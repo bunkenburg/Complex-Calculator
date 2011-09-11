@@ -1,0 +1,238 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+  <HEAD><TITLE>Complex Calculator</TITLE>
+    <META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+  </HEAD>
+<BODY>
+  <H1>Complex Calculator in Java 1.1</H1>
+  In the teaching of mathematics, the 
+complex numbers are often presented symbolically as entitites of the form z = a 
++ bi, where a and b are real numbers, rather than as simple entities, 
+geometrically represented by points on the complex plane (the Argand diagram) or 
+on the complex sphere (the Riemann sphere). Many of the complex functions become 
+much easier to understand using these models. Simple functions like addition, 
+subtraction, multiplication, or division, and even more sophisticated ones like 
+exponential, logarithm, or the winding number become intuitively obvious. The 
+sphere even provides a way of visualizing infinity, and a neighbourhood of 
+infinity. 
+<P>
+Complex Calculator is a Java program that implements the functions of a usual 
+desk calculator, but accepts input and displays output both symbolically and 
+geometrically. In addition, the program can display the action of complex 
+functions interactively. The program is to be used in teaching at high school 
+and university level. 
+<P>
+Complex Calculator makes complex numbers simple! <BR/>
+<P>
+
+<APPLET height="60" width="350" code="AppletButton.class" archive="CC.jar">
+  <PARAM NAME="windowClass" VALUE="bunkenba.calculator.Calculator">
+  <PARAM NAME="windowTitle" VALUE="Complex Calculator">
+  <PARAM NAME="buttonText" VALUE="Click here to get a Complex Calculator.">
+</APPLET> 
+
+<BR/>
+<H2>Technical problems and bugs</H2>
+When you load this page, a Complex 
+Calculator should appear automatically in a new window. 
+<P>
+You need a browser that has Java 1.1 to run the program. Suitable browsers 
+are Netscape 4 and Internet Explorer 4. 
+<P>
+Above this section you should see a button labeled "Click here to get a 
+Complex Calculator.". If you do not see it, your browser does not have Java 1.1, 
+or Java is not switched on. If you see the button, but no calculator window 
+appears, your browser might have Java, but not Java 1.1. The status bar at the 
+bottom of the window may report "class AppletButton not found", and there will 
+be an error message in the Java Console saying that the class "ActionListener", 
+which is part of Java 1.1, but not Java 1.0, was not found. In particular, 
+Netscape Communicator 4.05 and 4.5 on the Macintosh do not have full Java 1.1, 
+although their Java Consoles claim to have "Java 1.1.2", respectively "Java 
+1.1.5". The Java console will report "class ActionListener not found". 
+<P>
+Depending on your system, some of the interactive mapping functions are slow. 
+In a future version of the program they may be disabled. On some systems, 
+entering formulas into the calculator by keyboard causes the characters to 
+appear twice. I will fix this soon. In any case, entering formulas by using the 
+buttons works. Some systems (e.g. on Macintosh) don't give the program the 
+chance to redraw the screen during a mouse drag. Only the first and last mouse 
+position will be recognized by the program then. Sadly, this makes the program a 
+lot less entertaining. This is a fault in the implementation of Java on those 
+system and not of the program. If you have a Macintosh, consider the <A 
+href="Macintosh/CC.html">native Mac version</A> of the program. 
+<P>
+I'd be grateful if you'd <A href="mailto:alex@inspiracio.com">email me</A> 
+with any other problems. It would be useful if you tell me what system and 
+browser you use, and any error messages displayed in the Java console. 
+<H2>Instructions</H2>
+The program has four modes, the calculating mode, the z 
+-&gt; f(z) mode, the z -&gt; |f(z)| mode, and the x -&gt; Re(f(x)) mode. The 
+mode may be selected from the menu bar of the calculator. When the program 
+starts up, it is in calculating mode. 
+<H3>Calculating mode</H3>
+In calculating mode, the program implements the usual 
+function of a desktop calculator. Complex numbers may be entered geometrically 
+or symbolically, and results are displayed geometrically and symbolically. 
+<P>
+In this mode, there are two windows: the calculator and the Calculation 
+World. The calculator may be used to enter numbers, operators, and functions in 
+reasonably standard mathematical notation. When = is entered, the expression on 
+the display is evaluated and the result is displayed both on the calculator and 
+as a point on the calculation world. Numbers may also be entered geometrically, 
+by clicking on the calculation world. The Calculation World may be presented as 
+a plane or as a sphere. In either case, the world may be shifted or rotated by 
+selecting "Move" from the menu on the Calculation World and then dragging on the 
+window. The effects of moving are undone by pressing button "Reset". Select 
+"Draw" to enter more numbers geometrically. The button "Clear" erases previously 
+marked numbers. 
+<H4>The calculator</H4>
+The operators and functions on the calculator are mainly 
+standard. The ! is the factorial function. It applies only to small natural 
+numbers, and follows the number, e.g.: 5! = 120. "del" is the delete button, and 
+"C" clears the whole display. conj(z) is the complex conjugate of z. opp(z) is 
+the number opposite z on the sphere. Re(z) and Im(z) are the real and imaginary 
+parts of z. Exponentiation is written by infix ^: e.g. 3^2 = 3*3 = 9. mod(z) and 
+arg(z) are the modulus and the argument (the angle) of z. When applying 
+functions, the brackets don't always have to be written: sin z = sin(z). 
+Function application binds stronger than the operators. 
+<H3>The z -&gt; f(z) mode</H3>
+The z -&gt; f(z) mode may be used to display the 
+action of a complex function interactively. 
+<P>
+In this mode, there are three windows: the calculator, the z World, and the 
+f(z) World. The calculator is used to define a function f. (Press "C" in case 
+you need to clear the display.) Define a function by entering in the 
+calculator's display "f(z) = sin z", or any other function. What is displayed 
+must start with "f(z) = " to make sense. There is a space before and another 
+after the = symbol. Once the function has been defined, points, lines, circle, 
+square, rectangles, and grids may be drawn on the z World. They will be mapped 
+via the defined function f to points on the f(z) world. Select "Draw" and drag 
+the mouse on the z World to enter an arbitrary line. It will be mapped 
+interactively. Select "Line" and drag to enter a straight line between two 
+points (On the sphere a straight line does not usually look straight.). Select 
+"Circle" and drag to enter a circle. Drag from the center of the desired circle 
+to any point on its circumference. Similar functions are available for squares 
+and rectangles. Select "Grid" and drag to select a rectangle over which a 
+rectangular grid or net of lines will be drawn. Each of the lines is then mapped 
+to the f(z) world. The effect of f on a neighbourhood becomes visible. As usual, 
+select "Move" and press "Reset" to move the worlds and make movements undone. 
+Dragging on the f(z) World moves it. 
+<P>Since the shapes are sampled at finitely many points, they may sometimes 
+appear jagged rather than smooth. The sampling may miss interesting points at 
+which the function is undefined or infinite. 
+<H3>The z -&gt; |f(z)| mode</H3>The z -&gt; |f(z)| mode is used to observe the 
+modulus of complex functions. 
+<P>There are three windows: the calculator, the z World, and the |f(z)| World. 
+The calulator is used to define a function f as before. The z World is used to 
+specify a square. The |f(z)| World will display the modulus of the function over 
+the specified square. The image on the |f(z)| World may be rotated by dragging 
+on it. A new square may be specified in the z World by selecting "Square" and 
+dragging. 
+<P>However, since the function is only sampled at finitely many points, the 
+picture is only an approximation. If the function is sampled at a point where 
+the function is undefined (such as ln(0)), the display will represent this by 
+displaying a negative value (clearly indicates something is wrong, because the 
+modulus of any number is non-negative). Try the function f(z) = ln 0 to observe 
+this. If the function is infinite at a sampled point, the |f(z)| World will 
+reflect this by showing a value that exceeds the cube in which the maps are 
+normally fitted. Try the function f(z) = inf to observe this, or f(z) = 1/z over 
+the (initial) square centered exactly on 0. However, in general, even though the 
+function may have undefined points and infinite points on the specified square, 
+the sampling may miss them. 
+<H3>The x -&gt; Re(f(x)) mode</H3>The x -&gt; Re(f(x)) is used to observe the 
+real part of a function mapped over the real numbers. 
+<P>In this mode, there are two windows: the calculator and the Re(f(x)) World. 
+Use the calculator to define a function f as before. The Re(f(x)) will display 
+the function mapped over the real numbers in the standard way. The Re(f(x)) 
+World may be shifted by dragging on it, and you may zoom it. Try the function 
+f(x) = sin x to get the familiar picture of the sin curve. The picture is not 
+always the picture you expect from real analysis: Try f(x) = ln x. ln applied to 
+a negative real numbers yields a good complex number, and the Re(f(x)) World 
+displays its real part. When the function is infinite or undefined at a point, 
+the picture may reflect this by not drawing a image point. However, since the 
+function is only sampled at finitely many points, such points may be missed. Try 
+f(x) = tan x to see an example of this. 
+<H3>The Riemann sphere</H3>The Riemann sphere is a neat visualization of all 
+complex numbers in a simple finite model. In particular we can really see 
+infinity (Select "Move" and drag the mouse downwards a little.). The Riemann 
+sphere depicts the "extended complex numbers", that means the finite complex 
+numbers plus a single infinity. There is no negative infinity (or rather, 
+-infinity = infinity). Infinity is where you get to when you start walking from 
+any point in any direction and keep on walking. 
+<P>The complex numbers are the points on the surface of the sphere. In the 
+starting position of the sphere (press "Reset" to achieve it in case you have 
+rotated the sphere), 0 is the South pole of the sphere, infinity the North pole, 
+and the equator represents the circle of radius 1 around 0. Check mathematics 
+text books, for example "Complex Analysis" by Ian Stewart and David Tall 
+(Cambridge University Press) for more about the sphere. <BR>&nbsp; 
+<H2>Some interesting things to try out...</H2>This section gives some initial 
+ideas how to use Complex Calculator in teaching or self-study. The aim is to 
+develop a thorough intuitive geometric understanding of complex number 
+operations. As exercise, try to explain the geometric effect of certain 
+functions or if someone else defined the function and hides it, try to guess 
+what kind of function it is from observing its effects. 
+<P>Introducing complex numbers, the most basic questions are: What do the 
+functions Re, Im, mod, and arg do? Using the z -&gt; f(z) mode, the students can 
+be left to discover the answers by themselves. Similarly, they will discover 
+that addition and subtraction on the plane are just like 2d-vector addition and 
+subtraction. 
+<P>The reciprocal function f(z) = 1/z has the interesting property of mapping 
+the unit circle onto itself and swapping the inside and the outside of it. On 
+the sphere, this means that the equator stays fixed, while the northern and 
+souther hemisphere are swapped over. 
+<P>In cartography, the world sphere is mapped onto a sheet of paper by the 
+reverse process of the way the plane is mapped onto the Riemann sphere. To 
+remove the distortion, the plane is then mapped onto itself by the natural 
+logarithm. This method is called "stereographic projection". 
+<P>The sin function maps vertical lines to confocal hyperbolae and horizontal 
+lines to confocal ellipses. After seeing the picture on the f(z) World, the 
+student can form some theorems like these and prove (or disprove) them. 
+<P>The squaring function f(z) = z^2 maps the unit circle onto itself, but twice. 
+Try drawing the unit circle by hand, not using the circle button, and observe 
+how fast the image circle develops. After only half a revolution in the z World, 
+the f(z) World circle will already be complete. With higher polynomials like 
+f(z) = z^3 + z^2 + z + 1, simple curves can map onto curves with crossings. 
+<P>The Joukovsky aerofoil transformation has been used to make aeroplane wings. 
+The function is f(z) = 0.5 * (z + 1/z). Map a circle of roughly radius 1, 
+sitting near, but not quite centered on 0, to get an image that could be the 
+section of an aeroplane wing. 
+<P>The Riemann sphere is always useful to observe a neighbourhood of infinity, 
+but there are some functions that are special in relation to the sphere. The 
+opposite function opp maps each point to the point oppsite it on the sphere. The 
+students could try to devine its definition. It is opp(z) = conj(-1/z).The 
+reciprocal function f(z) = 1/z maps the outside of the unit circle to its 
+inside, but also performs a conjugation. 
+<P>A Möbius transformation is a function of the form f(z) = (az + b)/(cz + d) 
+for complex numbers a,b,c,d. It may be rewritten as f(z) = a/d * z + b/d, if c = 
+0, or f(z) = -(ad -bc)/c * 1/(cz + d) + a/c, if c is not 0. Möbius 
+transformations map circles or straight lines onto circle or straight lines. On 
+the sphere, a straight line is no more than a circle crossing infinity, so it's 
+useful to consider them one concept. 
+<P>The exponential function f(z) = exp z is the inverse of the natural logarithm 
+ln. It can be shown that exp z = e^z and therefore we have exp(x + iy) = exp x * 
+exp(iy), where x and y are real numbers. This conforms to the polar form of a 
+complex number z = r e^(theta i) where r is z's radius (modulus), and theta is 
+its angle in radians. Therefore vertical lines go to circles around 0 and 
+horizontal lines go to radii from 0 when mapped by exp. In particular, exp is 
+periodic, the period is 2pi. 
+<P>The natural logarithm of a complex number can be expressed in terms of the 
+radius and argument. ln(r e^(theta i)) = ln r + theta i. This conforms to the 
+Cartesian form x + iy of a complex number. Therefore circles around 0 map onto 
+vertical lines and straight lines through 0 map onto horizontal lines. 
+<P>These are just some ideas, the teacher may adapt the use of Complex 
+Calculator to the curriculum. As soon as the students playfully realize that 
+complex numbers needn't be thought of as complex entities, but simple points, 
+their difficulty evaporates! <BR>
+<HR>
+
+<CENTER>[ <A href="../">Alex's Home Page</A> ]</CENTER>
+<HR>
+
+<CENTER>
+<ADDRESS>Author: <A href="../">Alex Bunkenburg</A> (<A 
+href="mailto:alex@inspiracio.com">alex@inspiracio.com</A>)</ADDRESS></CENTER>
+<CENTER><BR><I>Last modified:&nbsp;</I>
+<SCRIPT language=JavaScript>
+    document.write(document.lastModified)
+  </SCRIPT>
+ </CENTER></BODY></HTML>
