@@ -32,10 +32,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
-// Referenced classes of package bunkenba.calculator:
-//            World, WorldRepresentation, Calculator, Drawing
-
-final class ComplexWorld extends World {
+/** The complex world displays results of calculations
+ * and allows graphical input of numbers.
+ *  Referenced classes of package bunkenba.calculator:
+ *             World, WorldRepresentation, Calculator, Drawing
+ */
+final class ComplexWorld extends World{
 	
 	//State ------------------------------------------------------------------
 	

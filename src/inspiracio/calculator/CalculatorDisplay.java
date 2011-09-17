@@ -19,70 +19,60 @@ package inspiracio.calculator;
 
 import java.awt.*;
 
-class CalculatorDisplay extends TextArea {
+/** The text area of the complex calculator. 
+ * This class just adds some convenient methods for copy/paste functionality to TextArea. */
+final class CalculatorDisplay extends TextArea{
 	
-	static final long serialVersionUID = 0;
-
-    public CalculatorDisplay(int i)
-    {
+	//Constructor ------------------------------------------
+	
+	/** @param fontSize Font size */
+    CalculatorDisplay(int fontSize){
         super("", 3, 1, 1);
-        setFont(new Font("SansSerif", 0, i));
+        setFont(new Font("SansSerif", 0, fontSize));
     }
 
-    public void clearAll()
-    {
-        setText("");
-    }
+    //Methods ------------------------------------------------
+    
+    final void clearAll(){setText("");}
 
-    public void delete()
-    {
+    final void delete(){
         int i = getSelectionStart();
         int j = getSelectionEnd();
         int k = getCaretPosition();
-        if(i == j)
-        {
-            if(k > 0)
-            {
+        if(i == j){
+            if(k > 0){
                 replaceRange("", k - 1, k);
                 select(k - 1, k - 1);
                 setCaretPosition(k - 1);
                 return;
             }
-        } else
-        {
+        } else{
             replaceRange("", i, j);
             setSelectionEnd(i);
             setCaretPosition(i);
         }
     }
 
-    void paste(char c)
-    {
+    final void paste(char c){
         paste(String.valueOf(c));
     }
 
-    public void paste(String s)
-    {
+    final void paste(String s){
         int i = getSelectionStart();
         int j = getSelectionEnd();
         int k = getCaretPosition();
-        if(i == j)
-        {
+        if(i == j){
             insert(s, k);
             setCaretPosition(k + s.length());
             select(k + s.length(), k + s.length());
-            return;
-        } else
-        {
+        } else{
             replaceRange(s, i, j);
             setCaretPosition(i + s.length());
             select(i + s.length(), i + s.length());
-            return;
         }
     }
 
-    public void prepend(String s)
-    {
+    final void prepend(String s){
         int i = getSelectionStart();
         int j = getSelectionEnd();
         int k = getCaretPosition();
@@ -92,8 +82,7 @@ class CalculatorDisplay extends TextArea {
         setCaretPosition(k + s.length());
     }
 
-    void replace(char c, char c1)
-    {
+    final void replace(char c, char c1){
         int i = getSelectionStart();
         int j = getSelectionEnd();
         int k = getCaretPosition();

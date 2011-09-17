@@ -114,6 +114,10 @@ final class Drawing{
         pen.y = point.y;
     }
 
+    /** Makes a triangle.
+     * @param point Triangle tip is here.
+     * @param i Points this direction.
+     * @param j Size of the triangle. */
     static Polygon mkTriangle(Point point, int i, int j){
         switch(i){
         case 0: // '\0'

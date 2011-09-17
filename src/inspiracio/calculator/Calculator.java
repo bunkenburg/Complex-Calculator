@@ -51,24 +51,21 @@ import java.text.ParseException;
 
 public final class Calculator extends Frame{
 	
-	private static final String PI="\u03C0";
-	private static final String INF="\u221E";
     public static enum Mode{CALC, FZ, MODFZ, REFX}
+
+    private static final String PI="\u03C0";
+	private static final String INF="\u221E";
     
     static final int precisions[] = {2, 4, 6, 8, 10};
+    private final static String ALLOWED_CHARS = " !sinhcoshtanhconjoppReImlnexp^modargiepi()789*/456+-123=0.z";
 
     //State -------------------------------------------
 
-    /** THe mode that the program is in: Calculation, z->fz mapping, z->|fz| mapping, or Re(fz). */
+    /** The mode that the program is in: Calculation, z->fz mapping, z->|fz| mapping, or Re(fz). */
     private Mode mode;
     
-    //private final String allowedKeys = " !sinhcoshtanhconjoppReImlnexp^modargiepi()789*/456+-123=0.z";
-    //private static final String NAME = "Complex Calculator";
     private CalculatorDisplay display;
     private Button equalsButton;
-    //private Button fButton;
-    //private static final int INITIAL_FONTSIZE = 12;
-    //private static final int INITIAL_PRECISION = 4;
     private Button zButton;
     private char variable;
     private ComplexWorld cW;
@@ -76,7 +73,6 @@ public final class Calculator extends Frame{
     private FzWorld fzW;
     private ThreeDWorld modfzW;
     private RefxWorld refxW;
-    //private SyntaxTree syntaxTree;
     private SyntaxTree f;
     private boolean inAnApplet;
 
@@ -86,7 +82,7 @@ public final class Calculator extends Frame{
     public Calculator(){
         super("Complex Calculator");
         mode = CALC;
-        display = new CalculatorDisplay(12);
+        this.display = new CalculatorDisplay(12);
         variable = 'z';
         inAnApplet = true;
         setBackground(Color.lightGray);
@@ -219,12 +215,14 @@ public final class Calculator extends Frame{
 
     void add(EC ec){display.paste("(" + ec + ")");}
 
+    /** Gets the expression from the display, parses it, evaluates it,
+     * and append the result to the display. */
 	private void doEquals(){
-        String s = display.getText();
+        String s=display.getText();
         display.append(" = ");
         try{
-            SyntaxTree syntaxtree = SyntaxTree.parse(s);
-            EC ec = syntaxtree.evaluate(null);
+            SyntaxTree tree=SyntaxTree.parse(s);
+            EC ec=tree.evaluate(null);
             display.append(ec.toString());
             cW.add(ec);
             return;
@@ -479,52 +477,53 @@ public final class Calculator extends Frame{
     //private inner classes -----------------------------------------------------------
     
     private final class MyKeyListener extends KeyAdapter{
-        public void keyPressed(KeyEvent keyevent){
+        MyKeyListener(){}
+
+        @Override public void keyPressed(KeyEvent keyevent){
             int i = keyevent.getKeyCode();
-            if(i == 8 || i == 127){
+            if(i==8 || i==127){
                 display.delete();
                 keyevent.consume();
                 return;
             }
-            if(i == 10){
-                if(mode ==CALC){
+            if(i==10){
+                if(mode==CALC){
                     eraseOldResult();
                     doEquals();
                 }
                 keyevent.consume();
                 return;
             }
-            if(i == 12){
+            if(i==12){
                 display.clearAll();
-                if(mode !=CALC)
+                if(mode!=CALC)
                     display.prepend("f(" + variable + ") = ");
                 keyevent.consume();
                 return;
             }
-            if(i != 37 && i != 39)
+            if(i!=37 && i!=39)
                 keyevent.consume();
         }
 
-        public void keyTyped(KeyEvent keyevent){
+        @Override public void keyTyped(KeyEvent keyevent){
             char c = keyevent.getKeyChar();
-            if(" !sinhcoshtanhconjoppReImlnexp^modargiepi()789*/456+-123=0.z".indexOf(c) == -1){
+            if(ALLOWED_CHARS.indexOf(c)==-1){
                 keyevent.consume();
             }else{
-                if(mode ==CALC)
+                if(mode==CALC)
                     eraseOldResult();
-                if(c == '='){
-                    if(mode ==CALC)
+                if(c=='='){
+                    if(mode==CALC)
                         doEquals();
-                } else
+                }else
                     display.paste(c);
-                if(mode !=CALC)
+                if(mode!=CALC)
                     functionChange();
             }
             keyevent.consume();
         }
 
-        MyKeyListener(){}
-    }
+    }//MyKeyListener
 
     private final class Bx{
         String label;

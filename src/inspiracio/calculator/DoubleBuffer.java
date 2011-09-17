@@ -19,18 +19,25 @@ package inspiracio.calculator;
 
 import java.awt.*;
 
+/** Keeps two graphics objects for off-screen drawing. */
 final class DoubleBuffer{
 
+	//State -------------------------------------------------------
+	
     private final Component component;
     private Dimension offDimension;
     private Image offImage;
     private Graphics offGraphics;
     private Graphics onGraphics;
 
+    //Constructors -----------------------------------------------
+    
     DoubleBuffer(Component component1){
         component = component1;
     }
 
+    //Methods ----------------------------------------------------
+    
     Graphics offScreen(Graphics g){
         onGraphics = g;
         Dimension dimension = component.getSize();

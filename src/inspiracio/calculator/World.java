@@ -23,19 +23,21 @@ import inspiracio.numbers.Piclet;
 import java.awt.*;
 import java.awt.event.*;
 
-// Referenced classes of package bunkenba.calculator:
-//            Plane, Sphere, Calculator, WorldRepresentation, 
-//            Drawing
-
+/** A frame that shows complex number on the complex plane or the Riemann sphere.
+ * 
+ * Referenced classes of package bunkenba.calculator:
+ * Plane, Sphere, Calculator, WorldRepresentation, Drawing
+ */
 abstract class World extends Frame{
 
-	//State -------------------------------------------------------------
+    protected enum Interaction{DRAW, MOVE, LINE, RECTANGLE, CIRCLE, GRID, SQUARE}
+
+    //State -------------------------------------------------------------
 	
     protected Calculator calculator;
     protected Panel buttonPanel;
     protected int prevx;
     protected int prevy;
-    protected enum Interaction{DRAW, MOVE, LINE, RECTANGLE, CIRCLE, GRID, SQUARE}
     protected Interaction interaction;
     double MaxImaginary;
     double MinImaginary;
