@@ -213,7 +213,8 @@ public final class Calculator extends Frame{
     
     //Methods ---------------------------------------------------------
 
-    void add(EC ec){display.paste("(" + ec + ")");}
+    /** Adds a complex number to the display. */
+    final void add(EC ec){display.paste("(" + ec + ")");}
 
     /** Gets the expression from the display, parses it, evaluates it,
      * and append the result to the display. */
