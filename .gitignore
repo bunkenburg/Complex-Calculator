@@ -1,7 +1,9 @@
 .classpath
+.idea
 .project
 .settings
 bin
+target
 *.class
 */.svn/*
 
