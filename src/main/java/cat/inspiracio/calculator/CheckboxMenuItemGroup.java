@@ -17,6 +17,7 @@
  * */
 package cat.inspiracio.calculator;
 
+import javax.swing.*;
 import java.awt.CheckboxMenuItem;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -28,7 +29,7 @@ class CheckboxMenuItemGroup{
 	//State -------------------------------------------------------
 	
 	/** I only remember the currently checked menu item. */
-    private CheckboxMenuItem current;
+    private JCheckBoxMenuItem current;
 
     //Constructor -------------------------------------------------
     
@@ -40,7 +41,7 @@ class CheckboxMenuItemGroup{
     /** Add a checkbox menu item to the group. 
      * The checked menu item becomes unchecked, and this new
      * menu item becomes the checked one. */
-    void add(final CheckboxMenuItem mi){
+    void add(final JCheckBoxMenuItem mi){
         if(current!=null)
             current.setState(false);
         mi.setState(true);
@@ -75,11 +76,11 @@ class CheckboxMenuItemGroup{
     }
 
     /** Gets the currently checked menu item. */
-    CheckboxMenuItem getSelected(){return current;}
+    JCheckBoxMenuItem getSelected(){return current;}
 
     /** Sets the checked menu item and unchecks the previously
      * checked one. */
-    void setSelected(CheckboxMenuItem checkboxmenuitem){
+    void setSelected(JCheckBoxMenuItem checkboxmenuitem){
         if(current != checkboxmenuitem){
             current.setState(false);
             checkboxmenuitem.setState(true);

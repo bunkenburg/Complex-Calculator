@@ -23,6 +23,7 @@ import cat.inspiracio.numbers.Rectangle;
 import cat.inspiracio.numbers.Square;
 import cat.inspiracio.parsing.SyntaxTree;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -30,7 +31,7 @@ import java.awt.event.*;
 //            Calculator, DoubleBuffer, Drawing, Matrix44, 
 //            Vector2, Vector3
 
-final class ThreeDWorld extends Frame{
+final class ThreeDWorld extends JFrame {
 
 	//State ---------------------------------------------
 
@@ -64,19 +65,19 @@ final class ThreeDWorld extends Frame{
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent windowevent){calculator.quit();}
         });
-        MenuBar mb=calculator.makeMenuBar();
-        this.setMenuBar(mb);
+        JMenuBar mb=calculator.makeMenuBar();
+        setJMenuBar(mb);
         pack();
-        this.setLocationRelativeTo(this.calculator);
-        this.setLocationByPlatform(true);
-        this.setVisible(true);
+        setLocationRelativeTo(calculator);
+        setLocationByPlatform(true);
+        setVisible(true);
     }
     
     //Methods -----------------------------------------
 
     /** Close and remove the window. */
     @Override public void dispose(){
-    	MMenuBar mb=(MMenuBar)this.getMenuBar();
+    	MMenuBar mb=(MMenuBar)this.getJMenuBar();
     	mb.dispose();
     	super.dispose();
     }
@@ -142,7 +143,7 @@ final class ThreeDWorld extends Frame{
 
     //Inner class ThreeDCanvas ------------------------------------------------------------
     
-	private class ThreeDCanvas extends Component{
+	private class ThreeDCanvas extends JComponent{
     
 		//State ----------------------------------------------------------
 		

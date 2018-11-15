@@ -17,6 +17,7 @@
  * */
 package cat.inspiracio.calculator;
 
+import javax.swing.*;
 import java.awt.*;
 
 /** Keeps two graphics objects for off-screen drawing. */
@@ -24,7 +25,7 @@ final class DoubleBuffer{
 
 	//State -------------------------------------------------------
 	
-    private final Component component;
+    private final JComponent component;
     private Dimension offDimension;
     private Image offImage;
     private Graphics offGraphics;
@@ -32,7 +33,7 @@ final class DoubleBuffer{
 
     //Constructors -----------------------------------------------
     
-    DoubleBuffer(Component component1){
+    DoubleBuffer(JComponent component1){
         component = component1;
     }
 

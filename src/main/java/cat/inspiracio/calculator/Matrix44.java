@@ -17,9 +17,6 @@
  * */
 package cat.inspiracio.calculator;
 
-// Referenced classes of package bunkenba.calculator:
-//            Vector3
-
 final class Matrix44{
 
 	/** Not private because it's used from Sphere. */

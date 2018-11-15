@@ -17,16 +17,17 @@
  * */
 package cat.inspiracio.calculator;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class AboutBox extends Dialog {
+public class AboutBox extends JDialog {
 	
 	static final long serialVersionUID = 0;
 
-    public AboutBox(Frame frame, String s)
+    public AboutBox(JFrame frame, String title)
     {
-        super(frame, "About " + s + "...", false);
+        super(frame, title, false);
         setResizable(false);
         addWindowListener(new WindowAdapter() {
 
@@ -36,12 +37,12 @@ public class AboutBox extends Dialog {
             }
 
         });
-        String s1 = s + "\n" + "6. 1. 1999\n" + "by Alex Bunkenburg\n" + "http://www.dcs.gla.ac.uk/~bunkenba\n";
-        TextArea textarea = new TextArea(s1, 5, 34, 3);
+        String text = title + "\n" + "6. 1. 1999\n" + "by Alexander Bunkenburg\n" + "http://www.inspiracio.cat\n";
+        JTextArea textarea = new JTextArea(text, 5, 34);//, TextArea.SCROLLBARS_NONE);
         textarea.setEditable(false);
         add("Center", textarea);
-        Panel panel = new Panel();
-        Button button = new Button("Continue");
+        JPanel panel = new JPanel();
+        JButton button = new JButton("Continue");
         button.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent actionevent)
@@ -54,14 +55,7 @@ public class AboutBox extends Dialog {
         add("South", panel);
         button.requestFocus();
         pack();
-        this.setVisible(true);
+        setVisible(true);
     }
 
-    public static void main(String args[])
-    {
-        Frame frame = new Frame("Parent frame");
-        frame.setSize(50, 30);
-        frame.setVisible(true);
-        new AboutBox(frame, "ProgramName");
-    }
 }

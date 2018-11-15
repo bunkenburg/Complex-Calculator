@@ -36,8 +36,7 @@ import cat.inspiracio.numbers.PicletList;
 import cat.inspiracio.numbers.Rectangle;
 import cat.inspiracio.numbers.Square;
 
-import java.awt.Button;
-import java.awt.Choice;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -63,8 +62,8 @@ final class ZWorld extends World{
     private Piclet currentPiclet;
     private PicletList piclets;
     private Square square;
-    private Choice interactionChoice;
-    private Button eraseButton;
+    private JComboBox interactionChoice;
+    private JButton eraseButton;
     private Mode mode;
     
 	//Constructor ------------------------------------------
@@ -76,19 +75,22 @@ final class ZWorld extends World{
         square = new Square(new Circle(EC.ZERO, 1.0D));
         super.interaction =DRAW;
         setTitle("z World");
-        eraseButton = new Button("Clear");
+        eraseButton = new JButton("Clear");
         eraseButton.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent actionevent){
                 erase();
                 canvas.repaint();
             }
         });
-        interactionChoice = new Choice();
+        interactionChoice = new JComboBox();
         interactionChoice.addItem("Move");
         interactionChoice.addItem("Draw");
-        interactionChoice.select("Draw");
+        interactionChoice.setSelectedItem("Draw");
         interactionChoice.addItemListener(new ItemListener() {
         	@Override public void itemStateChanged(ItemEvent itemevent){
+        	    int state = itemevent.getStateChange();
+        	    if(state!=ItemEvent.SELECTED)
+        	        return;
                 String s = (String)itemevent.getItem();
                 if(s == "Move"){
                     interaction =MOVE;
@@ -364,9 +366,9 @@ final class ZWorld extends World{
         super.sphere.addMouseListener(mouseadapter);
         super.sphere.addMouseMotionListener(mousemotionadapter);
         pack();
-        this.setLocationRelativeTo(this.calculator);
+        setLocationRelativeTo(this.calculator);
         //this.setLocationByPlatform(true);
-        this.setVisible(true);
+        setVisible(true);
     }
 
     void add(EC ec){
@@ -405,7 +407,7 @@ final class ZWorld extends World{
 
     /** Close and remove the window. */
     @Override public void dispose(){
-    	MMenuBar mb=(MMenuBar)this.getMenuBar();
+    	MMenuBar mb=(MMenuBar)getJMenuBar();
     	mb.dispose();
     	super.dispose();
     }
@@ -455,30 +457,30 @@ final class ZWorld extends World{
         case CALC:
         	setTitle("Complex World");
         	eraseButton.setEnabled(true);
-        	interactionChoice.add("Move");
-        	interactionChoice.add("Draw");
-        	interactionChoice.select("Draw");
+        	interactionChoice.addItem("Move");
+        	interactionChoice.addItem("Draw");
+        	interactionChoice.setSelectedItem("Draw");
         	super.interaction=DRAW;
         	break;
         case FZ:
         	setTitle("z World");
         	eraseButton.setEnabled(true);
-        	interactionChoice.add("Move");
-        	interactionChoice.add("Draw");
-        	interactionChoice.add("Circle");
-        	interactionChoice.add("Line");
-        	interactionChoice.add("Grid");
-        	interactionChoice.add("Rectangle");
-        	interactionChoice.add("Square");
-        	interactionChoice.select("Draw");
+        	interactionChoice.addItem("Move");
+        	interactionChoice.addItem("Draw");
+        	interactionChoice.addItem("Circle");
+        	interactionChoice.addItem("Line");
+        	interactionChoice.addItem("Grid");
+        	interactionChoice.addItem("Rectangle");
+        	interactionChoice.addItem("Square");
+        	interactionChoice.setSelectedItem("Draw");
         	super.interaction=DRAW;
         	break;
         case MODFZ:
         	setTitle("z World");
         	eraseButton.setEnabled(false);
-        	interactionChoice.add("Move");
-        	interactionChoice.add("Square");
-        	interactionChoice.select("Square");
+        	interactionChoice.addItem("Move");
+        	interactionChoice.addItem("Square");
+        	interactionChoice.setSelectedItem("Square");
         	super.interaction=SQUARE;
         	break;
         }

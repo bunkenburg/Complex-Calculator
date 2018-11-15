@@ -19,12 +19,13 @@ package cat.inspiracio.calculator;
 
 import cat.inspiracio.numbers.*;
 
+import javax.swing.*;
 import java.awt.*;
 
 // Referenced classes of package bunkenba.calculator:
 //            DoubleBuffer, World, Drawing
 
-abstract class WorldRepresentation extends Component{
+abstract class WorldRepresentation extends JComponent {
 
 	//State ---------------------------------------------------------
 	

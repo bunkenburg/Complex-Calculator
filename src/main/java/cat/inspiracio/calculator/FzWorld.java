@@ -23,10 +23,6 @@ import cat.inspiracio.parsing.SyntaxTree;
 
 import java.awt.event.*;
 
-// Referenced classes of package bunkenba.calculator:
-//            World, WorldRepresentation, zWorld, Calculator, 
-//            Drawing
-
 final class FzWorld extends World {
 
 	//State --------------------------------------------------------------------
@@ -76,8 +72,8 @@ final class FzWorld extends World {
         super.sphere.addMouseListener(mouseadapter);
         super.sphere.addMouseMotionListener(mousemotionadapter);
         pack();
-        this.setLocationRelativeTo(this.calculator);
-        this.setVisible(true);
+        setLocationRelativeTo(this.calculator);
+        setVisible(true);
     }
 
     //Methods ------------------------------------------------------------
@@ -132,7 +128,7 @@ final class FzWorld extends World {
 
     /** Close and remove the window. */
     @Override public void dispose(){
-    	MMenuBar mb=(MMenuBar)this.getMenuBar();
+    	MMenuBar mb=(MMenuBar)getJMenuBar();
     	mb.dispose();
     	super.dispose();
     }

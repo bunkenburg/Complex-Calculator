@@ -26,9 +26,6 @@ import cat.inspiracio.numbers.Rectangle;
 
 import java.awt.*;
 
-// Referenced classes of package bunkenba.calculator:
-//            WorldRepresentation, DoubleBuffer, Drawing, World
-
 final class Plane extends WorldRepresentation{
 
     private static int AXISSPACE = 30;

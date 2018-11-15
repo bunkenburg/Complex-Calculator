@@ -1,13 +1,17 @@
 # TODO
 
 * Better initial window positions
-* Double About-menu
-* Double Quit-menu
-* Menu name should be just "Complex Calculator"
+    - mode Calculate
+    - mode z -> f(z)
+    - mode z -> |f(z)|
+    - mode x -> Re(f(x))
 * Change from AWT to Swing
 * Take complex numbers out and make into Scala library
 * Change to Scala
 * Better colours, not so dark
+* Give it a real icon
+* Nice About-menu
+* make a real executable application
 
 # DONE
 

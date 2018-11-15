@@ -27,15 +27,11 @@ import cat.inspiracio.numbers.PartialException;
 import cat.inspiracio.numbers.Square;
 import cat.inspiracio.parsing.SyntaxTree;
 
-import java.awt.Button;
+import javax.swing.*;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Menu;
-import java.awt.MenuBar;
-import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -47,7 +43,7 @@ import java.text.ParseException;
 /** The Calculator application.
  * This is a frame, the main window.
  * This class has the main method. */
-public final class Calculator extends Frame{
+public final class Calculator extends JFrame {
 	
     public static enum Mode{CALC, FZ, MODFZ, REFX}
 
@@ -60,36 +56,46 @@ public final class Calculator extends Frame{
     //State -------------------------------------------
 
     /** The mode that the program is in: Calculation, z->fz mapping, z->|fz| mapping, or Re(fz). */
-    private Mode mode;
+    private Mode mode = CALC;
     
     private CalculatorDisplay display;
-    private Button equalsButton;
-    private Button zButton;
-    private char variable;
+    private JButton equalsButton;
+    private JButton zButton;
+    private char variable = 'z';
     private ComplexWorld cW;
     private ZWorld zW;
     private FzWorld fzW;
     private ThreeDWorld modfzW;
     private RefxWorld refxW;
     private SyntaxTree f;
-    private boolean inAnApplet;
+    private boolean inAnApplet = true;
 
     //Constructor --------------------------------------
     
     /** Instantiate a Complex Calculator. */
     public Calculator(){
         super("Complex Calculator");
-        mode = CALC;
-        this.display = new CalculatorDisplay(12);
-        variable = 'z';
-        inAnApplet = true;
+        buildFrame();
+        buildButtons();
+        buildMenuBar();
+        becomeVisible();
+    }
+
+    private void buildFrame(){
+        display = new CalculatorDisplay(12);
         setBackground(Color.lightGray);
         setResizable(false);
         EC.setPrecision(4);
         setFont(new Font("SansSerif", 0, 12));
-        MenuBar menubar = makeMenuBar();
+    }
+
+    private void buildMenuBar(){
+        JMenuBar menubar = makeMenuBar();
         setFont(getFont(), menubar);
-        setMenuBar(menubar);
+        setJMenuBar(menubar);
+    }
+
+    private void buildButtons(){
         GridBagLayout gridbaglayout = new GridBagLayout();
         GridBagConstraints gridbagconstraints = new GridBagConstraints();
         setLayout(gridbaglayout);
@@ -106,7 +112,7 @@ public final class Calculator extends Frame{
         gridbagconstraints.gridwidth = 1;
         gridbagconstraints.gridheight = 1;
         ActionListener actionlistener = new ActionListener() {
-        	@Override public void actionPerformed(ActionEvent actionevent){
+            @Override public void actionPerformed(ActionEvent actionevent){
                 if(mode ==CALC)
                     eraseOldResult();
                 display.paste(actionevent.getActionCommand());
@@ -116,77 +122,77 @@ public final class Calculator extends Frame{
             }
         };
         Bx abx[] = {
-            new Bx("!", 0, 3, 1, actionlistener), new Bx("del", 3, 3, 1, new ActionListener() {
-            	@Override public void actionPerformed(ActionEvent actionevent){
-                    if(mode ==CALC)
-                        eraseOldResult();
-                    display.delete();
-                    display.requestFocus();
-                    if(mode !=CALC)
-                        functionChange();
-                }
-            }),
-            new Bx("C", 4, 3, 1, new ActionListener() {
-            	@Override public void actionPerformed(ActionEvent actionevent){
-                    display.clearAll();
-                    if(mode !=CALC)
-                        display.prepend("f(" + variable + ") = ");
-                    display.requestFocus();
-                }
-            }), 
-            new Bx("sinh", 0, 4, 1, actionlistener), 
-            new Bx("cosh", 1, 4, 1, actionlistener), 
-            new Bx("tanh", 2, 4, 1, actionlistener), 
-            new Bx("conj", 3, 4, 1, actionlistener), 
-            new Bx("opp", 4, 4, 1, actionlistener), 
-            new Bx("sin", 0, 5, 1, actionlistener), 
-            new Bx("cos", 1, 5, 1, actionlistener), 
-            new Bx("tan", 2, 5, 1, actionlistener), 
-            new Bx("Re", 3, 5, 1, actionlistener), 
-            new Bx("Im", 4, 5, 1, actionlistener), 
-            new Bx("ln", 0, 7, 1, actionlistener), 
-            new Bx("exp", 1, 7, 1, actionlistener), 
-            new Bx("^", 2, 7, 1, actionlistener), 
-            new Bx("mod", 3, 7, 1, actionlistener), 
-            new Bx("arg", 4, 7, 1, actionlistener), 
-            new Bx("i", 0, 8, 1, actionlistener), 
-            new Bx("e", 1, 8, 1, actionlistener), 
-            new Bx(PI, 2, 8, 1, actionlistener), 
-            new Bx("(", 3, 8, 1, actionlistener), 
-            new Bx(")", 4, 8, 1, actionlistener), 
-            new Bx("7", 0, 9, 1, actionlistener), 
-            new Bx("8", 1, 9, 1, actionlistener), 
-            new Bx("9", 2, 9, 1, actionlistener), 
-            new Bx("*", 3, 9, 1, actionlistener), 
-            new Bx("/", 4, 9, 1, actionlistener), 
-            new Bx("4", 0, 10, 1, actionlistener), 
-            new Bx("5", 1, 10, 1, actionlistener), 
-            new Bx("6", 2, 10, 1, actionlistener), 
-            new Bx("+", 3, 10, 1, actionlistener), 
-            new Bx("-", 4, 10, 1, actionlistener), 
-            new Bx("1", 0, 11, 1, actionlistener), 
-            new Bx("2", 1, 11, 1, actionlistener), 
-            new Bx("3", 2, 11, 1, actionlistener), 
-            new Bx("z", 3, 11, 1, new ActionListener() {
-            	@Override public void actionPerformed(ActionEvent actionevent){
-                    display.paste(variable);
-                    display.requestFocus();
-                    if(mode !=CALC)
-                        functionChange();
-                }
-            }), 
-            new Bx("=", 4, 11, 2, new ActionListener() {
-            	@Override public void actionPerformed(ActionEvent actionevent){
-                    doEquals();
-                    display.requestFocus();
-                }
-            }), 
-            new Bx("0", 0, 12, 1, actionlistener), 
-            new Bx(".", 1, 12, 1, actionlistener), 
-            new Bx(INF, 2, 12, 1, actionlistener)
+                new Bx("!", 0, 3, 1, actionlistener), new Bx("del", 3, 3, 1, new ActionListener() {
+            @Override public void actionPerformed(ActionEvent actionevent){
+                if(mode ==CALC)
+                    eraseOldResult();
+                display.delete();
+                display.requestFocus();
+                if(mode !=CALC)
+                    functionChange();
+            }
+        }),
+                new Bx("C", 4, 3, 1, new ActionListener() {
+                    @Override public void actionPerformed(ActionEvent actionevent){
+                        display.clearAll();
+                        if(mode !=CALC)
+                            display.prepend("f(" + variable + ") = ");
+                        display.requestFocus();
+                    }
+                }),
+                new Bx("sinh", 0, 4, 1, actionlistener),
+                new Bx("cosh", 1, 4, 1, actionlistener),
+                new Bx("tanh", 2, 4, 1, actionlistener),
+                new Bx("conj", 3, 4, 1, actionlistener),
+                new Bx("opp", 4, 4, 1, actionlistener),
+                new Bx("sin", 0, 5, 1, actionlistener),
+                new Bx("cos", 1, 5, 1, actionlistener),
+                new Bx("tan", 2, 5, 1, actionlistener),
+                new Bx("Re", 3, 5, 1, actionlistener),
+                new Bx("Im", 4, 5, 1, actionlistener),
+                new Bx("ln", 0, 7, 1, actionlistener),
+                new Bx("exp", 1, 7, 1, actionlistener),
+                new Bx("^", 2, 7, 1, actionlistener),
+                new Bx("mod", 3, 7, 1, actionlistener),
+                new Bx("arg", 4, 7, 1, actionlistener),
+                new Bx("i", 0, 8, 1, actionlistener),
+                new Bx("e", 1, 8, 1, actionlistener),
+                new Bx(PI, 2, 8, 1, actionlistener),
+                new Bx("(", 3, 8, 1, actionlistener),
+                new Bx(")", 4, 8, 1, actionlistener),
+                new Bx("7", 0, 9, 1, actionlistener),
+                new Bx("8", 1, 9, 1, actionlistener),
+                new Bx("9", 2, 9, 1, actionlistener),
+                new Bx("*", 3, 9, 1, actionlistener),
+                new Bx("/", 4, 9, 1, actionlistener),
+                new Bx("4", 0, 10, 1, actionlistener),
+                new Bx("5", 1, 10, 1, actionlistener),
+                new Bx("6", 2, 10, 1, actionlistener),
+                new Bx("+", 3, 10, 1, actionlistener),
+                new Bx("-", 4, 10, 1, actionlistener),
+                new Bx("1", 0, 11, 1, actionlistener),
+                new Bx("2", 1, 11, 1, actionlistener),
+                new Bx("3", 2, 11, 1, actionlistener),
+                new Bx("z", 3, 11, 1, new ActionListener() {
+                    @Override public void actionPerformed(ActionEvent actionevent){
+                        display.paste(variable);
+                        display.requestFocus();
+                        if(mode !=CALC)
+                            functionChange();
+                    }
+                }),
+                new Bx("=", 4, 11, 2, new ActionListener() {
+                    @Override public void actionPerformed(ActionEvent actionevent){
+                        doEquals();
+                        display.requestFocus();
+                    }
+                }),
+                new Bx("0", 0, 12, 1, actionlistener),
+                new Bx(".", 1, 12, 1, actionlistener),
+                new Bx(INF, 2, 12, 1, actionlistener)
         };
         for(int i = 0; i < abx.length; i++){
-            Button button = new Button(abx[i].label);
+            JButton button = new JButton(abx[i].label);
             if(abx[i].label.equals("z"))
                 zButton = button;
             else if(abx[i].label.equals("="))
@@ -198,17 +204,19 @@ public final class Calculator extends Frame{
             gridbaglayout.setConstraints(button, gridbagconstraints);
             add(button);
         }
+    }
 
+    private void becomeVisible(){
         addWindowListener(new WindowAdapter() {
-        	@Override public void windowClosing(WindowEvent windowevent){quit();}
+            @Override public void windowClosing(WindowEvent windowevent){quit();}
         });
-        this.setMode(mode);
+        setMode(mode);
         pack();
-        this.setLocationByPlatform(true);
+        setLocationByPlatform(true);
         setVisible(true);
         display.requestFocus();
     }
-    
+
     //Methods ---------------------------------------------------------
 
     /** Run the Calculator as stand-alone application. */
@@ -321,30 +329,33 @@ public final class Calculator extends Frame{
         pack();
     }
 
-    private static void setFont(Font font, Menu menu){
+    private static void setFont(Font font, JMenu menu){
         menu.setFont(font);
         for(int i = 0; i < menu.getItemCount(); i++)
             setFont(font, menu.getItem(i));
     }
 
-    private static void setFont(Font font, MenuBar menubar){
+    private static void setFont(Font font, JMenuBar menubar){
         menubar.setFont(font);
         for(int i = 0; i < menubar.getMenuCount(); i++)
             setFont(font, menubar.getMenu(i));
     }
 
-    private static void setFont(Font font, MenuItem menuitem){
-        if(menuitem instanceof Menu){
-            setFont(font, (Menu)menuitem);
+    private static void setFont(Font font, JMenuItem menuitem){
+        if(menuitem instanceof JMenu){
+            setFont(font, (JMenu)menuitem);
         }else{
             menuitem.setFont(font);
         }
     }
 
-    Mode getMode(){return this.mode;}
+    Mode getMode(){return mode;}
     
     /** Sets the mode, opening and closing windows. */
     void setMode(Mode i){
+        if(i==mode)
+            return;
+
         switch(i){
         
         case CALC:
@@ -383,7 +394,7 @@ public final class Calculator extends Frame{
             }
             equalsButton.setEnabled(false);
             zButton.setEnabled(true);
-            zButton.setLabel("z");
+            zButton.setText("z");
             if(cW != null){
                 cW.dispose();
                 cW = null;
@@ -416,7 +427,7 @@ public final class Calculator extends Frame{
             }
             equalsButton.setEnabled(false);
             zButton.setEnabled(true);
-            zButton.setLabel("z");
+            zButton.setText("z");
             if(cW != null){
                 cW.dispose();
                 cW = null;
@@ -448,7 +459,7 @@ public final class Calculator extends Frame{
             }
             equalsButton.setEnabled(false);
             zButton.setEnabled(true);
-            zButton.setLabel("x");
+            zButton.setText("x");
             if(cW != null){
                 cW.dispose();
                 cW = null;
@@ -471,7 +482,7 @@ public final class Calculator extends Frame{
         }
         mode = i;
         functionChange();
-        this.firePropertyChange("mode", this, mode);//Fire event after the change
+        firePropertyChange("mode", this, mode);//Fire event after the change
     }
     
     //private inner classes -----------------------------------------------------------

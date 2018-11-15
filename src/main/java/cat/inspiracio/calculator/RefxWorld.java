@@ -20,13 +20,14 @@ package cat.inspiracio.calculator;
 import cat.inspiracio.numbers.EC;
 import cat.inspiracio.parsing.SyntaxTree;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
 // Referenced classes of package bunkenba.calculator:
 //            Calculator, DoubleBuffer, Drawing
 
-final class RefxWorld extends Frame{
+final class RefxWorld extends JFrame{
 
     private static final Dimension MIN_SIZE = new Dimension(400, 300);
     private static int AXISSPACE = 30;
@@ -35,7 +36,7 @@ final class RefxWorld extends Frame{
     private static int TRIANGLESIZE = 5;
     private static int MARKLENGTH = 2;
     private Calculator calculator;
-    protected Panel buttonPanel;
+    protected JPanel buttonPanel;
     protected int prevx;
     protected int prevy;
     private double Max;
@@ -52,28 +53,28 @@ final class RefxWorld extends Frame{
         calculator = calculator1;
         setTitle("Re(f(x)) World");
         resetExtremes();
-        Button button = new Button("Zoom In");
+        JButton button = new JButton("Zoom In");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionevent){
                 canvas.zoomIn();
                 canvas.repaint();
             }
         });
-        Button button1 = new Button("Zoom Out");
+        JButton button1 = new JButton("Zoom Out");
         button1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionevent){
                 canvas.zoomOut();
                 canvas.repaint();
             }
         });
-        Button button2 = new Button("Reset");
+        JButton button2 = new JButton("Reset");
         button2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionevent){
                 canvas.reset();
                 canvas.repaint();
             }
         });
-        buttonPanel = new Panel();
+        buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.lightGray);
         buttonPanel.setLayout(new FlowLayout(0));
         buttonPanel.add(button);
@@ -85,19 +86,19 @@ final class RefxWorld extends Frame{
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent windowevent){calculator.quit();}
         });
-        MenuBar mb=this.calculator.makeMenuBar();
-        this.setMenuBar(mb);
+        JMenuBar mb=calculator.makeMenuBar();
+        setJMenuBar(mb);
         pack();
-        this.setLocationRelativeTo(this.calculator);
-        this.setLocationByPlatform(true);
-        this.setVisible(true);
+        setLocationRelativeTo(calculator);
+        setLocationByPlatform(true);
+        setVisible(true);
     }
 
     //Methods ---------------------------------------------------------
     
     /** Close and remove the window. */
     @Override public void dispose(){
-    	MMenuBar mb=(MMenuBar)this.getMenuBar();
+    	MMenuBar mb=(MMenuBar)this.getJMenuBar();
     	mb.dispose();
     	super.dispose();
     }
@@ -149,7 +150,7 @@ final class RefxWorld extends Frame{
 
     //Inner class --------------------------------------------------------
     
-    private class RefxCanvas extends Component{
+    private class RefxCanvas extends JComponent{
     
     	//State ----------------------------------------------------
     	

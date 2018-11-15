@@ -24,11 +24,7 @@ import static cat.inspiracio.calculator.Calculator.Mode.REFX;
 import cat.inspiracio.calculator.Calculator.Mode;
 import cat.inspiracio.numbers.EC;
 
-import java.awt.CheckboxMenuItem;
-import java.awt.Menu;
-import java.awt.MenuBar;
-import java.awt.MenuItem;
-import java.awt.MenuShortcut;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -36,8 +32,18 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-/** A menu bar for Complex Calculator windows that remembers the listeners it has registered in other components. */
-final class MMenuBar extends MenuBar{
+/** A menu bar for Complex Calculator windows that remembers the listeners it
+ * has registered in other components.
+ *
+ * Five windows have an instance of this menu bar:
+ * 1. Calculator
+ * 2. zWorld
+ * 3. FzWorld
+ * 4. ThreeDWorld
+ * 5. RefxWorld
+ * Maybe the menu bar should only be in one?
+ * */
+final class MMenuBar extends JMenuBar {
 
 	private Calculator calculator;
 	private PropertyChangeListener modeListener;
@@ -47,74 +53,83 @@ final class MMenuBar extends MenuBar{
 	 * @param calculator The calculator. It has the state. */
 	MMenuBar(Calculator calculator){
 		this.calculator=calculator;
-		
-		Menu mFile = new Menu("File");
-		MenuItem menuitem = new MenuItem("About Complex Calculator...");
+
+		//File menu
+		JMenu mFile = new JMenu("File");
+		JMenuItem menuitem = new JMenuItem("About ...");
 		menuitem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent actionevent){
 				new AboutBox(MMenuBar.this.calculator, "Complex Calculator");
 			}
 		});
 		mFile.add(menuitem);
-		menuitem = new MenuItem("Quit", new MenuShortcut(81));
+		menuitem = new JMenuItem("Quit", 'Q');//new MenuShortcut(81));
 		menuitem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent actionevent){MMenuBar.this.calculator.quit();}
 		});
 		mFile.add(menuitem);
-		this.add(mFile);
+		add(mFile);
 		
 		//Mode menu
-		//Make a property change listener so that a mode change affects all three instances of the menu bar.
-		Menu mMode = new Menu("Mode");
-		final CheckboxMenuItem checkboxmenuitem = new CheckboxMenuItem("Calculate");
-		final CheckboxMenuItem checkboxmenuitem1 = new CheckboxMenuItem("z -> f(z)");
-		final CheckboxMenuItem checkboxmenuitem2 = new CheckboxMenuItem("z -> |f(z)|");
-		final CheckboxMenuItem checkboxmenuitem3 = new CheckboxMenuItem("x -> Re(f(x))");
+		//Make a property change listener so that a mode change affects all
+		// three instances of the menu bar.
+		JMenu mMode = new JMenu("Mode");
+		final JCheckBoxMenuItem checkboxmenuitem = new JCheckBoxMenuItem("Calculate");
+		final JCheckBoxMenuItem checkboxmenuitem1 = new JCheckBoxMenuItem("z -> f(z)");
+		final JCheckBoxMenuItem checkboxmenuitem2 = new JCheckBoxMenuItem("z -> |f(z)|");
+		final JCheckBoxMenuItem checkboxmenuitem3 = new JCheckBoxMenuItem("x -> Re(f(x))");
 		checkboxmenuitem.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent itemevent){
-				if(itemevent.getStateChange() == 1)MMenuBar.this.calculator.setMode(CALC);
+				if(itemevent.getStateChange() == ItemEvent.SELECTED)
+					MMenuBar.this.calculator.setMode(CALC);
 			}
 		});
 		mMode.add(checkboxmenuitem);
 		checkboxmenuitem1.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent itemevent){
-				if(itemevent.getStateChange() == 1)MMenuBar.this.calculator.setMode(FZ);
+				if(itemevent.getStateChange() == ItemEvent.SELECTED)
+					MMenuBar.this.calculator.setMode(FZ);
 			}
 		});
 		mMode.add(checkboxmenuitem1);
 		checkboxmenuitem2.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent itemevent){
-				if(itemevent.getStateChange() == 1)MMenuBar.this.calculator.setMode(MODFZ);
+				if(itemevent.getStateChange() == ItemEvent.SELECTED)
+					MMenuBar.this.calculator.setMode(MODFZ);
 			}
 		});
 		mMode.add(checkboxmenuitem2);
 		checkboxmenuitem3.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent itemevent){
-				if(itemevent.getStateChange() == 1)MMenuBar.this.calculator.setMode(REFX);
+				if(itemevent.getStateChange() == ItemEvent.SELECTED)
+					MMenuBar.this.calculator.setMode(REFX);
 			}
 		});
 		mMode.add(checkboxmenuitem3);
+
+		//XXX These already fire events. Here I just wanted to build the menu.
 		final CheckboxMenuItemGroup gMode = new CheckboxMenuItemGroup();
 		gMode.add(checkboxmenuitem);
 		gMode.add(checkboxmenuitem1);
 		gMode.add(checkboxmenuitem2);
 		gMode.add(checkboxmenuitem3);
+
 		Mode mode=MMenuBar.this.calculator.getMode();
 		gMode.setSelected(mode != CALC ? mode !=FZ ? mode !=MODFZ ? checkboxmenuitem3 : checkboxmenuitem2 : checkboxmenuitem1 : checkboxmenuitem);
 		//A listener to select the right mode.
-		this.modeListener=new PropertyChangeListener(){
+		modeListener=new PropertyChangeListener(){
 			@Override public void propertyChange(PropertyChangeEvent evt){
 				Mode mode=MMenuBar.this.calculator.getMode();
 				gMode.setSelected(mode != CALC ? mode !=FZ ? mode !=MODFZ ? checkboxmenuitem3 : checkboxmenuitem2 : checkboxmenuitem1 : checkboxmenuitem);
 			}};
-		MMenuBar.this.calculator.addPropertyChangeListener("mode", this.modeListener);
-		this.add(mMode);
+		MMenuBar.this.calculator.addPropertyChangeListener("mode", modeListener);
+		add(mMode);
 
 		//Precision menu
-		final Menu mPrecision = new Menu("Precision");
+		final JMenu mPrecision = new JMenu("Precision");
 		final CheckboxMenuItemGroup gPrecision= new CheckboxMenuItemGroup();
 		for(int l = 0; l < Calculator.precisions.length; l++){
-			CheckboxMenuItem mi = new CheckboxMenuItem(Integer.toString(Calculator.precisions[l]));
+			JCheckBoxMenuItem mi = new JCheckBoxMenuItem(Integer.toString(Calculator.precisions[l]));
 			final int j =Calculator.precisions[l];
 			mi.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent itemevent){
@@ -126,26 +141,26 @@ final class MMenuBar extends MenuBar{
 		}
 		int precision=EC.getPrecision();
 		for(int i1 = 0; i1 < mPrecision.getItemCount(); i1++){
-			CheckboxMenuItem checkboxmenuitem8 = (CheckboxMenuItem)mPrecision.getItem(i1);
-			if(checkboxmenuitem8.getLabel().equals(Integer.toString(precision)))
+			JCheckBoxMenuItem checkboxmenuitem8 = (JCheckBoxMenuItem)mPrecision.getItem(i1);
+			if(checkboxmenuitem8.getText().equals(Integer.toString(precision)))
 				gPrecision.setSelected(checkboxmenuitem8);
 		}
 		//A listener to select the right precision.
-		this.precisionListener=new PropertyChangeListener(){
+		precisionListener=new PropertyChangeListener(){
 			@Override public void propertyChange(PropertyChangeEvent evt){
 				int precision=EC.getPrecision();
 				for(int i1 = 0; i1 < mPrecision.getItemCount(); i1++){
-					CheckboxMenuItem mi = (CheckboxMenuItem)mPrecision.getItem(i1);
-					if(mi.getLabel().equals(Integer.toString(precision)))
+					JCheckBoxMenuItem mi = (JCheckBoxMenuItem)mPrecision.getItem(i1);
+					if(mi.getText().equals(Integer.toString(precision)))
 						gPrecision.setSelected(mi);
 				}
 			}};
 		EC.addPropertyChangeListener("precision", precisionListener);
-		this.add(mPrecision);
+		add(mPrecision);
 	}
 
 	void dispose(){
-		this.calculator.removePropertyChangeListener("mode", modeListener);
+		calculator.removePropertyChangeListener("mode", modeListener);
 		EC.removePropertyChangeListener("precision", modeListener);
 	}
 }

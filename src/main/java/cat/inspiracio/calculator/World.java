@@ -20,22 +20,19 @@ package cat.inspiracio.calculator;
 import cat.inspiracio.numbers.EC;
 import cat.inspiracio.numbers.Piclet;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-/** A frame that shows complex number on the complex plane or the Riemann sphere.
- * 
- * Referenced classes of package bunkenba.calculator:
- * Plane, Sphere, Calculator, WorldRepresentation, Drawing
- */
-abstract class World extends Frame{
+/** A frame that shows complex number on the complex plane or the Riemann sphere. */
+abstract class World extends JFrame {
 
     protected enum Interaction{DRAW, MOVE, LINE, RECTANGLE, CIRCLE, GRID, SQUARE}
 
     //State -------------------------------------------------------------
 	
     protected Calculator calculator;
-    protected Panel buttonPanel;
+    protected JPanel buttonPanel;
     protected int prevx;
     protected int prevy;
     protected Interaction interaction;
@@ -55,26 +52,29 @@ abstract class World extends Frame{
         canvas = plane;
         calculator = calculator1;
         resetExtremes();
-        final Button zInButton = new Button("Zoom In");
+        final JButton zInButton = new JButton("Zoom In");
         zInButton.addActionListener(new ActionListener(){
         	@Override public void actionPerformed(ActionEvent actionevent){
                 canvas.zoomIn();
                 canvas.repaint();
             }
         });
-        final Button zOutButton = new Button("Zoom Out");
+        final JButton zOutButton = new JButton("Zoom Out");
         zOutButton.addActionListener(new ActionListener(){
         	@Override public void actionPerformed(ActionEvent actionevent){
                 canvas.zoomOut();
                 canvas.repaint();
             }
         });
-        Choice choice = new Choice();
+        JComboBox choice = new JComboBox();
         choice.addItem("Plane");
         choice.addItem("Sphere");
-        choice.select("Plane");
+        choice.setSelectedItem("Plane");
         choice.addItemListener(new ItemListener(){
         	@Override public void itemStateChanged(ItemEvent itemevent){
+        	    int state = itemevent.getStateChange();
+        	    if(state!=ItemEvent.SELECTED)
+        	        return;
                 if(itemevent.getItem() == "Plane"){
                     remove(sphere);
                     add("Center", plane);
@@ -92,14 +92,14 @@ abstract class World extends Frame{
                 canvas.repaint();
             }
         });
-        Button button = new Button("Reset");
+        JButton button = new JButton("Reset");
         button.addActionListener(new ActionListener() {
         	@Override public void actionPerformed(ActionEvent actionevent){
                 canvas.reset();
                 canvas.repaint();
             }
         });
-        buttonPanel = new Panel();
+        buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.lightGray);
         buttonPanel.setLayout(new FlowLayout(0));
         buttonPanel.add(choice);
@@ -114,12 +114,12 @@ abstract class World extends Frame{
         });
         //Use the same menu bar as the calculator.
         //We use the same menu bar for all windows.
-        MenuBar mb=this.calculator.makeMenuBar();
-        this.setMenuBar(mb);
+        JMenuBar mb=this.calculator.makeMenuBar();
+        setJMenuBar(mb);
         pack();
-        this.setLocationRelativeTo(this.calculator);
-        this.setLocationByPlatform(true);
-        this.setVisible(true);
+        setLocationRelativeTo(this.calculator);
+        setLocationByPlatform(true);
+        setVisible(true);
     }
 
     abstract void add(EC ec);

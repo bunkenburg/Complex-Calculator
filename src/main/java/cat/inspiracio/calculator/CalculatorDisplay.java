@@ -17,17 +17,18 @@
  * */
 package cat.inspiracio.calculator;
 
+import javax.swing.*;
 import java.awt.*;
 
 /** The text area of the complex calculator. 
  * This class just adds some convenient methods for copy/paste functionality to TextArea. */
-final class CalculatorDisplay extends TextArea{
+final class CalculatorDisplay extends JTextArea {
 	
 	//Constructor ------------------------------------------
 	
 	/** @param fontSize Font size */
     CalculatorDisplay(int fontSize){
-        super("", 3, 1, 1);
+        super("", 3, 1);//, TextArea.SCROLLBARS_VERTICAL_ONLY);
         setFont(new Font("SansSerif", 0, fontSize));
     }
 

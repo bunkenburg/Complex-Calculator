@@ -22,8 +22,7 @@ import static cat.inspiracio.calculator.World.Interaction.MOVE;
 import cat.inspiracio.numbers.EC;
 import cat.inspiracio.numbers.ECList;
 
-import java.awt.Button;
-import java.awt.Choice;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -49,19 +48,22 @@ final class ComplexWorld extends World{
         super(calculator);
         super.interaction =DRAW;
         setTitle("Complex World");
-        Button button = new Button("Clear");
+        JButton button = new JButton("Clear");
         button.addActionListener(new ActionListener() {
         	@Override public void actionPerformed(ActionEvent actionevent){
                 erase();
                 canvas.repaint();
             }
         });
-        Choice choice = new Choice();
-        choice.add("Draw");
-        choice.add("Move");
-        choice.select("Draw");
+        JComboBox choice = new JComboBox();
+        choice.addItem("Draw");
+        choice.addItem("Move");
+        choice.setSelectedItem("Draw");
         choice.addItemListener(new ItemListener() {
         	@Override public void itemStateChanged(ItemEvent itemevent){
+        	    int state = itemevent.getStateChange();
+        	    if(state!=ItemEvent.SELECTED)
+        	        return;
                 if(itemevent.getItem() == "Draw"){
                     interaction =DRAW;
                     return;
@@ -118,7 +120,7 @@ final class ComplexWorld extends World{
         super.sphere.addMouseMotionListener(mousemotionadapter);
         pack();
         //this.setLocationByPlatform(true);
-        this.setVisible(true);
+        setVisible(true);
     }
 
     //Methods --------------------------------------------------------------
@@ -131,7 +133,7 @@ final class ComplexWorld extends World{
 
     /** Close and remove the window. */
     @Override public void dispose(){
-    	MMenuBar mb=(MMenuBar)this.getMenuBar();
+    	MMenuBar mb=(MMenuBar)getJMenuBar();
     	mb.dispose();
     	super.dispose();
     }
