@@ -18,44 +18,46 @@
 package cat.inspiracio.calculator;
 
 import javax.swing.*;
-import java.awt.*;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import java.awt.event.*;
 
 public class About extends JDialog {
 	
 	static final long serialVersionUID = 0;
 
-    public About(JFrame frame, String title)
-    {
-        super(frame, title, false);
+    public About(JFrame frame) {
+        super(frame, "About ...", true);
         setResizable(false);
         addWindowListener(new WindowAdapter() {
-
-            public void windowClosing(WindowEvent windowevent)
-            {
-                dispose();
-            }
-
+            public void windowClosing(WindowEvent windowevent) { dispose(); }
         });
-        String text = title + "\n" + "6. 1. 1999\n" + "by Alexander Bunkenburg\n" + "http://www.inspiracio.cat\n";
-        JTextArea textarea = new JTextArea(text, 5, 34);//, TextArea.SCROLLBARS_NONE);
-        textarea.setEditable(false);
-        add("Center", textarea);
+        add("Center", pane());
         JPanel panel = new JPanel();
         JButton button = new JButton("Continue");
-        button.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent actionevent)
-            {
-                dispose();
-            }
-
-        });
+        button.addActionListener( actionevent -> dispose() );
         panel.add(button);
         add("South", panel);
         button.requestFocus();
         pack();
+        setLocationRelativeTo(frame);
         setVisible(true);
     }
 
+    private JTextPane pane(){
+        String text = "\nComplex Calculator\n" + "6. 1. 1999\n" + "by Alexander Bunkenburg\n" + "http://www.inspiracio.cat\n";
+        JTextPane textpane = new JTextPane();//, 5, 34);
+        textpane.setText(text);
+        textpane.setEditable(false);
+
+        //align pane
+        //https://stackoverflow.com/questions/3213045/centering-text-in-a-jtextarea-or-jtextpane-horizontal-text-alignment
+        StyledDocument doc = textpane.getStyledDocument();
+        SimpleAttributeSet center = new SimpleAttributeSet();
+        StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+        doc.setParagraphAttributes(0, doc.getLength(), center, false);
+
+        return textpane;
+    }
 }
