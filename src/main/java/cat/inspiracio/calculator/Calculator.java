@@ -90,7 +90,7 @@ public final class Calculator extends JFrame {
     }
 
     private void buildMenuBar(){
-        JMenuBar menubar = new MMenuBar(this);
+        JMenuBar menubar = new Menus(this);
         setFont(getFont(), menubar);
         setJMenuBar(menubar);
     }

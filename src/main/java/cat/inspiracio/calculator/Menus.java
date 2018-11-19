@@ -28,14 +28,14 @@ import java.awt.event.ItemEvent;
 import java.beans.PropertyChangeListener;
 
 /** A menu bar for the Calculator */
-final class MMenuBar extends JMenuBar {
+final class Menus extends JMenuBar {
 
 	private Calculator calculator;
 	private PropertyChangeListener precisionListener;
 
 	/** Make a menu bar for complex calculator windows. 
 	 * @param calculator The calculator. It has the state. */
-	MMenuBar(Calculator calculator){
+	Menus(Calculator calculator){
 		this.calculator=calculator;
 		file();
 		mode();
@@ -74,30 +74,10 @@ final class MMenuBar extends JMenuBar {
 		group.add(miModFz);
 		group.add(miReFx);
 
-		miCalc.addItemListener(
-			itemevent -> {
-				if(itemevent.getStateChange() == ItemEvent.SELECTED)
-					calculator.setMode(CALC);
-			}
-		);
-		miFz.addItemListener(
-			itemevent -> {
-				if(itemevent.getStateChange() == ItemEvent.SELECTED)
-					calculator.setMode(FZ);
-			}
-		);
-		miModFz.addItemListener(
-			itemevent -> {
-				if(itemevent.getStateChange() == ItemEvent.SELECTED)
-					calculator.setMode(MODFZ);
-			}
-		);
-		miReFx.addItemListener(
-			itemevent -> {
-				if(itemevent.getStateChange() == ItemEvent.SELECTED)
-					calculator.setMode(REFX);
-			}
-		);
+		miCalc.addActionListener(event -> calculator.setMode(CALC));
+		miFz.addActionListener( event -> calculator.setMode(FZ) );
+		miModFz.addActionListener( event -> calculator.setMode(MODFZ) );
+		miReFx.addActionListener( event ->  calculator.setMode(REFX) );
 		add(menu);
 	}
 
@@ -106,38 +86,17 @@ final class MMenuBar extends JMenuBar {
 
 		ButtonGroup group=new ButtonGroup();
 
-		for(int l = 0; l < Calculator.precisions.length; l++){
-			final int j =Calculator.precisions[l];
-			JCheckBoxMenuItem item = new JCheckBoxMenuItem(Integer.toString(j));
-			item.addItemListener(
-				itemevent -> {
-					if(itemevent.getStateChange() == ItemEvent.SELECTED)EC.setPrecision(j);
-				}
-			);
+		int precision=EC.getPrecision();
+
+		for(int j : Calculator.precisions){
+			String s = Integer.toString(j);
+			boolean selected = precision==j;
+			JRadioButtonMenuItem item = new JRadioButtonMenuItem(s, selected );
+			item.addActionListener( event -> EC.setPrecision(j) );
 			menu.add(item);
 			group.add(item);
 		}
 
-		//select initial one
-		int precision=EC.getPrecision();
-		for(int i1 = 0; i1 < menu.getItemCount(); i1++){
-			JCheckBoxMenuItem checkboxmenuitem8 = (JCheckBoxMenuItem)menu.getItem(i1);
-			if(checkboxmenuitem8.getText().equals(Integer.toString(precision))) {
-				//gPrecision.setSelected(checkboxmenuitem8);
-			}
-		}
-
-		//A listener to select the right precision.
-		precisionListener= evt -> {
-				int prec=EC.getPrecision();
-				for(int i1 = 0; i1 < menu.getItemCount(); i1++){
-					JCheckBoxMenuItem mi = (JCheckBoxMenuItem)menu.getItem(i1);
-					if(mi.getText().equals(Integer.toString(prec))) {
-						//gPrecision.setSelected(mi);
-					}
-				}
-			};
-		EC.addPropertyChangeListener("precision", precisionListener);
 		add(menu);
 	}
 
