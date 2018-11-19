@@ -21,11 +21,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class AboutBox extends JDialog {
+public class About extends JDialog {
 	
 	static final long serialVersionUID = 0;
 
-    public AboutBox(JFrame frame, String title)
+    public About(JFrame frame, String title)
     {
         super(frame, title, false);
         setResizable(false);

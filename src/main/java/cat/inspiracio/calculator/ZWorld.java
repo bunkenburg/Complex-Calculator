@@ -37,17 +37,10 @@ import cat.inspiracio.numbers.Rectangle;
 import cat.inspiracio.numbers.Square;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-
-// Referenced classes of package bunkenba.calculator:
-//            World, Calculator, WorldRepresentation, fzWorld, 
-//            ThreeDWorld, Drawing
 
 final class ZWorld extends World{
 
@@ -76,18 +69,16 @@ final class ZWorld extends World{
         super.interaction =DRAW;
         setTitle("z World");
         eraseButton = new JButton("Clear");
-        eraseButton.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent actionevent){
+        eraseButton.addActionListener( actionevent -> {
                 erase();
                 canvas.repaint();
             }
-        });
+        );
         interactionChoice = new JComboBox();
         interactionChoice.addItem("Move");
         interactionChoice.addItem("Draw");
         interactionChoice.setSelectedItem("Draw");
-        interactionChoice.addItemListener(new ItemListener() {
-        	@Override public void itemStateChanged(ItemEvent itemevent){
+        interactionChoice.addItemListener( itemevent -> {
         	    int state = itemevent.getStateChange();
         	    if(state!=ItemEvent.SELECTED)
         	        return;
@@ -119,7 +110,7 @@ final class ZWorld extends World{
                 if(s == "Square")
                     interaction =SQUARE;
             }
-        });
+        );
         super.buttonPanel.add(eraseButton);
         super.buttonPanel.add(interactionChoice);
         MouseAdapter mouseadapter = new MouseAdapter() {
@@ -405,13 +396,6 @@ final class ZWorld extends World{
         }
     }
 
-    /** Close and remove the window. */
-    @Override public void dispose(){
-    	MMenuBar mb=(MMenuBar)getJMenuBar();
-    	mb.dispose();
-    	super.dispose();
-    }
-    
     void drawStuff(Drawing drawing){
         if(current != null)
             super.canvas.drawECList(drawing, current);

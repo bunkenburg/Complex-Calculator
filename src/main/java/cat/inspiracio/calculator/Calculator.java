@@ -90,7 +90,7 @@ public final class Calculator extends JFrame {
     }
 
     private void buildMenuBar(){
-        JMenuBar menubar = makeMenuBar();
+        JMenuBar menubar = new MMenuBar(this);
         setFont(getFont(), menubar);
         setJMenuBar(menubar);
     }
@@ -122,16 +122,17 @@ public final class Calculator extends JFrame {
             }
         };
         Bx abx[] = {
-                new Bx("!", 0, 3, 1, actionlistener), new Bx("del", 3, 3, 1, new ActionListener() {
-            @Override public void actionPerformed(ActionEvent actionevent){
-                if(mode ==CALC)
-                    eraseOldResult();
-                display.delete();
-                display.requestFocus();
-                if(mode !=CALC)
-                    functionChange();
-            }
-        }),
+                new Bx("!", 0, 3, 1, actionlistener),
+                new Bx("del", 3, 3, 1, new ActionListener() {
+                    @Override public void actionPerformed(ActionEvent actionevent){
+                        if(mode ==CALC)
+                            eraseOldResult();
+                        display.delete();
+                        display.requestFocus();
+                        if(mode !=CALC)
+                            functionChange();
+                    }
+                }),
                 new Bx("C", 4, 3, 1, new ActionListener() {
                     @Override public void actionPerformed(ActionEvent actionevent){
                         display.clearAll();
@@ -210,7 +211,7 @@ public final class Calculator extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override public void windowClosing(WindowEvent windowevent){quit();}
         });
-        setMode(mode);
+        setMode(CALC);
         pack();
         setLocationByPlatform(true);
         setVisible(true);
@@ -289,28 +290,14 @@ public final class Calculator extends JFrame {
         return zW.getSquare();
     }
 
-    /** Make a menu bar. Called from Calculator and from the other windows.
-     * Makes a fresh instance of the same menu bar every time. */
-    MMenuBar makeMenuBar(){
-        MMenuBar menubar = new MMenuBar(this);
-        return menubar;
-    }
-
     public void quit(){
         if(inAnApplet){
             dispose();
-            if(cW != null)
-                cW.dispose();
-            if(zW != null)
-                zW.dispose();
-            if(fzW != null)
-                fzW.dispose();
-            if(modfzW != null)
-                modfzW.dispose();
-            if(refxW != null){
-                refxW.dispose();
-                return;
-            }
+            if(cW != null) cW.dispose();
+            if(zW != null) zW.dispose();
+            if(fzW != null) fzW.dispose();
+            if(modfzW != null) modfzW.dispose();
+            if(refxW != null) refxW.dispose();
         } else
             System.exit(0);
     }
@@ -342,20 +329,14 @@ public final class Calculator extends JFrame {
     }
 
     private static void setFont(Font font, JMenuItem menuitem){
-        if(menuitem instanceof JMenu){
+        if(menuitem instanceof JMenu)
             setFont(font, (JMenu)menuitem);
-        }else{
+        else
             menuitem.setFont(font);
-        }
     }
 
-    Mode getMode(){return mode;}
-    
     /** Sets the mode, opening and closing windows. */
     void setMode(Mode i){
-        if(i==mode)
-            return;
-
         switch(i){
         
         case CALC:
@@ -363,30 +344,17 @@ public final class Calculator extends JFrame {
             display.clearAll();
             equalsButton.setEnabled(true);
             zButton.setEnabled(false);
-            if(cW == null)
-                cW = new ComplexWorld(this);
-            if(zW != null){
-                zW.dispose();
-                zW = null;
-            }
-            if(fzW != null){
-                fzW.dispose();
-                fzW = null;
-            }
-            if(modfzW != null){
-                modfzW.dispose();
-                modfzW = null;
-            }
-            if(refxW != null){
-                refxW.dispose();
-                refxW = null;
-            }
+            complexWorld();
+            disposeZWorld();
+            disposeFZWorld();
+            disposeModFZWorld();
+            disposeReFXWorld();
             break;
 
         case FZ:
             EC.setArgContinuous();
             variable = 'z';
-            if(mode ==REFX)
+            if(mode==REFX)
                 display.replace('x', 'z');
             else if(mode ==CALC){
                 display.clearAll();
@@ -395,25 +363,14 @@ public final class Calculator extends JFrame {
             equalsButton.setEnabled(false);
             zButton.setEnabled(true);
             zButton.setText("z");
-            if(cW != null){
-                cW.dispose();
-                cW = null;
-            }
-            if(zW == null)
-                zW = new ZWorld(this);
+            disposeComplexWorld();
+            zWorld();
             zW.setMode(FZ);
-            if(fzW == null)
-                fzW = new FzWorld(this);
+            fzWorld();
             fzW.setzWorld(zW);
             zW.setfzWorld(fzW);
-            if(modfzW != null){
-                modfzW.dispose();
-                modfzW = null;
-            }
-            if(refxW != null){
-                refxW.dispose();
-                refxW = null;
-            }
+            disposeModFZWorld();
+            disposeReFXWorld();
             break;
 
         case MODFZ:
@@ -428,24 +385,13 @@ public final class Calculator extends JFrame {
             equalsButton.setEnabled(false);
             zButton.setEnabled(true);
             zButton.setText("z");
-            if(cW != null){
-                cW.dispose();
-                cW = null;
-            }
-            if(zW == null)
-                zW = new ZWorld(this);
+            disposeComplexWorld();
+            zWorld();
             zW.setMode(MODFZ);
-            if(fzW != null){
-                fzW.dispose();
-                fzW = null;
-            }
-            if(modfzW == null)
-                modfzW = new ThreeDWorld(this);
+            disposeFZWorld();
+            modFZWorld();
             zW.setmodfzWorld(modfzW);
-            if(refxW != null){
-                refxW.dispose();
-                refxW = null;
-            }
+            disposeReFXWorld();
             break;
 
         case REFX:
@@ -460,31 +406,78 @@ public final class Calculator extends JFrame {
             equalsButton.setEnabled(false);
             zButton.setEnabled(true);
             zButton.setText("x");
-            if(cW != null){
-                cW.dispose();
-                cW = null;
-            }
-            if(zW != null){
-                zW.dispose();
-                zW = null;
-            }
-            if(fzW != null){
-                fzW.dispose();
-                fzW = null;
-            }
-            if(modfzW != null){
-                modfzW.dispose();
-                modfzW = null;
-            }
-            if(refxW == null)
-                refxW = new RefxWorld(this);
+            disposeComplexWorld();
+            disposeZWorld();
+            disposeFZWorld();
+            disposeModFZWorld();
+            refxWorld();
             break;
         }
         mode = i;
         functionChange();
         firePropertyChange("mode", this, mode);//Fire event after the change
     }
-    
+
+    private void complexWorld(){
+        if(cW == null)
+            cW = new ComplexWorld(this);
+    }
+
+    private void disposeComplexWorld(){
+        if(cW != null){
+            cW.dispose();
+            cW = null;
+        }
+    }
+
+    private void zWorld(){
+        if(zW == null)
+            zW = new ZWorld(this);
+    }
+
+    private void disposeZWorld() {
+        if (zW != null) {
+            zW.dispose();
+            zW = null;
+        }
+    }
+
+    private void fzWorld(){
+        if(fzW == null)
+            fzW = new FzWorld(this);
+    }
+
+    private void disposeFZWorld(){
+        if(fzW != null){
+            fzW.dispose();
+            fzW = null;
+        }
+    }
+
+    private void modFZWorld(){
+        if(modfzW == null)
+            modfzW = new ThreeDWorld(this);
+    }
+
+    private void disposeModFZWorld(){
+        if(modfzW != null){
+            modfzW.dispose();
+            modfzW = null;
+        }
+    }
+
+    private void refxWorld(){
+        if(refxW == null)
+            refxW = new RefxWorld(this);
+    }
+
+    private void disposeReFXWorld(){
+        if(refxW != null){
+            refxW.dispose();
+            refxW = null;
+        }
+    }
+
     //private inner classes -----------------------------------------------------------
     
     private final class MyKeyListener extends KeyAdapter{

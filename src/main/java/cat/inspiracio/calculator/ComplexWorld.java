@@ -131,13 +131,6 @@ final class ComplexWorld extends World{
         super.canvas.repaint();
     }
 
-    /** Close and remove the window. */
-    @Override public void dispose(){
-    	MMenuBar mb=(MMenuBar)getJMenuBar();
-    	mb.dispose();
-    	super.dispose();
-    }
-
     void drawStuff(Drawing drawing){
         for(ECList eclist = numbers; eclist != null; eclist = eclist.tail())
             super.canvas.drawComplex(drawing, eclist.head());

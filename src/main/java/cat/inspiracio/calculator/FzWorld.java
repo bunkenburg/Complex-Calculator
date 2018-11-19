@@ -126,13 +126,6 @@ final class FzWorld extends World {
         }
     }
 
-    /** Close and remove the window. */
-    @Override public void dispose(){
-    	MMenuBar mb=(MMenuBar)getJMenuBar();
-    	mb.dispose();
-    	super.dispose();
-    }
-
     final void drawStuff(Drawing drawing){
         if(current != null)
             super.canvas.drawECList(drawing, current);

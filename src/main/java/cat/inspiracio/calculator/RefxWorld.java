@@ -86,8 +86,8 @@ final class RefxWorld extends JFrame{
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent windowevent){calculator.quit();}
         });
-        JMenuBar mb=calculator.makeMenuBar();
-        setJMenuBar(mb);
+        //JMenuBar mb=calculator.makeMenuBar();
+        //setJMenuBar(mb);
         pack();
         setLocationRelativeTo(calculator);
         setLocationByPlatform(true);
@@ -96,13 +96,6 @@ final class RefxWorld extends JFrame{
 
     //Methods ---------------------------------------------------------
     
-    /** Close and remove the window. */
-    @Override public void dispose(){
-    	MMenuBar mb=(MMenuBar)this.getJMenuBar();
-    	mb.dispose();
-    	super.dispose();
-    }
-
     void functionChange(SyntaxTree syntaxtree){
         f = syntaxtree;
         canvas.repaint();

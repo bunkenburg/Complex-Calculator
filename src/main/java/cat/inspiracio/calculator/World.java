@@ -112,10 +112,7 @@ abstract class World extends JFrame {
         addWindowListener(new WindowAdapter() {
         	@Override public void windowClosing(WindowEvent windowevent){calculator.quit();}
         });
-        //Use the same menu bar as the calculator.
-        //We use the same menu bar for all windows.
-        JMenuBar mb=this.calculator.makeMenuBar();
-        setJMenuBar(mb);
+
         pack();
         setLocationRelativeTo(this.calculator);
         setLocationByPlatform(true);
