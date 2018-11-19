@@ -24,7 +24,6 @@ import static cat.inspiracio.calculator.Calculator.Mode.REFX;
 import cat.inspiracio.numbers.EC;
 
 import javax.swing.*;
-import java.awt.event.ItemEvent;
 import java.beans.PropertyChangeListener;
 
 /** A menu bar for the Calculator */

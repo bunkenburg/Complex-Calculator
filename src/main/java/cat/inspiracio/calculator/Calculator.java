@@ -28,11 +28,8 @@ import cat.inspiracio.numbers.Square;
 import cat.inspiracio.parsing.SyntaxTree;
 
 import javax.swing.*;
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -45,7 +42,7 @@ import java.text.ParseException;
  * This class has the main method. */
 public final class Calculator extends JFrame {
 	
-    public static enum Mode{CALC, FZ, MODFZ, REFX}
+    public enum Mode{CALC, FZ, MODFZ, REFX}
 
     private static final String PI="\u03C0";
 	private static final String INF="\u221E";
@@ -77,22 +74,14 @@ public final class Calculator extends JFrame {
         super("Complex Calculator");
         buildFrame();
         buildButtons();
-        buildMenuBar();
+        setJMenuBar(new Menus(this));
         becomeVisible();
     }
 
     private void buildFrame(){
         display = new CalculatorDisplay(12);
-        setBackground(Color.lightGray);
         setResizable(false);
         EC.setPrecision(4);
-        setFont(new Font("SansSerif", 0, 12));
-    }
-
-    private void buildMenuBar(){
-        JMenuBar menubar = new Menus(this);
-        setFont(getFont(), menubar);
-        setJMenuBar(menubar);
     }
 
     private void buildButtons(){
@@ -111,36 +100,30 @@ public final class Calculator extends JFrame {
         add(display);
         gridbagconstraints.gridwidth = 1;
         gridbagconstraints.gridheight = 1;
-        ActionListener actionlistener = new ActionListener() {
-            @Override public void actionPerformed(ActionEvent actionevent){
+        ActionListener actionlistener = actionevent -> {
                 if(mode ==CALC)
                     eraseOldResult();
                 display.paste(actionevent.getActionCommand());
                 display.requestFocus();
                 if(mode !=CALC)
                     functionChange();
-            }
-        };
+            };
         Bx abx[] = {
                 new Bx("!", 0, 3, 1, actionlistener),
-                new Bx("del", 3, 3, 1, new ActionListener() {
-                    @Override public void actionPerformed(ActionEvent actionevent){
+                new Bx("del", 3, 3, 1, actionevent -> {
                         if(mode ==CALC)
                             eraseOldResult();
                         display.delete();
                         display.requestFocus();
                         if(mode !=CALC)
                             functionChange();
-                    }
-                }),
-                new Bx("C", 4, 3, 1, new ActionListener() {
-                    @Override public void actionPerformed(ActionEvent actionevent){
+                    }),
+                new Bx("C", 4, 3, 1, actionevent -> {
                         display.clearAll();
                         if(mode !=CALC)
                             display.prepend("f(" + variable + ") = ");
                         display.requestFocus();
-                    }
-                }),
+                    }),
                 new Bx("sinh", 0, 4, 1, actionlistener),
                 new Bx("cosh", 1, 4, 1, actionlistener),
                 new Bx("tanh", 2, 4, 1, actionlistener),
@@ -174,20 +157,16 @@ public final class Calculator extends JFrame {
                 new Bx("1", 0, 11, 1, actionlistener),
                 new Bx("2", 1, 11, 1, actionlistener),
                 new Bx("3", 2, 11, 1, actionlistener),
-                new Bx("z", 3, 11, 1, new ActionListener() {
-                    @Override public void actionPerformed(ActionEvent actionevent){
+                new Bx("z", 3, 11, 1, actionevent -> {
                         display.paste(variable);
                         display.requestFocus();
                         if(mode !=CALC)
                             functionChange();
-                    }
-                }),
-                new Bx("=", 4, 11, 2, new ActionListener() {
-                    @Override public void actionPerformed(ActionEvent actionevent){
+                    }),
+                new Bx("=", 4, 11, 2, actionevent -> {
                         doEquals();
                         display.requestFocus();
-                    }
-                }),
+                    }),
                 new Bx("0", 0, 12, 1, actionlistener),
                 new Bx(".", 1, 12, 1, actionlistener),
                 new Bx(INF, 2, 12, 1, actionlistener)
@@ -269,26 +248,17 @@ public final class Calculator extends JFrame {
             String s = SyntaxTree.stripBlanks(display.getText());
             if(s.startsWith("f(" + variable + ")=")){
                 f = SyntaxTree.parse(s.substring(5));
-                if(mode ==MODFZ){
-                    modfzW.functionChange(f);
-                    return;
-                }
-                if(mode ==REFX){
-                    refxW.functionChange(f);
-                    return;
-                }
-                if(mode ==FZ){
-                    fzW.functionChange(f);
-                    return;
+                switch(mode){
+                    case MODFZ: modfzW.functionChange(f); break;
+                    case REFX: refxW.functionChange(f); break;
+                    case FZ: fzW.functionChange(f); break;
                 }
             }
         }
         catch(ParseException _ex) { }
     }
 
-    Square getSquare(){
-        return zW.getSquare();
-    }
+    Square getSquare(){ return zW.getSquare(); }
 
     public void quit(){
         if(inAnApplet){
@@ -300,39 +270,6 @@ public final class Calculator extends JFrame {
             if(refxW != null) refxW.dispose();
         } else
             System.exit(0);
-    }
-
-    public void setFontSize(int i){
-        Font font = new Font("SansSerif", 0, i);
-        display.setFont(font);
-        if(cW != null)cW.setFont(font);
-        if(zW != null)zW.setFont(font);
-        if(fzW != null)fzW.setFont(font);
-        if(modfzW != null)modfzW.setFont(font);
-        if(refxW != null)refxW.setFont(font);
-        setFont(font);
-        getMenuBar().setFont(font);
-        doLayout();
-        pack();
-    }
-
-    private static void setFont(Font font, JMenu menu){
-        menu.setFont(font);
-        for(int i = 0; i < menu.getItemCount(); i++)
-            setFont(font, menu.getItem(i));
-    }
-
-    private static void setFont(Font font, JMenuBar menubar){
-        menubar.setFont(font);
-        for(int i = 0; i < menubar.getMenuCount(); i++)
-            setFont(font, menubar.getMenu(i));
-    }
-
-    private static void setFont(Font font, JMenuItem menuitem){
-        if(menuitem instanceof JMenu)
-            setFont(font, (JMenu)menuitem);
-        else
-            menuitem.setFont(font);
     }
 
     /** Sets the mode, opening and closing windows. */
@@ -415,7 +352,6 @@ public final class Calculator extends JFrame {
         }
         mode = i;
         functionChange();
-        firePropertyChange("mode", this, mode);//Fire event after the change
     }
 
     private void complexWorld(){
