@@ -1,11 +1,12 @@
 # TODO
 
 * Better initial window positions
+    x About
     - mode Calculate
     - mode z -> f(z)
     - mode z -> |f(z)|
     - mode x -> Re(f(x))
-* Change from AWT to Swing
+x Change from AWT to Swing
 * Take complex numbers out and make into Scala library
 * Change to Scala
 * Better colours, not so dark

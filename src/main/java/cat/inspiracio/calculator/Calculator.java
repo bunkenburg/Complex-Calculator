@@ -55,7 +55,7 @@ public final class Calculator extends JFrame {
     /** The mode that the program is in: Calculation, z->fz mapping, z->|fz| mapping, or Re(fz). */
     private Mode mode = CALC;
     
-    private CalculatorDisplay display;
+    private Display display;
     private JButton equalsButton;
     private JButton zButton;
     private char variable = 'z';
@@ -79,7 +79,7 @@ public final class Calculator extends JFrame {
     }
 
     private void buildFrame(){
-        display = new CalculatorDisplay(12);
+        display = new Display(12);
         setResizable(false);
         EC.setPrecision(4);
     }

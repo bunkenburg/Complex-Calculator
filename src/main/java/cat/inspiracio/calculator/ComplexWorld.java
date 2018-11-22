@@ -33,8 +33,6 @@ import java.awt.event.MouseMotionAdapter;
 
 /** The complex world displays results of calculations
  * and allows graphical input of numbers.
- *  Referenced classes of package bunkenba.calculator:
- *             World, WorldRepresentation, Calculator, Drawing
  */
 final class ComplexWorld extends World{
 	
@@ -49,18 +47,15 @@ final class ComplexWorld extends World{
         super.interaction =DRAW;
         setTitle("Complex World");
         JButton button = new JButton("Clear");
-        button.addActionListener(new ActionListener() {
-        	@Override public void actionPerformed(ActionEvent actionevent){
+        button.addActionListener( actionevent -> {
                 erase();
                 canvas.repaint();
-            }
-        });
+            });
         JComboBox choice = new JComboBox();
         choice.addItem("Draw");
         choice.addItem("Move");
         choice.setSelectedItem("Draw");
-        choice.addItemListener(new ItemListener() {
-        	@Override public void itemStateChanged(ItemEvent itemevent){
+        choice.addItemListener( itemevent -> {
         	    int state = itemevent.getStateChange();
         	    if(state!=ItemEvent.SELECTED)
         	        return;
@@ -71,8 +66,7 @@ final class ComplexWorld extends World{
                     interaction =MOVE;
                     return;
                 }
-            }
-        });
+            });
         super.buttonPanel.add(button);
         super.buttonPanel.add(choice);
         MouseAdapter mouseadapter = new MouseAdapter() {
