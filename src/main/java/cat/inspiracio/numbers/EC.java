@@ -52,6 +52,7 @@ public final class EC{
     private static int PRECISION;
     private static double EPSILON;
     private static NumberFormat nf;
+
     private final boolean finite;
     private final double real;
     private final double imag;

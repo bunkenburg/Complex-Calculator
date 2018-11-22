@@ -20,8 +20,15 @@ package cat.inspiracio.numbers
 import org.scalatest.FunSuite
 
 class ComplexTest extends FunSuite {
+
   test("pi string") {
-    val piString = "\u03C0"
-    assert(3 === 3)
+    assert(Complex.piString === "\u03C0")
+    printf(Complex.piString)
   }
+
+  test("infinity string") {
+    assert(Complex.infinityString === "\u221E")
+    printf(Complex.infinityString)
+  }
+
 }
