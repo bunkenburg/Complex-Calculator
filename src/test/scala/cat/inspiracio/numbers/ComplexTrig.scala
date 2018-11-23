@@ -18,17 +18,14 @@
 package cat.inspiracio.numbers
 
 import org.scalatest.FunSuite
+import cat.inspiracio.numbers.Complex._
 
-class ComplexTest extends FunSuite {
+class ComplexTrig extends FunSuite {
 
-  test("pi string") {
-    assert(Complex.piString === "\u03C0")
-    printf(Complex.piString)
-  }
-
-  test("infinity string") {
-    assert(Complex.infinityString === "\u221E")
-    printf(Complex.infinityString)
+  test("sin 0") {
+    val c: Complex = 0.sin
+    val e: Complex = 0
+    //assert(c === e )
   }
 
 }

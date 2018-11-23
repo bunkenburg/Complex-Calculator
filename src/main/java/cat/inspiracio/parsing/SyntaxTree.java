@@ -83,7 +83,7 @@ public abstract class SyntaxTree
         return ((SyntaxTree) (obj));
     }
 
-    /** Does the String contains this character? */
+    /** Does the String contain this character? */
     public static boolean in(char c, String s){
         return s.indexOf(c) != -1;
     }

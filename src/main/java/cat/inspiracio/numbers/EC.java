@@ -122,7 +122,7 @@ public final class EC{
         throw new PartialException("EC.acos not implemented.");
     }
 
-    public int quadrant(){
+    private int quadrant(){
         double d = re();
         double d1 = im();
         if(d >= 0.0D && d >= 0.0D)
@@ -332,6 +332,7 @@ public final class EC{
             throw new PartialException("not real");
         }
     }
+
     /** The modulus, the distance from zero. */
     public double mod(){
         double d;
