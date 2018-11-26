@@ -39,12 +39,12 @@ class Patterns extends FunSuite {
   def parse(z: Complex): String = z match {
 
     //case 0 => "0"
-    case z if(z.isZero) => "0"
+    case z if z.isZero => "zero"
 
-    //case n: Int => n + ": Int"
+    //case n: Int => n.toString
 
-    //case d: Double => d + ": Double"
-    case Real(d) => d + ": Double"
+    //case d: Double => d.toString
+    case Real(d) => d.toString
 
     //case e => "e"
     //case π => "π"
@@ -62,39 +62,156 @@ class Patterns extends FunSuite {
     case _ => "not recognised"
   }
 
-  test("pattern polar") {
-    val c = Polar(3, 2)
-    val s = parse( c )
-    assert( s === "3 e^i2" )
+  test("0") {
+    val c = 0
+    val s = parse(c)
+    assert( s === "zero" )
   }
 
-  test("pattern 0") {
-    assert( parse(0) === "0" )
+  test("int 17") {
+    assert( parse(17) === "17.0" )
   }
 
-  test("pattern 17") {
-    assert( parse(17) === "17" )
+  test("Real 0") {
+    val c: Complex = 0
+    val s = c match {
+      case Real(re) => "zero"
+      case _ => "fail"
+    }
+    assert( s === "zero" )
   }
 
-  test("pattern 3.2") {
+  test("Real 3.2") {
     assert( parse(3.2) === "3.2" )
   }
 
-  test("pattern e") {
-    assert( parse(e) === "e" )
+  test("Real 2+i") {
+    val c = 2+i
+    val s = c match {
+      case Real(re) => "real"
+      case _ => "fail"
+    }
+    assert( s === "fail" )
   }
 
-  test("pattern π") {
-    assert( parse(π) === "π" )
+  test("Real ∞") {
+    val c = ∞
+    val s = c match {
+      case Real(re) => "real"
+      case _ => "fail"
+    }
+    assert( s === "fail" )
   }
 
-  test("pattern i") {
-    assert( parse(i) === "i" )
+  test("Imaginary i") {
+    assert( parse(i) === "1.0i" )
   }
 
-  test("pattern 3 + 2i") {
-    assert( parse(3 + 2*1) === "3+2i" )
+  test("Imaginary 3.2i") {
+    assert( parse(3.2 * i) === "3.2i" )
   }
+
+  test("Imaginary 0") {
+    val c: Complex = 0
+    val s = c match {
+      case Imaginary(im) => "zero"
+      case _ => "fail"
+    }
+    assert( s === "zero" )
+  }
+
+  test("Imaginary 2+i") {
+    val c: Complex = 2+i
+    val s = c match {
+      case Imaginary(im) => "zero"
+      case _ => "fail"
+    }
+    assert( s === "fail" )
+  }
+
+  test("Imaginary ∞") {
+    val c = ∞
+    val s = c match {
+      case Imaginary(im) => "∞"
+      case _ => "fail"
+    }
+    assert( s === "fail" )
+  }
+
+  test("Polar(3, 2)") {
+    val c = Polar(3, 2)
+    val s = c match {
+      case Polar(m,a) => s"$m * e^i$a"
+      case _ => "fail"
+    }
+    assert( s === "3.0 * e^i2.0" )
+  }
+
+  test("polar ∞") {
+    val c = ∞
+    val s = c match {
+      case Polar(m,a) => s"$m * e^i$a"
+      case _ => "fail"
+    }
+    assert( s === "fail" )
+  }
+
+  test("polar 3") {
+    val c = Real(3)
+    val s = c match {
+      case Polar(m,a) => s"Polar($m, $a)"
+      case _ => "fail"
+    }
+    assert( s === "Polar(3.0, 0.0)" )
+  }
+
+  test("Polar 1+i") {
+    val c = 1+i
+    val s = c match {
+      case Polar(m,a) => s"Polar($m, $a)"
+      case _ => "fail"
+    }
+    val m = Math.sqrt(2)
+    val a = π/4
+    assert( s === s"Polar($m, $a)" )
+  }
+
+  test("Polar 0") {
+    val c = Real(0)
+    val s = c match {
+      case Polar(m,a) => s"Polar($m, $a)"
+      case _ => "fail"
+    }
+    assert( s === "Polar(0.0, 0.0)" )
+  }
+
+  // Cartesian -------------------
+
+  test("Cartesian 0") {
+    val c = Real(0)
+    val s = c match {
+      case Cartesian(re,im) => s"$re + $im*i)"
+      case _ => "fail"
+    }
+    assert( s === "0.0 + 0.0*i)" )
+  }
+
+  test("Cartesian 3 + 2i") {
+    val c = 3 + 2*i
+    val s = parse(c)
+    assert( s === "3.0 + 2.0i" )
+  }
+
+  test("Cartesian ∞") {
+    val c: Complex = ∞
+    val s = c match {
+      case Cartesian(re,im) => s"$re + $im*i)"
+      case _ => "fail"
+    }
+    assert( s === "fail" )
+  }
+
+  // Infinity ------------------------
 
   test("pattern ∞") {
     assert( parse(∞) === "∞" )

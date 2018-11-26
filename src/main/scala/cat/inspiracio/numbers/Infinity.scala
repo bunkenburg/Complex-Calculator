@@ -17,6 +17,8 @@
  * */
 package cat.inspiracio.numbers
 
+/** Infinity, the one complex number at the north
+  * pole of the Riemann sphere. */
 object Infinity extends Complex{
 
   import Complex._

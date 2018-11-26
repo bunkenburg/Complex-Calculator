@@ -30,12 +30,17 @@ class Real
 
 object Real {
 
+  /** val c = Real(3.2) */
   def apply(re: Double): Real = new Real(re)
 
+  /** Provides Real(re) as a pattern.
+    *
+    * Only matches if it's a finite real number.
+    * */
   def unapply(c: Complex): Option[Double] = {
     c match {
-      case Real(re) => Some(re)
-      case Cartesian(re, im) if(im==0) => Some(re)
+      case c: Real => Some(c.re)
+      case Cartesian(re, im) if im==0 => Some(re)
       case _ => None
     }
   }

@@ -21,6 +21,22 @@ import java.text.NumberFormat
 
 import scala.xml.Equality
 
+/** Complex numbers.
+  *
+  * The only implementations are:
+  * - class Real(re)
+  * - class Cartesian(re,im)
+  * - object Infinity
+  *
+  * Could become implementations:
+  * - Polar
+  * - Imaginary
+  *
+  * The client programmer must import this trait
+  * and its companion object:
+  * - import Complex._
+  *
+  * */
 trait Complex {
 
   val finite = false
@@ -198,8 +214,9 @@ object Complex {
 
   // better comparison --------------------------
 
-  import org.scalactic.Tolerance._
 
+  /*
+  import org.scalactic.Tolerance._
   implicit val complexEq =
        new org.scalactic.Equality[Complex] {
          def areEqual(a: Complex, b: Any): Boolean =
@@ -208,4 +225,5 @@ object Complex {
                  case _ => false
                }
        }
+       */
 }

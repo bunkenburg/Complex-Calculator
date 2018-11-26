@@ -48,11 +48,12 @@
             <version>${scala.version}</version>
         </dependency>
 
-        <dependency>
+        <!--scalactic-->
+        <!--dependency>
             <groupId>org.scalactic</groupId>
             <artifactId>scalactic_2.12</artifactId>
             <version>3.0.5</version>
-        </dependency>
+        </dependency-->
 
         <!-- https://mvnrepository.com/artifact/org.scalatest/scalatest -->
         <dependency>
