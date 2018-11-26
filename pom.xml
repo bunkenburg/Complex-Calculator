@@ -16,6 +16,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <scala.version>2.12.7</scala.version>
     </properties>
 
     <dependencies>
@@ -31,20 +32,26 @@
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-reflect</artifactId>
-            <version>2.12.7</version>
+            <version>${scala.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.scala-lang/scala-compiler -->
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-compiler</artifactId>
-            <version>2.12.7</version>
+            <version>${scala.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
-            <version>2.12.7</version>
+            <version>${scala.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.scalactic</groupId>
+            <artifactId>scalactic_2.12</artifactId>
+            <version>3.0.5</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.scalatest/scalatest -->

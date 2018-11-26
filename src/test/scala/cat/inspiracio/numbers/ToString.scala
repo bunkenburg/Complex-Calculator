@@ -1,4 +1,4 @@
-/*	Copyright 2018 Alexander Bunkenburg alex@cat.inspiracio.com
+/*	Copyright 2018 Alexander Bunkenburg alex@inspiracio.cat
  *
  * This file is part of Complex Calculator.
  *
@@ -20,7 +20,7 @@ package cat.inspiracio.numbers
 import org.scalatest.FunSuite
 import cat.inspiracio.numbers.Complex._
 
-class ComplexToStringTest extends FunSuite {
+class ToString extends FunSuite {
 
   test("toString 0") {
     val c: Complex = 0

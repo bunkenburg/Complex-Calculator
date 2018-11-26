@@ -17,26 +17,35 @@
  * */
 package cat.inspiracio.numbers
 
-import org.scalatest.FunSuite
-import org.scalactic.Tolerance._
-import cat.inspiracio.numbers.Complex._
+/** Specialisation to Real numbers, because many functions
+  * and operations have much simples implementations that
+  * are more precise. */
+class Real
+  (re: Double)
+  extends Cartesian(re, 0) {
 
-class ComplexTrig extends FunSuite {
+  override def sin: Real = Math.sin(re)
 
-  test("sin 0") {
-    val e = sin(0)
-    assert( e === 0 )
+}
+
+object Real {
+
+  def apply(re: Double): Real = new Real(re)
+
+  def unapply(c: Complex): Option[Double] = {
+    c match {
+      case Real(re) => Some(re)
+      case Cartesian(re, im) if(im==0) => Some(re)
+      case _ => None
+    }
   }
 
-  test("sin π/2") { assert( sin(π/2) === 1 ) }
+  //Conversions ---------------------------------
 
-  test("sin π") {
-    // Math.sin(Math.PI) == 1.2246467991473532E-16
-    val Cartesian(re,im) = sin(π)
-    assert( re === 0.0 +- 1.0E-15 )
-    assert( im === 0.0 +- 1.0E-15 )
-  }
-
-  test("sin 3π/2") { assert( sin(3*π/2) === -1 ) }
+  implicit def byte2Real(n: Byte): Real = Real(n.toDouble)
+  implicit def int2Real(n: Int): Real = Real(n.toDouble)
+  implicit def long2Real(n: Long): Real = Real(n.toDouble)
+  implicit def float2Real(f: Float): Real = Real(f)
+  implicit def double2Real(d: Double): Real = Real(d)
 
 }
