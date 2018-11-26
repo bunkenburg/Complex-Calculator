@@ -6,6 +6,15 @@
     - mode z -> f(z)
     - mode z -> |f(z)|
     - mode x -> Re(f(x))
+    
+    Initial windows positions:
+    - Calculator: setLocationByPlatform(true)
+    - ComplexWorld extends World: //setLocationByPlatform(true)
+    - FzWorld extends World: setLocationRelativeTo(this.calculator)
+    - RefxWorld: setLocationRelativeTo(calculator); setLocationByPlatform(true);
+    - abstract World: setLocationRelativeTo(calculator); setLocationByPlatform(true);
+    - ThreeDWorld: setLocationRelativeTo(calculator); setLocationByPlatform(true);
+    
 x Change from AWT to Swing
 * Take complex numbers out and make into Scala library
 * Change to Scala

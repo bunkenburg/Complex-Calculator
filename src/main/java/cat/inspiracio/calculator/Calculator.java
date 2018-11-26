@@ -1,4 +1,4 @@
-/*	Copyright 2011 Alexander Bunkenburg alex@cat.inspiracio.com
+/*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
  * 
  * This file is part of Complex Calculator.
  * 
@@ -85,32 +85,32 @@ public final class Calculator extends JFrame {
     }
 
     private void buildButtons(){
-        GridBagLayout gridbaglayout = new GridBagLayout();
-        GridBagConstraints gridbagconstraints = new GridBagConstraints();
-        setLayout(gridbaglayout);
+        GridBagLayout layout = new GridBagLayout();
+        GridBagConstraints constraints = new GridBagConstraints();
+        setLayout(layout);
         display.addKeyListener(new MyKeyListener());
-        gridbagconstraints.gridx = 0;
-        gridbagconstraints.gridy = 0;
-        gridbagconstraints.gridwidth = 5;
-        gridbagconstraints.gridheight = 3;
-        gridbagconstraints.weightx = 1.0D;
-        gridbagconstraints.weighty = 1.0D;
-        gridbagconstraints.fill = 1;
-        gridbaglayout.setConstraints(display, gridbagconstraints);
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.gridwidth = 5;
+        constraints.gridheight = 3;
+        constraints.weightx = 1.0D;
+        constraints.weighty = 1.0D;
+        constraints.fill = 1;
+        layout.setConstraints(display, constraints);
         add(display);
-        gridbagconstraints.gridwidth = 1;
-        gridbagconstraints.gridheight = 1;
-        ActionListener actionlistener = actionevent -> {
+        constraints.gridwidth = 1;
+        constraints.gridheight = 1;
+        ActionListener listener = e -> {
                 if(mode ==CALC)
                     eraseOldResult();
-                display.paste(actionevent.getActionCommand());
+                display.paste(e.getActionCommand());
                 display.requestFocus();
                 if(mode !=CALC)
                     functionChange();
             };
         Bx abx[] = {
-                new Bx("!", 0, 3, 1, actionlistener),
-                new Bx("del", 3, 3, 1, actionevent -> {
+                new Bx("!", 0, 3, 1, listener),
+                new Bx("del", 3, 3, 1, e -> {
                         if(mode ==CALC)
                             eraseOldResult();
                         display.delete();
@@ -118,58 +118,58 @@ public final class Calculator extends JFrame {
                         if(mode !=CALC)
                             functionChange();
                     }),
-                new Bx("C", 4, 3, 1, actionevent -> {
+                new Bx("C", 4, 3, 1, e -> {
                         display.clearAll();
                         if(mode !=CALC)
                             display.prepend("f(" + variable + ") = ");
                         display.requestFocus();
                     }),
-                new Bx("sinh", 0, 4, 1, actionlistener),
-                new Bx("cosh", 1, 4, 1, actionlistener),
-                new Bx("tanh", 2, 4, 1, actionlistener),
-                new Bx("conj", 3, 4, 1, actionlistener),
-                new Bx("opp", 4, 4, 1, actionlistener),
-                new Bx("sin", 0, 5, 1, actionlistener),
-                new Bx("cos", 1, 5, 1, actionlistener),
-                new Bx("tan", 2, 5, 1, actionlistener),
-                new Bx("Re", 3, 5, 1, actionlistener),
-                new Bx("Im", 4, 5, 1, actionlistener),
-                new Bx("ln", 0, 7, 1, actionlistener),
-                new Bx("exp", 1, 7, 1, actionlistener),
-                new Bx("^", 2, 7, 1, actionlistener),
-                new Bx("mod", 3, 7, 1, actionlistener),
-                new Bx("arg", 4, 7, 1, actionlistener),
-                new Bx("i", 0, 8, 1, actionlistener),
-                new Bx("e", 1, 8, 1, actionlistener),
-                new Bx(PI, 2, 8, 1, actionlistener),
-                new Bx("(", 3, 8, 1, actionlistener),
-                new Bx(")", 4, 8, 1, actionlistener),
-                new Bx("7", 0, 9, 1, actionlistener),
-                new Bx("8", 1, 9, 1, actionlistener),
-                new Bx("9", 2, 9, 1, actionlistener),
-                new Bx("*", 3, 9, 1, actionlistener),
-                new Bx("/", 4, 9, 1, actionlistener),
-                new Bx("4", 0, 10, 1, actionlistener),
-                new Bx("5", 1, 10, 1, actionlistener),
-                new Bx("6", 2, 10, 1, actionlistener),
-                new Bx("+", 3, 10, 1, actionlistener),
-                new Bx("-", 4, 10, 1, actionlistener),
-                new Bx("1", 0, 11, 1, actionlistener),
-                new Bx("2", 1, 11, 1, actionlistener),
-                new Bx("3", 2, 11, 1, actionlistener),
-                new Bx("z", 3, 11, 1, actionevent -> {
+                new Bx("sinh", 0, 4, 1, listener),
+                new Bx("cosh", 1, 4, 1, listener),
+                new Bx("tanh", 2, 4, 1, listener),
+                new Bx("conj", 3, 4, 1, listener),
+                new Bx("opp", 4, 4, 1, listener),
+                new Bx("sin", 0, 5, 1, listener),
+                new Bx("cos", 1, 5, 1, listener),
+                new Bx("tan", 2, 5, 1, listener),
+                new Bx("Re", 3, 5, 1, listener),
+                new Bx("Im", 4, 5, 1, listener),
+                new Bx("ln", 0, 7, 1, listener),
+                new Bx("exp", 1, 7, 1, listener),
+                new Bx("^", 2, 7, 1, listener),
+                new Bx("mod", 3, 7, 1, listener),
+                new Bx("arg", 4, 7, 1, listener),
+                new Bx("i", 0, 8, 1, listener),
+                new Bx("e", 1, 8, 1, listener),
+                new Bx(PI, 2, 8, 1, listener),
+                new Bx("(", 3, 8, 1, listener),
+                new Bx(")", 4, 8, 1, listener),
+                new Bx("7", 0, 9, 1, listener),
+                new Bx("8", 1, 9, 1, listener),
+                new Bx("9", 2, 9, 1, listener),
+                new Bx("*", 3, 9, 1, listener),
+                new Bx("/", 4, 9, 1, listener),
+                new Bx("4", 0, 10, 1, listener),
+                new Bx("5", 1, 10, 1, listener),
+                new Bx("6", 2, 10, 1, listener),
+                new Bx("+", 3, 10, 1, listener),
+                new Bx("-", 4, 10, 1, listener),
+                new Bx("1", 0, 11, 1, listener),
+                new Bx("2", 1, 11, 1, listener),
+                new Bx("3", 2, 11, 1, listener),
+                new Bx("z", 3, 11, 1, e -> {
                         display.paste(variable);
                         display.requestFocus();
                         if(mode !=CALC)
                             functionChange();
                     }),
-                new Bx("=", 4, 11, 2, actionevent -> {
+                new Bx("=", 4, 11, 2, e -> {
                         doEquals();
                         display.requestFocus();
                     }),
-                new Bx("0", 0, 12, 1, actionlistener),
-                new Bx(".", 1, 12, 1, actionlistener),
-                new Bx(INF, 2, 12, 1, actionlistener)
+                new Bx("0", 0, 12, 1, listener),
+                new Bx(".", 1, 12, 1, listener),
+                new Bx(INF, 2, 12, 1, listener)
         };
         for(int i = 0; i < abx.length; i++){
             JButton button = new JButton(abx[i].label);
@@ -178,10 +178,10 @@ public final class Calculator extends JFrame {
             else if(abx[i].label.equals("="))
                 equalsButton = button;
             button.addActionListener(abx[i].al);
-            gridbagconstraints.gridx = abx[i].gridx;
-            gridbagconstraints.gridy = abx[i].gridy;
-            gridbagconstraints.gridheight = abx[i].gridheight;
-            gridbaglayout.setConstraints(button, gridbagconstraints);
+            constraints.gridx = abx[i].gridx;
+            constraints.gridy = abx[i].gridy;
+            constraints.gridheight = abx[i].gridheight;
+            layout.setConstraints(button, constraints);
             add(button);
         }
     }
@@ -192,9 +192,14 @@ public final class Calculator extends JFrame {
         });
         setMode(CALC);
         pack();
-        setLocationByPlatform(true);
+        setLocation();
         setVisible(true);
         display.requestFocus();
+    }
+
+    /** Find a good place on the screen for the new Calculator frame. */
+    private void setLocation(){
+        setLocationByPlatform(true);
     }
 
     //Methods ---------------------------------------------------------

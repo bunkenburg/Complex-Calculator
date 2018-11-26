@@ -1,4 +1,4 @@
-/*	Copyright 2011 Alexander Bunkenburg alex@cat.inspiracio.com
+/*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
  * 
  * This file is part of Complex Calculator.
  * 
@@ -53,6 +53,7 @@ final class RefxWorld extends JFrame{
         calculator = calculator1;
         setTitle("Re(f(x)) World");
         resetExtremes();
+
         JButton button = new JButton("Zoom In");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionevent){
@@ -86,12 +87,17 @@ final class RefxWorld extends JFrame{
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent windowevent){calculator.quit();}
         });
-        //JMenuBar mb=calculator.makeMenuBar();
-        //setJMenuBar(mb);
+
         pack();
         setLocationRelativeTo(calculator);
         setLocationByPlatform(true);
+        setLocation();
         setVisible(true);
+    }
+
+    private void setLocation(){
+        setLocationRelativeTo(calculator);
+        setLocationByPlatform(true);
     }
 
     //Methods ---------------------------------------------------------

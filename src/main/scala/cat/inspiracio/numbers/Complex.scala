@@ -74,68 +74,6 @@ trait Complex {
 
 }
 
-/** How does the client programmer use Complex numbers?
-  *
-  * Constants:
-  *   e : Double
-  *   π : Double
-  *   i : Complex
-  *   ∞ : Complex
-  * Defined as val in object Complex.
-  * import cat.inspiracio.numbers.Complex._
-  *
-  * Functions:
-  *   sin(z)
-  *   cos(z)
-  *   tan(z)
-  *   sinh(z)
-  *   cosh(z)
-  *   tanh(z)
-  *   exp(z)
-  *   ln(z)
-  * Defined as def in object Complex.
-  * import cat.inspiracio.numbers.Complex._
-  *
-  * Operators:
-  *   +
-  *   -
-  *   *
-  *   /
-  *   ^
-  * Defined as def in trait Complex, implemented in Infinity and Cartesian.
-  * Work with first argument of types Byte, Int, Long, Float, Double because
-  * there are conversions from these types to Complex in object Complex.
-  * They are overloaded with seconds argument of type Complex, Int, Double,
-  * in order to use simplified implementations (more precise).
-  *   ==  Complex.equals() Problems with floats.
-  *   === Complex.complexEq Uses scalatics.
-  *
-  * toString:
-  *   e     (when precise)
-  *   -e    (when precise)
-  *   π     (when precise)
-  *   -π    (when precise)
-  *   i
-  *   ∞
-  *   15    (when integer)
-  *   15.2  (when real)
-  *   12.8i (when imaginary)
-  *   3 + 2i
-  *
-  * pattern matching:
-  *   z match {
-  *     case 0 =>
-  *     case i: Int =>    //real
-  *     case d: Double => //real
-  *     case e =>
-  *     case π =>
-  *     case xi => ...  //imaginary
-  *     case x + yi =>  //finite
-  *     case ∞ =>
-  *   }
-  * Let's see how much of this can be done.
-  *
-  * */
 object Complex {
 
   // formatting, maybe disappears ---------------
@@ -191,6 +129,12 @@ object Complex {
   val i = new Cartesian(0,1)
   val π = Math.PI
   val ∞ = Infinity
+
+  // ugly constants for pattern matching
+
+  val E: Complex = e
+  val I = i
+  val Pi: Complex = π
 
   //Conversions ---------------------------------
 

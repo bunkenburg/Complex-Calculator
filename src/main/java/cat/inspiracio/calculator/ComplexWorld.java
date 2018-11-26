@@ -1,4 +1,4 @@
-/*	Copyright 2011 Alexander Bunkenburg alex@cat.inspiracio.com
+/*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
  * 
  * This file is part of Complex Calculator.
  * 
@@ -46,8 +46,9 @@ final class ComplexWorld extends World{
         super(calculator);
         super.interaction =DRAW;
         setTitle("Complex World");
+
         JButton button = new JButton("Clear");
-        button.addActionListener( actionevent -> {
+        button.addActionListener( e -> {
                 erase();
                 canvas.repaint();
             });
@@ -55,11 +56,11 @@ final class ComplexWorld extends World{
         choice.addItem("Draw");
         choice.addItem("Move");
         choice.setSelectedItem("Draw");
-        choice.addItemListener( itemevent -> {
-        	    int state = itemevent.getStateChange();
+        choice.addItemListener( e -> {
+        	    int state = e.getStateChange();
         	    if(state!=ItemEvent.SELECTED)
         	        return;
-                if(itemevent.getItem() == "Draw"){
+                if(e.getItem() == "Draw"){
                     interaction =DRAW;
                     return;
                 } else{
@@ -112,9 +113,14 @@ final class ComplexWorld extends World{
         super.plane.addMouseMotionListener(mousemotionadapter);
         super.sphere.addMouseListener(mouseadapter);
         super.sphere.addMouseMotionListener(mousemotionadapter);
+
         pack();
-        //this.setLocationByPlatform(true);
+        setLocation();
         setVisible(true);
+    }
+
+    private void setLocation(){
+        //setLocationByPlatform(true);
     }
 
     //Methods --------------------------------------------------------------

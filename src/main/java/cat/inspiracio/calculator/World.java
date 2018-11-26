@@ -114,9 +114,13 @@ abstract class World extends JFrame {
         });
 
         pack();
+        setLocation();
+        setVisible(true);
+    }
+
+    private void setLocation(){
         setLocationRelativeTo(this.calculator);
         setLocationByPlatform(true);
-        setVisible(true);
     }
 
     abstract void add(EC ec);

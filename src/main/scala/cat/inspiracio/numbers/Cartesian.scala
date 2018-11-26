@@ -368,7 +368,7 @@ object Cartesian {
   def apply(re: Double, im: Double): Cartesian = new Cartesian(re, im)
 
   /** val Cartesian(re, im) = z */
-  def unapply(c: Cartesian): Option[(Double,Double)] = Some((c.re, c.im))
+  def unapply(c: Cartesian): Option[(Double,Double)] = Some( (c.re, c.im) )
 
 }
 

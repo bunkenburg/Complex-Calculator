@@ -1,4 +1,4 @@
-/*	Copyright 2011 Alexander Bunkenburg alex@cat.inspiracio.com
+/*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
  * 
  * This file is part of Complex Calculator.
  * 
@@ -40,6 +40,7 @@ final class FzWorld extends World {
         super(calculator);
         super.interaction =MOVE;
         setTitle("f(z) World");
+
         MouseAdapter mouseadapter = new MouseAdapter() {
             public void mousePressed(MouseEvent mouseevent){
                 prevx = mouseevent.getX();
@@ -74,6 +75,10 @@ final class FzWorld extends World {
         pack();
         setLocationRelativeTo(this.calculator);
         setVisible(true);
+    }
+
+    private void setLocation(){
+        setLocationRelativeTo(this.calculator);
     }
 
     //Methods ------------------------------------------------------------

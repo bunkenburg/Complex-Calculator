@@ -38,9 +38,6 @@ final class ThreeDWorld extends JFrame {
     private static final Dimension MIN_SIZE = new Dimension(400, 300);
     static final double XYFACTOR = 0.6D;
     private ThreeDCanvas canvas;
-    //private static final double EPSILON = 0.0001D;
-    //private static final double undefinedModulus = -0.20000000000000001D;
-    //private static final double infiniteModulus = 1.2D;
     private Square square;
     private SyntaxTree f;
     double M[][];
@@ -65,14 +62,17 @@ final class ThreeDWorld extends JFrame {
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent windowevent){calculator.quit();}
         });
-        //JMenuBar mb=calculator.makeMenuBar();
-        //setJMenuBar(mb);
+
         pack();
-        setLocationRelativeTo(calculator);
-        setLocationByPlatform(true);
+        setLocation();
         setVisible(true);
     }
-    
+
+    private void setLocation(){
+        setLocationRelativeTo(calculator);
+        setLocationByPlatform(true);
+    }
+
     //Methods -----------------------------------------
 
     void functionChange(SyntaxTree syntaxtree){
