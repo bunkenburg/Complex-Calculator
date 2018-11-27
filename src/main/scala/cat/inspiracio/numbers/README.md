@@ -15,9 +15,17 @@ Constants:
     i : Complex
     ∞ : Complex
 
+Operators:
+    
+       -a
+    a + b
+    a - b
+    a * b
+    a / b
+    a ^ b
+
 Functions:
 
-    -z
     sin(z)
     sinh(z)
     cos(z)
@@ -26,18 +34,6 @@ Functions:
     tanh(z)
     exp(z)
     ln(z)
-
-Operators:
-    
-    a + b
-    a - b
-    a * b
-    a / b
-    a ^ b
-
-They also work when the first argument has of types Byte, Int, Long, Float, Double because there are conversions from these types to Complex.
-
-They are overloaded so that the second argument can have type Byte, Int, Float, Double, Complex.
 
 Comparison:
 
@@ -77,8 +73,8 @@ Pattern matching:
         case Imaginary(4.2) => ???  //imaginary
         case Imaginary(im) => ??? //imaginary
         
-        case Polar(m, a) => ???
         case Polar(5, Math.PI) => ???
+        case Polar(m, a) => ???
         
         case Cartesian(3.2, 4.1) => ???
         case Cartesian(re, im) => ???

@@ -68,7 +68,13 @@ trait Complex {
   def - (c: Complex): Complex
   def * (c: Complex): Complex
   def / (c: Complex): Complex
+
   def ^ (c: Complex): Complex
+  def ^ (c: Byte): Complex = ???
+  def ^ (c: Int): Complex = ???
+  def ^ (c: Long): Complex = ???
+  def ^ (c: Float): Complex = ???
+  def ^ (c: Double): Complex = this / (c: Double)
 
 }
 
