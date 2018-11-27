@@ -15,16 +15,28 @@
  * You should have received a copy of the GNU General Public License
  * along with Complex Calculator. If not, see <http://www.gnu.org/licenses/>.
  * */
-package cat.inspiracio.numbers
+package cat.inspiracio.complextests
 
-object Imaginary {
+import org.scalatest.FunSuite
+import org.scalactic.Tolerance._
+import cat.inspiracio.numbers.Complex._
 
-  /** Matches imaginary numbers */
-  def unapply(c: Complex): Option[Double] = {
-    c match {
-      case Cartesian(re, im) if(re==0) => Some(im)
-      case _ => None
-    }
+class Trigonometry extends FunSuite {
+
+  test("sin 0") {
+    val e = sin(0)
+    assert( e === 0 )
   }
+
+  test("sin π/2") { assert( sin(π/2) === 1 ) }
+
+  test("sin π") {
+    // Math.sin(Math.PI) == 1.2246467991473532E-16
+    val Cartesian(re,im) = sin(π)
+    assert( re === 0.0 +- 1.0E-15 )
+    assert( im === 0.0 +- 1.0E-15 )
+  }
+
+  test("sin 3π/2") { assert( sin(3*π/2) === -1 ) }
 
 }

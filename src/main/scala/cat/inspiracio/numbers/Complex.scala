@@ -19,8 +19,6 @@ package cat.inspiracio.numbers
 
 import java.text.NumberFormat
 
-import scala.xml.Equality
-
 /** Complex numbers.
   *
   * The only implementations are:
@@ -170,4 +168,147 @@ object Complex {
                }
        }
        */
+
+  // pattern matchers -------------------------
+
+  object Natural {
+
+    /** Matches natural numbers */
+    def unapply(c: Complex): Option[Int] = {
+      c match {
+        case Integer(n) if(0<=n) => Some(n)
+        case _ => None
+      }
+    }
+
+  }
+
+  object Integer {
+
+    /** Matches integer numbers */
+    def unapply(c: Complex): Option[Int] = {
+      c match {
+        case Real(re) if(re.isWhole()) => Some(re.toInt)
+        case _ => None
+      }
+    }
+
+  }
+
+  /** Specialisation to Real numbers, because many functions
+    * and operations have much simples implementations that
+    * are more precise. */
+  class Real
+  (re: Double)
+    extends Cartesian(re, 0) {
+
+    override def sin: Real = Math.sin(re)
+
+  }
+
+  object Real {
+
+    /** val c = Real(3.2) */
+    def apply(re: Double): Real = new Real(re)
+
+    /** Provides Real(re) as a pattern.
+      *
+      * Only matches if it's a finite real number.
+      * */
+    def unapply(c: Complex): Option[Double] = {
+      c match {
+        case c: Real => Some(c.re)
+        case Cartesian(re, im) if im==0 => Some(re)
+        case _ => None
+      }
+    }
+
+    //Conversions ---------------------------------
+
+    implicit def byte2Real(n: Byte): Real = Real(n.toDouble)
+    implicit def int2Real(n: Int): Real = Real(n.toDouble)
+    implicit def long2Real(n: Long): Real = Real(n.toDouble)
+    implicit def float2Real(f: Float): Real = Real(f)
+    implicit def double2Real(d: Double): Real = Real(d)
+
+  }
+
+  object Imaginary {
+
+    /** Matches imaginary numbers */
+    def unapply(c: Complex): Option[Double] = {
+      c match {
+        case Cartesian(re, im) if(re==0) => Some(im)
+        case _ => None
+      }
+    }
+
+  }
+
+  object Polar {
+
+    /** val z = Polar(m, a) */
+    def apply(m: Double, a: Double): Complex = mkPolar(m, a)
+
+    /** val Polar(m, a) = z */
+    def unapply(c: Complex): Option[(Double,Double)] = {
+      if(!c.finite)
+        None
+      else {
+        val m = c.modulus
+        val a = c.argument
+        Some( (m, a) )
+      }
+    }
+
+  }
+
+  object Cartesian {
+
+    /** val z = Cartesian(re, im) */
+    def apply(re: Double, im: Double): Cartesian = new Cartesian(re, im)
+
+    /** val Cartesian(re, im) = z */
+    def unapply(c: Cartesian): Option[(Double,Double)] = Some( (c.re, c.im) )
+
+  }
+
+  /** Infinity, the one complex number at the north
+    * pole of the Riemann sphere. */
+  object Infinity extends Complex{
+
+    override val finite = false
+    override val isZero = false
+    override def toString: String = "∞"
+
+    override def sin: Cartesian = throw new PartialException("sin ∞")
+    override def sinh: Cartesian = throw new PartialException("sinh ∞")
+    override def cos: Cartesian = throw new PartialException("cos ∞")
+    override def cosh: Cartesian = throw new PartialException("cosh ∞")
+    override def tan: Cartesian = throw new PartialException("tan ∞")
+    override def tanh: Cartesian = throw new PartialException("tanh ∞")
+    override def ln: Complex = ∞
+    override def exp = ∞
+
+    override def conj = ∞
+    override def opp = 0
+    override def reciprocal = 0
+
+    override def fac = ∞
+
+    // Operators ------------------------------------
+
+    override def unary_- = ∞
+
+    override def + (c: Complex): Complex =
+      if (c.finite) ∞
+      else throw new PartialException("∞ + ∞")
+
+    override def - (c: Complex): Complex = ???
+    override def * (c: Complex): Complex = ???
+    override def / (c: Complex): Complex = ???
+    override def ^ (c: Complex): Complex = ???
+
+  }
+
 }
