@@ -220,11 +220,11 @@ class CartesianComplex
   def * (c: Complex): Complex = {
 
     if (z.isZero) {
-      if (c.finite) int2Complex(0)
-      else throw new PartialException("0 * ∞")
+      if (c.finite) 0
+      else throw new ArithmeticException("0 * ∞")
     }
 
-    else if (z.finite) {
+    else {
       if (c.isZero) int2Complex(0)
       else if (c.finite) {
         val Cartesian(cre, cim) = c
@@ -233,24 +233,14 @@ class CartesianComplex
       else ∞
     }
 
-    else {
-      if (c.isZero) throw new PartialException("∞ * 0")
-      ∞
-    }
   }
 
   def / (d: Double): Complex = {
     if (z.isZero) {
-      if (d == 0) throw new PartialException("0/0")
-      else int2Complex(0)
-    }
-    else if (finite) {
-      if (d == 0) ∞
-      else Complex(re / d, im / d)
+      if (d == 0) throw new ArithmeticException("0/0") else 0
     }
     else {
-      if (d == 0) throw new PartialException("∞/0")
-      else ∞
+      if (d == 0) ∞ else Complex(re / d, im / d)
     }
   }
 
@@ -278,12 +268,12 @@ class CartesianComplex
     }
 
     if (z.isZero) {
-      if (c.isZero) throw new PartialException("0/0")
-      if (c.finite) int2Complex(0)
-      else throw new PartialException("0/∞")
+      if (c.isZero) throw new ArithmeticException("0/0")
+      if (c.finite) 0
+      else throw new ArithmeticException("0/∞")
     }
 
-    else if (z.finite) {
+    else {
       if (c.isZero) ∞
       else if (c.finite) {
         val Cartesian(cre, cim) = c
@@ -292,16 +282,11 @@ class CartesianComplex
       }
       else int2Complex(0)
     }
-
-    else {
-      if (c.isZero) throw new PartialException("∞/0")
-      if (c.finite) ∞ else throw new PartialException("∞/∞")
-    }
   }
 
   override def ^ (c: Complex): Complex = {
     if (z.isZero) {
-      if (c.isZero) throw new PartialException("0^0")
+      if (c.isZero) throw new ArithmeticException("0^0")
       else int2Complex(0)
     }
 
@@ -324,7 +309,7 @@ class CartesianComplex
     }
 
     else
-      if (c.isZero) throw new PartialException("∞^0")  // ∞^0 = undefined
+      if (c.isZero) throw new ArithmeticException("∞^0")  // ∞^0 = undefined
       else ∞ // ∞^y = ∞
   }
 

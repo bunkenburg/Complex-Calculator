@@ -25,6 +25,7 @@ Literals will be transformed to Complex:
     
 Operators:
     
+       +a
        -a
     a + b
     a - b

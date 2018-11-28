@@ -199,11 +199,11 @@ object Complex {
 
     override def + (c: Complex) =
       if (c.finite) ∞
-      else throw new IllegalArgumentException("∞ + ∞")
+      else throw new ArithmeticException("∞ + ∞")
 
-    override def - (c: Complex) = if(c.finite) ∞ else throw new IllegalArgumentException("∞ - ∞")
-    override def * (c: Complex): Complex = ???
-    override def / (c: Complex): Complex = ???
+    override def - (c: Complex) = if(c.finite) ∞ else throw new ArithmeticException("∞ - ∞")
+    override def * (c: Complex)= if (c.isZero) throw new ArithmeticException("∞ * 0") else ∞
+    override def / (c: Complex) = if (c.isZero) throw new ArithmeticException("∞/0") else ∞
     override def ^ (c: Complex): Complex = ???
 
   }
