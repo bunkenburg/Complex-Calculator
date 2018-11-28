@@ -84,6 +84,11 @@ trait Complex {
 
 object Complex {
 
+  // constants ----------------
+
+  val π = Math.PI
+  val ∞ = Complex.Infinity
+
   // formatting, maybe disappears ---------------
 
   /** for formatting */
@@ -170,20 +175,20 @@ object Complex {
 
     override val finite = false
     override val isZero = false
-    override def toString: String = "∞"
+    override def toString = "∞"
 
-    override def sin: Complex = throw new PartialException("sin ∞")
-    override def sinh: Complex = throw new PartialException("sinh ∞")
-    override def cos: Complex = throw new PartialException("cos ∞")
-    override def cosh: Complex = throw new PartialException("cosh ∞")
-    override def tan: Complex = throw new PartialException("tan ∞")
-    override def tanh: Complex = throw new PartialException("tanh ∞")
-    override def ln: Complex = ∞
+    override def sin = throw new PartialException("sin ∞")
+    override def sinh = throw new PartialException("sinh ∞")
+    override def cos = throw new PartialException("cos ∞")
+    override def cosh = throw new PartialException("cosh ∞")
+    override def tan = throw new PartialException("tan ∞")
+    override def tanh = throw new PartialException("tanh ∞")
+    override def ln = ∞
     override def exp = ∞
 
     override def conj = ∞
-    override def opp: Complex = 0
-    override def reciprocal: Complex = 0
+    override def opp = 0
+    override def reciprocal = 0
 
     override def fac = ∞
 
@@ -191,11 +196,11 @@ object Complex {
 
     override def unary_- = ∞
 
-    override def + (c: Complex): Complex =
+    override def + (c: Complex) =
       if (c.finite) ∞
-      else throw new PartialException("∞ + ∞")
+      else throw new IllegalArgumentException("∞ + ∞")
 
-    override def - (c: Complex): Complex = ???
+    override def - (c: Complex) = if(c.finite) ∞ else throw new IllegalArgumentException("∞ - ∞")
     override def * (c: Complex): Complex = ???
     override def / (c: Complex): Complex = ???
     override def ^ (c: Complex): Complex = ???

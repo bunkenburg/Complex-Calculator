@@ -211,12 +211,10 @@ class CartesianComplex
     }
 
   override def - (c: Complex): Complex = {
-    if (z.finite) {
-      val Cartesian(cre, cim) = c
-      if (c.finite) Cartesian(z.re - cre, z.im - cim) else ∞
-    } else {
-      if (c.finite) ∞ else throw new PartialException("∞ - ∞")
-    }
+      if (c.finite) {
+        val Cartesian(cre, cim) = c
+        Cartesian(z.re - cre, z.im - cim)
+      } else ∞
   }
 
   def * (c: Complex): Complex = {

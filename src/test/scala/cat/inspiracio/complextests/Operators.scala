@@ -24,6 +24,12 @@ class Operators extends FunSuite {
 
   // -a -----------------------------
 
+  test("-0"){
+    val c: Complex = 0
+    val d = -c
+    assert( (0:Complex) === d )
+  }
+
   test("-i"){
     val c: Complex = -i
     val d = 0 - i
@@ -37,28 +43,72 @@ class Operators extends FunSuite {
 
   // a + b ---------------------------
 
-  test("a + b"){
+  test("0 + i"){
     val a = 0
     val b = i
-    assert( a+b === 0 )
+    assert( a+b === i )
   }
 
-  test("Long"){
-    val l: Long = 0L
-    val c: Complex = l
-    assert( c === 0 )
+  test("i + 0"){
+    val a = i
+    val b = 0
+    assert( a+b === i )
   }
 
-  test("Float"){
-    val f: Float = 0f
-    val c: Complex = f
-    assert( c === 0 )
+  test("3 + i"){
+    val a = 3
+    val b = i
+    val s = (a+b).toString
+    assert( s === "3+i" )
   }
 
-  test("Double"){
-    val d: Double = 0d
-    val c: Complex = d
-    assert( c === 0 )
+  test("π + ∞"){
+    val a = π
+    val b = ∞
+    assert( a+b === ∞ )
+  }
+
+  test("∞ + ∞"){
+    assertThrows[IllegalArgumentException] {
+      val a = ∞
+      val b = ∞
+      assert(a + b === ∞)
+    }
+  }
+
+  // a - b ---------------------------
+
+  test("0 - i"){
+    val a = 0
+    val b = i
+    assert( a-b === -i )
+  }
+
+  test("i - 0"){
+    val a = i
+    val b = 0
+    assert( a-b === i )
+  }
+
+  test("3 - i"){
+    val a = 3
+    val b = i
+    val s = (a-b).toString
+    assert( s === "3-i" )
+  }
+
+  test("π - ∞"){
+    val a = π
+    val b = ∞
+    assert( a-b === ∞ )
+  }
+
+  test("∞ - ∞"){
+    assertThrows[IllegalArgumentException] {
+      val a = ∞
+      val b = ∞
+      assert(a - b === ∞)
+    }
   }
 
 }
