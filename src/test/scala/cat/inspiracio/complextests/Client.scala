@@ -19,6 +19,9 @@ package cat.inspiracio.complextests
 
 import org.scalatest.FunSuite
 
+//This is the only import. The package object.
+import cat.inspiracio.complex._
+
 /** This class shows what the client programmer
   * can do with Complex. */
 class Clients extends FunSuite {
@@ -27,12 +30,10 @@ class Clients extends FunSuite {
 
     // one type ---------------------------
 
-    import cat.inspiracio.numbers.Complex
     var z: Complex = 0
 
     // constants ----------------------
 
-    import cat.inspiracio.numbers.Complex._
     var d: Double = 0
 
     d = e
@@ -110,6 +111,21 @@ class Clients extends FunSuite {
     val Cartesian(re, im) = z
     val Polar(m, arg) = z
 
+    // things that cannot be accessed
+
+    z.isZero
+    z.argument
+    z.fac
+    z.conj
+    z.cos
+    z.cosh
+    z.finite
+    z.exp
+    z.modulus
+    z.ln
+    z.reciprocal
+    z.opp
+    z.unary_-
   }
 
 }

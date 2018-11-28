@@ -15,9 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with Complex Calculator. If not, see <http://www.gnu.org/licenses/>.
  * */
-package cat.inspiracio.numbers
+package cat.inspiracio.complex
 
 import java.text.NumberFormat
+
+import cat.inspiracio.numbers.PartialException
 
 /** Complex numbers.
   *
@@ -37,8 +39,10 @@ import java.text.NumberFormat
   * */
 trait Complex {
 
-  val finite = false
+  def finite = false
   val isZero = false
+  def re: Double = 0
+  def im: Double = 0
   def modulus: Double = 0
   def argument: Double = 0
 
@@ -116,52 +120,18 @@ object Complex {
   /** Complex(re) */
   def apply(re: Double): Complex =
     if(re.isInfinite) ∞
-    else new Cartesian(re, 0)
+    else new CartesianComplex(re, 0)
 
   /** Complex(re, im) */
   def apply(re: Double, im: Double): Complex =
     if(re.isInfinite || im.isInfinite) ∞
-    else new Cartesian(re, im)
+    else new CartesianComplex(re, im)
 
   def mkPolar(modulus: Double, angle: Double): Complex =
     if (java.lang.Double.isInfinite(modulus)) ∞
-    else new Cartesian(modulus * Math.cos(angle), modulus * Math.sin(angle))
-
-  //Constants -----------------------------------
-
-  val e = Math.E
-  val i = new Cartesian(0,1)
-  val π = Math.PI
-  val ∞ = Infinity
-
-  // ugly constants for pattern matching
-
-  val E: Complex = e
-  val I = i
-  val Pi: Complex = π
-
-  //Conversions ---------------------------------
-
-  implicit def byte2Complex(n: Byte): Complex = Real(n.toDouble)
-  implicit def int2Complex(n: Int): Complex = Real(n.toDouble)
-  implicit def long2Complex(n: Long): Complex = Real(n.toDouble)
-  implicit def float2Complex(f: Float): Complex = Real(f)
-  implicit def double2Complex(d: Double): Cartesian = Real(d)
-
-  // Trigonometry ---------------------------------
-
-  def sin(z: Complex) = z.sin
-  def sinh(z: Complex) = z.sinh
-  def cos(z: Complex) = z.cos
-  def cosh(z: Complex) = z.cosh
-  def tan(z: Complex) = z.tan
-  def tanh(z: Complex) = z.tanh
-
-  def exp(z: Complex) = z.exp
-  def ln(z: Complex) = z.ln
+    else new CartesianComplex(modulus * Math.cos(angle), modulus * Math.sin(angle))
 
   // better comparison --------------------------
-
 
   /*
   import org.scalactic.Tolerance._
@@ -175,107 +145,22 @@ object Complex {
        }
        */
 
-  // pattern matchers -------------------------
-
-  object Natural {
-
-    /** Matches natural numbers */
-    def unapply(c: Complex): Option[Int] = {
-      c match {
-        case Integer(n) if(0<=n) => Some(n)
-        case _ => None
-      }
-    }
-
-  }
-
-  object Integer {
-
-    /** Matches integer numbers */
-    def unapply(c: Complex): Option[Int] = {
-      c match {
-        case Real(re) if(re.isWhole()) => Some(re.toInt)
-        case _ => None
-      }
-    }
-
-  }
-
   /** Specialisation to Real numbers, because many functions
     * and operations have much simples implementations that
     * are more precise. */
   class Real
   (re: Double)
-    extends Cartesian(re, 0) {
-
-    override def sin: Real = Math.sin(re)
-
-  }
-
-  object Real {
-
-    /** val c = Real(3.2) */
-    def apply(re: Double): Real = new Real(re)
-
-    /** Provides Real(re) as a pattern.
-      *
-      * Only matches if it's a finite real number.
-      * */
-    def unapply(c: Complex): Option[Double] = {
-      c match {
-        case c: Real => Some(c.re)
-        case Cartesian(re, im) if im==0 => Some(re)
-        case _ => None
-      }
-    }
+    extends CartesianComplex(re, 0) {
 
     //Conversions ---------------------------------
 
-    implicit def byte2Real(n: Byte): Real = Real(n.toDouble)
-    implicit def int2Real(n: Int): Real = Real(n.toDouble)
-    implicit def long2Real(n: Long): Real = Real(n.toDouble)
-    implicit def float2Real(f: Float): Real = Real(f)
-    implicit def double2Real(d: Double): Real = Real(d)
+    implicit private def byte2Real(n: Byte): Real = Real(n.toDouble)
+    implicit private def int2Real(n: Int): Real = Real(n.toDouble)
+    implicit private def long2Real(n: Long): Real = Real(n.toDouble)
+    implicit private def float2Real(f: Float): Real = Real(f)
+    implicit private def double2Real(d: Double): Real = Real(d)
 
-  }
-
-  object Imaginary {
-
-    /** Matches imaginary numbers */
-    def unapply(c: Complex): Option[Double] = {
-      c match {
-        case Cartesian(re, im) if(re==0) => Some(im)
-        case _ => None
-      }
-    }
-
-  }
-
-  object Polar {
-
-    /** val z = Polar(m, a) */
-    def apply(m: Double, a: Double): Complex = mkPolar(m, a)
-
-    /** val Polar(m, a) = z */
-    def unapply(c: Complex): Option[(Double,Double)] = {
-      if(!c.finite)
-        None
-      else {
-        val m = c.modulus
-        val a = c.argument
-        Some( (m, a) )
-      }
-    }
-
-  }
-
-  object Cartesian {
-
-    /** val z = Cartesian(re, im) */
-    def apply(re: Double, im: Double): Cartesian = new Cartesian(re, im)
-
-    /** val Cartesian(re, im) = z */
-    def unapply(c: Cartesian): Option[(Double,Double)] = Some( (c.re, c.im) )
+    override def sin: Real = Math.sin(re)
 
   }
 
@@ -287,18 +172,18 @@ object Complex {
     override val isZero = false
     override def toString: String = "∞"
 
-    override def sin: Cartesian = throw new PartialException("sin ∞")
-    override def sinh: Cartesian = throw new PartialException("sinh ∞")
-    override def cos: Cartesian = throw new PartialException("cos ∞")
-    override def cosh: Cartesian = throw new PartialException("cosh ∞")
-    override def tan: Cartesian = throw new PartialException("tan ∞")
-    override def tanh: Cartesian = throw new PartialException("tanh ∞")
+    override def sin: Complex = throw new PartialException("sin ∞")
+    override def sinh: Complex = throw new PartialException("sinh ∞")
+    override def cos: Complex = throw new PartialException("cos ∞")
+    override def cosh: Complex = throw new PartialException("cosh ∞")
+    override def tan: Complex = throw new PartialException("tan ∞")
+    override def tanh: Complex = throw new PartialException("tanh ∞")
     override def ln: Complex = ∞
     override def exp = ∞
 
     override def conj = ∞
-    override def opp = 0
-    override def reciprocal = 0
+    override def opp: Complex = 0
+    override def reciprocal: Complex = 0
 
     override def fac = ∞
 

@@ -19,7 +19,7 @@ package cat.inspiracio.complextests
 
 import org.scalatest.FunSuite
 import org.scalactic.Tolerance._
-import cat.inspiracio.numbers.Complex._
+import cat.inspiracio.complex._
 
 class Trigonometry extends FunSuite {
 

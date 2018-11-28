@@ -15,16 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with Complex Calculator. If not, see <http://www.gnu.org/licenses/>.
  * */
-package cat.inspiracio.numbers
+package cat.inspiracio.complex
+
+//the object
+import Complex._
+
+//the package object
+import cat.inspiracio.numbers._
 
 /** Finite complex numbers in Cartesian representation */
-class Cartesian
-  (val re: Double, val im: Double)  //XXX reduce visibility
+class CartesianComplex
+  (override val re: Double, override val im: Double)  //XXX reduce visibility
   extends Complex
 {
   require( !re.isInfinite && !im.isInfinite, "Infinite: " + re + " " + im)
-
-  import Complex._
 
   /** just to make nicer formulas in this class */
   private val z = this
@@ -93,25 +97,24 @@ class Cartesian
     else 4
 
   protected def acos = throw new PartialException("acos not implemented.")
-  protected def asin: Cartesian = throw new PartialException("asin not implemented")
-  protected def atan: Cartesian = throw new PartialException("atan not implemented")
+  protected def asin: CartesianComplex = throw new PartialException("asin not implemented")
+  protected def atan: CartesianComplex = throw new PartialException("atan not implemented")
 
   override def sin: Complex = {
     val zi = z * i
-    (Complex.exp(zi) - Complex.exp(-zi)) / (2*i)
+    (zi.exp - (-zi).exp) / (2 * i)
   }
 
-  def sinh: Complex =
-    ( Complex.exp(z) - Complex.exp(-z) ) / 2
+  def sinh: Complex = ( z.exp - (-z).exp ) / 2
 
   def cos: Complex = {
     val zi = z * i
-    (Complex.exp(zi) + Complex.exp(-zi)) / 2
+    (zi.exp + (-zi).exp) / 2
     //( e^zi + e^(-zi) ) / 2
   }
 
   def cosh: Complex =
-      ( Complex.exp(z) + ( Complex.exp(-z))) / 2
+      ( z.exp + ( (-z).exp)) / 2
       //(e^z + e^(-z)) / 2
 
   def tan: Complex = z.sin / z.cos
@@ -172,7 +175,7 @@ class Cartesian
       if(r<=1) 1
       else r * f(r-1)
 
-    f(z.re)
+    double2Complex(f(z.re))
   }
 
   protected def sqrt: Complex = {
@@ -219,12 +222,12 @@ class Cartesian
   def * (c: Complex): Complex = {
 
     if (z.isZero) {
-      if (c.finite) 0
+      if (c.finite) int2Complex(0)
       else throw new PartialException("0 * ∞")
     }
 
     else if (z.finite) {
-      if (c.isZero) 0
+      if (c.isZero) int2Complex(0)
       else if (c.finite) {
         val Cartesian(cre, cim) = c
         Cartesian(z.re * cre - z.im * cim, z.re * cim + cre * z.im)
@@ -240,7 +243,8 @@ class Cartesian
 
   def / (d: Double): Complex = {
     if (z.isZero) {
-      if (d == 0) throw new PartialException("0/0") else 0
+      if (d == 0) throw new PartialException("0/0")
+      else int2Complex(0)
     }
     else if (finite) {
       if (d == 0) ∞
@@ -277,7 +281,7 @@ class Cartesian
 
     if (z.isZero) {
       if (c.isZero) throw new PartialException("0/0")
-      if (c.finite) 0
+      if (c.finite) int2Complex(0)
       else throw new PartialException("0/∞")
     }
 
@@ -288,7 +292,7 @@ class Cartesian
         val ad = div(re, im, cre, cim)
         Cartesian(ad(0), ad(1))
       }
-      else 0
+      else int2Complex(0)
     }
 
     else {
@@ -300,11 +304,11 @@ class Cartesian
   override def ^ (c: Complex): Complex = {
     if (z.isZero) {
       if (c.isZero) throw new PartialException("0^0")
-      else 0
+      else int2Complex(0)
     }
 
     else if (z.finite) {
-      if (c.isZero) 1     // x^0 = 1
+      if (c.isZero) int2Complex(1)     // x^0 = 1
       else if (c.finite) { // x^y
 
         val Cartesian(cre, cim) = c
@@ -329,7 +333,7 @@ class Cartesian
   def distance(c: Infinity.type ): Double =
     if (!z.finite) Double.PositiveInfinity else 0
 
-  def distance(c: Cartesian): Double = Math.sqrt(sqr(z.re - c.re) + sqr(z.im - c.im))
+  def distance(c: CartesianComplex): Double = Math.sqrt(sqr(z.re - c.re) + sqr(z.im - c.im))
 
   /** Copes with null and ∞;
     * accepts Byte, Int, Long, Float, Double,
@@ -347,7 +351,7 @@ class Cartesian
       case f: Float => z == float2Complex(f)
       case d: Double => z == double2Complex(d)
 
-      case c: Cartesian =>
+      case c: CartesianComplex =>
         if (!z.finite && !c.finite) true
         else if (z.finite != c.finite) false
         else z.re==c.re && z.im==c.im

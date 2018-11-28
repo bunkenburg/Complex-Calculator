@@ -17,9 +17,9 @@
  * */
 package cat.inspiracio.complextests
 
-import cat.inspiracio.numbers.Complex
 import org.scalatest.FunSuite
-import cat.inspiracio.numbers.Complex._
+
+import cat.inspiracio.complex._
 
 class ToString extends FunSuite {
 

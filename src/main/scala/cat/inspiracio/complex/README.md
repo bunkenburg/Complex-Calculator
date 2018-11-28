@@ -2,7 +2,7 @@
 
 How does the client programmer use Complex numbers?
 
-    import cat.inspiracio.numbers.Complex._
+    import cat.inspiracio.complex._
 
 One type:
 
@@ -15,6 +15,14 @@ Constants:
     i : Complex
     ∞ : Complex
 
+Literals will be transformed to Complex:
+
+    0: Byte
+    1: Int
+    2L: Long
+    3.2: Float
+    4.5: Double
+    
 Operators:
     
        -a

@@ -18,8 +18,7 @@
 package cat.inspiracio.complextests
 
 import org.scalatest.FunSuite
-import cat.inspiracio.numbers.Complex
-import cat.inspiracio.numbers.Complex._
+import cat.inspiracio.complex._
 
 class Patterns extends FunSuite {
 
