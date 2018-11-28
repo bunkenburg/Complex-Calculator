@@ -24,6 +24,25 @@ class Operators extends FunSuite {
 
   // -a -----------------------------
 
+  test("+0"){
+    val c: Complex = 0
+    val d = +c
+    assert( (0:Complex) === d )
+  }
+
+  test("+i"){
+    val c: Complex = +i
+    val d = 0 + i
+    assert( c === d )
+  }
+
+  test("+∞"){
+    val c = + ∞
+    assert( c === ∞ )
+  }
+
+  // -a -----------------------------
+
   test("-0"){
     val c: Complex = 0
     val d = -c

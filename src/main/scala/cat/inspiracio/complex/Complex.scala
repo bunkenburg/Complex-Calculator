@@ -66,6 +66,7 @@ trait Complex {
 
   // Operators ---------------------------------
 
+  def unary_+ : Complex = this
   def unary_- : Complex
 
   def + (c: Complex): Complex
