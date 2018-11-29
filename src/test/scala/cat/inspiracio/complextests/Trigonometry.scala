@@ -23,20 +23,50 @@ import cat.inspiracio.complex._
 
 class Trigonometry extends FunSuite {
 
-  test("sin 0") {
+  test("sin(0)") {
     val e = sin(0)
     assert( e === 0 )
   }
 
-  test("sin π/2") { assert( sin(π/2) === 1 ) }
-
-  test("sin π") {
-    // Math.sin(Math.PI) == 1.2246467991473532E-16
-    val Cartesian(re,im) = sin(π)
-    assert( re === 0.0 +- 1.0E-15 )
-    assert( im === 0.0 +- 1.0E-15 )
+  test("sin(π/2)") {
+    assert( sin(π/2) === 1 )
   }
 
-  test("sin 3π/2") { assert( sin(3*π/2) === -1 ) }
+  test("sin(π)") {
+    // Math.sin(Math.PI) == 1.2246467991473532E-16
+    val Real(re) = sin(π)
+    assert( re === 0.0 +- 1.0E-15 )
+  }
+
+  test("sin(3π/2)") {
+    assert( sin(3*π/2) === -1 )
+  }
+
+  test("sin(2π)") {
+    // Math.sin(Math.PI) == 1.2246467991473532E-16
+    val Real(re) = sin(2*π)
+    assert( re === 0.0 +- 1.0E-15 )
+  }
+
+  test("sin(2kπ)") {
+    // Math.sin(Math.PI) == 1.2246467991473532E-16
+    val k = 16
+    val Real(re) = sin(2*k*π)
+    assert( re === 0.0 +- 1.0E-15 )
+  }
+
+  test("sin(i)") {
+    val c = sin(i)
+    assert( c.toString === "1.1752011936i"  )
+  }
+
+  test("sin(∞)") {
+    assertThrows[ArithmeticException] {
+      val c = sin(∞)
+      assert(c === 0.0 +- 1.0E-15)
+    }
+  }
+
+
 
 }

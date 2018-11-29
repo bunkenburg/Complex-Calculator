@@ -178,12 +178,12 @@ object Complex {
     override val isZero = false
     override def toString = "∞"
 
-    override def sin = throw new PartialException("sin ∞")
-    override def sinh = throw new PartialException("sinh ∞")
-    override def cos = throw new PartialException("cos ∞")
-    override def cosh = throw new PartialException("cosh ∞")
-    override def tan = throw new PartialException("tan ∞")
-    override def tanh = throw new PartialException("tanh ∞")
+    override def sin = throw new ArithmeticException("sin ∞")
+    override def sinh = throw new ArithmeticException("sinh ∞")
+    override def cos = throw new ArithmeticException("cos ∞")
+    override def cosh = throw new ArithmeticException("cosh ∞")
+    override def tan = throw new ArithmeticException("tan ∞")
+    override def tanh = throw new ArithmeticException("tanh ∞")
     override def ln = ∞
     override def exp = ∞
 
@@ -201,10 +201,19 @@ object Complex {
       if (c.finite) ∞
       else throw new ArithmeticException("∞ + ∞")
 
-    override def - (c: Complex) = if(c.finite) ∞ else throw new ArithmeticException("∞ - ∞")
-    override def * (c: Complex)= if (c.isZero) throw new ArithmeticException("∞ * 0") else ∞
+    override def - (c: Complex) =
+      if(c.finite) ∞
+      else throw new ArithmeticException("∞ - ∞")
+
+    override def * (c: Complex)=
+      if (c.isZero) throw new ArithmeticException("∞ * 0")
+      else ∞
+
     override def / (c: Complex) = if (c.isZero) throw new ArithmeticException("∞/0") else ∞
-    override def ^ (c: Complex): Complex = ???
+
+    override def ^ (c: Complex) = if (c.isZero)
+      throw new ArithmeticException("∞^0")  // ∞^0 = undefined
+      else ∞ // ∞^y = ∞
 
   }
 

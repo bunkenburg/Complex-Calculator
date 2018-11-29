@@ -221,8 +221,11 @@ class Operators extends FunSuite {
   }
 
   test("∞ / ∞"){
-    val a = ∞
-    val b = ∞
+    assertThrows[ArithmeticException] {
+      val a = ∞
+      val b = ∞
+      assert(a / b === 0)
+    }
   }
 
   test("∞ / 0"){
@@ -238,6 +241,70 @@ class Operators extends FunSuite {
       val a = 0
       val b = ∞
       assert(a / b === ∞)
+    }
+  }
+
+  // a ^ b ---------------------------
+
+  test("0 ^ 0"){
+    assertThrows[ArithmeticException] {
+      val a = 0
+      val b: Complex = 0
+      assert( (a^b) === 0)
+    }
+  }
+
+  test("0 ^ i"){
+    val a = 0
+    val b = i
+    assert( (a^b) === 0 )
+  }
+
+  test("i ^ 0"){
+    val a = i
+    val b = 0
+    assert( (a^b) === 1 )
+  }
+
+  test("1 ^ i"){
+    val a = 1
+    val b = i
+    val s = (a^b).toString
+    assert( s === "1" )
+  }
+
+  test("i ^ 2"){
+    val a = i
+    val b = 2
+    val s = (a^b).toString
+    assert( s === "-1" )
+  }
+
+  test("π ^ ∞"){
+    val a = π
+    val b = ∞
+    assert( (a^b) === ∞ )
+  }
+
+  test("∞ ^ ∞"){
+    val a = ∞
+    val b = ∞
+    assert( (a^b) === ∞ )
+  }
+
+  test("∞ ^ 0"){
+    assertThrows[ArithmeticException] {
+      val a = ∞
+      val b = 0
+      assert( (a^b) === ∞)
+    }
+  }
+
+  test("0 ^ ∞"){
+    assertThrows[ArithmeticException] {
+      val a = 0
+      val b = ∞
+      assert( (a^b) === ∞)
     }
   }
 

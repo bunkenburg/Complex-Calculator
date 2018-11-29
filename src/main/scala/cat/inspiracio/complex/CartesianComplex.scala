@@ -285,12 +285,13 @@ class CartesianComplex
   }
 
   override def ^ (c: Complex): Complex = {
+
     if (z.isZero) {
       if (c.isZero) throw new ArithmeticException("0^0")
-      else int2Complex(0)
+      else 0
     }
 
-    else if (z.finite) {
+    else {
       if (c.isZero) int2Complex(1)     // x^0 = 1
       else if (c.finite) { // x^y
 
@@ -308,9 +309,6 @@ class CartesianComplex
       else ∞ // x^∞ = ∞
     }
 
-    else
-      if (c.isZero) throw new ArithmeticException("∞^0")  // ∞^0 = undefined
-      else ∞ // ∞^y = ∞
   }
 
   def distance(c: Infinity.type ): Double =
