@@ -60,4 +60,18 @@ class CompareEC extends FunSuite {
     }
   }
 
+  test("cos"){
+    for( _ <- 1 to 10) {
+      val c = complex()
+      val e = ec(c)
+
+      val x = e.cos()
+      val alt = complex(x)
+
+      val neu = cos(c)
+
+      assert( alt === neu )
+    }
+  }
+
 }

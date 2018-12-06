@@ -24,7 +24,18 @@ package object complex {
     else Math.sin(a)
 
   def sinh(z: Complex) = z.sinh
+
   def cos(z: Complex) = z.cos
+
+  /** Improves Math.cos for important values */
+  def cos(a: Double): Double =
+    if(a==0) 1
+    else if(a==π/2) 0
+    else if(a==π) -1
+    else if(a==3*π/2) 0
+    else if(a==2*π) 1
+    else Math.cos(a)
+
   def cosh(z: Complex) = z.cosh
   def tan(z: Complex) = z.tan
   def tanh(z: Complex) = z.tanh

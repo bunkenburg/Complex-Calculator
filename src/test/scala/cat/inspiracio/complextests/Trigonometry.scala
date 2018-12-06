@@ -22,6 +22,8 @@ import cat.inspiracio.complex._
 
 class Trigonometry extends FunSuite {
 
+  // sin -----------------------------------------
+
   test("sin(0)") {
     assert( sin(0) === 0 )
   }
@@ -63,25 +65,45 @@ class Trigonometry extends FunSuite {
     }
   }
 
-  test("EC.sin"){
-    import cat.inspiracio.numbers.EC
-    import java.util.concurrent.ThreadLocalRandom
+  // cos -----------------------------------------
 
-    val min = 0
-    val max = 100
+  test("cos(0)") {
+    assert( cos(0) === 1 )
+  }
 
-    for( _ <- 1 to 10) {
-      val re = ThreadLocalRandom.current.nextDouble(min, max)
-      val im = ThreadLocalRandom.current.nextDouble(min, max)
+  test("cos(π/2)") {
+    assert( cos(π/2) === 0 )
+  }
 
-      val ec = EC.mkCartesian(re, im)
-      val x = ec.sin()
-      val alt = x.re() + i * x.im()
+  test("cos(π)") {
+    assert( cos(π) === -1 )
+  }
 
-      val c = Cartesian(re, im)
-      val neu = sin(c)
+  test("cos(3π/2)") {
+    val c = cos(3*π/2)
+    assert( c === 0 )
+  }
 
-      assert( alt === neu )
+  test("cos(2π)") {
+    val c = cos(2*π)
+    assert( c === 1 )
+  }
+
+  test("cos(2kπ)") {
+    val k = 16
+    val z = cos(2*k*π)
+    assert( z === 1)
+  }
+
+  test("cos(i)") {
+    val c = cos(i)
+    assert( c === 1.5430806348 )
+  }
+
+  test("cos(∞)") {
+    assertThrows[ArithmeticException] {
+      val c = cos(∞)
+      assert(c === 0.0 )
     }
   }
 
