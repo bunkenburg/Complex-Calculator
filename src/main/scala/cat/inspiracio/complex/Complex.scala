@@ -39,8 +39,12 @@ import cat.inspiracio.numbers.PartialException
   * */
 trait Complex {
 
+  /** maybe can get rid of this? */
   def finite = false
+
+  /** maybe can get rid of this? */
   val isZero = false
+
   def re: Double = 0
   def im: Double = 0
   def modulus: Double = 0
@@ -62,12 +66,13 @@ trait Complex {
   def opp: Complex
   def reciprocal: Complex
 
+  /** restrict type? */
   def fac: Complex
 
   // Operators ---------------------------------
 
   def unary_+ : Complex = this
-  def unary_- : Complex
+  def unary_- : Complex = 0 - this
 
   def + (c: Complex): Complex
   def - (c: Complex): Complex
@@ -128,6 +133,18 @@ trait Complex {
   }
 
   def +- (eps: Double): Circle = Circle(this, eps)
+
+  // for implementing classes ---------------------
+
+  /** improves Math.sin.
+    * sin(0) == 0
+    * sin(π) == 0 */
+  private def sin(a: Double): Double = {
+    if(a==0) 0
+    else if(a==π) 0
+    else Math.sin(a)
+  }
+
 }
 
 case class Circle(centre: Complex, radius: Double)
@@ -185,13 +202,6 @@ object Complex {
   def mkPolar(modulus: Double, angle: Double): Complex =
     if (modulus.isInfinite) ∞
     else new CartesianComplex(modulus * Math.cos(angle), modulus * sin(angle))
-
-  /** improves Math.sin.
-    * sin(π) == 0 */
-  private def sin(a: Double): Double = {
-    if(a==π) 0
-    else Math.sin(a)
-  }
 
   // better comparison --------------------------
 

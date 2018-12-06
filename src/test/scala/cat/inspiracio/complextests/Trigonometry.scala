@@ -31,43 +31,58 @@ class Trigonometry extends FunSuite {
   }
 
   test("sin(π)") {
-    // Math.sin(Math.PI) == 1.2246467991473532E-16
     val z = sin(π)
-    assert( z === 0.0 +- 1.0E-15 )
+    assert( z === 0 )
   }
 
   test("sin(3π/2)") {
-    val b = sin(3*π/2) === -1
-    assert( b )
-    assertResult(-1){
-      sin(3*π/2)
-    }
+    val c = sin(3*π/2)
+    assert( c === -1 )
   }
 
   test("sin(2π)") {
-    // Math.sin(Math.PI) == 1.2246467991473532E-16
-    val Real(re) = sin(2*π)
-    assert( re === 0.0 +- 1.0E-15 )
+    val c = sin(2*π)
+    assert( c === 0 )
   }
 
   test("sin(2kπ)") {
     val k = 16
     val z = sin(2*k*π)
-    assert( z === 0.0 +- 1.0E-14 )
+    assert( z === 0 +- 1e-14)
   }
 
   test("sin(i)") {
     val c = sin(i)
-    assert( c.toString === "1.1752011936i"  )
+    assert( c === 1.1752011936438014 * i  )
   }
 
   test("sin(∞)") {
     assertThrows[ArithmeticException] {
       val c = sin(∞)
-      assert(c === 0.0 +- 1.0E-15)
+      assert(c === 0.0 )
     }
   }
 
+  test("EC.sin"){
+    import cat.inspiracio.numbers.EC
+    import java.util.concurrent.ThreadLocalRandom
 
+    val min = 0
+    val max = 100
+
+    for( _ <- 1 to 10) {
+      val re = ThreadLocalRandom.current.nextDouble(min, max)
+      val im = ThreadLocalRandom.current.nextDouble(min, max)
+
+      val ec = EC.mkCartesian(re, im)
+      val x = ec.sin()
+      val alt = x.re() + i * x.im()
+
+      val c = Cartesian(re, im)
+      val neu = sin(c)
+
+      assert( alt === neu )
+    }
+  }
 
 }

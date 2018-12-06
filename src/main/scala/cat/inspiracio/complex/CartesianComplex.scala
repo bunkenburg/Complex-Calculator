@@ -154,7 +154,7 @@ class CartesianComplex
   /** complex conjugate */
   def conj: Complex = Complex(re, -im)
 
-  def unary_- : Complex = Cartesian(-re, -im)
+  override def unary_- : Complex = Cartesian(-re, -im)
 
   def opp: Complex =
     if (z.isZero) ∞

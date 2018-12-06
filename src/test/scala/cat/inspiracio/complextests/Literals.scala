@@ -22,36 +22,34 @@ import cat.inspiracio.complex._
 
 class Literals extends FunSuite {
 
-  // constants ---------------------------------------------
-
   test("Byte"){
-    val b: Byte = 0
+    val b: Byte = 17
     val c: Complex = b
-    assert( c === 0 )
+    assert( c === 17 )
   }
 
   test("Int"){
-    val i: Int = 0
+    val i: Int = 18
     val c: Complex = i
-    assert( c === 0 )
+    assert( c === 18 )
   }
 
   test("Long"){
-    val l: Long = 0L
+    val l: Long = 19L
     val c: Complex = l
-    assert( c === 0 )
+    assert( c === 19 )
   }
 
   test("Float"){
-    val f: Float = 0f
+    val f: Float = 20.3f
     val c: Complex = f
-    assert( c === 0 )
+    assert( c === 20.3 )
   }
 
   test("Double"){
-    val d: Double = 0d
+    val d: Double = -3.14d
     val c: Complex = d
-    assert( c === 0 )
+    assert( c === -3.14 )
   }
 
 }

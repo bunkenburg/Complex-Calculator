@@ -15,6 +15,14 @@ package object complex {
   // functions ---------------------------------
 
   def sin(z: Complex) = z.sin
+
+  /** Improves Math.sin for important values */
+  def sin(a: Double): Double =
+    if(a==0) 0
+    else if(a==π) 0
+    else if(a==2*π) 0
+    else Math.sin(a)
+
   def sinh(z: Complex) = z.sinh
   def cos(z: Complex) = z.cos
   def cosh(z: Complex) = z.cosh
@@ -28,8 +36,8 @@ package object complex {
   implicit def byte2Complex(n: Byte): Complex = Real(n.toDouble)
   implicit def int2Complex(n: Int): Complex = Real(n.toDouble)
   implicit def long2Complex(n: Long): Complex = Real(n.toDouble)
-  implicit def float2Complex(f: Float): Complex = Real(f)
-  implicit def double2Complex(d: Double): Complex = Real(d)
+  implicit def float2Complex(f: Float): Complex = if(f.isInfinite) ∞ else Real(f)
+  implicit def double2Complex(d: Double): Complex = if(d.isInfinite) ∞ else Real(d)
 
   // pattern matchers -------------------------
 
@@ -134,19 +142,5 @@ package object complex {
     }
 
   }
-
-  // comparison -------------------------------
-
-  /** Provides a === b
-  implicit val complexEquality =
-    new Equality[Complex] {
-      import org.scalactic.Tolerance._
-      def areEqual(a: Complex, b: Any): Boolean =
-        b match {
-          case p: Complex => true
-          case _ => false
-        }
-    }
-    */
 
 }

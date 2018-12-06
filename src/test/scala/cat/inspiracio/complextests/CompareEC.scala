@@ -18,39 +18,46 @@
 package cat.inspiracio.complextests
 
 import org.scalatest.FunSuite
+
+import cat.inspiracio.numbers.EC
+
 import cat.inspiracio.complex._
 
-class Constants extends FunSuite {
+/** Compares operations on new Complex
+  * with old EC. */
+class CompareEC extends FunSuite {
 
-  test("e"){
-    val r: Double = e
-    val c: Complex = r
-    assert( c === Math.E )
+  def complex(): Complex = {
+    import java.util.concurrent.ThreadLocalRandom
+    val min = 0
+    val max = 100
+    val re = ThreadLocalRandom.current.nextDouble(min, max)
+    val im = ThreadLocalRandom.current.nextDouble(min, max)
+    Cartesian(re, im)
   }
 
-  test("e compiles"){
-    assertCompiles("val c: Double = e")
-    assertCompiles("val c: Complex = e")
+  def ec(c: Complex): EC = c match {
+    case Cartesian(re,im) => EC.mkCartesian(re, im)
+    case Infinity => EC.INFINITY
   }
 
-  test("π"){
-    val r: Double = π
-    val c: Complex = r
-    assert( c === Math.PI )
+  def complex(x: EC): Complex = {
+    if(!x.finite()) ∞
+    else x.re() + i * x.im()
   }
 
-  test("π compiles"){
-    assertCompiles("val c: Double = π")
-    assertCompiles("val c: Complex = π")
+  test("sin"){
+    for( _ <- 1 to 10) {
+      val c = complex()
+      val e = ec(c)
+
+      val x = e.sin()
+      val alt = complex(x)
+
+      val neu = sin(c)
+
+      assert( alt === neu )
+    }
   }
 
-  test("i"){
-    val c: Complex = i
-    assert( c.toString === "i" )
-  }
-
-  test("∞"){
-    val c:Complex = ∞
-    assert( c.toString === "∞" )
-  }
 }

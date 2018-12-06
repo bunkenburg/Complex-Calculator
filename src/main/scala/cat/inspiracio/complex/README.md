@@ -8,13 +8,6 @@ One type:
 
     val z: Complex
     
-Constants:
-
-    e : Double
-    π : Double
-    i : Complex
-    ∞ : Complex
-
 Literals will be transformed to Complex:
 
     0: Byte
@@ -22,6 +15,13 @@ Literals will be transformed to Complex:
     2L: Long
     3.2: Float
     4.5: Double
+
+Constants:
+
+    e : Double
+    π : Double
+    i : Complex
+    ∞ : Complex
     
 Operators:
     
@@ -31,7 +31,7 @@ Operators:
     a - b
     a * b
     a / b
-    a ^ b
+    a ^ b   Careful: precedence not right.
 
 Functions:
 
@@ -46,9 +46,9 @@ Functions:
 
 Comparison:
 
-    a == b      Complex.equals() Problems with floats.
-    a === b     Complex.complexEq Uses scalatics.
-    a === b +- 0.1  Approximate equality.
+    a == b              Exact for floating point.
+    a === b             Exact for floating point.
+    a === b +- 0.1      Approximate equality.
 
 Formatting with toString:
 
