@@ -107,4 +107,46 @@ class Trigonometry extends FunSuite {
     }
   }
 
+  // tan -----------------------------------------
+
+  test("tan(0)") {
+    assert( tan(0) === 0 )
+  }
+
+  test("tan(π/4)") {
+    assert( tan(π/4) === 1 )
+  }
+
+  test("tan(π/2)") {
+    assert( tan(π/2) === ∞ )
+  }
+
+  test("tan(3π/2)") {
+    val c = tan(3*π/2)
+    assert( c === 0 )
+  }
+
+  test("tan(2π)") {
+    val c = tan(2*π)
+    assert( c === 0 )
+  }
+
+  test("tan(2kπ)") {
+    val k = 16
+    val z = tan(2*k*π)
+    assert( z === 0 +- 1e-14 )
+  }
+
+  test("tan(i)") {
+    val c = tan(i)
+    assert( c === 0.7615941559557649 * i )
+  }
+
+  test("tan(∞)") {
+    assertThrows[ArithmeticException] {
+      val c = tan(∞)
+      assert(c === 0.0 )
+    }
+  }
+
 }

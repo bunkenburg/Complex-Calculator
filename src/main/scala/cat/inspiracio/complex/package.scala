@@ -37,7 +37,17 @@ package object complex {
     else Math.cos(a)
 
   def cosh(z: Complex) = z.cosh
+
   def tan(z: Complex) = z.tan
+
+  /** Improves Math.tan for important values */
+  def tan(a: Double): Complex =
+    if(a==0) 1
+    else if(a==π/4) 1
+    else if(a==π/2) ∞
+    else if(a==2*π) 0
+    else Math.tan(a)
+
   def tanh(z: Complex) = z.tanh
   def exp(z: Complex) = z.exp
   def ln(z: Complex) = z.ln

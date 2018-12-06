@@ -74,4 +74,18 @@ class CompareEC extends FunSuite {
     }
   }
 
+  test("tan"){
+    for( _ <- 1 to 10) {
+      val c = complex()
+      val e = ec(c)
+
+      val x = e.tan()
+      val alt = complex(x)
+
+      val neu = tan(c)
+
+      assert( alt === neu )
+    }
+  }
+
 }
