@@ -40,7 +40,7 @@ package object complex {
   val Pi: Complex = π
   val Infinity = Complex.Infinity
 
-  // unapply methods for patter matching
+  // unapply methods for pattern matching
 
   object Natural {
 
@@ -57,9 +57,9 @@ package object complex {
   object Integer {
 
     /** val Integer(n) = z */
-    def unapply(c: Complex): Option[Int] = {
+    def unapply(c: Complex): Option[Long] = {
       c match {
-        case Real(re) if (re.isWhole()) => Some(re.toInt)
+        case Real(re) if (re.isWhole()) => Some(re.toLong)
         case _ => None
       }
     }
@@ -98,8 +98,10 @@ package object complex {
     * numbers in polar coordinates. */
   object Polar {
 
+    import Complex.mkPolar
+
     /** val z = Polar(m, a) */
-    def apply(m: Double, a: Double): Complex = Complex.mkPolar(m, a)
+    def apply(m: Double, a: Double): Complex = mkPolar(m, a)
 
     /** val Polar(m, a) = z
       * Matches all finite numbers. */
@@ -132,5 +134,19 @@ package object complex {
     }
 
   }
+
+  // comparison -------------------------------
+
+  /** Provides a === b
+  implicit val complexEquality =
+    new Equality[Complex] {
+      import org.scalactic.Tolerance._
+      def areEqual(a: Complex, b: Any): Boolean =
+        b match {
+          case p: Complex => true
+          case _ => false
+        }
+    }
+    */
 
 }

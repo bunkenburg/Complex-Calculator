@@ -18,14 +18,12 @@
 package cat.inspiracio.complextests
 
 import org.scalatest.FunSuite
-import org.scalactic.Tolerance._
 import cat.inspiracio.complex._
 
 class Trigonometry extends FunSuite {
 
   test("sin(0)") {
-    val e = sin(0)
-    assert( e === 0 )
+    assert( sin(0) === 0 )
   }
 
   test("sin(π/2)") {
@@ -34,12 +32,16 @@ class Trigonometry extends FunSuite {
 
   test("sin(π)") {
     // Math.sin(Math.PI) == 1.2246467991473532E-16
-    val Real(re) = sin(π)
-    assert( re === 0.0 +- 1.0E-15 )
+    val z = sin(π)
+    assert( z === 0.0 +- 1.0E-15 )
   }
 
   test("sin(3π/2)") {
-    assert( sin(3*π/2) === -1 )
+    val b = sin(3*π/2) === -1
+    assert( b )
+    assertResult(-1){
+      sin(3*π/2)
+    }
   }
 
   test("sin(2π)") {
@@ -49,10 +51,9 @@ class Trigonometry extends FunSuite {
   }
 
   test("sin(2kπ)") {
-    // Math.sin(Math.PI) == 1.2246467991473532E-16
     val k = 16
-    val Real(re) = sin(2*k*π)
-    assert( re === 0.0 +- 1.0E-15 )
+    val z = sin(2*k*π)
+    assert( z === 0.0 +- 1.0E-14 )
   }
 
   test("sin(i)") {

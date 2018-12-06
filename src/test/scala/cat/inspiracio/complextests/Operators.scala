@@ -19,6 +19,7 @@ package cat.inspiracio.complextests
 
 import org.scalatest.FunSuite
 import cat.inspiracio.complex._
+import cat.inspiracio.numbers.EC
 
 class Operators extends FunSuite {
 
@@ -260,10 +261,9 @@ class Operators extends FunSuite {
     assert( (a^b) === 0 )
   }
 
-  test("i ^ 0"){
-    val a = i
-    val b = 0
-    assert( (a^b) === 1 )
+  test("i^0"){
+    val c = i^0
+    assert( c === 1 )
   }
 
   test("1 ^ i"){
@@ -273,11 +273,9 @@ class Operators extends FunSuite {
     assert( s === "1" )
   }
 
-  test("i ^ 2"){
-    val a = i
-    val b = 2
-    val s = (a^b).toString
-    assert( s === "-1" )
+  test("i^2"){
+    val z = i^2
+    assert( z === -1 )
   }
 
   test("π ^ ∞"){
@@ -292,20 +290,16 @@ class Operators extends FunSuite {
     assert( (a^b) === ∞ )
   }
 
-  test("∞ ^ 0"){
+  test("∞^0"){
     assertThrows[ArithmeticException] {
-      val a = ∞
-      val b = 0
-      assert( (a^b) === ∞)
+      val c = ∞ ^ 0
+      assert( c === ∞)
     }
   }
 
-  test("0 ^ ∞"){
-    assertThrows[ArithmeticException] {
-      val a = 0
-      val b = ∞
-      assert( (a^b) === ∞)
-    }
+  test("0^∞"){
+      val c = 0 ^ ∞
+      assert( c === 0)
   }
 
 }

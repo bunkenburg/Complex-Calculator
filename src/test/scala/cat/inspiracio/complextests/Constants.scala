@@ -22,12 +22,15 @@ import cat.inspiracio.complex._
 
 class Constants extends FunSuite {
 
-  // constants ---------------------------------------------
-
   test("e"){
     val r: Double = e
     val c: Complex = r
     assert( c === Math.E )
+  }
+
+  test("e compiles"){
+    assertCompiles("val c: Double = e")
+    assertCompiles("val c: Complex = e")
   }
 
   test("π"){

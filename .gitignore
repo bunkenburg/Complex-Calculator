@@ -4,8 +4,6 @@
 .project
 .settings
 bin
-target
+target/
 *.class
-*/.svn/*
-project/
 

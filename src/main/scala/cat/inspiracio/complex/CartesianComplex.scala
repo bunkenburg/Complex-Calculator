@@ -284,33 +284,6 @@ class CartesianComplex
     }
   }
 
-  override def ^ (c: Complex): Complex = {
-
-    if (z.isZero) {
-      if (c.isZero) throw new ArithmeticException("0^0")
-      else 0
-    }
-
-    else {
-      if (c.isZero) int2Complex(1)     // x^0 = 1
-      else if (c.finite) { // x^y
-
-        val Cartesian(cre, cim) = c
-
-        val mx = Math.log(z.modulus)
-        // ln(mod(x))
-        var ax = Math.atan2(z.im, z.re) // angle(x). Angle(-1) should be pi, not -pi. I want -pi < ax <= pi.
-        if (ax == -Math.PI) ax = Math.PI //Prefer pi over -pi
-        val mr = Math.exp(mx * cre - cim * ax)
-        // mod(x^y) = e^(mod(x)*re(y) - angle(x)*im(y))
-        val ar = cim * mx + cre * ax // angle(x^y) = im(y)*mod(x) + re(y)*angle(x)
-        mkPolar(mr, ar)
-      }
-      else ∞ // x^∞ = ∞
-    }
-
-  }
-
   def distance(c: Infinity.type ): Double =
     if (!z.finite) Double.PositiveInfinity else 0
 

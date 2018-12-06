@@ -20,7 +20,7 @@ package cat.inspiracio.complextests
 import org.scalatest.FunSuite
 import cat.inspiracio.complex._
 
-class ComplexEquals extends FunSuite {
+class Equals extends FunSuite {
 
   test("0==0") {
     val c: Complex = 0

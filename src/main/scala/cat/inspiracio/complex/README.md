@@ -46,8 +46,9 @@ Functions:
 
 Comparison:
 
-    ==  Complex.equals() Problems with floats.
-    === Complex.complexEq Uses scalatics.
+    a == b      Complex.equals() Problems with floats.
+    a === b     Complex.complexEq Uses scalatics.
+    a === b +- 0.1  Approximate equality.
 
 Formatting with toString:
 

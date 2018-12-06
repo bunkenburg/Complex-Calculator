@@ -74,14 +74,63 @@ trait Complex {
   def * (c: Complex): Complex
   def / (c: Complex): Complex
 
-  def ^ (c: Complex): Complex
   def ^ (c: Byte): Complex = ???
-  def ^ (c: Int): Complex = ???
+  def ^ (c: Int): Complex = this match {
+    case Real(0) =>
+      if(c==0) throw new ArithmeticException("0^0")
+      else 0
+    case Polar(mx,ax) =>
+      if(c==0) 1
+      else Polar(Math.exp(Math.log(mx) * c), c * ax)
+    case Infinity => if(c==0) throw new ArithmeticException("∞^0") else ∞
+  }
   def ^ (c: Long): Complex = ???
   def ^ (c: Float): Complex = ???
   def ^ (c: Double): Complex = this / (c: Double)
+  def ^ (c: Complex): Complex = this match {
+    case Real(0) => if(c.isZero) throw new ArithmeticException("0^0") else 0
+    case Polar(mx,ax) =>
+      if(c.isZero) 1
+      else if(c.finite){
+        val Cartesian(cre, cim) = c
+        val lnmx = Math.log(mx)
+        Polar(Math.exp(lnmx * cre - cim * ax), cim * lnmx + cre * ax)
+      }
+      else ∞
+    case Infinity => if(c.isZero) throw new ArithmeticException("∞^0") else ∞
+  }
 
+  def === (c: Byte): Boolean = this match {
+    case Integer(c) => true
+    case _ => false
+  }
+  def === (c: Int): Boolean = this match {
+    case Integer(c) => true
+    case _ => false
+  }
+  def === (c: Long): Boolean = this match {
+    case Integer(c) => true
+    case _ => false
+  }
+  def === (c: Float): Boolean = this match {
+    case Real(c) => true
+    case _ => false
+  }
+  def === (c: Double): Boolean = this match {
+    case Real(c) => true
+    case _ => false
+  }
+  def === (c: Complex): Boolean = this == c
+
+  def === (c: Circle): Boolean = {
+    val delta = (this - c.centre).modulus
+    delta <= c.radius
+  }
+
+  def +- (eps: Double): Circle = Circle(this, eps)
 }
+
+case class Circle(centre: Complex, radius: Double)
 
 object Complex {
 
@@ -134,22 +183,17 @@ object Complex {
     else new CartesianComplex(re, im)
 
   def mkPolar(modulus: Double, angle: Double): Complex =
-    if (java.lang.Double.isInfinite(modulus)) ∞
-    else new CartesianComplex(modulus * Math.cos(angle), modulus * Math.sin(angle))
+    if (modulus.isInfinite) ∞
+    else new CartesianComplex(modulus * Math.cos(angle), modulus * sin(angle))
+
+  /** improves Math.sin.
+    * sin(π) == 0 */
+  private def sin(a: Double): Double = {
+    if(a==π) 0
+    else Math.sin(a)
+  }
 
   // better comparison --------------------------
-
-  /*
-  import org.scalactic.Tolerance._
-  implicit val complexEq =
-       new org.scalactic.Equality[Complex] {
-         def areEqual(a: Complex, b: Any): Boolean =
-             b match {
-               case p: Complex => true
-                 case _ => false
-               }
-       }
-       */
 
   /** Specialisation to Real numbers, because many functions
     * and operations have much simples implementations that
@@ -209,7 +253,10 @@ object Complex {
       if (c.isZero) throw new ArithmeticException("∞ * 0")
       else ∞
 
-    override def / (c: Complex) = if (c.isZero) throw new ArithmeticException("∞/0") else ∞
+    override def / (c: Complex) =
+      if (c.isZero) throw new ArithmeticException("∞/0")
+      else if(c.finite) ∞
+      else throw new ArithmeticException("∞/∞")
 
     override def ^ (c: Complex) = if (c.isZero)
       throw new ArithmeticException("∞^0")  // ∞^0 = undefined
