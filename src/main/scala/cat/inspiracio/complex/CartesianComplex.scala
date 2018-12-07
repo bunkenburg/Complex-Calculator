@@ -121,8 +121,7 @@ class CartesianComplex
 
   def tanh: Complex = z.sinh / z.cosh
 
-  def exp: Complex =
-    mkPolar(Math.exp(re), im)
+  def exp: Complex = mkPolar(Math.exp(re), im)
 
   def ln: Complex =
     if (isZero) throw new ArithmeticException("ln 0")

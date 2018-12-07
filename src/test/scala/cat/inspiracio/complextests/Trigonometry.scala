@@ -67,8 +67,27 @@ class Trigonometry extends FunSuite {
 
   // cos -----------------------------------------
 
+  test("cos(-π)") {
+    assert( cos(-π) === -1 )
+  }
+
+  test("cos(-π : Complex)") {
+    val z: Complex = -π
+    assert( cos(z) === -1 )
+  }
+
+  test("cos(-π/2)") {
+    val z: Complex = -π/2
+    val y = cos(z)
+    assert( y === 0 )
+  }
+
   test("cos(0)") {
     assert( cos(0) === 1 )
+  }
+
+  test("cos(0 : Complex)") {
+    assert( cos(0 : Complex) === 1 )
   }
 
   test("cos(π/2)") {

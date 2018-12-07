@@ -201,7 +201,7 @@ object Complex {
 
   def mkPolar(modulus: Double, angle: Double): Complex =
     if (modulus.isInfinite) ∞
-    else new CartesianComplex(modulus * Math.cos(angle), modulus * sin(angle))
+    else new CartesianComplex(modulus * cos(angle), modulus * sin(angle))
 
   // better comparison --------------------------
 

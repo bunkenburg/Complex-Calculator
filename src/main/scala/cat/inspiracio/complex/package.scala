@@ -18,7 +18,10 @@ package object complex {
 
   /** Improves Math.sin for important values */
   def sin(a: Double): Double =
-    if(a==0) 0
+    if(a== -π) 0
+    else if(a== -π/2) -1
+    else if(a==0) 0
+    else if(a== π/2) 1
     else if(a==π) 0
     else if(a==2*π) 0
     else Math.sin(a)
@@ -27,7 +30,9 @@ package object complex {
 
   /** Improves Math.cos for important values */
   def cos(a: Double): Double =
-    if(a==0) 1
+    if(a== -π) -1
+    else if(a== -π/2) 0
+    else if(a==0) 1
     else if(a==π/2) 0
     else if(a==π) -1
     else if(a==3*π/2) 0

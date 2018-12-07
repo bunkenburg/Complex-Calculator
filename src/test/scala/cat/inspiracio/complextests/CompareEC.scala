@@ -18,128 +18,120 @@
 package cat.inspiracio.complextests
 
 import org.scalatest.FunSuite
-
 import cat.inspiracio.numbers.EC
-
 import cat.inspiracio.complex._
+
+import scala.util.{Failure, Success, Try}
 
 /** Compares operations on new Complex
   * with old EC. */
 class CompareEC extends FunSuite {
 
+  /** How many random runs per comparison test? */
+  val N = 20
+
   // helpers -----------------------------------
 
-  def complex(): Complex = {
+  def complex(max: Double): Complex = {
     import java.util.concurrent.ThreadLocalRandom
     val min = 0
-    val max = 100
     val re = ThreadLocalRandom.current.nextDouble(min, max)
     val im = ThreadLocalRandom.current.nextDouble(min, max)
     Cartesian(re, im)
   }
 
-  def ec(c: Complex): EC = c match {
+  def mkEC(c: Complex): EC = c match {
     case Cartesian(re,im) => EC.mkCartesian(re, im)
     case Infinity => EC.INFINITY
   }
 
-  def complex(x: EC): Complex = {
+  def mkComplex(x: EC): Complex = {
     if(!x.finite()) ∞
     else x.re() + i * x.im()
   }
 
-  def random() = {
-    val c = complex()
-    val e = ec(c)
-    (c, e)
+  def equals(c: Complex, fc: Complex, fe: EC): Unit ={
+    val cfe = mkComplex(fe)
+    assert(fc === cfe)
   }
 
-  def equals(c: Complex, fc: Complex, fe: EC): Unit ={
-    val cfe = complex(fe)
-    assert(fc === cfe)
+  def numbers: Seq[Complex] = {
+    val constants: Seq[Complex] = Seq(
+      -π, -3,
+      //-π/2,
+      -1, -π/4, 0, π/4, 1,
+      //π/2,
+      e, -3, π, -i, i, 3.2+i)
+
+    var small: Seq[Complex] = Seq()
+    for(_ <- 1 to N)
+      small = complex(5) +: small
+
+    var big: Seq[Complex] = Seq(i)
+    for(_ <- 1 to N)
+      big = complex(1000) +: big
+
+    constants ++ small ++ big
+  }
+
+  def compare(
+                f : Complex => Complex,
+                g : EC => EC ) = {
+    for(c <- numbers) {
+
+      val e = mkEC(c)
+      val fc = Try(f(c))
+      val fe = Try(g(e))
+
+      fc match {
+        case Success(x) => fe match {
+          case Success(y) => assert( x === mkComplex(y) , "z=" + c)
+          case Failure(ye) => fail("new: " + x, ye)
+        }
+        case Failure(xe) => fe match {
+          case Success(y) => fail("old: " + y, xe)
+          case Failure(ye) => succeed
+        }
+      }
+    }
   }
 
   // trigonometry -------------------------------
 
   test("sin"){
-    for( _ <- 1 to 10) {
-      val c = complex()
-      val e = ec(c)
-
-      val x = e.sin()
-      val alt = complex(x)
-
-      val neu = sin(c)
-
-      assert( alt === neu )
-    }
+    compare( sin(_) , _.sin() )
   }
 
   test("cos"){
-    for( _ <- 1 to 10) {
-      val c = complex()
-      val e = ec(c)
-
-      val x = e.cos()
-      val alt = complex(x)
-
-      val neu = cos(c)
-
-      assert( alt === neu )
-    }
+    compare( cos(_), _.cos() )
   }
 
   test("tan"){
-    for( _ <- 1 to 10) {
-      val c = complex()
-      val e = ec(c)
-
-      val x = e.tan()
-      val alt = complex(x)
-
-      val neu = tan(c)
-
-      assert( alt === neu )
-    }
+    compare( tan(_), _.tan() )
   }
 
   // hyperbolic --------------------------------
 
   test("sinh"){
-    for( _ <- 1 to 10) {
-      val (c,e) = random()
-      equals(c, sinh(c), e.sinh())
-    }
+    compare( sinh(_), _.sinh() )
   }
 
   test("cosh"){
-    for( _ <- 1 to 10) {
-      val (c,e) = random()
-      equals(c, cosh(c), e.cosh())
-    }
+    compare( cosh(_), _.cosh() )
   }
 
   test("tanh"){
-    for( _ <- 1 to 10) {
-      val (c,e) = random()
-      equals(c, tanh(c), e.tanh())
-    }
+    compare( tanh(_), _.tanh() )
   }
 
   // exp ln --------------------------------
 
   test("exp"){
-    for( _ <- 1 to 10) {
-      val (c,e) = random()
-      equals(c, exp(c), e.exp())
-    }
+    compare( exp(_), _.exp() )
   }
 
   test("ln"){
-    for( _ <- 1 to 10) {
-      val (c,e) = random()
-      equals(c, ln(c), e.ln())
-    }
+    compare( ln(_), _.ln() )
   }
 
 }
