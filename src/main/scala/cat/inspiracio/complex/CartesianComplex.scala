@@ -125,7 +125,7 @@ class CartesianComplex
     mkPolar(Math.exp(re), im)
 
   def ln: Complex =
-    if (isZero) throw new PartialException("ln 0")
+    if (isZero) throw new ArithmeticException("ln 0")
     else Complex(Math.log(z.modulus), z.argument)
 
   override def argument: Double = if (finite && !isZero) {

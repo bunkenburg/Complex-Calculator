@@ -27,6 +27,8 @@ import cat.inspiracio.complex._
   * with old EC. */
 class CompareEC extends FunSuite {
 
+  // helpers -----------------------------------
+
   def complex(): Complex = {
     import java.util.concurrent.ThreadLocalRandom
     val min = 0
@@ -45,6 +47,19 @@ class CompareEC extends FunSuite {
     if(!x.finite()) ∞
     else x.re() + i * x.im()
   }
+
+  def random() = {
+    val c = complex()
+    val e = ec(c)
+    (c, e)
+  }
+
+  def equals(c: Complex, fc: Complex, fe: EC): Unit ={
+    val cfe = complex(fe)
+    assert(fc === cfe)
+  }
+
+  // trigonometry -------------------------------
 
   test("sin"){
     for( _ <- 1 to 10) {
@@ -90,17 +105,6 @@ class CompareEC extends FunSuite {
 
   // hyperbolic --------------------------------
 
-  def random() = {
-    val c = complex()
-    val e = ec(c)
-    (c, e)
-  }
-
-  def equals(c: Complex, fc: Complex, fe: EC): Unit ={
-    val cfe = complex(fe)
-    assert(fc === cfe)
-  }
-
   test("sinh"){
     for( _ <- 1 to 10) {
       val (c,e) = random()
@@ -119,6 +123,22 @@ class CompareEC extends FunSuite {
     for( _ <- 1 to 10) {
       val (c,e) = random()
       equals(c, tanh(c), e.tanh())
+    }
+  }
+
+  // exp ln --------------------------------
+
+  test("exp"){
+    for( _ <- 1 to 10) {
+      val (c,e) = random()
+      equals(c, exp(c), e.exp())
+    }
+  }
+
+  test("ln"){
+    for( _ <- 1 to 10) {
+      val (c,e) = random()
+      equals(c, ln(c), e.ln())
     }
   }
 
