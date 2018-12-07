@@ -36,11 +36,13 @@ Operators:
 Functions:
 
     sin(z)
-    sinh(z)
     cos(z)
-    cosh(z)
     tan(z)
+
+    sinh(z)
+    cosh(z)
     tanh(z)
+
     exp(z)
     ln(z)
 

@@ -88,4 +88,38 @@ class CompareEC extends FunSuite {
     }
   }
 
+  // hyperbolic --------------------------------
+
+  def random() = {
+    val c = complex()
+    val e = ec(c)
+    (c, e)
+  }
+
+  def equals(c: Complex, fc: Complex, fe: EC): Unit ={
+    val cfe = complex(fe)
+    assert(fc === cfe)
+  }
+
+  test("sinh"){
+    for( _ <- 1 to 10) {
+      val (c,e) = random()
+      equals(c, sinh(c), e.sinh())
+    }
+  }
+
+  test("cosh"){
+    for( _ <- 1 to 10) {
+      val (c,e) = random()
+      equals(c, cosh(c), e.cosh())
+    }
+  }
+
+  test("tanh"){
+    for( _ <- 1 to 10) {
+      val (c,e) = random()
+      equals(c, tanh(c), e.tanh())
+    }
+  }
+
 }

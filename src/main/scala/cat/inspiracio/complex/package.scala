@@ -23,8 +23,6 @@ package object complex {
     else if(a==2*π) 0
     else Math.sin(a)
 
-  def sinh(z: Complex) = z.sinh
-
   def cos(z: Complex) = z.cos
 
   /** Improves Math.cos for important values */
@@ -36,8 +34,6 @@ package object complex {
     else if(a==2*π) 1
     else Math.cos(a)
 
-  def cosh(z: Complex) = z.cosh
-
   def tan(z: Complex) = z.tan
 
   /** Improves Math.tan for important values */
@@ -48,7 +44,15 @@ package object complex {
     else if(a==2*π) 0
     else Math.tan(a)
 
+  /** sinh x = -i sin(ix) */
+  def sinh(z: Complex) = z.sinh
+
+  /** cosh x = cos(ix) */
+  def cosh(z: Complex) = z.cosh
+
+  /** tanh x = -i tan(ix) */
   def tanh(z: Complex) = z.tanh
+
   def exp(z: Complex) = z.exp
   def ln(z: Complex) = z.ln
 
