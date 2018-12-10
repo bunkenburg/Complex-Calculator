@@ -1,7 +1,5 @@
 package cat.inspiracio
 
-import cat.inspiracio.complex.Complex.Real
-
 /** This is all the client programmer needs:
   *
   * import cat.inspiracio.complex._
@@ -129,12 +127,11 @@ package object complex {
   object Real {
 
     /** val c = Real(3.2) */
-    def apply(re: Double): Real = new Real(re)
+    def apply(re: Double): Complex = Cartesian(re, 0)
 
     /** val Real(re) = z */
     def unapply(c: Complex): Option[Double] = {
       c match {
-        case c: Real => Some(c.re)
         case Cartesian(re, im) if im == 0 => Some(re)
         case _ => None
       }

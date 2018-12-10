@@ -375,22 +375,4 @@ object Complex {
 
   }
 
-  /** Specialisation to Real numbers, because many functions
-    * and operations have much simples implementations that
-    * are more precise.
-    *
-    * Maybe in a different place? */
-  class Real(re: Double) extends CartesianComplex(re, 0) {
-
-    //Conversions ---------------------------------
-
-    implicit private def byte2Real(n: Byte): Real = Real(n.toDouble)
-    implicit private def int2Real(n: Int): Real = Real(n.toDouble)
-    implicit private def long2Real(n: Long): Real = Real(n.toDouble)
-    //implicit private def float2Real(f: Float): Real = Real(f) //infinite?
-    //implicit private def double2Real(d: Double): Real = Real(d) //infinite?
-
-    override def sin: Real = Real(Math.sin(re))
-  }
-
 }

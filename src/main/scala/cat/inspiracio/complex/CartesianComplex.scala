@@ -122,7 +122,7 @@ class CartesianComplex
 
   def ln: Complex =
     if (isZero) throw new ArithmeticException("ln 0")
-    else Cartesian(Math.log(this.modulus), this.argument)
+    else Cartesian(Math.log(modulus), argument)
 
   override def argument: Double = if (finite && !isZero) {
     val d = Math.atan2(im, re)
