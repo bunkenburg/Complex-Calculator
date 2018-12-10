@@ -30,7 +30,7 @@ package object complex {
 
   def sin(z: Complex): Complex = z match {
     case ∞ => throw new ArithmeticException("sin ∞")
-    case Cartesian(re,im) => {
+    case _ => {
       val zi = z * i
       (exp(zi) - exp(-zi)) / (2 * i)
     }
@@ -49,7 +49,7 @@ package object complex {
 
   def cos(z: Complex) = z match {
     case ∞ => throw new ArithmeticException("cos ∞")
-    case Cartesian(re,im) => {
+    case _ => {
       val zi = z * i
       (exp(zi) + exp(-zi)) / 2
     }
@@ -72,7 +72,10 @@ package object complex {
   // hyperbolic functions -------------------
 
   /** sinh x = -i sin(ix) */
-  def sinh(z: Complex) = z.sinh
+  def sinh(z: Complex) = z match {
+    case ∞ => throw new ArithmeticException("sinh ∞")
+    case _ => ( exp(z) - exp(-z) ) / 2
+  }
 
   /** cosh x = cos(ix) */
   def cosh(z: Complex) = z.cosh
