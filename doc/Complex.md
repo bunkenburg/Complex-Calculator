@@ -10,8 +10,8 @@ trait and classes:
 
 * trait cat.inspiracio.complex.Complex
     - serves as type
-    - declares methods other classes have to implement
-    - gives default implementations for many methods
+    - declares functions like sin
+    - gives default implementations for many operators
 * class cat.inspiracio.complex.imp.CartesianComplex(re: Double, im: Double)
     - always finite
     - make lazy in re, im, mod, arg
@@ -21,8 +21,10 @@ trait and classes:
     
 ## todo
 
-* remove methods sin and similar: syntax not natural
-* for re im modulus arguments: make them lazy. Calculate at most once.
 * get rid of finite
 * get rid of isZero
+* get rid of modulus
+* get rid of argument
+* for re im modulus arguments: make them private lazy val. Calculate at most once.
+x remove methods sin and similar: syntax not natural
 x are Complex, Real, Infinity, etc in the right place?

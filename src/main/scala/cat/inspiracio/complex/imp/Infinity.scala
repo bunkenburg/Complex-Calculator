@@ -18,8 +18,6 @@ object Infinity extends Complex{
 
   // Operators ------------------------------------
 
-  override def unary_- = ∞
-
   override def + (c: Complex) =
     if (c.finite) ∞
     else throw new ArithmeticException("∞ + ∞")

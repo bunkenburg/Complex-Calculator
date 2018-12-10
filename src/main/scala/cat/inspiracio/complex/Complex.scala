@@ -46,7 +46,11 @@ trait Complex {
   // Operators ---------------------------------
 
   def unary_+ : Complex = this
-  def unary_- : Complex = 0 - this
+
+  def unary_- : Complex = this match {
+    case ∞ => ∞
+    case Cartesian(re,im) => Cartesian(-re,-im)
+  }
 
   def + (d: Double): Complex = this + double2Complex(d)
   def + (c: Complex): Complex

@@ -111,8 +111,6 @@ class CartesianComplex
 
   private def sqr(d: Double) = d * d
 
-  override def unary_- : Complex = Cartesian(-re, -im)
-
   protected def sqrt: Complex = {
     val m = this.modulus
 
