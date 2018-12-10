@@ -15,8 +15,7 @@ object Infinity extends Complex{
   override val finite = false
   override val isZero = false
   override def toString = "∞"
-
-  override def tanh = throw new ArithmeticException("tanh ∞")
+  
   override def ln = ∞
   override def exp = ∞
 

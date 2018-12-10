@@ -45,8 +45,6 @@ trait Complex {
 
   // Functions ----------------
 
-  def tanh: Complex
-
   def ln: Complex
   def exp: Complex
 

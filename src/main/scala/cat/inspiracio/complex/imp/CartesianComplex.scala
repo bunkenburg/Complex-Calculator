@@ -92,8 +92,6 @@ class CartesianComplex
     else if (re < 0 || 0 <= im) 0
     else 4
 
-  def tanh: Complex = sinh(this) / cosh(this)
-
   def exp: Complex = Polar(Math.exp(re), im)
 
   def ln: Complex =
