@@ -111,9 +111,6 @@ class CartesianComplex
 
   private def sqr(d: Double) = d * d
 
-  /** complex conjugate */
-  def conj: Complex = Cartesian(re, -im)
-
   override def unary_- : Complex = Cartesian(-re, -im)
 
   def opp: Complex =

@@ -116,7 +116,6 @@ class Clients extends FunSuite {
     z.isZero
     z.argument
     3.fac
-    z.conj
     z.finite
     z.modulus
     z.reciprocal

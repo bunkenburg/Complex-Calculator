@@ -16,7 +16,6 @@ object Infinity extends Complex{
   override val isZero = false
   override def toString = "∞"
 
-  override def conj = ∞
   override def opp = 0
   override def reciprocal = 0
 

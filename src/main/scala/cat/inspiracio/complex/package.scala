@@ -99,11 +99,11 @@ package object complex {
     case Polar(m,a) => Cartesian(Math.log(m), a)
   }
 
-  //Maybe not, because Math.log(d) is very partial.
-  //Gives NaN for negative values.
-  //def ln(d: Double) = Math.log(d)
+  def conj(z: Complex) = z match {
+    case ∞ => ∞
+    case Cartesian(re,im) => Cartesian(re, -im)
+  }
 
-  def conj(z: Complex) = z.conj
   def opp(z: Complex) = z.opp
   def reciprocal(z: Complex) = z.reciprocal
 
