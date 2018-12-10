@@ -92,12 +92,6 @@ class CartesianComplex
     else if (re < 0 || 0 <= im) 0
     else 4
 
-  override def sin: Complex = {
-    val z = this
-    val zi = z * i
-    (zi.exp - (-zi).exp) / (2 * i)
-  }
-
   def sinh: Complex = ( this.exp - (-this).exp ) / 2
 
   def cos: Complex = {
@@ -113,7 +107,7 @@ class CartesianComplex
     //(e^z + e^(-z)) / 2
   }
 
-  def tan: Complex = this.sin / this.cos
+  def tan: Complex = sin(this) / this.cos
 
   def tanh: Complex = this.sinh / this.cosh
 

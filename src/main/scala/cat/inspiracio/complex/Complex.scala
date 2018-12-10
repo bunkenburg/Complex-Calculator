@@ -22,13 +22,8 @@ import java.text.NumberFormat
 /** Complex numbers.
   *
   * The only implementations are:
-  * - class Real(re)
   * - class CartesianComplex(re,im)
   * - object Infinity
-  *
-  * Could become implementations:
-  * - Polar
-  * - Imaginary
   *
   * The client programmer must import this trait
   * and its companion object:
@@ -50,7 +45,7 @@ trait Complex {
 
   // Functions ----------------
 
-  def sin: Complex
+  //def sin: Complex
   def cos: Complex
   def tan: Complex
 
