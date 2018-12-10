@@ -18,7 +18,6 @@ object Infinity extends Complex{
 
   override def sinh = throw new ArithmeticException("sinh ∞")
   override def cosh = throw new ArithmeticException("cosh ∞")
-  override def tan = throw new ArithmeticException("tan ∞")
   override def tanh = throw new ArithmeticException("tanh ∞")
   override def ln = ∞
   override def exp = ∞

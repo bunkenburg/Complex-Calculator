@@ -45,8 +45,6 @@ trait Complex {
 
   // Functions ----------------
 
-  def tan: Complex
-
   def sinh: Complex
   def cosh: Complex
   def tanh: Complex

@@ -100,8 +100,6 @@ class CartesianComplex
     //(e^z + e^(-z)) / 2
   }
 
-  def tan: Complex = sin(this) / cos(this)
-
   def tanh: Complex = this.sinh / this.cosh
 
   def exp: Complex = Polar(Math.exp(re), im)

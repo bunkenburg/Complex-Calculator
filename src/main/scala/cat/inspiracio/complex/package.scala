@@ -36,14 +36,6 @@ package object complex {
     }
   }
 
-  def cos(z: Complex) = z match {
-    case ∞ => throw new ArithmeticException("cos ∞")
-    case Cartesian(re,im) => {
-      val zi = z * i
-      (exp(zi) + exp(-zi)) / 2
-    }
-  }
-
   /** Improves Math.cos for important values */
   def cos(a: Double): Double =
     if(a== -π) -1
@@ -55,7 +47,13 @@ package object complex {
     else if(a==2*π) 1
     else Math.cos(a)
 
-  def tan(z: Complex) = z.tan
+  def cos(z: Complex) = z match {
+    case ∞ => throw new ArithmeticException("cos ∞")
+    case Cartesian(re,im) => {
+      val zi = z * i
+      (exp(zi) + exp(-zi)) / 2
+    }
+  }
 
   /** Improves Math.tan for important values */
   def tan(a: Double): Complex =
@@ -64,6 +62,8 @@ package object complex {
     else if(a==π/2) ∞
     else if(a==2*π) 0
     else Math.tan(a)
+
+  def tan(z: Complex): Complex = sin(z) / cos(z)
 
   def cot(a: Double) = 1 / tan(a)
 
