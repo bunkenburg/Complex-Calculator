@@ -73,7 +73,7 @@ package object complex {
   def opp(z: Complex) = z.opp
   def reciprocal(z: Complex) = z.reciprocal
 
-  def fac(n: Complex) = n.fac
+  def fac(n: Complex): Complex = n.fac
 
   // conversions ---------------------------------
 

@@ -38,15 +38,15 @@ import java.text.NumberFormat
 trait Complex {
 
   /** maybe can get rid of this? */
-  def finite = false
+  def finite: Boolean
 
   /** maybe can get rid of this? */
-  val isZero = false
+  val isZero: Boolean
 
-  def re: Double = 0
-  def im: Double = 0
-  def modulus: Double = 0
-  def argument: Double = 0
+  def re: Double
+  def im: Double
+  def modulus: Double
+  def argument: Double
 
   // Functions ----------------
 
@@ -65,7 +65,6 @@ trait Complex {
   def opp: Complex
   def reciprocal: Complex
 
-  /** restrict type? */
   def fac: Complex
 
   // Operators ---------------------------------
@@ -146,8 +145,8 @@ trait Complex {
     import RiemannSphere._
     import Math.asin
 
-    object Sin {
-      /** val Sin(a) = d */
+    object sin {
+      /** val sin(a) = d */
       def unapply(d: Double): Option[Double] = {
         val a = asin(d)
         Some(a)
@@ -173,7 +172,7 @@ trait Complex {
       // asin(0) = 0
       // asin(0.5) = 0.5235987755982989
       // asin(1) = π/2
-      val Sin(halfAngle) = halfDelta / 1
+      val sin(halfAngle) = halfDelta / 1
 
       val angle = 2 * halfAngle
       angle <= delta
@@ -348,7 +347,10 @@ object Complex {
     * pole of the Riemann sphere. */
   object Infinity extends Complex{
 
-    override def modulus = Double.PositiveInfinity
+    override def argument: Double = 0 //arbitrary
+    override def modulus = Double.PositiveInfinity  //I'd rather not go there
+    override def re = Double.PositiveInfinity //I'd rather not go there
+    override def im = Double.PositiveInfinity //I'd rather not go there
 
     override val finite = false
     override val isZero = false
