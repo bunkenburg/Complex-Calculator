@@ -117,7 +117,6 @@ class Clients extends FunSuite {
     z.argument
     3.fac
     z.conj
-    z.cosh
     z.finite
     z.exp
     z.modulus

@@ -92,13 +92,7 @@ class CartesianComplex
     else if (re < 0 || 0 <= im) 0
     else 4
 
-  def cosh: Complex = {
-    val z = this
-    (z.exp + ((-z).exp)) / 2
-    //(e^z + e^(-z)) / 2
-  }
-
-  def tanh: Complex = sinh(this) / this.cosh
+  def tanh: Complex = sinh(this) / cosh(this)
 
   def exp: Complex = Polar(Math.exp(re), im)
 

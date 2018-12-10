@@ -78,7 +78,10 @@ package object complex {
   }
 
   /** cosh x = cos(ix) */
-  def cosh(z: Complex) = z.cosh
+  def cosh(z: Complex) = z match {
+    case ∞ => throw new ArithmeticException("cosh ∞")
+    case _ => (exp(z) + (exp(-z))) / 2
+  }
 
   /** tanh x = -i tan(ix) */
   def tanh(z: Complex) = z.tanh
