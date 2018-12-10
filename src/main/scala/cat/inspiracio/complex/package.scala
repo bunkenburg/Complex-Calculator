@@ -93,7 +93,11 @@ package object complex {
     case Cartesian(re,im) => Polar(exp(re), im)
   }
 
-  def ln(z: Complex) = z.ln
+  def ln(z: Complex) = z match {
+    case ∞ => ∞
+    case Real(0) => throw new ArithmeticException("ln 0")
+    case Polar(m,a) => Cartesian(Math.log(m), a)
+  }
 
   //Maybe not, because Math.log(d) is very partial.
   //Gives NaN for negative values.
