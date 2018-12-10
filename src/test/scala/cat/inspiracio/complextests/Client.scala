@@ -119,7 +119,6 @@ class Clients extends FunSuite {
     z.finite
     z.modulus
     z.reciprocal
-    z.opp
     z.unary_-
   }
 

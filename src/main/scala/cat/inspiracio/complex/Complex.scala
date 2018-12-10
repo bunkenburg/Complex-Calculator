@@ -45,7 +45,6 @@ trait Complex {
 
   // Functions ----------------
 
-  def opp: Complex
   def reciprocal: Complex
 
   def fac: Complex

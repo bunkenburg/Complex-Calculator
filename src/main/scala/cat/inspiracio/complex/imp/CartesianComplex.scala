@@ -113,10 +113,6 @@ class CartesianComplex
 
   override def unary_- : Complex = Cartesian(-re, -im)
 
-  def opp: Complex =
-    if (this.isZero) ∞
-    else Polar(1 / this.modulus, this.argument + π)
-
   def reciprocal: Complex =
     if (isZero) ∞
     else Polar(1 / this.modulus, this.argument + π)

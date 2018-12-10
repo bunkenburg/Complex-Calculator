@@ -104,7 +104,12 @@ package object complex {
     case Cartesian(re,im) => Cartesian(re, -im)
   }
 
-  def opp(z: Complex) = z.opp
+  def opp(z: Complex): Complex = z match {
+    case ∞ => 0
+    case Real(0) => ∞
+    case Polar(m,a) => Polar(1 / m, a + π)
+  }
+
   def reciprocal(z: Complex) = z.reciprocal
 
   def fac(n: Complex): Complex = n.fac
