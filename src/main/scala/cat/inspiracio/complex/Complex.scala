@@ -23,7 +23,7 @@ import java.text.NumberFormat
   *
   * The only implementations are:
   * - class Real(re)
-  * - class Cartesian(re,im)
+  * - class CartesianComplex(re,im)
   * - object Infinity
   *
   * Could become implementations:
@@ -72,12 +72,18 @@ trait Complex {
   def unary_+ : Complex = this
   def unary_- : Complex = 0 - this
 
+  def + (d: Double): Complex = this + double2Complex(d)
   def + (c: Complex): Complex
+
+  def - (d: Double): Complex = this - double2Complex(d)
   def - (c: Complex): Complex
+
+  def * (d: Double): Complex = this * double2Complex(d)
   def * (c: Complex): Complex
+
+  def / (d: Double): Complex = this / double2Complex(d)
   def / (c: Complex): Complex
 
-  def ^ (c: Byte): Complex = ???
   def ^ (c: Int): Complex = this match {
     case Real(0) =>
       if(c==0) throw new ArithmeticException("0^0")
@@ -87,8 +93,6 @@ trait Complex {
       else Polar(Math.exp(Math.log(mx) * c), c * ax)
     case Infinity => if(c==0) throw new ArithmeticException("∞^0") else ∞
   }
-  def ^ (c: Long): Complex = ???
-  def ^ (c: Float): Complex = ???
 
   def ^ (c: Double): Complex = this match {
     case Real(0) =>
@@ -143,18 +147,21 @@ trait Complex {
 
   def === (c: Circle): Boolean = {
     import RiemannSphere._
-    import Math.asin
 
+    /** too much nicety */
     object sin {
       /** val sin(a) = d */
       def unapply(d: Double): Option[Double] = {
-        val a = asin(d)
+        val a = Math.asin(d)
         Some(a)
       }
     }
 
+    //Are they actually equal?
     if(this == c.centre)
       true
+
+    //Are they neighbours?
     else {
 
       // (x,y,z) with x² + y² + z² = 1
@@ -172,8 +179,10 @@ trait Complex {
       // asin(0) = 0
       // asin(0.5) = 0.5235987755982989
       // asin(1) = π/2
+      // 0 <= halfAngle <= π/2
       val sin(halfAngle) = halfDelta / 1
 
+      // 0 <= angle <= π
       val angle = 2 * halfAngle
       angle <= delta
     }
@@ -219,7 +228,7 @@ case class Circle(centre: Complex, radius: Double)
   * https://math.stackexchange.com/questions/1219406/how-do-i-convert-a-complex-number-to-a-point-on-the-riemann-sphere
   */
 object RiemannSphere {
-  import java.lang.Math.{sqrt}
+  import java.lang.Math.sqrt
 
   type Point = (Double, Double, Double)
 
@@ -270,6 +279,7 @@ object RiemannSphere {
   private def sqr(d: Double) = d*d
 }
 
+/** Complex object. Maybe all of this can disappear? */
 object Complex {
 
   // constants ----------------
@@ -310,47 +320,14 @@ object Complex {
 
   // Constructors --------------------------------
 
-  /** Complex(re) */
-  def apply(re: Double): Complex =
-    if(re.isInfinite) ∞
-    else new CartesianComplex(re, 0)
-
-  /** Complex(re, im) */
-  def apply(re: Double, im: Double): Complex =
-    if(re.isInfinite || im.isInfinite) ∞
-    else new CartesianComplex(re, im)
-
-  def mkPolar(modulus: Double, angle: Double): Complex =
-    if (modulus.isInfinite) ∞
-    else new CartesianComplex(modulus * cos(angle), modulus * sin(angle))
-
-  /** Specialisation to Real numbers, because many functions
-    * and operations have much simples implementations that
-    * are more precise. */
-  class Real
-  (re: Double)
-    extends CartesianComplex(re, 0) {
-
-    //Conversions ---------------------------------
-
-    implicit private def byte2Real(n: Byte): Real = Real(n.toDouble)
-    implicit private def int2Real(n: Int): Real = Real(n.toDouble)
-    implicit private def long2Real(n: Long): Real = Real(n.toDouble)
-    implicit private def float2Real(f: Float): Real = Real(f)
-    implicit private def double2Real(d: Double): Real = Real(d)
-
-    override def sin: Real = Math.sin(re)
-
-  }
-
   /** Infinity, the one complex number at the north
     * pole of the Riemann sphere. */
   object Infinity extends Complex{
 
-    override def argument: Double = 0 //arbitrary
-    override def modulus = Double.PositiveInfinity  //I'd rather not go there
-    override def re = Double.PositiveInfinity //I'd rather not go there
-    override def im = Double.PositiveInfinity //I'd rather not go there
+    override def argument: Double = throw new ArithmeticException("argument(inf)") //0 //arbitrary
+    override def modulus = throw new ArithmeticException("modulus(inf)") //Double.PositiveInfinity  //I'd rather not go there
+    override def re = throw new ArithmeticException("re(inf)") //Double.PositiveInfinity //I'd rather not go there
+    override def im = throw new ArithmeticException("im(inf)") //Double.PositiveInfinity //I'd rather not go there
 
     override val finite = false
     override val isZero = false
@@ -392,10 +369,28 @@ object Complex {
       else if(c.finite) ∞
       else throw new ArithmeticException("∞/∞")
 
-    override def ^ (c: Complex) = if (c.isZero)
-      throw new ArithmeticException("∞^0")  // ∞^0 = undefined
-      else ∞ // ∞^y = ∞
+    override def ^ (c: Complex)=
+      if (c.isZero) throw new ArithmeticException("∞^0")
+      else ∞
 
+  }
+
+  /** Specialisation to Real numbers, because many functions
+    * and operations have much simples implementations that
+    * are more precise.
+    *
+    * Maybe in a different place? */
+  class Real(re: Double) extends CartesianComplex(re, 0) {
+
+    //Conversions ---------------------------------
+
+    implicit private def byte2Real(n: Byte): Real = Real(n.toDouble)
+    implicit private def int2Real(n: Int): Real = Real(n.toDouble)
+    implicit private def long2Real(n: Long): Real = Real(n.toDouble)
+    //implicit private def float2Real(f: Float): Real = Real(f) //infinite?
+    //implicit private def double2Real(d: Double): Real = Real(d) //infinite?
+
+    override def sin: Real = Real(Math.sin(re))
   }
 
 }

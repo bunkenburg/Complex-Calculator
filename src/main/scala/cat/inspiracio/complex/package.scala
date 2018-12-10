@@ -1,10 +1,12 @@
 package cat.inspiracio
 
-import java.lang.Math.atan
-
 import cat.inspiracio.complex.Complex.Real
 
-/** This is all the client programmer needs. */
+/** This is all the client programmer needs:
+  *
+  * import cat.inspiracio.complex._
+  *
+  * */
 package object complex {
 
   // beautiful constants -----------------------------------
@@ -53,7 +55,7 @@ package object complex {
 
   def cot(a: Double) = 1 / tan(a)
 
-  def acot(m: Double) = atan(1/m)
+  def acot(m: Double) = Math.atan(1/m)
 
   // hyperbolic functions -------------------
 
@@ -67,7 +69,13 @@ package object complex {
   def tanh(z: Complex) = z.tanh
 
   def exp(z: Complex) = z.exp
+  def exp(d: Double) = Math.exp(d)
+
   def ln(z: Complex) = z.ln
+
+  //Maybe not, because Math.log(d) is very partial.
+  //Gives NaN for negative values.
+  //def ln(d: Double) = Math.log(d)
 
   def conj(z: Complex) = z.conj
   def opp(z: Complex) = z.opp
@@ -150,10 +158,11 @@ package object complex {
     * numbers in polar coordinates. */
   object Polar {
 
-    import Complex.mkPolar
-
     /** val z = Polar(m, a) */
-    def apply(m: Double, a: Double): Complex = mkPolar(m, a)
+    def apply(m: Double, a: Double): Complex =
+      if (m.isInfinite) ∞
+      else Cartesian(m * cos(a), m * sin(a))
+
 
     /** val Polar(m, a) = z
       * Matches all finite numbers. */

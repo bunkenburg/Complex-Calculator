@@ -20,9 +20,6 @@ package cat.inspiracio.complex
 //the object
 import Complex._
 
-//the package object
-import cat.inspiracio.numbers._
-
 /** Finite complex numbers in Cartesian representation */
 class CartesianComplex
   (override val re: Double, override val im: Double)  //XXX reduce visibility
@@ -30,42 +27,41 @@ class CartesianComplex
 {
   require( !re.isInfinite && !im.isInfinite, "Infinite: " + re + " " + im)
 
-  /** just to make nicer formulas in this class */
-  private val z = this
+  /** Format real number nicely, with e and π. */
+  private def toString(d: Double): String = {
+
+    //Some special real numbers
+    if(d == e) "e"
+    else if(d == -e) "-e"
+    else if(d == π) "π"
+    else if(d == -π) "-π"
+
+    //General formatting, XXX improve
+    else {
+      //val s = nf.format(d)
+      val s = d.toString
+      if (s.contains('.')) { //Cuts off trailing zeros.
+        val b = new StringBuilder(s)
+        while ( b.charAt(b.length - 1) == '0')
+          b.setLength(b.length - 1)
+        //Maybe cut off trailing '.' too.
+        if (b.charAt(b.length - 1) == '.')
+          b.setLength(b.length - 1)
+        b.toString
+      }
+      else s
+    }
+  }
 
   /** Format a complex number nicely.
     * XXX improve */
   override def toString: String = {
 
-    /** Format real number nicely, with e and π. */
-    def toString(d: Double): String = {
-
-      //Some special real numbers
-      if(d == e) "e"
-      else if(d == -e) "-e"
-      else if(d == π) "π"
-      else if(d == -π) "-π"
-
-      //General formatting, XXX improve
-      else {
-        //val s = nf.format(d)
-        val s = d.toString
-        if (s.contains('.')) { //Cuts off trailing zeros.
-          val b = new StringBuilder(s)
-          while ( b.charAt(b.length - 1) == '0')
-            b.setLength(b.length - 1)
-          //Maybe cut off trailing '.' too.
-          if (b.charAt(b.length - 1) == '.')
-            b.setLength(b.length - 1)
-          b.toString
-        }
-        else s
-      }
-    }
-
       //It's just a real number.
       if (Math.abs(im) < EPSILON)
         toString(re)
+
+      //Cartesian x + yi
       else {
         val s = toString(re)
 
@@ -97,36 +93,36 @@ class CartesianComplex
     else if (re < 0 || 0 <= im) 0
     else 4
 
-  protected def acos: Complex = throw new ArithmeticException("acos not implemented.")
-  protected def asin: Complex = throw new ArithmeticException("asin not implemented")
-  protected def atan: Complex = throw new ArithmeticException("atan not implemented")
-
   override def sin: Complex = {
+    val z = this
     val zi = z * i
     (zi.exp - (-zi).exp) / (2 * i)
   }
 
-  def sinh: Complex = ( z.exp - (-z).exp ) / 2
+  def sinh: Complex = ( this.exp - (-this).exp ) / 2
 
   def cos: Complex = {
+    val z = this
     val zi = z * i
     (zi.exp + (-zi).exp) / 2
     //( e^zi + e^(-zi) ) / 2
   }
 
-  def cosh: Complex =
-      ( z.exp + ( (-z).exp)) / 2
-      //(e^z + e^(-z)) / 2
+  def cosh: Complex = {
+    val z = this
+    (z.exp + ((-z).exp)) / 2
+    //(e^z + e^(-z)) / 2
+  }
 
-  def tan: Complex = z.sin / z.cos
+  def tan: Complex = this.sin / this.cos
 
-  def tanh: Complex = z.sinh / z.cosh
+  def tanh: Complex = this.sinh / this.cosh
 
-  def exp: Complex = mkPolar(Math.exp(re), im)
+  def exp: Complex = Polar(Math.exp(re), im)
 
   def ln: Complex =
     if (isZero) throw new ArithmeticException("ln 0")
-    else Complex(Math.log(z.modulus), z.argument)
+    else Cartesian(Math.log(this.modulus), this.argument)
 
   override def argument: Double = if (finite && !isZero) {
     val d = Math.atan2(im, re)
@@ -143,36 +139,31 @@ class CartesianComplex
   }
   else 0
 
-  override def modulus: Double =
-    if (z.finite)
-      Math.sqrt(sqr(re) + sqr(im))
-    else
-      java.lang.Double.POSITIVE_INFINITY
+  override def modulus: Double = Math.sqrt(sqr(re) + sqr(im))
 
   private def sqr(d: Double) = d * d
 
   /** complex conjugate */
-  def conj: Complex = Complex(re, -im)
+  def conj: Complex = Cartesian(re, -im)
 
   override def unary_- : Complex = Cartesian(-re, -im)
 
   def opp: Complex =
-    if (z.isZero) ∞
-    else mkPolar(1 / z.modulus, z.argument + Math.PI)
+    if (this.isZero) ∞
+    else Polar(1 / this.modulus, this.argument + π)
 
   def reciprocal: Complex =
     if (isZero) ∞
-    else mkPolar(1 / z.modulus, z.argument + Math.PI)
+    else Polar(1 / this.modulus, this.argument + π)
+
+  /** factorial function for natural numbers
+    * @param n Assumes 0 <= n */
+  private def f(n: Long): Long =
+    if(n<=1) 1
+    else n * f(n-1)
 
   /** Factorial function, for natural numbers only */
   def fac: Complex = {
-
-    /** factorial function for natural numbers
-      * @param n Assumes 0 <= n */
-    def f(n: Long): Long =
-      if(n<=1) 1
-      else n * f(n-1)
-
     this match {
       case Natural(n) => f(n)
       case _ => throw new ArithmeticException(this +  "!")
@@ -180,26 +171,23 @@ class CartesianComplex
   }
 
   protected def sqrt: Complex = {
-    if (!finite) ∞
+    val m = this.modulus
+
+    if (m == 0 )
+      0
+
+    else if (0 < re) {
+      val d1 = Math.sqrt(0.5 * (m + re))
+      val d2 = im / d1 / 2
+      Cartesian(d1, d2)
+    }
+
     else {
-      val d = z.modulus
-      var d1 = .0
-      var d2 = .0
-      if (d == 0.0D) {
-        d1 = d
-        d2 = d
-      }
-      else if (0 < re) {
-        d1 = Math.sqrt(0.5 * (d + re))
-        d2 = im / d1 / 2D
-      }
-      else {
-        d2 = Math.sqrt(0.5 * (d - re))
-        if (im < 0)
-          d2 = -d2
-        d1 = im / d2 / 2D
-      }
-      Complex(d1, d2)
+      var d2 = Math.sqrt(0.5 * (m - re))
+      if (im < 0)
+        d2 = -d2
+      val d1 = im / d2 / 2D
+      Cartesian(d1, d2)
     }
   }
 
@@ -211,16 +199,15 @@ class CartesianComplex
       case Cartesian(cre, cim) => Cartesian(re + cre, im + cim)
     }
 
-  override def - (c: Complex): Complex = {
-      if (c.finite) {
-        val Cartesian(cre, cim) = c
-        Cartesian(z.re - cre, z.im - cim)
-      } else ∞
-  }
+  override def - (c: Complex): Complex =
+    c match {
+      case ∞ => ∞
+      case Cartesian(cre, cim) => Cartesian (re - cre, im - cim)
+    }
 
   def * (c: Complex): Complex = {
 
-    if (z.isZero) {
+    if (this.isZero) {
       if (c.finite) 0
       else throw new ArithmeticException("0 * ∞")
     }
@@ -229,46 +216,59 @@ class CartesianComplex
       if (c.isZero) int2Complex(0)
       else if (c.finite) {
         val Cartesian(cre, cim) = c
-        Cartesian(z.re * cre - z.im * cim, z.re * cim + cre * z.im)
+        Cartesian(re * cre - im * cim, re * cim + cre * im)
       }
       else ∞
     }
 
   }
 
-  def / (d: Double): Complex = {
-    if (z.isZero) {
-      if (d == 0) throw new ArithmeticException("0/0") else 0
+  override def / (d: Double): Complex = {
+    if (isZero) {
+      if (d == 0) throw new ArithmeticException("0/0")
+      else 0
     }
     else {
-      if (d == 0) ∞ else Complex(re / d, im / d)
+      if (d == 0) ∞
+      else Cartesian(re / d, im / d)
     }
   }
 
-  override def / (c: Complex): Complex = {
+  /** Division for two Cartesian
+    *
+    * (ar + ai*i) / (br + bi*i)
+    * */
+  private def div(ar: Double, ai: Double, br: Double, bi: Double): Complex = {
+    //I don't understand this anymore.
+    //It is from decompiled code.
+    val d4 = Math.abs(br)
+    val d5 = Math.abs(bi)
+    var d6 = .0
+    var d7 = .0
+    var d10 = .0
 
-    def div(d: Double, d1: Double, d2: Double, d3: Double): Array[Double] = {
-      val d4 = Math.abs(d2)
-      val d5 = Math.abs(d3)
-      var d6 = .0
-      var d7 = .0
-      var d10 = .0
-      if (d4 <= d5) {
-        val d8 = d2 / d3
-        d10 = d3 * (1.0D + d8 * d8)
-        d6 = d * d8 + d1
-        d7 = d1 * d8 - d
-      }
-      else {
-        val d9 = d3 / d2
-        d10 = d2 * (1.0D + d9 * d9)
-        d6 = d + d1 * d9
-        d7 = d1 - d * d9
-      }
-      Array(d6 / d10, d7 / d10)
+    if (d4 <= d5) {
+      val d8 = br / bi
+      d10 = bi * (1.0D + d8 * d8)
+      d6 = ar * d8 + ai
+      d7 = ai * d8 - ar
     }
 
-    if (z.isZero) {
+    else {
+      val d9 = bi / br
+      d10 = br * (1.0D + d9 * d9)
+      d6 = ar + ai * d9
+      d7 = ai - ar * d9
+    }
+
+    Cartesian(d6 / d10, d7 / d10)
+  }
+
+  override def / (c: Complex): Complex = {
+    // See http://www.mesacc.edu/~scotz47781/mat120/notes/complex/dividing/dividing_complex.html
+    // for a better algorithm.
+
+    if (isZero) {
       if (c.isZero) throw new ArithmeticException("0/0")
       if (c.finite) 0
       else throw new ArithmeticException("0/∞")
@@ -278,17 +278,11 @@ class CartesianComplex
       if (c.isZero) ∞
       else if (c.finite) {
         val Cartesian(cre, cim) = c
-        val ad = div(re, im, cre, cim)
-        Cartesian(ad(0), ad(1))
+        div(re, im, cre, cim)
       }
       else int2Complex(0)
     }
   }
-
-  def distance(c: Infinity.type ): Double =
-    if (!z.finite) Double.PositiveInfinity else 0
-
-  def distance(c: CartesianComplex): Double = Math.sqrt(sqr(z.re - c.re) + sqr(z.im - c.im))
 
   /** Copes with null and ∞;
     * accepts Byte, Int, Long, Float, Double,
@@ -297,6 +291,7 @@ class CartesianComplex
     * therefore sometimes not useful.
     * */
   override def equals(other: Any): Boolean = {
+    val z = this
     other match {
       case null => false
 
@@ -320,4 +315,3 @@ class CartesianComplex
   override def hashCode = (re,im).##
 
 }
-
