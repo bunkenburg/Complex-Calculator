@@ -1,6 +1,5 @@
 package cat.inspiracio
 
-import cat.inspiracio.complex.Complex.∞
 import cat.inspiracio.complex.imp.CartesianComplex
 
 /** This is all the client programmer needs:
@@ -13,7 +12,7 @@ package object complex {
   // beautiful constants -----------------------------------
 
   val e = Math.E
-  val i = new CartesianComplex(0, 1)
+  val i = Cartesian(0, 1)
   val π = Math.PI
   val ∞ = cat.inspiracio.complex.imp.Infinity
 
@@ -66,9 +65,9 @@ package object complex {
 
   def tan(z: Complex): Complex = sin(z) / cos(z)
 
-  def cot(a: Double) = 1 / tan(a)
+  def cot(a: Double): Complex = 1 / tan(a)
 
-  def acot(m: Double) = Math.atan(1/m)
+  def acot(m: Double): Double = Math.atan(1/m)
 
   // hyperbolic functions -------------------
 
