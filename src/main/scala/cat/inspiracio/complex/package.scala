@@ -1,5 +1,6 @@
 package cat.inspiracio
 
+import cat.inspiracio.complex.Complex.∞
 import cat.inspiracio.complex.imp.CartesianComplex
 
 /** This is all the client programmer needs:
@@ -86,8 +87,11 @@ package object complex {
   /** tanh x = -i tan(ix) */
   def tanh(z: Complex): Complex = sinh(z) / cosh(z)
 
-  def exp(z: Complex) = z.exp
   def exp(d: Double) = Math.exp(d)
+  def exp(z: Complex): Complex = z match {
+    case ∞ => ∞
+    case Cartesian(re,im) => Polar(exp(re), im)
+  }
 
   def ln(z: Complex) = z.ln
 

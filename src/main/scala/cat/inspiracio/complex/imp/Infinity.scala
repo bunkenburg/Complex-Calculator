@@ -15,9 +15,8 @@ object Infinity extends Complex{
   override val finite = false
   override val isZero = false
   override def toString = "∞"
-  
+
   override def ln = ∞
-  override def exp = ∞
 
   override def conj = ∞
   override def opp = 0

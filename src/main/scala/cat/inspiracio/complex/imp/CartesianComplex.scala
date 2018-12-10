@@ -92,8 +92,6 @@ class CartesianComplex
     else if (re < 0 || 0 <= im) 0
     else 4
 
-  def exp: Complex = Polar(Math.exp(re), im)
-
   def ln: Complex =
     if (isZero) throw new ArithmeticException("ln 0")
     else Cartesian(Math.log(modulus), argument)
