@@ -16,10 +16,6 @@ object Infinity extends Complex{
   override val isZero = false
   override def toString = "∞"
 
-  override def reciprocal = 0
-
-  override def fac = ∞
-
   // Operators ------------------------------------
 
   override def unary_- = ∞

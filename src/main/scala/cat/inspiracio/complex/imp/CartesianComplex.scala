@@ -113,24 +113,6 @@ class CartesianComplex
 
   override def unary_- : Complex = Cartesian(-re, -im)
 
-  def reciprocal: Complex =
-    if (isZero) ∞
-    else Polar(1 / this.modulus, this.argument + π)
-
-  /** factorial function for natural numbers
-    * @param n Assumes 0 <= n */
-  private def f(n: Long): Long =
-    if(n<=1) 1
-    else n * f(n-1)
-
-  /** Factorial function, for natural numbers only */
-  def fac: Complex = {
-    this match {
-      case Natural(n) => f(n)
-      case _ => throw new ArithmeticException(this +  "!")
-    }
-  }
-
   protected def sqrt: Complex = {
     val m = this.modulus
 

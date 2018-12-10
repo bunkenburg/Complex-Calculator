@@ -43,12 +43,6 @@ trait Complex {
   def modulus: Double
   def argument: Double
 
-  // Functions ----------------
-
-  def reciprocal: Complex
-
-  def fac: Complex
-
   // Operators ---------------------------------
 
   def unary_+ : Complex = this

@@ -110,9 +110,25 @@ package object complex {
     case Polar(m,a) => Polar(1 / m, a + π)
   }
 
-  def reciprocal(z: Complex) = z.reciprocal
+  /** Same as opp? */
+  def reciprocal(z: Complex): Complex = z match {
+    case ∞ => 0
+    case Real(0) => ∞
+    case Polar(m,a) => Polar(1 / m, a + π)
+  }
 
-  def fac(n: Complex): Complex = n.fac
+  /** factorial function for natural numbers
+    * @param n Assumes 0 <= n */
+  private def f(n: Long): Long =
+    if(n<=1) 1
+    else n * f(n-1)
+
+  /** Factorial function, for natural numbers only */
+  def fac(z: Complex): Complex = z match {
+    case ∞ => ∞
+    case Natural(n) => f(n)
+    case _ => throw new ArithmeticException(z +  "!")
+  }
 
   // conversions ---------------------------------
 
