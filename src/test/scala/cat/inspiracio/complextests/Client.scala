@@ -115,7 +115,7 @@ class Clients extends FunSuite {
 
     z.isZero
     z.argument
-    z.fac
+    3.fac
     z.conj
     z.cos
     z.cosh

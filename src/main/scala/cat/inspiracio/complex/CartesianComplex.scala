@@ -48,7 +48,8 @@ class CartesianComplex
 
       //General formatting, XXX improve
       else {
-        val s = nf.format(d)
+        //val s = nf.format(d)
+        val s = d.toString
         if (s.contains('.')) { //Cuts off trailing zeros.
           val b = new StringBuilder(s)
           while ( b.charAt(b.length - 1) == '0')
@@ -96,9 +97,9 @@ class CartesianComplex
     else if (re < 0 || 0 <= im) 0
     else 4
 
-  protected def acos = throw new PartialException("acos not implemented.")
-  protected def asin: CartesianComplex = throw new PartialException("asin not implemented")
-  protected def atan: CartesianComplex = throw new PartialException("atan not implemented")
+  protected def acos: Complex = throw new ArithmeticException("acos not implemented.")
+  protected def asin: Complex = throw new ArithmeticException("asin not implemented")
+  protected def atan: Complex = throw new ArithmeticException("atan not implemented")
 
   override def sin: Complex = {
     val zi = z * i
@@ -163,18 +164,19 @@ class CartesianComplex
     if (isZero) ∞
     else mkPolar(1 / z.modulus, z.argument + Math.PI)
 
-  /** Factorial function, extended to complex numbers with infinity.
-    * ∞ -> ∞
-    * Then look at real part only.
-    * r <= 1  --> 1
-    * r       --> r * f(r-1)
-    * */
+  /** Factorial function, for natural numbers only */
   def fac: Complex = {
-    def f(r: Double): Double =
-      if(r<=1) 1
-      else r * f(r-1)
 
-    double2Complex(f(z.re))
+    /** factorial function for natural numbers
+      * @param n Assumes 0 <= n */
+    def f(n: Long): Long =
+      if(n<=1) 1
+      else n * f(n-1)
+
+    this match {
+      case Natural(n) => f(n)
+      case _ => throw new ArithmeticException(this +  "!")
+    }
   }
 
   protected def sqrt: Complex = {

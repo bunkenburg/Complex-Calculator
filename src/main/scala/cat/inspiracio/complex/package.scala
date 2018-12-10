@@ -43,7 +43,7 @@ package object complex {
 
   /** Improves Math.tan for important values */
   def tan(a: Double): Complex =
-    if(a==0) 1
+    if(a==0) 0
     else if(a==π/4) 1
     else if(a==π/2) ∞
     else if(a==2*π) 0
@@ -60,6 +60,12 @@ package object complex {
 
   def exp(z: Complex) = z.exp
   def ln(z: Complex) = z.ln
+
+  def conj(z: Complex) = z.conj
+  def opp(z: Complex) = z.opp
+  def reciprocal(z: Complex) = z.reciprocal
+
+  def fac(n: Complex) = n.fac
 
   // conversions ---------------------------------
 

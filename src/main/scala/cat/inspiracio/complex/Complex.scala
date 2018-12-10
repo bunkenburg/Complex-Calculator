@@ -19,8 +19,6 @@ package cat.inspiracio.complex
 
 import java.text.NumberFormat
 
-import cat.inspiracio.numbers.PartialException
-
 /** Complex numbers.
   *
   * The only implementations are:
@@ -53,10 +51,11 @@ trait Complex {
   // Functions ----------------
 
   def sin: Complex
-  def sinh: Complex
   def cos: Complex
-  def cosh: Complex
   def tan: Complex
+
+  def sinh: Complex
+  def cosh: Complex
   def tanh: Complex
 
   def ln: Complex
@@ -91,9 +90,24 @@ trait Complex {
   }
   def ^ (c: Long): Complex = ???
   def ^ (c: Float): Complex = ???
-  def ^ (c: Double): Complex = this / (c: Double)
+
+  def ^ (c: Double): Complex = this match {
+    case Real(0) =>
+      if(c==0) throw new ArithmeticException("0^0") else 0
+    case Polar(mx,ax) =>
+      if(c==0) 1
+      else if(!c.isInfinite){
+        val lnmx = Math.log(mx)
+        Polar(Math.exp(lnmx * c), c * ax)
+      }
+      else ∞
+    case Infinity =>
+      if(c==0) throw new ArithmeticException("∞^0") else ∞
+  }
+
   def ^ (c: Complex): Complex = this match {
-    case Real(0) => if(c.isZero) throw new ArithmeticException("0^0") else 0
+    case Real(0) =>
+      if(c.isZero) throw new ArithmeticException("0^0") else 0
     case Polar(mx,ax) =>
       if(c.isZero) 1
       else if(c.finite){
@@ -102,7 +116,8 @@ trait Complex {
         Polar(Math.exp(lnmx * cre - cim * ax), cim * lnmx + cre * ax)
       }
       else ∞
-    case Infinity => if(c.isZero) throw new ArithmeticException("∞^0") else ∞
+    case Infinity =>
+      if(c.isZero) throw new ArithmeticException("∞^0") else ∞
   }
 
   def === (c: Byte): Boolean = this match {
@@ -128,26 +143,159 @@ trait Complex {
   def === (c: Complex): Boolean = this == c
 
   def === (c: Circle): Boolean = {
-    val delta = (this - c.centre).modulus
-    delta <= c.radius
+    import RiemannSphere._
+    import Math.asin
+
+    //XXX Optimise: check whether this == c ?
+
+    // (x,y,z) with x² + y² + z² = 1
+    val pthis = plane2sphere(this)
+    val pc = plane2sphere(c.centre) //_ floating point operations
+
+    // 0 <= delta <= 2
+    val delta = distance(pthis, pc) // 9 floating point operations.
+
+    //Optimise: if delta==0 return true.
+
+    // 0 <= halfDelta <= 1
+    val halfDelta = delta / 2
+
+    //For optimisation, could skip asin.
+    //On x in [0,1], asin(x) and x are very similar.
+    // asin(0) = 0
+    // asin(0.5) = 0.5235987755982989
+    // asin(1) = π/2
+    val halfAngle = asin(halfDelta / 1)
+    //val Sin(halfAngle) = halfDelta / 1  //XXX Wouldn't this be cool?
+
+    val angle = 2 * halfAngle
+    val b = angle <= delta
+    if(!b){
+      println(this + " === " + c.centre + " +- " + c.radius)
+    }
+    b
   }
 
-  def +- (eps: Double): Circle = Circle(this, eps)
-
-  // for implementing classes ---------------------
-
-  /** improves Math.sin.
-    * sin(0) == 0
-    * sin(π) == 0 */
-  private def sin(a: Double): Double = {
-    if(a==0) 0
-    else if(a==π) 0
-    else Math.sin(a)
-  }
+  /** For approximate equality of complex numbers.
+    * Write
+    *   a === b +- angle
+    * to mean: complex numbers a and b and approximately equal.
+    *
+    * The difference between them is limited to angle.
+    * The difference is measured by the angle at the centre
+    * of the Riemann sphere between the two complex numbers as
+    * points on the Riemann sphere. The angle is measured in
+    * radians.
+    *
+    * Therefore
+    *   0 <= angle <= π
+    * and therefore
+    *   a === b +- π
+    * will always be true.
+    *
+    * To allow a 1⁰ difference, write
+    *   a === b +- π/180
+    *
+    * For reference:
+    *   π/180 = 0.017453292519943295
+    *
+    * So maybe angle = 0.01 or a little less may be a practical
+    * value to give.
+    *
+    * */
+  def +- (angle: Double): Circle = Circle(this, angle)
 
 }
 
 case class Circle(centre: Complex, radius: Double)
+
+/** Riemann sphere
+  * https://en.wikipedia.org/wiki/Riemann_sphere
+  * x² + y² + z² = 1
+  * https://math.stackexchange.com/questions/1219406/how-do-i-convert-a-complex-number-to-a-point-on-the-riemann-sphere
+  */
+object RiemannSphere {
+  import java.lang.Math.{abs,atan,sqrt}
+
+  type Point = (Double, Double, Double)
+
+  /** From sphere to plane: x/(1−z) + i * y/(1−z)
+    * Receives point in 3d space. Riemann sphere is centered
+    * on (0,0,0) and has radius 1.
+    * @param x
+    * @param y
+    * @param z
+    * @return Commplex number represented by this point.
+    * */
+  def sphere2plane(x: Double, y: Double, z: Double): Complex =
+    if(z== -1) 0
+    else if(z==1) ∞
+    else x/(1-z) +  (y/(1-z))*i
+
+  /** From sphere to plane: x/(1−z) + i * y/(1−z).
+    * @param p = (x,y,z) In 3d space on the unit sphere
+    * @return Complex number represented by this point. */
+  def sphere2plane(p: Point): Complex =
+    p match { case (x,y,z) => sphere2plane(x,y,z) }
+
+  /** From plane to sphere (x,y,z) = ( 2X/(1+X²+Y²) , 2Y/(1+X²+Y²) , (X²+Y²−1)/(1+X²+Y²) )
+    * @param c Complex number
+    * @return 3d point on unit sphere */
+  def plane2sphere(c: Complex): Point =
+    c match {
+      case Infinity => (0,0,1)
+      case Cartesian(re, im) => {
+        val re2 = sqr(re) //maybe Double.Infinity
+        val im2 = sqr(im) //maybe Double.Infinity
+        if(re2.isInfinity || im.isInfinity)
+          (0,0,1)
+        else
+        (
+          2 * re / (1 + re2 + im2),
+          2 * im / (1 + re2 + im2),
+          (re2 + im2 - 1) / (1 + re2 + im2)
+        )
+      }
+    }
+
+  /** Places a complex number on the Riemann sphere.
+    * Gives zenit and azimuth.
+    * Zenit is the angle at sphere centre between ∞ and c.
+    * 0 <= zenith <= π.
+    * The zenith corresponds to the modulus of c.
+    * It is  2 * acot(modulus).
+    * Azimuth is the angle on the complex plane at 0 between
+    * 1 and c.
+    * -π <= azimuth <= π
+    * The numbers ∞ and 0 are special cases: Their azimuth is 0.
+    * @param c Complex number
+    * @return (zenith, azimuth) */
+  def plane2angles(c: Complex): (Double, Double) =
+    ( 2 * acot(c.modulus), c.argument )
+
+  /** Decodes zenith and azimuth angles of a point on the
+    * Riemann sphere to corresponding complex number. */
+  def angles2plane(zenith: Double, azimuth: Double) =
+    cot(zenith/2) * exp(i * azimuth)
+
+  def cot(a: Double) = 1 / tan(a)
+  def acot(m: Double) = atan(1/m)
+
+  def d3max(a: Point, b: Point): Double =
+    d(a._1, b._1) max d(a._2, b._2) max d(a._3, b._3)
+
+  def distance(a: Point, b: Point): Double =
+    sqrt(sqr(a._1-b._1) + sqr(a._2-b._2) + sqr(a._3-b._3))
+
+  // XXX Near inf and 0, must ignore azimuth.
+  // XXX Otherwise compare azimuth modulus pi.
+  def d2max(a: (Double,Double), b: (Double,Double)): Double =
+    d(a._1, b._1) max d(a._2, b._2)
+
+  def d(a: Double, b: Double): Double = abs(a - b)
+
+  def sqr(d: Double) = d*d
+}
 
 object Complex {
 
@@ -203,8 +351,6 @@ object Complex {
     if (modulus.isInfinite) ∞
     else new CartesianComplex(modulus * cos(angle), modulus * sin(angle))
 
-  // better comparison --------------------------
-
   /** Specialisation to Real numbers, because many functions
     * and operations have much simples implementations that
     * are more precise. */
@@ -227,6 +373,8 @@ object Complex {
   /** Infinity, the one complex number at the north
     * pole of the Riemann sphere. */
   object Infinity extends Complex{
+
+    override def modulus = Double.PositiveInfinity
 
     override val finite = false
     override val isZero = false

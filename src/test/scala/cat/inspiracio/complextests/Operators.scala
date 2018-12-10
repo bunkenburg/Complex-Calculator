@@ -19,7 +19,6 @@ package cat.inspiracio.complextests
 
 import org.scalatest.FunSuite
 import cat.inspiracio.complex._
-import cat.inspiracio.numbers.EC
 
 class Operators extends FunSuite {
 

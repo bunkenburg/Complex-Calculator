@@ -33,6 +33,11 @@ class ToString extends FunSuite {
     assert(c.toString === "1")
   }
 
+  test("toString 3") {
+    val c: Complex = 3
+    assert(c.toString === "3")
+  }
+
   test("toString 0.5") {
     val c: Complex = 0.5
     assert(c.toString === "0.5")
@@ -56,6 +61,11 @@ class ToString extends FunSuite {
   test("toString i") {
     val c: Complex = i
     assert(c.toString === "i")
+  }
+
+  test("toString 3+i") {
+    val c: Complex = 3+i
+    assert(c.toString === "3+i")
   }
 
   test("toString ∞") {

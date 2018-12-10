@@ -57,10 +57,11 @@ class CompareEC extends FunSuite {
 
   def numbers: Seq[Complex] = {
     val constants: Seq[Complex] = Seq(
+      -π/2,
       -π, -3,
-      //-π/2,
+      -π/2,
       -1, -π/4, 0, π/4, 1,
-      //π/2,
+      π/2,
       e, -3, π, -i, i, 3.2+i)
 
     var small: Seq[Complex] = Seq()
@@ -85,7 +86,8 @@ class CompareEC extends FunSuite {
 
       fc match {
         case Success(x) => fe match {
-          case Success(y) => assert( x === mkComplex(y) , "z=" + c)
+          case Success(y) =>
+            assert( x === mkComplex(y) +- 1e-15, "z=" + c)
           case Failure(ye) => fail("new: " + x, ye)
         }
         case Failure(xe) => fe match {
@@ -132,6 +134,24 @@ class CompareEC extends FunSuite {
 
   test("ln"){
     compare( ln(_), _.ln() )
+  }
+
+  // conj opp reciprocal fac --------------------------------
+
+  test("conj"){
+    compare( conj(_), _.conj() )
+  }
+
+  test("opp"){
+    compare( opp(_), _.opp() )
+  }
+
+  test("reciprocal"){
+    compare( reciprocal(_), _.reciprocal() )
+  }
+
+  test("fac"){
+    compare( fac(_), _.fac() )
   }
 
 }
