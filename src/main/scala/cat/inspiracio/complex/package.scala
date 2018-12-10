@@ -1,5 +1,7 @@
 package cat.inspiracio
 
+import cat.inspiracio.complex.imp.CartesianComplex
+
 /** This is all the client programmer needs:
   *
   * import cat.inspiracio.complex._

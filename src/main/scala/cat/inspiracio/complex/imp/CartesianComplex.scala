@@ -15,10 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with Complex Calculator. If not, see <http://www.gnu.org/licenses/>.
  * */
-package cat.inspiracio.complex
+package cat.inspiracio.complex.imp
 
-//the object
-import Complex._
+import cat.inspiracio.complex._
 
 /** Finite complex numbers in Cartesian representation */
 class CartesianComplex
@@ -58,7 +57,7 @@ class CartesianComplex
   override def toString: String = {
 
       //It's just a real number.
-      if (Math.abs(im) < EPSILON)
+      if (Math.abs(im) < Complex.EPSILON)
         toString(re)
 
       //Cartesian x + yi
@@ -66,13 +65,13 @@ class CartesianComplex
         val s = toString(re)
 
         var s1: String = null
-        if (Math.abs(im - 1) < EPSILON)
+        if (Math.abs(im - 1) < Complex.EPSILON)
           s1 = "i"
-        else if (Math.abs(im + 1) < EPSILON)
+        else if (Math.abs(im + 1) < Complex.EPSILON)
           s1 = "-i"
         else
           s1 = toString(im) + "i"
-        if (Math.abs(re) < EPSILON)
+        if (Math.abs(re) < Complex.EPSILON)
           s1
         else
           s + (if (im <= 0) "" else "+") + s1
@@ -126,14 +125,14 @@ class CartesianComplex
 
   override def argument: Double = if (finite && !isZero) {
     val d = Math.atan2(im, re)
-    if (argContinuous) {
+    if (Complex.argContinuous) {
       val q = quadrant
-      if (lastQuad == 2 && q == 3)
-        k += 1
-      else if (lastQuad == 3 && q==2)
-        k -= 1
-      lastQuad = q
-      d + 2 * k * Math.PI
+      if (Complex.lastQuad == 2 && q == 3)
+        Complex.k += 1
+      else if (Complex.lastQuad == 3 && q==2)
+        Complex.k -= 1
+      Complex.lastQuad = q
+      d + 2 * Complex.k * Math.PI
     }
     else d
   }
