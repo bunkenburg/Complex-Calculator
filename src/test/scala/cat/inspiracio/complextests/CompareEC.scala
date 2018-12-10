@@ -87,7 +87,7 @@ class CompareEC extends FunSuite {
       fc match {
         case Success(x) => fe match {
           case Success(y) =>
-            assert( x === mkComplex(y) +- 1e-15, "z=" + c)
+            assert( x === mkComplex(y) +- 1e-10, "z=" + c)
           case Failure(ye) => fail("new: " + x, ye)
         }
         case Failure(xe) => fe match {

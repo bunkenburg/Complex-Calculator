@@ -146,34 +146,39 @@ trait Complex {
     import RiemannSphere._
     import Math.asin
 
-    //XXX Optimise: check whether this == c ?
-
-    // (x,y,z) with x² + y² + z² = 1
-    val pthis = plane2sphere(this)
-    val pc = plane2sphere(c.centre) //_ floating point operations
-
-    // 0 <= delta <= 2
-    val delta = distance(pthis, pc) // 9 floating point operations.
-
-    //Optimise: if delta==0 return true.
-
-    // 0 <= halfDelta <= 1
-    val halfDelta = delta / 2
-
-    //For optimisation, could skip asin.
-    //On x in [0,1], asin(x) and x are very similar.
-    // asin(0) = 0
-    // asin(0.5) = 0.5235987755982989
-    // asin(1) = π/2
-    val halfAngle = asin(halfDelta / 1)
-    //val Sin(halfAngle) = halfDelta / 1  //XXX Wouldn't this be cool?
-
-    val angle = 2 * halfAngle
-    val b = angle <= delta
-    if(!b){
-      println(this + " === " + c.centre + " +- " + c.radius)
+    object Sin {
+      /** val Sin(a) = d */
+      def unapply(d: Double): Option[Double] = {
+        val a = asin(d)
+        Some(a)
+      }
     }
-    b
+
+    if(this == c.centre)
+      true
+    else {
+
+      // (x,y,z) with x² + y² + z² = 1
+      val pthis = plane2sphere(this)
+      val pc = plane2sphere(c.centre)
+
+      // 0 <= delta <= 2
+      val delta = distance(pthis, pc)
+
+      // 0 <= halfDelta <= 1
+      val halfDelta = delta / 2
+
+      //For optimisation, could skip asin.
+      //On x in [0,1], asin(x) and x are very similar.
+      // asin(0) = 0
+      // asin(0.5) = 0.5235987755982989
+      // asin(1) = π/2
+      val Sin(halfAngle) = halfDelta / 1
+
+      val angle = 2 * halfAngle
+      angle <= delta
+    }
+
   }
 
   /** For approximate equality of complex numbers.
@@ -215,7 +220,7 @@ case class Circle(centre: Complex, radius: Double)
   * https://math.stackexchange.com/questions/1219406/how-do-i-convert-a-complex-number-to-a-point-on-the-riemann-sphere
   */
 object RiemannSphere {
-  import java.lang.Math.{abs,atan,sqrt}
+  import java.lang.Math.{sqrt}
 
   type Point = (Double, Double, Double)
 
@@ -225,12 +230,12 @@ object RiemannSphere {
     * @param x
     * @param y
     * @param z
-    * @return Commplex number represented by this point.
+    * @return Complex number represented by this point.
     * */
   def sphere2plane(x: Double, y: Double, z: Double): Complex =
     if(z== -1) 0
     else if(z==1) ∞
-    else x/(1-z) +  (y/(1-z))*i
+    else x/(1-z) + (y/(1-z))*i
 
   /** From sphere to plane: x/(1−z) + i * y/(1−z).
     * @param p = (x,y,z) In 3d space on the unit sphere
@@ -249,52 +254,21 @@ object RiemannSphere {
         val im2 = sqr(im) //maybe Double.Infinity
         if(re2.isInfinity || im.isInfinity)
           (0,0,1)
-        else
-        (
-          2 * re / (1 + re2 + im2),
-          2 * im / (1 + re2 + im2),
-          (re2 + im2 - 1) / (1 + re2 + im2)
-        )
+        else {
+          val d = 1 + re2 + im2
+          (
+            2 * re / d,
+            2 * im / d,
+            (re2 + im2 - 1) / d
+          )
+        }
       }
     }
-
-  /** Places a complex number on the Riemann sphere.
-    * Gives zenit and azimuth.
-    * Zenit is the angle at sphere centre between ∞ and c.
-    * 0 <= zenith <= π.
-    * The zenith corresponds to the modulus of c.
-    * It is  2 * acot(modulus).
-    * Azimuth is the angle on the complex plane at 0 between
-    * 1 and c.
-    * -π <= azimuth <= π
-    * The numbers ∞ and 0 are special cases: Their azimuth is 0.
-    * @param c Complex number
-    * @return (zenith, azimuth) */
-  def plane2angles(c: Complex): (Double, Double) =
-    ( 2 * acot(c.modulus), c.argument )
-
-  /** Decodes zenith and azimuth angles of a point on the
-    * Riemann sphere to corresponding complex number. */
-  def angles2plane(zenith: Double, azimuth: Double) =
-    cot(zenith/2) * exp(i * azimuth)
-
-  def cot(a: Double) = 1 / tan(a)
-  def acot(m: Double) = atan(1/m)
-
-  def d3max(a: Point, b: Point): Double =
-    d(a._1, b._1) max d(a._2, b._2) max d(a._3, b._3)
 
   def distance(a: Point, b: Point): Double =
     sqrt(sqr(a._1-b._1) + sqr(a._2-b._2) + sqr(a._3-b._3))
 
-  // XXX Near inf and 0, must ignore azimuth.
-  // XXX Otherwise compare azimuth modulus pi.
-  def d2max(a: (Double,Double), b: (Double,Double)): Double =
-    d(a._1, b._1) max d(a._2, b._2)
-
-  def d(a: Double, b: Double): Double = abs(a - b)
-
-  def sqr(d: Double) = d*d
+  private def sqr(d: Double) = d*d
 }
 
 object Complex {

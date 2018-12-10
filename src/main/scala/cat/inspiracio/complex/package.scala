@@ -1,5 +1,7 @@
 package cat.inspiracio
 
+import java.lang.Math.atan
+
 import cat.inspiracio.complex.Complex.Real
 
 /** This is all the client programmer needs. */
@@ -48,6 +50,12 @@ package object complex {
     else if(a==π/2) ∞
     else if(a==2*π) 0
     else Math.tan(a)
+
+  def cot(a: Double) = 1 / tan(a)
+
+  def acot(m: Double) = atan(1/m)
+
+  // hyperbolic functions -------------------
 
   /** sinh x = -i sin(ix) */
   def sinh(z: Complex) = z.sinh
