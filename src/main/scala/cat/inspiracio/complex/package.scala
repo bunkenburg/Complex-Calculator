@@ -18,14 +18,6 @@ package object complex {
 
   // functions ---------------------------------
 
-  def sin(z: Complex): Complex = z match {
-    case Infinity => throw new ArithmeticException("sin ∞")
-    case Cartesian(re,im) => {
-      val zi = z * i
-      (exp(zi) - exp(-zi)) / (2 * i)
-    }
-  }
-
   /** Improves Math.sin for important values */
   def sin(a: Double): Double =
     if(a== -π) 0
@@ -36,7 +28,21 @@ package object complex {
     else if(a==2*π) 0
     else Math.sin(a)
 
-  def cos(z: Complex) = z.cos
+  def sin(z: Complex): Complex = z match {
+    case ∞ => throw new ArithmeticException("sin ∞")
+    case Cartesian(re,im) => {
+      val zi = z * i
+      (exp(zi) - exp(-zi)) / (2 * i)
+    }
+  }
+
+  def cos(z: Complex) = z match {
+    case ∞ => throw new ArithmeticException("cos ∞")
+    case Cartesian(re,im) => {
+      val zi = z * i
+      (exp(zi) + exp(-zi)) / 2
+    }
+  }
 
   /** Improves Math.cos for important values */
   def cos(a: Double): Double =

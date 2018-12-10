@@ -94,20 +94,13 @@ class CartesianComplex
 
   def sinh: Complex = ( this.exp - (-this).exp ) / 2
 
-  def cos: Complex = {
-    val z = this
-    val zi = z * i
-    (zi.exp + (-zi).exp) / 2
-    //( e^zi + e^(-zi) ) / 2
-  }
-
   def cosh: Complex = {
     val z = this
     (z.exp + ((-z).exp)) / 2
     //(e^z + e^(-z)) / 2
   }
 
-  def tan: Complex = sin(this) / this.cos
+  def tan: Complex = sin(this) / cos(this)
 
   def tanh: Complex = this.sinh / this.cosh
 

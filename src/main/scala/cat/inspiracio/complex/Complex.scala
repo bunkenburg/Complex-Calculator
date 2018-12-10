@@ -45,8 +45,6 @@ trait Complex {
 
   // Functions ----------------
 
-  //def sin: Complex
-  def cos: Complex
   def tan: Complex
 
   def sinh: Complex
