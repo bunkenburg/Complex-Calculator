@@ -14,7 +14,7 @@ package object complex {
   val e = Math.E
   val i = new CartesianComplex(0, 1)
   val π = Math.PI
-  val ∞ = Complex.Infinity
+  val ∞ = cat.inspiracio.complex.imp.Infinity
 
   // functions ---------------------------------
 
@@ -98,7 +98,7 @@ package object complex {
   val E: Complex = e
   val I = i
   val Pi: Complex = π
-  val Infinity = Complex.Infinity
+  val Infinity = cat.inspiracio.complex.imp.Infinity
 
   // unapply methods for pattern matching
 
