@@ -26,6 +26,8 @@ class CartesianComplex
 {
   require( !re.isInfinite && !im.isInfinite, "Infinite: " + re + " " + im)
 
+  override val isZero: Boolean = re==0 && im==0
+
   /** Format real number nicely, with e and π. */
   private def toString(d: Double): String = {
 
@@ -80,9 +82,6 @@ class CartesianComplex
 
   // methods with 0 parameters ------------------------------------
 
-  override val finite = true
-  override val isZero = re==0 && im==0
-
   /** Why results 0, 1, 2, 3, 4 ?
     * I would expect only four results. */
   private def quadrant: Int =
@@ -92,7 +91,7 @@ class CartesianComplex
     else if (re < 0 || 0 <= im) 0
     else 4
 
-  override def argument: Double = if (finite && !isZero) {
+  override def argument: Double = if (!isZero) {
     val d = Math.atan2(im, re)
     if (Complex.argContinuous) {
       val q = quadrant
@@ -149,17 +148,17 @@ class CartesianComplex
   def * (c: Complex): Complex = {
 
     if (this.isZero) {
-      if (c.finite) 0
-      else throw new ArithmeticException("0 * ∞")
+      c match {
+        case ∞ => throw new ArithmeticException("0 * ∞")
+        case _ => 0
+      }
     }
 
     else {
-      if (c.isZero) int2Complex(0)
-      else if (c.finite) {
-        val Cartesian(cre, cim) = c
-        Cartesian(re * cre - im * cim, re * cim + cre * im)
+      c match {
+        case ∞ => ∞
+        case Cartesian(cre, cim) => Cartesian(re * cre - im * cim, re * cim + cre * im)
       }
-      else ∞
     }
 
   }
@@ -210,18 +209,19 @@ class CartesianComplex
     // for a better algorithm.
 
     if (isZero) {
-      if (c.isZero) throw new ArithmeticException("0/0")
-      if (c.finite) 0
-      else throw new ArithmeticException("0/∞")
+      c match {
+        case Real(0) => throw new ArithmeticException("0/0")
+        case ∞ => throw new ArithmeticException("0/∞")
+        case _ => 0
+      }
     }
 
     else {
-      if (c.isZero) ∞
-      else if (c.finite) {
-        val Cartesian(cre, cim) = c
-        div(re, im, cre, cim)
+      c match {
+        case Real(0) => ∞
+        case ∞ => 0
+        case Cartesian(cre, cim) => div(re, im, cre, cim)
       }
-      else int2Complex(0)
     }
   }
 
@@ -243,9 +243,7 @@ class CartesianComplex
       case d: Double => z == double2Complex(d)
 
       case c: CartesianComplex =>
-        if (!z.finite && !c.finite) true
-        else if (z.finite != c.finite) false
-        else z.re==c.re && z.im==c.im
+        z.re==c.re && z.im==c.im
 
       case ∞ => false
 

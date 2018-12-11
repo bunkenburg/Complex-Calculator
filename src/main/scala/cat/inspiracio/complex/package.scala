@@ -212,7 +212,7 @@ package object complex {
     /** val Polar(m, a) = z
       * Matches all finite numbers. */
     def unapply(c: Complex): Option[(Double,Double)] = {
-      if(!c.finite)
+      if(c === ∞)
         None
       else {
         val m = c.modulus
@@ -233,10 +233,10 @@ package object complex {
     /** val Cartesian(re, im) = z
       * Matches all finite complex numbers. */
     def unapply(c: Complex): Option[(Double,Double)] = {
-      if(c.finite)
-        Some( (c.re, c.im) )
-      else
+      if(c === ∞)
         None
+      else
+        Some( (c.re, c.im) )
     }
 
   }

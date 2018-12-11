@@ -33,9 +33,6 @@ import java.text.NumberFormat
 trait Complex {
 
   /** maybe can get rid of this? */
-  def finite: Boolean
-
-  /** maybe can get rid of this? */
   val isZero: Boolean
 
   def re: Double
@@ -92,13 +89,16 @@ trait Complex {
     case Real(0) =>
       if(c.isZero) throw new ArithmeticException("0^0") else 0
     case Polar(mx,ax) =>
-      if(c.isZero) 1
-      else if(c.finite){
-        val Cartesian(cre, cim) = c
-        val lnmx = Math.log(mx)
-        Polar(Math.exp(lnmx * cre - cim * ax), cim * lnmx + cre * ax)
+      c match {
+        case Real(0) => 1
+        case Cartesian(cre,cim) => {
+          val lnmx = Math.log(mx)
+          Polar(
+            Math.exp(lnmx * cre - cim * ax),
+            cim * lnmx + cre * ax)
+        }
+        case _ => ∞
       }
-      else ∞
     case Infinity =>
       if(c.isZero) throw new ArithmeticException("∞^0") else ∞
   }
