@@ -31,10 +31,10 @@ class RiemannSphereTest extends FunSuite {
   val N = 20
 
   def complex(max: Double): Complex = {
-    import java.util.concurrent.ThreadLocalRandom
+    import java.util.concurrent.ThreadLocalRandom.current
     val min = 0
-    val re = ThreadLocalRandom.current.nextDouble(min, max)
-    val im = ThreadLocalRandom.current.nextDouble(min, max)
+    val re = current.nextDouble(min, max)
+    val im = current.nextDouble(min, max)
     Cartesian(re, im)
   }
 
@@ -60,7 +60,7 @@ class RiemannSphereTest extends FunSuite {
 
   test("plane large") {
     val c = 6.863146616520403E201 + 2.1823605310174247E201 * i
-    val (x, y, z) = plane2sphere(c) //(0.0,0.0,NaN)
+    val (x, y, z) = plane2sphere(c)
     assert( (x, y, z) === (0, 0, 1))
   }
 

@@ -32,9 +32,6 @@ import java.text.NumberFormat
   * */
 trait Complex {
 
-  /** maybe can get rid of this? */
-  val isZero: Boolean
-
   def re: Double
   def im: Double
   def modulus: Double
@@ -63,39 +60,43 @@ trait Complex {
 
   def ^ (c: Int): Complex = this match {
     case Real(0) =>
-      if(c === 0) throw new ArithmeticException("0^0")
+      if(c == 0) throw new ArithmeticException("0^0")
       else 0
     case Polar(mx,ax) =>
-      if(c === 0) 1
-      else Polar(Math.exp(Math.log(mx) * c), c * ax)
-    case Infinity => if(c==0) throw new ArithmeticException("∞^0") else ∞
+      if(c == 0) 1
+      else Polar(exp(log(mx) * c), c * ax)
+    case ∞ =>
+      if(c == 0) throw new ArithmeticException("∞^0")
+      else ∞
   }
 
   def ^ (c: Double): Complex = this match {
     case Real(0) =>
-      if(c==0) throw new ArithmeticException("0^0") else 0
+      if(c == 0) throw new ArithmeticException("0^0")
+      else 0
     case Polar(mx,ax) =>
-      if(c==0) 1
+      if(c == 0) 1
       else if(!c.isInfinite){
-        val lnmx = Math.log(mx)
-        Polar(Math.exp(lnmx * c), c * ax)
+        val lnmx = log(mx)
+        Polar(exp(lnmx * c), c * ax)
       }
       else ∞
-    case Infinity =>
-      if(c==0) throw new ArithmeticException("∞^0") else ∞
+    case ∞ =>
+      if(c == 0) throw new ArithmeticException("∞^0")
+      else ∞
   }
 
   def ^ (c: Complex): Complex = this match {
     case Real(0) =>
-      if(c===0) throw new ArithmeticException("0^0")
+      if(c === 0) throw new ArithmeticException("0^0")
       else 0
     case Polar(mx,ax) =>
       c match {
         case Real(0) => 1
         case Cartesian(cre,cim) => {
-          val lnmx = Math.log(mx)
+          val lnmx = log(mx)
           Polar(
-            Math.exp(lnmx * cre - cim * ax),
+            exp(lnmx * cre - cim * ax),
             cim * lnmx + cre * ax)
         }
         case _ => ∞
@@ -205,14 +206,18 @@ trait Complex {
     * */
   def +- (angle: Double): Circle = Circle(this, angle)
 
+  private def log(d: Double): Double = Math.log(d)
 }
 
+//XXX visibility
 case class Circle(centre: Complex, radius: Double)
 
 /** Riemann sphere
   * https://en.wikipedia.org/wiki/Riemann_sphere
   * x² + y² + z² = 1
   * https://math.stackexchange.com/questions/1219406/how-do-i-convert-a-complex-number-to-a-point-on-the-riemann-sphere
+  *
+  * XXX less visibility
   */
 object RiemannSphere {
   import java.lang.Math.sqrt
@@ -243,7 +248,7 @@ object RiemannSphere {
     * @return 3d point on unit sphere */
   def plane2sphere(c: Complex): Point =
     c match {
-      case Infinity => (0,0,1)
+      case ∞ => (0,0,1)
       case Cartesian(re, im) => {
         val re2 = sqr(re) //maybe Double.Infinity
         val im2 = sqr(im) //maybe Double.Infinity
@@ -263,7 +268,7 @@ object RiemannSphere {
   def distance(a: Point, b: Point): Double =
     sqrt(sqr(a._1-b._1) + sqr(a._2-b._2) + sqr(a._3-b._3))
 
-  private def sqr(d: Double) = d*d
+  private def sqr(d: Double): Double = d*d
 }
 
 /** Complex object. Maybe all of this can disappear? */
@@ -281,7 +286,7 @@ object Complex {
   def setPrecision(np: Int): Unit = {
     val op = PRECISION
     PRECISION = np
-    EPSILON = Math.pow(10D, -PRECISION)
+    ε = Math.pow(10D, -PRECISION)
     nf.setMaximumFractionDigits(np)
   }
   def getPrecision: Int = PRECISION
@@ -292,7 +297,7 @@ object Complex {
 
   // state, maybe disappears --------------------
 
-  var EPSILON: Double = Math.pow(10D, -PRECISION)
+  var ε: Double = Math.pow(10D, -PRECISION)
 
   /** important for curves in polar coordinates */
   var argContinuous: Boolean = false

@@ -50,7 +50,7 @@ Comparison:
 
     a == b              Exact for floating point.
     a === b             Exact for floating point.
-    a === b +- 0.1      Approximate equality.
+    a === b +- 0.1      Approximate equality with angle on sphere in radians.
 
 Formatting with toString:
 
@@ -70,26 +70,24 @@ Pattern matching:
     z match {
 
         case Natural(17) => ???
-        case Natural(n) => ???   //matches natural
+        case Natural(n) => ???   //binding n
 
         case Integer(18) => ???
-        case Integer(n) => ???   //matches integer
+        case Integer(n) => ???   //binding n
         
-        case E => ???   // matches e
-        case Pi => ???  // matches π
         case I => ???  // matches i
         
         case Real(0) => ??? //matches a finite real number
-        case Real(re) => ??? //matches any finite real number
+        case Real(re) => ??? //binding re
 
         case Imaginary(4.2) => ???  //imaginary
-        case Imaginary(im) => ??? //imaginary
+        case Imaginary(im) => ??? //binding im
         
-        case Polar(5, Math.PI) => ???
-        case Polar(m, a) => ???
+        case Polar(5, Pi) => ???
+        case Polar(m, a) => ??? //binding m and a
         
         case Cartesian(3.2, 4.1) => ???
-        case Cartesian(re, im) => ???
+        case Cartesian(re, im) => ???   //binding re and im
         
-        case Infinity => ??? 
+        case ∞ => ??? 
     }

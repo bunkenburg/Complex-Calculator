@@ -21,10 +21,10 @@ trait and classes:
     
 ## todo
 
-* get rid of isZero
 * get rid of modulus
 * get rid of argument
 * for re im modulus arguments: make them private lazy val. Calculate at most once.
+x get rid of isZero
 x get rid of finite
 x remove methods sin and similar: syntax not natural
 x are Complex, Real, Infinity, etc in the right place?

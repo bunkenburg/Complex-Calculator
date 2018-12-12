@@ -30,8 +30,6 @@ class Patterns extends FunSuite {
     case Integer(18) => "Integer(18)"
     case Integer(n) => "Integer(n)"
 
-    case E => "e"
-    case Pi => "π"
     case I => "i"
 
     case Real(0) => "Real(0)"
@@ -46,22 +44,12 @@ class Patterns extends FunSuite {
 
     case Polar(m, a) => m + " e^i" + a
 
-    case Infinity => "Infinity"
+    case ∞ => "Infinity"
 
     case _ => "not recognised"
   }
 
   // constants ---------------------------------------------
-
-  test("E"){
-    val s = parse(e)
-    assert( s === "e" )
-  }
-
-  test("π"){
-    val s = parse(π)
-    assert( s === "π" )
-  }
 
   test("i"){
     val s = parse(i)

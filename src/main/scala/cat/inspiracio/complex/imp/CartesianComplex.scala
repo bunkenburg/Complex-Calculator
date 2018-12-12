@@ -26,8 +26,6 @@ class CartesianComplex
 {
   require( !re.isInfinite && !im.isInfinite, "Infinite: " + re + " " + im)
 
-  override val isZero: Boolean = re==0 && im==0
-
   /** Format real number nicely, with e and π. */
   private def toString(d: Double): String = {
 
@@ -57,9 +55,11 @@ class CartesianComplex
   /** Format a complex number nicely.
     * XXX improve */
   override def toString: String = {
+    import Math.abs
+    import Complex.ε
 
       //It's just a real number.
-      if (Math.abs(im) < Complex.EPSILON)
+      if (abs(im) < ε)
         toString(re)
 
       //Cartesian x + yi
@@ -67,13 +67,13 @@ class CartesianComplex
         val s = toString(re)
 
         var s1: String = null
-        if (Math.abs(im - 1) < Complex.EPSILON)
+        if (abs(im - 1) < ε)
           s1 = "i"
-        else if (Math.abs(im + 1) < Complex.EPSILON)
+        else if (abs(im + 1) < ε)
           s1 = "-i"
         else
           s1 = toString(im) + "i"
-        if (Math.abs(re) < Complex.EPSILON)
+        if (abs(re) < ε)
           s1
         else
           s + (if (im <= 0) "" else "+") + s1
@@ -91,24 +91,32 @@ class CartesianComplex
     else if (re < 0 || 0 <= im) 0
     else 4
 
-  override def argument: Double = if (!isZero) {
-    val d = Math.atan2(im, re)
-    if (Complex.argContinuous) {
-      val q = quadrant
-      if (Complex.lastQuad == 2 && q == 3)
-        Complex.k += 1
-      else if (Complex.lastQuad == 3 && q==2)
-        Complex.k -= 1
-      Complex.lastQuad = q
-      d + 2 * Complex.k * Math.PI
-    }
-    else d
-  }
-  else 0
+  override def argument: Double = {
+    import Math.atan2
+    import Complex.argContinuous
+    import Complex.lastQuad
+    import Complex.k
 
-  override def modulus: Double = Math.sqrt(sqr(re) + sqr(im))
+    if (!(this === 0)) {
+      val d = atan2(im, re)
+      if (argContinuous) {
+        val q = quadrant
+        if (lastQuad == 2 && q == 3)
+          k += 1
+        else if (lastQuad == 3 && q == 2)
+          k -= 1
+        lastQuad = q
+        d + 2 * k * π
+      }
+      else d
+    }
+    else 0
+  }
+
+  override def modulus: Double = sqrt(sqr(re) + sqr(im))
 
   private def sqr(d: Double) = d * d
+  private def sqrt(d: Double): Double = Math.sqrt(d)
 
   protected def sqrt: Complex = {
     val m = this.modulus
@@ -117,16 +125,16 @@ class CartesianComplex
       0
 
     else if (0 < re) {
-      val d1 = Math.sqrt(0.5 * (m + re))
+      val d1 = sqrt(0.5 * (m + re))
       val d2 = im / d1 / 2
       Cartesian(d1, d2)
     }
 
     else {
-      var d2 = Math.sqrt(0.5 * (m - re))
+      var d2 = sqrt(0.5 * (m - re))
       if (im < 0)
         d2 = -d2
-      val d1 = im / d2 / 2D
+      val d1 = im / d2 / 2
       Cartesian(d1, d2)
     }
   }
@@ -146,14 +154,12 @@ class CartesianComplex
     }
 
   def * (c: Complex): Complex = {
-
-    if (this.isZero) {
+    if (this === 0) {
       c match {
         case ∞ => throw new ArithmeticException("0 * ∞")
         case _ => 0
       }
     }
-
     else {
       c match {
         case ∞ => ∞
@@ -164,14 +170,11 @@ class CartesianComplex
   }
 
   override def / (d: Double): Complex = {
-    if (isZero) {
+    if(this === 0) {
       if (d == 0) throw new ArithmeticException("0/0")
       else 0
     }
-    else {
-      if (d == 0) ∞
-      else Cartesian(re / d, im / d)
-    }
+    else Cartesian(re / d, im / d)
   }
 
   /** Division for two Cartesian
@@ -208,7 +211,7 @@ class CartesianComplex
     // See http://www.mesacc.edu/~scotz47781/mat120/notes/complex/dividing/dividing_complex.html
     // for a better algorithm.
 
-    if (isZero) {
+    if (this === 0) {
       c match {
         case Real(0) => throw new ArithmeticException("0/0")
         case ∞ => throw new ArithmeticException("0/∞")

@@ -62,10 +62,11 @@ class Clients extends FunSuite {
     // functions ---------------------
 
     z = sin(z)
-    z = sinh(z)
     z = cos(z)
-    z = cosh(z)
     z = tan(z)
+
+    z = sinh(z)
+    z = cosh(z)
     z = tanh(z)
 
     z = exp(z)
@@ -78,44 +79,38 @@ class Clients extends FunSuite {
 
     a == b    //precise for doubles: sometimes not practical
     a === b   //approximate: sometimes more practical
+    a === b +- 0.01 //approximate, angle on Riemann sphere
 
     // pattern matching ----------------
 
     z match {
 
       case Natural(17) => ???
-      case Natural(n) => ???   //matches natural
+      case Natural(n) => ???   //binding n
 
       case Integer(18) => ???
-      case Integer(n) => ???   //matches integer
+      case Integer(n) => ???   //binding n
 
-      case E => ???   // matches e
-      case Pi => ???  // matches π
       case I => ???  // matches i
 
-      case Real(0) => ??? //matches a finite real number
-      case Real(re) => ??? //matches any finite real number
+      case Real(0) => ???   //matches a finite real number
+      case Real(re) => ???  //binding re
 
       case Imaginary(4.2) => ???  //imaginary
-      case Imaginary(im) => ??? //imaginary
+      case Imaginary(im) => ???   //binding im
 
       case Polar(5, Math.PI) => ???
-      case Polar(m, a) => 0
+      case Polar(m, a) => 0     //binding m and a
 
       case Cartesian(3.2, 4.1) => ???
-      case Cartesian(re, im) => 0
+      case Cartesian(re, im) => 0   //binding re and im
 
-      case Infinity => ???
+      case ∞ => ???
     }
 
-    val Cartesian(re, im) = z
-    val Polar(m, arg) = z
+    val Cartesian(re, im) = z   //only finite
+    val Polar(m, arg) = z       //only finite
 
-    // things that cannot be accessed
-
-    z.isZero
-    z.argument
-    z.modulus
   }
 
 }

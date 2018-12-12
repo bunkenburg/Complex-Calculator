@@ -7,12 +7,11 @@ import cat.inspiracio.complex.Complex.∞
   * pole of the Riemann sphere. */
 object Infinity extends Complex{
 
-  override def argument: Double = throw new ArithmeticException("argument(inf)") //0 //arbitrary
-  override def modulus = throw new ArithmeticException("modulus(inf)") //Double.PositiveInfinity  //I'd rather not go there
-  override def re = throw new ArithmeticException("re(inf)") //Double.PositiveInfinity //I'd rather not go there
-  override def im = throw new ArithmeticException("im(inf)") //Double.PositiveInfinity //I'd rather not go there
+  override def argument = throw new ArithmeticException("argument(∞)")
+  override def modulus = throw new ArithmeticException("modulus(∞)")
+  override def re = throw new ArithmeticException("re(∞)")
+  override def im = throw new ArithmeticException("im(∞)")
 
-  override val isZero = false
   override def toString = "∞"
 
   // Operators ------------------------------------
@@ -27,9 +26,10 @@ object Infinity extends Complex{
     case _ => ∞
   }
 
-  override def * (c: Complex)=
-    if (c.isZero) throw new ArithmeticException("∞ * 0")
-    else ∞
+  override def * (c: Complex): Complex = c match {
+    case Real(0) => throw new ArithmeticException("∞ * 0")
+    case _ => ∞
+  }
 
   override def / (c: Complex) = c match {
     case Real(0) => throw new ArithmeticException("∞/0")
@@ -37,8 +37,9 @@ object Infinity extends Complex{
     case _ => ∞
   }
 
-  override def ^ (c: Complex)=
-    if (c.isZero) throw new ArithmeticException("∞^0")
-    else ∞
+  override def ^ (c: Complex): Complex = c match {
+    case Real(0) => throw new ArithmeticException("∞^0")
+    case _ => ∞
+  }
 
 }

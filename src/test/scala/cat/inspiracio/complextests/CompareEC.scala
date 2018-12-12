@@ -33,16 +33,16 @@ class CompareEC extends FunSuite {
   // helpers -----------------------------------
 
   def complex(max: Double): Complex = {
-    import java.util.concurrent.ThreadLocalRandom
+    import java.util.concurrent.ThreadLocalRandom.current
     val min = 0
-    val re = ThreadLocalRandom.current.nextDouble(min, max)
-    val im = ThreadLocalRandom.current.nextDouble(min, max)
+    val re = current.nextDouble(min, max)
+    val im = current.nextDouble(min, max)
     Cartesian(re, im)
   }
 
   def mkEC(c: Complex): EC = c match {
     case Cartesian(re,im) => EC.mkCartesian(re, im)
-    case Infinity => EC.INFINITY
+    case ∞ => EC.INFINITY
   }
 
   def mkComplex(x: EC): Complex = {
@@ -50,7 +50,7 @@ class CompareEC extends FunSuite {
     else x.re() + i * x.im()
   }
 
-  def equals(c: Complex, fc: Complex, fe: EC): Unit ={
+  def equals(c: Complex, fc: Complex, fe: EC): Unit = {
     val cfe = mkComplex(fe)
     assert(fc === cfe)
   }

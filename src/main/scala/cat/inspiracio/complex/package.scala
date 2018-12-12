@@ -80,13 +80,13 @@ package object complex {
   /** cosh x = cos(ix) */
   def cosh(z: Complex) = z match {
     case ∞ => throw new ArithmeticException("cosh ∞")
-    case _ => (exp(z) + (exp(-z))) / 2
+    case _ => ( exp(z) + exp(-z) ) / 2
   }
 
   /** tanh x = -i tan(ix) */
   def tanh(z: Complex): Complex = sinh(z) / cosh(z)
 
-  def exp(d: Double) = Math.exp(d)
+  def exp(d: Double): Double = Math.exp(d)
 
   def exp(z: Complex): Complex = z match {
     case ∞ => ∞
@@ -126,7 +126,7 @@ package object complex {
   /** Factorial function, for natural numbers only */
   def fac(z: Complex): Complex = z match {
     case ∞ => ∞
-    case Natural(n) => f(n)
+    case Natural(n) if n <= 20 => f(n)
     case _ => throw new ArithmeticException(z +  "!")
   }
 
@@ -142,10 +142,9 @@ package object complex {
 
   // ugly constants for pattern matching
 
-  val E: Complex = e
+  val E = e
   val I = i
-  val Pi: Complex = π
-  val Infinity = cat.inspiracio.complex.imp.Infinity
+  val Pi = π
 
   // unapply methods for pattern matching
 
@@ -154,7 +153,7 @@ package object complex {
     /** val Natural(n) = z */
     def unapply(c: Complex): Option[Long] = {
       c match {
-        case Integer(n) if (0 <= n) => Some(n)
+        case Integer(n) if 0<=n => Some(n)
         case _ => None
       }
     }
@@ -166,7 +165,7 @@ package object complex {
     /** val Integer(n) = z */
     def unapply(c: Complex): Option[Long] = {
       c match {
-        case Real(re) if (re.isWhole()) => Some(re.toLong)
+        case Real(re) if re.isWhole() => Some(re.toLong)
         case _ => None
       }
     }
@@ -181,7 +180,7 @@ package object complex {
     /** val Real(re) = z */
     def unapply(c: Complex): Option[Double] = {
       c match {
-        case Cartesian(re, im) if im == 0 => Some(re)
+        case Cartesian(re, im) if im==0 => Some(re)
         case _ => None
       }
     }
@@ -193,7 +192,7 @@ package object complex {
     /** val Imaginary(im) = z */
     def unapply(c: Complex): Option[Double] = {
       c match {
-        case Cartesian(re, im) if(re==0) => Some(im)
+        case Cartesian(re, im) if re==0 => Some(im)
         case _ => None
       }
     }
@@ -229,14 +228,16 @@ package object complex {
   object Cartesian {
 
     /** val z = Cartesian(re, im) */
-    def apply(re: Double, im: Double): Complex = new CartesianComplex(re, im)
+    def apply(re: Double, im: Double): Complex =
+      if(re.isInfinity || im.isInfinity) ∞
+      else new CartesianComplex(re, im)
 
     /** val Cartesian(re, im) = z
       * Matches all finite complex numbers. */
     def unapply(c: Complex): Option[(Double,Double)] = c match {
-        case ∞ => None
-        case _ => Some( (c.re, c.im) )
-      }
+      case ∞ => None
+      case _ => Some( (c.re, c.im) )
+    }
 
   }
 
