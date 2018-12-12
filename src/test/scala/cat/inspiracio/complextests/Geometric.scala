@@ -205,4 +205,13 @@ class Geometric extends FunSuite {
     }
   }
 
+  // lazy vals ------------------------
+
+  test("lazy argument"){
+    val z = 3 + 4*i
+    val Polar(m,a) = z  //first evaluation
+    val Polar(m1,a1) = z  //should be free
+    assert( m == m1)
+    assert( a == a1 )
+  }
 }

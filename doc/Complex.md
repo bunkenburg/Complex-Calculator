@@ -3,14 +3,13 @@
 aims:
 
 * only one import: import cat.inspiracio.complex._
-* syntax as close as possible to standed mathematics syntax
+* syntax as close as possible to standard mathematics syntax
 * geared towards view as points on Riemann sphere
 
 trait and classes:
 
 * trait cat.inspiracio.complex.Complex
     - serves as type
-    - declares functions like sin
     - gives default implementations for many operators
 * class cat.inspiracio.complex.imp.CartesianComplex(re: Double, im: Double)
     - always finite
@@ -21,11 +20,22 @@ trait and classes:
     
 ## todo
 
-* for re im modulus arguments: make them private lazy val. Calculate at most once.
-x get rid of public methods re and im
-x get rid of argument
-x get rid of modulus
-x get rid of isZero
-x get rid of finite
-x remove methods sin and similar: syntax not natural
-x are Complex, Real, Infinity, etc in the right place?
+Could do:
+
+trait Complex
+
+object Infinity extends Complex
+
+abstract class Finite extends Complex
+    re
+    im
+    modulus
+    argument
+   
+class CartesianComplex(re,im) extends Finite
+    lazy val modulus
+    lazy val argument
+    
+class PolarComplex(m,a) extends Finite
+    lazy val re
+    lazy im

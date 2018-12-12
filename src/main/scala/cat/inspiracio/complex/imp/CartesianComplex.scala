@@ -91,7 +91,7 @@ class CartesianComplex
     else if (re < 0 || 0 <= im) 0
     else 4
 
-  def argument: Double = {
+  lazy val argument: Double = {
     import Math.atan2
     import Complex.argContinuous
     import Complex.lastQuad
@@ -113,7 +113,7 @@ class CartesianComplex
     else 0
   }
 
-  def modulus: Double = sqrt(sqr(re) + sqr(im))
+  lazy val modulus: Double = sqrt(sqr(re) + sqr(im))
 
   private def sqr(d: Double) = d * d
   private def sqrt(d: Double): Double = Math.sqrt(d)
