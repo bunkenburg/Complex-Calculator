@@ -14,7 +14,6 @@ package object complex {
   val e = Math.E
   val i = Cartesian(0, 1)
   val π = Math.PI
-  val ∞ = cat.inspiracio.complex.imp.Infinity
 
   // functions ---------------------------------
 

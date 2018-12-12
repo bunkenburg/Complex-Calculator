@@ -111,9 +111,10 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
   lazy val modulus: Double = sqrt(sqr(re) + sqr(im))
 
   private def sqr(d: Double) = d * d
+
   private def sqrt(d: Double): Double = Math.sqrt(d)
 
-  protected def sqrt: Complex = {
+  private def sqrt: Complex = {
     val Polar(m, _) = this
 
     if (m == 0 )
@@ -136,11 +137,17 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
 
   // operators of 2 parameters ----------------------------------
 
+  override def unary_- : Complex = Cartesian(-re,-im)
+
+  override def + (d: Double): Complex = Cartesian(re + d, im)
+
   override def + (c: Complex): Complex =
     c match {
       case ∞ => ∞
       case Cartesian(cre, cim) => Cartesian(re + cre, im + cim)
     }
+
+  override def - (d: Double): Complex = Cartesian(re-d, im)
 
   override def - (c: Complex): Complex =
     c match {
@@ -148,7 +155,9 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
       case Cartesian(cre, cim) => Cartesian (re - cre, im - cim)
     }
 
-  def * (c: Complex): Complex = {
+  override def * (d: Double): Complex = Cartesian(re * d, im * d)
+
+  override def * (c: Complex): Complex = {
     if (this === 0) {
       c match {
         case ∞ => throw new ArithmeticException("0 * ∞")

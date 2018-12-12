@@ -204,7 +204,6 @@ trait Complex {
   private def log(d: Double): Double = Math.log(d)
 }
 
-//XXX visibility
 case class Circle(centre: Complex, radius: Double)
 
 /** Riemann sphere
@@ -212,7 +211,6 @@ case class Circle(centre: Complex, radius: Double)
   * x² + y² + z² = 1
   * https://math.stackexchange.com/questions/1219406/how-do-i-convert-a-complex-number-to-a-point-on-the-riemann-sphere
   *
-  * XXX less visibility
   */
 object RiemannSphere {
   import java.lang.Math.sqrt
@@ -272,7 +270,6 @@ object Complex {
   // constants ----------------
 
   val π = Math.PI
-  val ∞ = cat.inspiracio.complex.imp.Infinity
 
   // formatting, maybe disappears ---------------
 
@@ -286,7 +283,7 @@ object Complex {
   }
   def getPrecision: Int = PRECISION
 
-  val nf = NumberFormat.getInstance()
+  private val nf = NumberFormat.getInstance()
   nf.setGroupingUsed(false)
   nf.setMaximumFractionDigits(10)
 

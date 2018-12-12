@@ -1,22 +1,19 @@
-package cat.inspiracio.complex.imp
-
-import cat.inspiracio.complex.{Complex, Real}
-import cat.inspiracio.complex.Complex.∞
+package cat.inspiracio.complex
 
 /** Infinity, the one complex number at the north
   * pole of the Riemann sphere. */
-object Infinity extends Complex{
+object ∞ extends Complex{
 
   override def toString = "∞"
 
   // Operators ------------------------------------
 
-  override def + (c: Complex) = c match {
+  override def + (c: Complex): Complex = c match {
     case ∞ => throw new ArithmeticException("∞ + ∞")
     case _ => ∞
   }
 
-  override def - (c: Complex) = c match {
+  override def - (c: Complex): Complex = c match {
     case ∞ => throw new ArithmeticException("∞ - ∞")
     case _ => ∞
   }
@@ -26,7 +23,7 @@ object Infinity extends Complex{
     case _ => ∞
   }
 
-  override def / (c: Complex) = c match {
+  override def / (c: Complex): Complex = c match {
     case Real(0) => throw new ArithmeticException("∞/0")
     case ∞ => throw new ArithmeticException("∞/∞")
     case _ => ∞
