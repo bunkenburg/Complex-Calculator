@@ -24,7 +24,8 @@ package object complex {
     * Only for finite numbers. */
   def abs(c: Complex): Double = c match {
     case Real(r) => abs(r)
-    case Cartesian(re, im) => sqrt(sqr(re) + sqr(im))
+    //case Cartesian(re, im) => sqrt(sqr(re) + sqr(im))
+    case cc: CartesianComplex => cc.modulus
     case ∞ => throw new ArithmeticException("|∞|")
   }
 
@@ -53,6 +54,7 @@ package object complex {
 
   def sin(z: Complex): Complex = z match {
     case ∞ => throw new ArithmeticException("sin ∞")
+    case Real(r) => sin(r)
     case _ => {
       val zi = z * i
       (exp(zi) - exp(-zi)) / (2 * i)
@@ -70,8 +72,9 @@ package object complex {
     else if(a==2*π) 1
     else Math.cos(a)
 
-  def cos(z: Complex) = z match {
+  def cos(z: Complex): Complex = z match {
     case ∞ => throw new ArithmeticException("cos ∞")
+    case Real(r) => cos(r)
     case _ => {
       val zi = z * i
       (exp(zi) + exp(-zi)) / 2
@@ -86,7 +89,10 @@ package object complex {
     else if(a==2*π) 0
     else Math.tan(a)
 
-  def tan(z: Complex): Complex = sin(z) / cos(z)
+  def tan(z: Complex): Complex = z match {
+    case Real(r) => tan(r)
+    case _ => sin(z) / cos (z)
+  }
 
   def cot(a: Double): Complex = 1 / tan(a)
 
@@ -95,24 +101,30 @@ package object complex {
   // hyperbolic functions -------------------
 
   /** sinh x = -i sin(ix) */
-  def sinh(z: Complex) = z match {
+  def sinh(z: Complex): Complex = z match {
     case ∞ => throw new ArithmeticException("sinh ∞")
+    case Real(r) => ( exp(r) - exp(-r) ) / 2
     case _ => ( exp(z) - exp(-z) ) / 2
   }
 
   /** cosh x = cos(ix) */
-  def cosh(z: Complex) = z match {
+  def cosh(z: Complex): Complex = z match {
     case ∞ => throw new ArithmeticException("cosh ∞")
+    case Real(r) => ( exp(r) + exp(-r) ) / 2
     case _ => ( exp(z) + exp(-z) ) / 2
   }
 
   /** tanh x = -i tan(ix) */
-  def tanh(z: Complex): Complex = sinh(z) / cosh(z)
+  def tanh(z: Complex): Complex = z match {
+    case Real(r) => sinh(r) / cosh(r)
+    case _ => sinh(z) / cosh(z)
+  }
 
   def exp(d: Double): Double = Math.exp(d)
 
   def exp(z: Complex): Complex = z match {
     case ∞ => ∞
+    case Real(r) => exp(r)
     case Cartesian(re,im) => Polar(exp(re), im)
   }
 
@@ -122,19 +134,16 @@ package object complex {
     case Polar(m,a) => Cartesian(Math.log(m), a)
   }
 
+  /** Complex conjugate: negates the imaginary part */
   def conj(z: Complex) = z match {
     case ∞ => ∞
     case Cartesian(re,im) => Cartesian(re, -im)
   }
 
+  /** Opposite point on Riemann sphere.
+    * def opp(z) = -1 / conj(z)
+    * */
   def opp(z: Complex): Complex = z match {
-    case ∞ => 0
-    case Real(0) => ∞
-    case Polar(m,a) => Polar(1 / m, a + π)
-  }
-
-  /** Same as opp? */
-  def reciprocal(z: Complex): Complex = z match {
     case ∞ => 0
     case Real(0) => ∞
     case Polar(m,a) => Polar(1 / m, a + π)

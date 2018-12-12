@@ -20,10 +20,7 @@ package cat.inspiracio.complex.imp
 import cat.inspiracio.complex._
 
 /** Finite complex numbers in Cartesian representation */
-class CartesianComplex
-  (val re: Double, val im: Double)  //XXX reduce visibility
-  extends Complex
-{
+class CartesianComplex(val re: Double, val im: Double) extends Complex {
   require( !re.isInfinite && !im.isInfinite, "Infinite: " + re + " " + im)
 
   /** Format real number nicely, with e and π. */
@@ -35,9 +32,8 @@ class CartesianComplex
     else if(d == π) "π"
     else if(d == -π) "-π"
 
-    //General formatting, XXX improve
+    //General formatting
     else {
-      //val s = nf.format(d)
       val s = d.toString
       if (s.contains('.')) { //Cuts off trailing zeros.
         val b = new StringBuilder(s)
@@ -52,8 +48,7 @@ class CartesianComplex
     }
   }
 
-  /** Format a complex number nicely.
-    * XXX improve */
+  /** Format a complex number nicely. */
   override def toString: String = {
     import Math.abs
     import Complex.ε
@@ -64,19 +59,19 @@ class CartesianComplex
 
       //Cartesian x + yi
       else {
-        val s = toString(re)
+        val real = toString(re)
 
-        var s1: String = null
-        if (abs(im - 1) < ε)
-          s1 = "i"
+        val imaginary = if (abs(im - 1) < ε)
+          "i"
         else if (abs(im + 1) < ε)
-          s1 = "-i"
+          "-i"
         else
-          s1 = toString(im) + "i"
+          toString(im) + "i"
+
         if (abs(re) < ε)
-          s1
+          imaginary
         else
-          s + (if (im <= 0) "" else "+") + s1
+          real + (if (im <= 0) "" else "+") + imaginary
       }
   }
 
@@ -125,17 +120,17 @@ class CartesianComplex
       0
 
     else if (0 < re) {
-      val d1 = sqrt(0.5 * (m + re))
-      val d2 = im / d1 / 2
-      Cartesian(d1, d2)
+      val real = sqrt(0.5 * (m + re))
+      val imaginary = im / real / 2
+      Cartesian(real, imaginary)
     }
 
     else {
-      var d2 = sqrt(0.5 * (m - re))
+      var imaginary = sqrt(0.5 * (m - re))
       if (im < 0)
-        d2 = -d2
-      val d1 = im / d2 / 2
-      Cartesian(d1, d2)
+        imaginary = -imaginary
+      val real = im / imaginary / 2
+      Cartesian(real, imaginary)
     }
   }
 

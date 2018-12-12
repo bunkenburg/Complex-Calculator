@@ -93,38 +93,30 @@ class Geometric extends FunSuite {
       assert(c === 0 )
   }
 
-  // reciprocal -----------------------------------------
+  def alt(z: Complex) = -1 / conj(z)
 
-  test("reciprocal(0)") {
-    assert( reciprocal(0) === ∞ )
+  test("alt 0"){
+    val z = 0
+    assert( ∞ === alt(z) )
+    assert( opp(z) === alt(z) )
   }
 
-  test("reciprocal(π/4)") {
-    assert( reciprocal(π/4) === -1.2732395447351628 )
+  test("alt ∞"){
+    val z = ∞
+    assert( 0 === alt(z) )
+    assert( opp(z) === alt(z) )
   }
 
-  test("reciprocal(π/2)") {
-    assert( reciprocal(π/2) === -0.6366197723675814 )
+  test("alt 1"){
+    val z = 1
+    assert( -1 === alt(z) )
+    assert( opp(z) === alt(z) )
   }
 
-  test("reciprocal(3π/2)") {
-    val c = reciprocal(3*π/2)
-    assert( c === -0.2122065907891938 )
-  }
-
-  test("reciprocal(3+2i)") {
-    val z = reciprocal(3 + 2*i)
-    assert( z === -0.2307692307692308 -0.1538461538461538*i )
-  }
-
-  test("reciprocal(i)") {
-    val c = reciprocal(i)
-    assert( c === -i )
-  }
-
-  test("reciprocal(∞)") {
-      val c = reciprocal(∞)
-      assert(c === 0 )
+  test("alt i"){
+    val z = i
+    assert( -i === alt(z) )
+    assert( opp(z) === alt(z) )
   }
 
   // factorial -----------------------------------------

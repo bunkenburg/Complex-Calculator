@@ -146,10 +146,6 @@ class CompareEC extends FunSuite {
     compare( opp(_), _.opp() )
   }
 
-  test("reciprocal"){
-    compare( reciprocal(_), _.reciprocal() )
-  }
-
   test("fac"){
     compare( fac(_), _.fac() )
   }

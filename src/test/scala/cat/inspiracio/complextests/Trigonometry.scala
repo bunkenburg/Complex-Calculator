@@ -33,7 +33,8 @@ class Trigonometry extends FunSuite {
   }
 
   test("sin(π)") {
-    val z = sin(π)
+    val c: Complex = π
+    val z = sin(c)
     assert( z === 0 )
   }
 
@@ -146,7 +147,8 @@ class Trigonometry extends FunSuite {
   }
 
   test("tan(2π)") {
-    val c = tan(2*π)
+    val z: Complex = 2*π
+    val c = tan(z)
     assert( c === 0 )
   }
 
