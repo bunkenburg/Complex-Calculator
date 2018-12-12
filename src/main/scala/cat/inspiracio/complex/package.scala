@@ -12,7 +12,7 @@ package object complex {
   // beautiful constants -----------------------------------
 
   val e = Math.E
-  val i = Cartesian(0, 1)
+  val i = Imaginary(1)
   val π = Math.PI
 
   // functions ---------------------------------
@@ -23,7 +23,6 @@ package object complex {
     * Only for finite numbers. */
   def abs(c: Complex): Double = c match {
     case Real(r) => abs(r)
-    //case Cartesian(re, im) => sqrt(sqr(re) + sqr(im))
     case cc: CartesianComplex => cc.modulus
     case ∞ => throw new ArithmeticException("|∞|")
   }
@@ -39,6 +38,7 @@ package object complex {
   }
 
   private def sqrt(d: Double): Double = Math.sqrt(d)
+
   private def sqr(d: Double): Double = d*d
 
   /** Improves Math.sin for important values */
@@ -219,6 +219,9 @@ package object complex {
   }
 
   object Imaginary {
+
+    /** val c = Img(3.2) */
+    def apply(im: Double): Complex = Cartesian(0, im)
 
     /** val Imaginary(im) = z */
     def unapply(c: Complex): Option[Double] = {

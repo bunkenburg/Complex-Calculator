@@ -14,7 +14,7 @@ trait and classes:
 * class cat.inspiracio.complex.imp.CartesianComplex(re: Double, im: Double)
     - always finite
     - make lazy in re, im, mod, arg
-* object cat.inspiracio.complex.imp.Infinity
+* object cat.inspiracio.complex.∞
     - because ∞ often is a special case
     - is the only infinite value
     

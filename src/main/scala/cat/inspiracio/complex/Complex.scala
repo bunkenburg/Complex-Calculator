@@ -267,10 +267,6 @@ object RiemannSphere {
 /** Complex object. Maybe all of this can disappear? */
 object Complex {
 
-  // constants ----------------
-
-  val π = Math.PI
-
   // formatting, maybe disappears ---------------
 
   /** for formatting */
