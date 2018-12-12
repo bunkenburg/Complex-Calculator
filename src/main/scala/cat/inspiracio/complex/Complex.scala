@@ -32,9 +32,6 @@ import java.text.NumberFormat
   * */
 trait Complex {
 
-  def re: Double
-  def im: Double
-
   // Operators ---------------------------------
 
   def unary_+ : Complex = this

@@ -21,7 +21,7 @@ import cat.inspiracio.complex._
 
 /** Finite complex numbers in Cartesian representation */
 class CartesianComplex
-  (override val re: Double, override val im: Double)  //XXX reduce visibility
+  (val re: Double, val im: Double)  //XXX reduce visibility
   extends Complex
 {
   require( !re.isInfinite && !im.isInfinite, "Infinite: " + re + " " + im)

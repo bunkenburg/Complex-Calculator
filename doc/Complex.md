@@ -21,8 +21,9 @@ trait and classes:
     
 ## todo
 
-* get rid of argument
 * for re im modulus arguments: make them private lazy val. Calculate at most once.
+x get rid of public methods re and im
+x get rid of argument
 x get rid of modulus
 x get rid of isZero
 x get rid of finite

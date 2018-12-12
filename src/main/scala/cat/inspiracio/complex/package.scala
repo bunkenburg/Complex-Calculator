@@ -28,6 +28,16 @@ package object complex {
     case ∞ => throw new ArithmeticException("|∞|")
   }
 
+  def Re(c: Complex): Double = c match {
+    case Cartesian(re, _) => re
+    case ∞ => throw new ArithmeticException("Re(∞)")
+  }
+
+  def Im(c: Complex): Double = c match {
+    case Cartesian(_, im) => im
+    case ∞ => throw new ArithmeticException("Im(∞)")
+  }
+
   private def sqrt(d: Double): Double = Math.sqrt(d)
   private def sqr(d: Double): Double = d*d
 
@@ -249,7 +259,7 @@ package object complex {
       * Matches all finite complex numbers. */
     def unapply(c: Complex): Option[(Double,Double)] = c match {
       case ∞ => None
-      case _ => Some( (c.re, c.im) )
+      case cc: CartesianComplex => Some( (cc.re, cc.im) )
     }
 
   }

@@ -10,11 +10,11 @@ One type:
     
 Literals will be transformed to Complex:
 
-    0: Byte
-    1: Int
-    2L: Long
-    3.2: Float
-    4.5: Double
+    0    : Byte
+    1    : Int
+    2L   : Long
+    3.2f : Float
+    4.5  : Double
 
 Constants:
 
@@ -34,6 +34,9 @@ Operators:
     a ^ b   Careful: precedence not right.
 
 Functions:
+
+    Re(z)
+    Im(z)
 
     sin(z)
     cos(z)

@@ -61,6 +61,9 @@ class Clients extends FunSuite {
 
     // functions ---------------------
 
+    d = Re(z)
+    d = Im(z)
+
     z = sin(z)
     z = cos(z)
     z = tan(z)

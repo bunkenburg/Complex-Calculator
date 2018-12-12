@@ -7,9 +7,6 @@ import cat.inspiracio.complex.Complex.∞
   * pole of the Riemann sphere. */
 object Infinity extends Complex{
 
-  override def re = throw new ArithmeticException("re(∞)")
-  override def im = throw new ArithmeticException("im(∞)")
-
   override def toString = "∞"
 
   // Operators ------------------------------------
