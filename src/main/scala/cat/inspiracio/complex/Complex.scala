@@ -34,7 +34,7 @@ trait Complex {
 
   def re: Double
   def im: Double
-  def modulus: Double
+
   def argument: Double
 
   // Operators ---------------------------------

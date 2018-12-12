@@ -8,7 +8,7 @@ import cat.inspiracio.complex.Complex.∞
 object Infinity extends Complex{
 
   override def argument = throw new ArithmeticException("argument(∞)")
-  override def modulus = throw new ArithmeticException("modulus(∞)")
+
   override def re = throw new ArithmeticException("re(∞)")
   override def im = throw new ArithmeticException("im(∞)")
 

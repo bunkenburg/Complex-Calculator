@@ -162,8 +162,47 @@ class Geometric extends FunSuite {
   }
 
   test("fac(∞)") {
-      val c = fac(∞)
-      assert(c === ∞ )
+    val c = fac(∞)
+    assert(c === ∞ )
+  }
+
+  // abs -----------------------------------------
+
+  test("abs(0)") {
+    val c: Complex = 0
+    assert( abs(c) === 0 )
+  }
+
+  test("abs(1)") {
+    val c: Complex = 1
+    assert( abs(c) === 1 )
+  }
+
+  test("abs(-1)") {
+    val c: Complex = -1
+    assert( abs(c) === 1 )
+  }
+
+  test("abs(i)") {
+    val c: Complex = i
+    assert( abs(i) === 1 )
+  }
+
+  test("abs(-i)") {
+    val c = -i
+    assert( abs(c) === 1 )
+  }
+
+  test("abs(3+4i)") {
+    val z = 3+4*i
+    assert( abs(z) === 5 )
+  }
+
+  test("abs(∞)") {
+    assertThrows[ArithmeticException] {
+      val c = abs(∞)
+      assert(c === 8)
+    }
   }
 
 }

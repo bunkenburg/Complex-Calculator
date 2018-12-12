@@ -18,6 +18,19 @@ package object complex {
 
   // functions ---------------------------------
 
+  def abs(d: Double): Double = Math.abs(d)
+
+  /** The modulus or absolute value of the number.
+    * Only for finite numbers. */
+  def abs(c: Complex): Double = c match {
+    case Real(r) => abs(r)
+    case Cartesian(re, im) => sqrt(sqr(re) + sqr(im))
+    case ∞ => throw new ArithmeticException("|∞|")
+  }
+
+  private def sqrt(d: Double): Double = Math.sqrt(d)
+  private def sqr(d: Double): Double = d*d
+
   /** Improves Math.sin for important values */
   def sin(a: Double): Double =
     if(a== -π) 0
@@ -211,15 +224,15 @@ package object complex {
 
     /** val Polar(m, a) = z
       * Matches all finite numbers. */
-    def unapply(c: Complex): Option[(Double,Double)] = {
-      if(c === ∞)
-        None
-      else {
-        val m = c.modulus
-        val a = c.argument
-        Some( (m, a) )
+    def unapply(c: Complex): Option[(Double,Double)] =
+      c match {
+        case ∞ => None
+        case cc: CartesianComplex => {
+          val m = cc.modulus
+          val a = cc.argument
+          Some( (m, a) )
+        }
       }
-    }
 
   }
 

@@ -113,13 +113,13 @@ class CartesianComplex
     else 0
   }
 
-  override def modulus: Double = sqrt(sqr(re) + sqr(im))
+  def modulus: Double = sqrt(sqr(re) + sqr(im))
 
   private def sqr(d: Double) = d * d
   private def sqrt(d: Double): Double = Math.sqrt(d)
 
   protected def sqrt: Complex = {
-    val m = this.modulus
+    val Polar(m, _) = this
 
     if (m == 0 )
       0
