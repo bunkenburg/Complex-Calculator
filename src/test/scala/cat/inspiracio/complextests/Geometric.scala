@@ -51,13 +51,13 @@ class Geometric extends FunSuite {
   // opp -----------------------------------------
 
   test("opp(-π)") {
-    assert( opp(-π) === 0.3183098862 )
+    assert( opp(-π) === 0.3183098861837907 )
   }
 
   test("opp(-π/2)") {
     val z: Complex = -π/2
     val y = opp(z)
-    assert( y === 0.6366197724 )
+    assert( y === 0.6366197723675814 )
   }
 
   test("opp(0)") {
@@ -65,11 +65,11 @@ class Geometric extends FunSuite {
   }
 
   test("opp(π/2)") {
-    assert( opp(π/2) === -0.6366197724 )
+    assert( opp(π/2) === -0.6366197723675814 )
   }
 
   test("opp(π)") {
-    assert( opp(π) === -0.3183098862 )
+    assert( opp(π) === -0.3183098861837907 )
   }
 
   test("opp(2 + 3.2i)") {
@@ -80,7 +80,7 @@ class Geometric extends FunSuite {
   test("opp(2kπ)") {
     val k = 16
     val z = opp(2*k*π)
-    assert( z === -0.0099471839 )
+    assert( z === -0.009947183943243459 )
   }
 
   test("opp(i)") {
@@ -100,16 +100,16 @@ class Geometric extends FunSuite {
   }
 
   test("reciprocal(π/4)") {
-    assert( reciprocal(π/4) === -1.2732395447 )
+    assert( reciprocal(π/4) === -1.2732395447351628 )
   }
 
   test("reciprocal(π/2)") {
-    assert( reciprocal(π/2) === -0.6366197724 )
+    assert( reciprocal(π/2) === -0.6366197723675814 )
   }
 
   test("reciprocal(3π/2)") {
     val c = reciprocal(3*π/2)
-    assert( c === -0.2122065908 )
+    assert( c === -0.2122065907891938 )
   }
 
   test("reciprocal(3+2i)") {
@@ -130,7 +130,7 @@ class Geometric extends FunSuite {
   // factorial -----------------------------------------
 
   test("fac(0)") {
-    assert( fac(0) === 0 )
+    assert( fac(0) === 1 )
   }
 
   test("fac(1)") {
@@ -153,12 +153,12 @@ class Geometric extends FunSuite {
 
   test("fac(5)") {
     val z = fac(5)
-    assert( z === 96 )
+    assert( z === 120 )
   }
 
-  test("fac(65)") {
-    val c = fac(65)
-    assert( c === 65 )
+  test("fac(20)") {
+    val c = fac(20)
+    assert( c === 2.43290200817664E18 )
   }
 
   test("fac(∞)") {

@@ -29,22 +29,22 @@ class Hyperbolic extends FunSuite {
   }
 
   test("sinh(π/2)") {
-    assert( sinh(π/2) === 2.3012989023 )
+    assert( sinh(π/2) === 2.3012989023072947 )
   }
 
   test("sinh(π)") {
     val z = sinh(π)
-    assert( z === 11.5487393573 )
+    assert( z === 11.548739357257748 )
   }
 
   test("sinh(3π/2)") {
     val c = sinh(3*π/2)
-    assert( c === 55.6543975994 )
+    assert( c === 55.65439759941754)
   }
 
   test("sinh(2π)") {
     val c = sinh(2*π)
-    assert( c === 267.744894041 )
+    assert( c === 267.74489404101644 )
   }
 
   test("sinh(i)") {
@@ -66,32 +66,26 @@ class Hyperbolic extends FunSuite {
   }
 
   test("cosh(π/2)") {
-    assert( cosh(π/2) === 2.5091784787 )
+    assert( cosh(π/2) === 2.5091784786580567 )
   }
 
   test("cosh(π)") {
-    assert( cosh(π) === 11.5919532755 )
+    assert( cosh(π) === 11.591953275521519 )
   }
 
   test("cosh(3π/2)") {
     val c = cosh(3*π/2)
-    assert( c === 55.6633808904 )
+    assert( c === 55.66338089043867 )
   }
 
   test("cosh(2π)") {
     val c = cosh(2*π)
-    assert( c === 267.7467614837 )
-  }
-
-  test("cosh(2kπ)") {
-    val k = 16
-    val z = cosh(2*k*π)
-    assert( z === 1)
+    assert( c === 267.7467614837482 )
   }
 
   test("cosh(i)") {
     val c = cosh(i)
-    assert( c === 1.5430806348 )
+    assert( c === 0.5403023058681398 )
   }
 
   test("cosh(∞)") {
@@ -108,21 +102,21 @@ class Hyperbolic extends FunSuite {
   }
 
   test("tanh(π/4)") {
-    assert( tanh(π/4) === 0.6557942026 )
+    assert( tanh(π/4) === 0.6557942026326724 )
   }
 
   test("tanh(π/2)") {
-    assert( tanh(π/2) === 0.9171523357 )
+    assert( tanh(π/2) === 0.9171523356672744 )
   }
 
   test("tanh(3π/2)") {
     val c = tanh(3*π/2)
-    assert( c === 0.999838614 )
+    assert( c === 0.9998386139886327 )
   }
 
   test("tanh(2π)") {
     val c = tanh(2*π)
-    assert( c === 0.9999930253 )
+    assert( c === 0.9999930253396105 )
   }
 
   test("tanh(2kπ)") {

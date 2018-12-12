@@ -22,46 +22,54 @@ import cat.inspiracio.complex._
 
 class Equals extends FunSuite {
 
-  test("0==0") {
+  test("0 === 0") {
     val c: Complex = 0
     val e: Complex = 0
     assert(c === e )
   }
 
-  test("0==0 Byte") {
+  test("0 === 0 Byte") {
     val c: Complex = 0
     val e: Byte = 0
     assert(c === e )
   }
 
-  test("0==0 Int") {
+  test("0 === 0 Int") {
     val c: Complex = 0
     val e: Int = 0
     assert(c === e )
   }
 
-  test("0==0L") {
+  test("0 === 0L") {
     val c: Complex = 0
     val e: Long = 0
     assert(c === e )
   }
 
-  test("0==0F") {
+  test("0 === 0F") {
     val c: Complex = 0
     val e: Float = 0
     assert(c === e )
   }
 
-  test("0==0D") {
+  test("0 === 0D") {
     val c: Complex = 0
     val e: Double = 0
     assert(c === e )
   }
 
-  test("0 == ∞") {
-    val c: Complex = 0
-    val e: Complex = ∞
-    assert( c !== e )
+  test("∞ === 0") {
+    val c: Complex = ∞
+    val e: Complex = 0
+    val b = c === e
+    assert( !b )
+  }
+
+  test("13+3*i === 0") {
+    val c: Complex = 13 + 3*i
+    val e: Complex = 0
+    val b = c === e
+    assert( !b )
   }
 
   test("∞ == ∞") {

@@ -232,18 +232,17 @@ class CartesianComplex
     * therefore sometimes not useful.
     * */
   override def equals(other: Any): Boolean = {
-    val z = this
     other match {
       case null => false
 
-      case b: Byte => z == byte2Complex(b)
-      case n: Int => z == int2Complex(n)
-      case l: Long => z == long2Complex(l)
-      case f: Float => z == float2Complex(f)
-      case d: Double => z == double2Complex(d)
+      case b: Byte => this == byte2Complex(b)
+      case n: Int => this == int2Complex(n)
+      case l: Long => this == long2Complex(l)
+      case f: Float => this == float2Complex(f)
+      case d: Double => this == double2Complex(d)
 
       case c: CartesianComplex =>
-        z.re==c.re && z.im==c.im
+        this.re==c.re && this.im==c.im
 
       case ∞ => false
 

@@ -41,9 +41,11 @@ class Literals extends FunSuite {
   }
 
   test("Float"){
+    //This value 20.3 is imprecise:
+    // 20.3f != 20.3d
     val f: Float = 20.3f
     val c: Complex = f
-    assert( c === 20.3 )
+    assert( c === 20.3f )
   }
 
   test("Double"){

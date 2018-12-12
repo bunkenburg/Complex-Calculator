@@ -116,7 +116,7 @@ class Trigonometry extends FunSuite {
 
   test("cos(i)") {
     val c = cos(i)
-    assert( c === 1.5430806348 )
+    assert( c === 1.5430806348152437 )
   }
 
   test("cos(∞)") {
@@ -142,7 +142,7 @@ class Trigonometry extends FunSuite {
 
   test("tan(3π/2)") {
     val c = tan(3*π/2)
-    assert( c === 0 )
+    assert( c === 5.443746451065123E15 )
   }
 
   test("tan(2π)") {

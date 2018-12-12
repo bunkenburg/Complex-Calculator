@@ -63,10 +63,10 @@ trait Complex {
 
   def ^ (c: Int): Complex = this match {
     case Real(0) =>
-      if(c==0) throw new ArithmeticException("0^0")
+      if(c === 0) throw new ArithmeticException("0^0")
       else 0
     case Polar(mx,ax) =>
-      if(c==0) 1
+      if(c === 0) 1
       else Polar(Math.exp(Math.log(mx) * c), c * ax)
     case Infinity => if(c==0) throw new ArithmeticException("∞^0") else ∞
   }
@@ -87,7 +87,8 @@ trait Complex {
 
   def ^ (c: Complex): Complex = this match {
     case Real(0) =>
-      if(c.isZero) throw new ArithmeticException("0^0") else 0
+      if(c===0) throw new ArithmeticException("0^0")
+      else 0
     case Polar(mx,ax) =>
       c match {
         case Real(0) => 1
@@ -99,30 +100,36 @@ trait Complex {
         }
         case _ => ∞
       }
-    case Infinity =>
-      if(c.isZero) throw new ArithmeticException("∞^0") else ∞
+    case ∞ =>
+      if(c === 0) throw new ArithmeticException("∞^0")
+      else ∞
   }
 
   def === (c: Byte): Boolean = this match {
-    case Integer(c) => true
+    case Integer(n) => n == c.toLong
     case _ => false
   }
+
   def === (c: Int): Boolean = this match {
-    case Integer(c) => true
+    case Integer(n) => n == c.toLong
     case _ => false
   }
+
   def === (c: Long): Boolean = this match {
-    case Integer(c) => true
+    case Integer(n) => n == c
     case _ => false
   }
+
   def === (c: Float): Boolean = this match {
-    case Real(c) => true
+    case Real(d) => d == c.toDouble
     case _ => false
   }
+
   def === (c: Double): Boolean = this match {
-    case Real(c) => true
+    case Real(d) => d == c
     case _ => false
   }
+
   def === (c: Complex): Boolean = this == c
 
   def === (c: Circle): Boolean = {

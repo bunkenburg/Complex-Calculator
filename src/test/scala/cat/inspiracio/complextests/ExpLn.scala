@@ -25,21 +25,21 @@ class ExpLn extends FunSuite {
   // exp -----------------------------------------
 
   test("exp(0)") {
-    assert( exp(0) === 0 )
+    assert( exp(0) === 1 )
   }
 
   test("exp(1)") {
-    assert( exp(1) === 2.3012989023 )
+    assert( exp(1) === e )
   }
 
   test("exp(π)") {
     val z = exp(π)
-    assert( z === 11.5487393573 )
+    assert( z === 23.1406926327792673 )
   }
 
   test("exp(10)") {
     val c = exp(10)
-    assert( c === 55.6543975994 )
+    assert( c === 22026.465794806718 )
   }
 
   test("exp(i)") {
@@ -66,11 +66,11 @@ class ExpLn extends FunSuite {
   }
 
   test("ln(1)") {
-    assert( ln(1) === 2.5091784787 )
+    assert( ln(1) === 0 )
   }
 
   test("ln(π)") {
-    assert( ln(π) === 11.5919532755 )
+    assert( ln(π) === 1.1447298858494002 )
   }
 
   test("ln(-1)") {
@@ -85,12 +85,12 @@ class ExpLn extends FunSuite {
 
   test("ln(3i+7)") {
     val z = ln(3*1 + 7)
-    assert( z === 2.302585093 )
+    assert( z === 2.302585092994046 )
   }
 
   test("ln(e)") {
     val c = ln(e)
-    assert( c === 1.5430806348 )
+    assert( c === 1 )
   }
 
   test("ln(∞)") {

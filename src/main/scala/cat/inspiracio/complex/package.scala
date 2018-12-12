@@ -87,6 +87,7 @@ package object complex {
   def tanh(z: Complex): Complex = sinh(z) / cosh(z)
 
   def exp(d: Double) = Math.exp(d)
+
   def exp(z: Complex): Complex = z match {
     case ∞ => ∞
     case Cartesian(re,im) => Polar(exp(re), im)
@@ -232,12 +233,10 @@ package object complex {
 
     /** val Cartesian(re, im) = z
       * Matches all finite complex numbers. */
-    def unapply(c: Complex): Option[(Double,Double)] = {
-      if(c === ∞)
-        None
-      else
-        Some( (c.re, c.im) )
-    }
+    def unapply(c: Complex): Option[(Double,Double)] = c match {
+        case ∞ => None
+        case _ => Some( (c.re, c.im) )
+      }
 
   }
 

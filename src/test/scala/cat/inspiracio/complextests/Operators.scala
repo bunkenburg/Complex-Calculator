@@ -261,6 +261,27 @@ class Operators extends FunSuite {
     assert( c === 0 )
   }
 
+  test("0 ^ 3"){
+    val a: Complex = 0
+    val c = a ^ 3
+    assert( c === 0 )
+  }
+
+  test("case Real(0)"){
+    val a: Complex = 0
+    val b = a match {
+      case Real(0) => true
+      case _ => false
+    }
+    assert( b )
+  }
+
+  test("a === 0"){
+    val a: Int = 3
+    val b = a === 0
+    assert( !b )
+  }
+
   test("i^0"){
     val c = i^0
     assert( c === 1 )
