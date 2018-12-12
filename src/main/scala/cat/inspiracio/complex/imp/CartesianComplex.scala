@@ -91,7 +91,7 @@ class CartesianComplex
     else if (re < 0 || 0 <= im) 0
     else 4
 
-  override def argument: Double = {
+  def argument: Double = {
     import Math.atan2
     import Complex.argContinuous
     import Complex.lastQuad

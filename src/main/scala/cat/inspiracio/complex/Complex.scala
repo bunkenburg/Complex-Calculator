@@ -35,8 +35,6 @@ trait Complex {
   def re: Double
   def im: Double
 
-  def argument: Double
-
   // Operators ---------------------------------
 
   def unary_+ : Complex = this
