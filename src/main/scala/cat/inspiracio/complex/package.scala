@@ -239,7 +239,7 @@ package object complex {
 
     /** val z = Polar(m, a) */
     def apply(m: Double, a: Double): Complex =
-      if (m.isInfinite) ∞
+      if (m.isInfinity) ∞
       else Cartesian(m * cos(a), m * sin(a))
 
 

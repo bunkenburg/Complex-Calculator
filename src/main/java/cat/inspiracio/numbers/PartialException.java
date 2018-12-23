@@ -20,9 +20,7 @@ package cat.inspiracio.numbers;
 import cat.inspiracio.say.SayException;
 
 public class PartialException extends SayException {
-	
 	static final long serialVersionUID = 0;
-
 
     public PartialException(String s)
     {

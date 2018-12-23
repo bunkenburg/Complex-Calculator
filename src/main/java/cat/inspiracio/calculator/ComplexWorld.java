@@ -19,7 +19,8 @@ package cat.inspiracio.calculator;
 
 import static cat.inspiracio.calculator.World.Interaction.DRAW;
 import static cat.inspiracio.calculator.World.Interaction.MOVE;
-import cat.inspiracio.numbers.EC;
+//import cat.inspiracio.numbers.EC;
+import cat.inspiracio.complex.Complex;
 import cat.inspiracio.numbers.ECList;
 
 import javax.swing.*;
@@ -75,10 +76,11 @@ final class ComplexWorld extends World{
                     mouseevent.consume();
                     return;
                 }
-                EC ec = canvas.Point2Complex(mouseevent.getPoint());
-                if(ec != null){
-                    calculator.add(ec);
-                    add(ec);
+                java.awt.Point p = mouseevent.getPoint();
+                Complex c = canvas.Point2Complex(p);
+                if(c != null){
+                    calculator.add(c);
+                    add(c);
                 }
             }
             @Override public void mouseReleased(MouseEvent mouseevent){
@@ -122,9 +124,9 @@ final class ComplexWorld extends World{
 
     //Methods --------------------------------------------------------------
     
-    void add(EC ec){
-        numbers = new ECList(ec, numbers);
-        updateExtremes(ec);
+    @Override void add(Complex c){
+        numbers = new ECList(c, numbers);
+        updateExtremes(c);
         super.canvas.repaint();
     }
 

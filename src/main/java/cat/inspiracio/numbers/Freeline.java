@@ -21,11 +21,9 @@ package cat.inspiracio.numbers;
 // Referenced classes of package bunkenba.numbers:
 //            Piclet, ECList
 
-public class Freeline extends Piclet
-{
+public class Freeline extends Piclet {
 
-    public Freeline(ECList eclist)
-    {
+    public Freeline(ECList eclist) {
         super.samples = eclist;
     }
 
@@ -49,7 +47,5 @@ public class Freeline extends Piclet
         return 0.0D;
     }
 
-    protected void sample()
-    {
-    }
+    protected void sample() { }
 }

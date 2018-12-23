@@ -17,7 +17,8 @@
  * */
 package cat.inspiracio.calculator;
 
-import cat.inspiracio.numbers.EC;
+import cat.inspiracio.complex.Complex;
+import cat.inspiracio.complex.package$;
 import cat.inspiracio.numbers.Piclet;
 
 import javax.swing.*;
@@ -36,10 +37,12 @@ abstract class World extends JFrame {
     protected int prevx;
     protected int prevy;
     protected Interaction interaction;
+
     double MaxImaginary;
     double MinImaginary;
     double MaxReal;
     double MinReal;
+
     protected final Plane plane = new Plane(this);
     protected final Sphere sphere = new Sphere(this);
     protected WorldRepresentation canvas;
@@ -123,7 +126,7 @@ abstract class World extends JFrame {
         setLocationByPlatform(true);
     }
 
-    abstract void add(EC ec);
+    abstract void add(Complex c);
 
     abstract void drawStuff(Drawing drawing);
 
@@ -138,12 +141,12 @@ abstract class World extends JFrame {
 
     public void update(Graphics g){paint(g);}
 
-    protected void updateExtremes(EC ec){
-        if(ec.finite()){
-            MaxImaginary = Math.max(MaxImaginary, ec.im());
-            MinImaginary = Math.min(MinImaginary, ec.im());
-            MaxReal = Math.max(MaxReal, ec.re());
-            MinReal = Math.min(MinReal, ec.re());
+    protected void updateExtremes(Complex c){
+        if( c.isFinite() ){
+            MaxImaginary = Math.max(MaxImaginary, package$.MODULE$.Im(c) );
+            MinImaginary = Math.min(MinImaginary, package$.MODULE$.Im(c) );
+            MaxReal = Math.max(MaxReal, package$.MODULE$.Re(c) );
+            MinReal = Math.min(MinReal, package$.MODULE$.Re(c) );
         }
     }
 
@@ -160,4 +163,19 @@ abstract class World extends JFrame {
         sphere.setFont(font);
     }
 
+    // helpers -----------------------------------
+
+    protected double Im(Complex z){ return package$.MODULE$.Im(z); }
+    protected double Re(Complex z){ return package$.MODULE$.Re(z); }
+
+    protected Complex Cartesian(double re, double im){
+        //Complex r = package$.MODULE$.double2Complex(re);
+        Complex i = package$.MODULE$.i();
+        return i.$times(im).$plus(re);
+    }
+
+    protected Complex Real(double re){
+        Complex r = package$.MODULE$.double2Complex(re);
+        return r;
+    }
 }

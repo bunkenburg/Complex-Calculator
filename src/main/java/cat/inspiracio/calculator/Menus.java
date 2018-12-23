@@ -21,7 +21,8 @@ import static cat.inspiracio.calculator.Calculator.Mode.CALC;
 import static cat.inspiracio.calculator.Calculator.Mode.FZ;
 import static cat.inspiracio.calculator.Calculator.Mode.MODFZ;
 import static cat.inspiracio.calculator.Calculator.Mode.REFX;
-import cat.inspiracio.numbers.EC;
+
+import cat.inspiracio.complex.Complex$;
 
 import javax.swing.*;
 import java.beans.PropertyChangeListener;
@@ -84,14 +85,14 @@ final class Menus extends JMenuBar {
 		final JMenu menu = new JMenu("Precision");
 
 		ButtonGroup group=new ButtonGroup();
-
-		int precision=EC.getPrecision();
-
+		int precision= Complex$.MODULE$.getPrecision();
 		for(int j : Calculator.precisions){
 			String s = Integer.toString(j);
 			boolean selected = precision==j;
 			JRadioButtonMenuItem item = new JRadioButtonMenuItem(s, selected );
-			item.addActionListener( event -> EC.setPrecision(j) );
+			item.addActionListener(
+					event -> Complex$.MODULE$.setPrecision(j)
+			);
 			menu.add(item);
 			group.add(item);
 		}

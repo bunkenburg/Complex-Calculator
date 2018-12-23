@@ -19,10 +19,7 @@ package cat.inspiracio.parsing;
 
 import java.text.Format;
 
-public abstract class SyntaxFormat extends Format
-{
+public abstract class SyntaxFormat extends Format {
 
-    public SyntaxFormat()
-    {
-    }
+    public SyntaxFormat() { }
 }

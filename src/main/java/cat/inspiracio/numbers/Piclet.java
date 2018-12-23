@@ -21,11 +21,12 @@ package cat.inspiracio.numbers;
 // Referenced classes of package bunkenba.numbers:
 //            ECList
 
-public abstract class Piclet
-{
+import cat.inspiracio.complex.Complex;
+import cat.inspiracio.complex.package$;
 
-    public ECList getSamples()
-    {
+public abstract class Piclet {
+
+    public ECList getSamples() {
         if(samples == null)
             sample();
         return samples;
@@ -41,10 +42,36 @@ public abstract class Piclet
 
     public abstract double right();
 
-    public Piclet()
-    {
-    }
+    public Piclet() { }
 
     static final int SAMPLE_DENSITY = 30;
     protected ECList samples;
+
+    // helpers -------------------------------
+
+    protected double Im(Complex c){ return cat.inspiracio.complex.package$.MODULE$.Im(c); }
+
+    protected double Re(Complex c){
+        return cat.inspiracio.complex.package$.MODULE$.Re(c);
+    }
+
+    protected double distance(Complex a, Complex ec){
+        if( a.isFinite() && ec.isFinite() )
+            return Math.sqrt(sqr(Re(a) - Re(ec)) + sqr(Im(a) - Im(ec) ));
+        return a.isFinite() != ec.isFinite() ? (1.0D / 0.0D) : 0.0D;
+    }
+
+    protected double sqr(double d){return d*d;}
+
+    protected Complex Cartesian(double re, double im){
+        //Complex r = package$.MODULE$.double2Complex(re);
+        Complex i = package$.MODULE$.i();
+        return i.$times(im).$plus(re);
+    }
+
+    protected Complex Real(double re){
+        Complex r = package$.MODULE$.double2Complex(re);
+        return r;
+    }
+
 }

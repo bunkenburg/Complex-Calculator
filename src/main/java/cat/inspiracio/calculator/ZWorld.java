@@ -26,8 +26,10 @@ import static cat.inspiracio.calculator.World.Interaction.LINE;
 import static cat.inspiracio.calculator.World.Interaction.MOVE;
 import static cat.inspiracio.calculator.World.Interaction.SQUARE;
 import cat.inspiracio.calculator.Calculator.Mode;
+import cat.inspiracio.complex.Complex;
+import cat.inspiracio.complex.Complex$;
+import cat.inspiracio.complex.package$;
 import cat.inspiracio.numbers.Circle;
-import cat.inspiracio.numbers.EC;
 import cat.inspiracio.numbers.ECList;
 import cat.inspiracio.numbers.Freeline;
 import cat.inspiracio.numbers.Line;
@@ -50,8 +52,8 @@ final class ZWorld extends World{
     private FzWorld fzW;
     private ThreeDWorld modfzW;
     private ECList current;
-    private EC start;
-    private EC end;
+    private Complex start;
+    private Complex end;
     private Piclet currentPiclet;
     private PicletList piclets;
     private Square square;
@@ -65,8 +67,9 @@ final class ZWorld extends World{
 	 * @param calculator Connected to this calculator. */
     ZWorld(Calculator calculator){
         super(calculator);
-        square = new Square(new Circle(EC.ZERO, 1.0D));
-        super.interaction =DRAW;
+        Complex zero = Real(0);
+        square = new Square(new Circle(zero, 1.0D));
+        super.interaction = DRAW;
         setTitle("z World");
         eraseButton = new JButton("Clear");
         eraseButton.addActionListener( actionevent -> {
@@ -123,16 +126,16 @@ final class ZWorld extends World{
                     mouseevent.consume();
                     return;
                 case DRAW: // '\0'
-                    EC ec = canvas.Point2Complex(mouseevent.getPoint());
+                    Complex ec = canvas.Point2Complex(mouseevent.getPoint());
                     if(ec != null){
-                        EC.resetArg();
+                        Complex$.MODULE$.resetArg();
                         add(ec);
                         canvas.paint(canvas.getGraphics());
                         return;
                     }
                     break;
                 case GRID: // '\006'
-                    EC ec1 = canvas.Point2Complex(mouseevent.getPoint());
+                    Complex ec1 = canvas.Point2Complex(mouseevent.getPoint());
                     if(ec1 != null){
                         start = ec1;
                         end = ec1;
@@ -142,7 +145,7 @@ final class ZWorld extends World{
                     }
                     break;
                 case LINE: // '\002'
-                    EC ec2 = canvas.Point2Complex(mouseevent.getPoint());
+                    Complex ec2 = canvas.Point2Complex(mouseevent.getPoint());
                     if(ec2 != null){
                         start = ec2;
                         end = ec2;
@@ -152,7 +155,7 @@ final class ZWorld extends World{
                     }
                     break;
                 case CIRCLE: // '\004'
-                    EC ec3 = canvas.Point2Complex(mouseevent.getPoint());
+                    Complex ec3 = canvas.Point2Complex(mouseevent.getPoint());
                     if(ec3 != null){
                         start = ec3;
                         end = ec3;
@@ -162,7 +165,7 @@ final class ZWorld extends World{
                     }
                     break;
                 case RECTANGLE: // '\003'
-                    EC ec4 = canvas.Point2Complex(mouseevent.getPoint());
+                    Complex ec4 = canvas.Point2Complex(mouseevent.getPoint());
                     if(ec4 != null){
                         start = ec4;
                         end = ec4;
@@ -172,7 +175,7 @@ final class ZWorld extends World{
                     }
                     break;
                 case SQUARE: // '\007'
-                    EC ec5 = canvas.Point2Complex(mouseevent.getPoint());
+                    Complex ec5 = canvas.Point2Complex(mouseevent.getPoint());
                     if(ec5 == null)
                         break;
                     start = ec5;
@@ -186,6 +189,7 @@ final class ZWorld extends World{
                     return;
                 }
             }
+
         	@Override public void mouseReleased(MouseEvent mouseevent){
                 switch(interaction){
                 //case 5: default: break;
@@ -200,7 +204,7 @@ final class ZWorld extends World{
                     return;
                 case DRAW: // '\0'
                     if(current != null){
-                        EC ec = canvas.Point2Complex(mouseevent.getPoint());
+                        Complex ec = canvas.Point2Complex(mouseevent.getPoint());
                         if(ec != null)
                             add(ec);
                         piclets = new PicletList(new Freeline(current), piclets);
@@ -212,7 +216,7 @@ final class ZWorld extends World{
                     break;
                 case LINE: // '\002'
                     if(start != null){
-                        EC ec1 = canvas.Point2Complex(mouseevent.getPoint());
+                        Complex ec1 = canvas.Point2Complex(mouseevent.getPoint());
                         if(ec1 != null)
                             end = ec1;
                         add(new Line(start, end));
@@ -222,7 +226,7 @@ final class ZWorld extends World{
                     return;
                 case CIRCLE: // '\004'
                     if(start != null){
-                        EC ec2 = canvas.Point2Complex(mouseevent.getPoint());
+                        Complex ec2 = canvas.Point2Complex(mouseevent.getPoint());
                         if(ec2 != null)
                             end = ec2;
                         add(new Circle(start, end));
@@ -232,7 +236,7 @@ final class ZWorld extends World{
                     return;
                 case RECTANGLE: // '\003'
                     if(start != null){
-                        EC ec3 = canvas.Point2Complex(mouseevent.getPoint());
+                        Complex ec3 = canvas.Point2Complex(mouseevent.getPoint());
                         if(ec3 != null)
                             end = ec3;
                         add(new Rectangle(start, end));
@@ -242,7 +246,7 @@ final class ZWorld extends World{
                     return;
                 case SQUARE: // '\007'
                     if(start != null){
-                        EC ec4 = canvas.Point2Complex(mouseevent.getPoint());
+                        Complex ec4 = canvas.Point2Complex(mouseevent.getPoint());
                         if(ec4 != null)
                             end = ec4;
                         square = new Square(start, end);
@@ -257,7 +261,7 @@ final class ZWorld extends World{
                     return;
                 case GRID: // '\006'
                     if(start != null){
-                        EC ec5 = canvas.Point2Complex(mouseevent.getPoint());
+                        Complex ec5 = canvas.Point2Complex(mouseevent.getPoint());
                         if(ec5 != null)
                             end = ec5;
                         addGrid(new Rectangle(start, end));
@@ -282,7 +286,7 @@ final class ZWorld extends World{
                     mouseevent.consume();
                     return;
                 case DRAW: // '\0'
-                    EC ec = canvas.Point2Complex(mouseevent.getPoint());
+                    Complex ec = canvas.Point2Complex(mouseevent.getPoint());
                     if(current != null){
                         if(ec != null){
                             add(ec);
@@ -295,14 +299,14 @@ final class ZWorld extends World{
                         return;
                     }
                     if(ec != null){
-                        EC.resetArg();
+                        Complex$.MODULE$.resetArg();
                         add(ec);
                         canvas.paint(canvas.getGraphics());
                         return;
                     }
                     break;
                 case CIRCLE: // '\004'
-                    EC ec1 = canvas.Point2Complex(mouseevent.getPoint());
+                    Complex ec1 = canvas.Point2Complex(mouseevent.getPoint());
                     if(ec1 != null){
                         end = ec1;
                         addCurrent(new Circle(start, end));
@@ -311,7 +315,7 @@ final class ZWorld extends World{
                     }
                     break;
                 case GRID: // '\006'
-                    EC ec2 = canvas.Point2Complex(mouseevent.getPoint());
+                    Complex ec2 = canvas.Point2Complex(mouseevent.getPoint());
                     if(ec2 != null){
                         end = ec2;
                         addCurrent(new Rectangle(start, end));
@@ -320,7 +324,7 @@ final class ZWorld extends World{
                     }
                     break;
                 case LINE: // '\002'
-                    EC ec3 = canvas.Point2Complex(mouseevent.getPoint());
+                    Complex ec3 = canvas.Point2Complex(mouseevent.getPoint());
                     if(ec3 != null){
                         end = ec3;
                         addCurrent(new Line(start, end));
@@ -329,7 +333,7 @@ final class ZWorld extends World{
                     }
                     break;
                 case RECTANGLE: // '\003'
-                    EC ec4 = canvas.Point2Complex(mouseevent.getPoint());
+                    Complex ec4 = canvas.Point2Complex(mouseevent.getPoint());
                     if(ec4 != null){
                         end = ec4;
                         addCurrent(new Rectangle(start, end));
@@ -338,7 +342,7 @@ final class ZWorld extends World{
                     }
                     break;
                 case SQUARE: // '\007'
-                    EC ec5 = canvas.Point2Complex(mouseevent.getPoint());
+                    Complex ec5 = canvas.Point2Complex(mouseevent.getPoint());
                     if(ec5 == null)
                         break;
                     end = ec5;
@@ -362,7 +366,7 @@ final class ZWorld extends World{
         setVisible(true);
     }
 
-    void add(EC ec){
+    @Override void add(Complex ec){
         updateExtremes(ec);
         current = new ECList(ec, current);
         fzW.add(ec);
@@ -380,18 +384,18 @@ final class ZWorld extends World{
     }
 
     void addGrid(Rectangle rectangle){
-        double d = rectangle.topLeft.im();
-        double d1 = rectangle.botLeft.im();
-        double d2 = rectangle.botRight.re();
-        double d3 = rectangle.botLeft.re();
+        double d  = Im( rectangle.topLeft );
+        double d1 = Im( rectangle.botLeft );
+        double d2 = Re( rectangle.botRight );
+        double d3 = Re( rectangle.botLeft );
         double d4 = rectangle.getWidth() / 10D;
         double d5 = rectangle.getHeight() / 10D;
         double d6 = d3;
         double d7 = d1;
         for(int i = 0; i <= 10; i++){
-            add(new Line(EC.mkCartesian(d6, d), EC.mkCartesian(d6, d1)));
+            add(new Line(Cartesian(d6, d), Cartesian(d6, d1)));
             d6 += d4;
-            add(new Line(EC.mkCartesian(d3, d7), EC.mkCartesian(d2, d7)));
+            add(new Line( Cartesian(d3, d7), Cartesian(d2, d7)));
             d7 += d5;
         }
     }

@@ -32,6 +32,9 @@ import java.text.NumberFormat
   * */
 trait Complex {
 
+  /** Just for easier Java compatibility */
+  def isFinite : Boolean = this != ∞
+
   // Operators ---------------------------------
 
   def unary_+ : Complex = this
@@ -291,7 +294,7 @@ object Complex {
   var argContinuous: Boolean = false
   var k = 0
   var lastQuad = 0
-  private def resetArg(): Unit = {
+  def resetArg(): Unit = {
     lastQuad = 0
     k = 0
   }

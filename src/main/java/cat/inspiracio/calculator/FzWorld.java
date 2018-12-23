@@ -18,6 +18,9 @@
 package cat.inspiracio.calculator;
 
 import static cat.inspiracio.calculator.World.Interaction.MOVE;
+
+import cat.inspiracio.complex.Complex;
+import cat.inspiracio.complex.Complex$;
 import cat.inspiracio.numbers.*;
 import cat.inspiracio.parsing.SyntaxTree;
 
@@ -83,10 +86,10 @@ final class FzWorld extends World {
 
     //Methods ------------------------------------------------------------
     
-    void add(EC ec){
+    @Override void add(Complex c){
         if(f != null){
             try{
-                EC ec1 = f.evaluate(ec);
+                Complex ec1 = f.evaluate(c);
                 current = new ECList(ec1, current);
                 updateExtremes(ec1);
             }
@@ -97,14 +100,15 @@ final class FzWorld extends World {
 
     void add(Piclet piclet){
         if(f != null){
-            EC.resetArg();
+            //EC.resetArg();
+            Complex$.MODULE$.resetArg();
             ECList eclist = piclet.getSamples();
             current = null;
             for(; eclist != null; eclist = eclist.tail())
                 try{
-                    EC ec = f.evaluate(eclist.head());
-                    updateExtremes(ec);
-                    current = new ECList(ec, current);
+                    Complex c = f.evaluate(eclist.head());
+                    updateExtremes(c);
+                    current = new ECList(c, current);
                 }
                 catch(Exception _ex) { }
             stopDynamicMap();
@@ -119,12 +123,13 @@ final class FzWorld extends World {
 
     void addCurrent(Piclet piclet){
         if(f != null){
-            EC.resetArg();
+            //EC.resetArg();
+            Complex$.MODULE$.resetArg();
             current = null;
             for(ECList eclist = piclet.getSamples(); eclist != null; eclist = eclist.tail())
                 try{
-                    EC ec = f.evaluate(eclist.head());
-                    current = new ECList(ec, current);
+                    Complex c = f.evaluate(eclist.head());
+                    current = new ECList(c, current);
                 }
                 catch(Exception _ex) { }
             super.canvas.paint(super.canvas.getGraphics());

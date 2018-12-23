@@ -17,8 +17,9 @@
  * */
 package cat.inspiracio.calculator;
 
+import cat.inspiracio.complex.Complex;
+import cat.inspiracio.complex.package$;
 import cat.inspiracio.numbers.Circle;
-import cat.inspiracio.numbers.EC;
 import cat.inspiracio.numbers.ECList;
 import cat.inspiracio.numbers.Line;
 import cat.inspiracio.numbers.Piclet;
@@ -55,9 +56,11 @@ final class Plane extends WorldRepresentation{
         point.y = -(int)((d1 - TopImaginary) * ScaleFactor);
     }
 
-    void drawComplex(Drawing drawing, EC ec){
-        if(ec.finite()){
-            drawing.cross((int)((ec.re() - LeftReal) * ScaleFactor), -(int)((ec.im() - TopImaginary) * ScaleFactor), MARKLENGTH);
+    @Override void drawComplex(Drawing drawing, Complex ec){
+        if( ec.isFinite() ){
+            int i = (int)(( Re(ec) - LeftReal) * ScaleFactor);
+            int j = -(int)(( Im(ec) - TopImaginary) * ScaleFactor);
+            drawing.cross( i, j, MARKLENGTH );
             drawing.move(2, 2);
             drawing.drawString(ec.toString());
         }
@@ -80,7 +83,11 @@ final class Plane extends WorldRepresentation{
         }
         if(piclet instanceof Circle){
             Circle circle = (Circle)piclet;
-            drawing.drawCircle((int)((circle.center.re() - LeftReal) * ScaleFactor), -(int)((circle.center.im() - TopImaginary) * ScaleFactor), Math2Pix(circle.radius));
+            drawing.drawCircle(
+                    (int)((Re(circle.center) - LeftReal) * ScaleFactor),
+                    -(int)((Im(circle.center) - TopImaginary) * ScaleFactor),
+                    Math2Pix(circle.radius)
+            );
             return;
         }
         if(piclet instanceof Rectangle){
@@ -97,19 +104,25 @@ final class Plane extends WorldRepresentation{
         }
     }
 
-    void lineTo(Drawing drawing, EC ec){
-        drawing.lineTo((int)((ec.re() - LeftReal) * ScaleFactor), -(int)((ec.im() - TopImaginary) * ScaleFactor));
+    void lineTo(Drawing drawing, Complex c){
+        int i = (int)(( Re(c) - LeftReal) * ScaleFactor);
+        int j = -(int)(( Im(c) - TopImaginary) * ScaleFactor);
+        drawing.lineTo(i, j );
     }
 
-    void moveTo(Drawing drawing, EC ec){
-        drawing.moveTo((int)((ec.re() - LeftReal) * ScaleFactor), -(int)((ec.im() - TopImaginary) * ScaleFactor));
+    void moveTo(Drawing drawing, Complex c){
+        int i = (int)(( Re(c) - LeftReal) * ScaleFactor);
+        int j = -(int)(( Im(c) - TopImaginary) * ScaleFactor);
+        drawing.moveTo( i, j );
     }
 
-    EC Point2Complex(Point point){
-        return EC.mkCartesian(LeftReal + (double)point.x / ScaleFactor, TopImaginary - (double)point.y / ScaleFactor);
+    @Override Complex Point2Complex(Point point){
+        double re = LeftReal + (double)point.x / ScaleFactor;
+        double im = TopImaginary - (double)point.y / ScaleFactor;
+        return Cartesian(re, im);
     }
 
-    public void paint(Graphics g){
+    @Override public void paint(Graphics g){
         g = super.doubleBuffer.offScreen(g);
         Point point = new Point();
         Point point1 = new Point();
@@ -158,7 +171,7 @@ final class Plane extends WorldRepresentation{
         for(; d3 < d4; d3 += d){
             drawing.moveTo(i, j);
             drawing.line(0, MARKLENGTH);
-            g.drawString(EC.toString(d3), i + MARKLENGTH, j + FONTHEIGHT);
+            g.drawString(toString(d3), i + MARKLENGTH, j + FONTHEIGHT);
             i += l;
         }
         cartesian2Point(d1, d5, point);
@@ -177,7 +190,7 @@ final class Plane extends WorldRepresentation{
         d5 = d7 * d;
         for(int k = imag2Pix(d5); d5 < d6; k -= l){
             if(d5 != 0.0D || d1 != 0.0D){
-                String s = EC.toString(d5) + "i";
+                String s = toString(d5) + "i";
                 drawing.moveTo(i, k);
                 drawing.line(-MARKLENGTH, 0);
                 g.drawString(s, i - MARKLENGTH - g.getFontMetrics().stringWidth(s), k + FONTHEIGHT);

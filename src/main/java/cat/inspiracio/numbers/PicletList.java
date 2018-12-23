@@ -21,11 +21,10 @@ package cat.inspiracio.numbers;
 // Referenced classes of package bunkenba.numbers:
 //            Piclet
 
-public class PicletList
-{
+/** Haskell-style list of Piclets. */
+public class PicletList {
 
-    public PicletList(Piclet piclet, PicletList picletlist)
-    {
+    public PicletList(Piclet piclet, PicletList picletlist) {
         head = piclet;
         tail = picletlist;
     }

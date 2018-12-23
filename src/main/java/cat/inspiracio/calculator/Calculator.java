@@ -22,10 +22,11 @@ import static cat.inspiracio.calculator.Calculator.Mode.FZ;
 import static cat.inspiracio.calculator.Calculator.Mode.MODFZ;
 import static cat.inspiracio.calculator.Calculator.Mode.REFX;
 import cat.inspiracio.numbers.BugException;
-import cat.inspiracio.numbers.EC;
+//import cat.inspiracio.numbers.EC;
 import cat.inspiracio.numbers.PartialException;
 import cat.inspiracio.numbers.Square;
 import cat.inspiracio.parsing.SyntaxTree;
+import cat.inspiracio.complex.*;
 
 import javax.swing.*;
 import java.awt.GridBagConstraints;
@@ -81,7 +82,8 @@ public final class Calculator extends JFrame {
     private void buildFrame(){
         display = new Display(12);
         setResizable(false);
-        EC.setPrecision(4);
+        //EC.setPrecision(4);
+        Complex$.MODULE$.setPrecision(4);
     }
 
     private void buildButtons(){
@@ -211,7 +213,8 @@ public final class Calculator extends JFrame {
     }
 
     /** Adds a complex number to the display. */
-    final void add(EC ec){display.paste("(" + ec + ")");}
+    //final void add(EC ec){display.paste("(" + ec + ")");}
+    final void add(Complex c){display.paste("(" + c + ")");}
 
     /** Gets the expression from the display, parses it, evaluates it,
      * and append the result to the display. */
@@ -219,10 +222,10 @@ public final class Calculator extends JFrame {
         String s=display.getText();
         display.append(" = ");
         try{
-            SyntaxTree tree=SyntaxTree.parse(s);
-            EC ec=tree.evaluate(null);
-            display.append(ec.toString());
-            cW.add(ec);
+            SyntaxTree tree=new SyntaxTree().parse(s);
+            Complex c = tree.evaluate(null);
+            display.append(c.toString());
+            cW.add(c);
             return;
         }catch(BugException bugexception){
         	bugexception.printStackTrace();
@@ -252,7 +255,7 @@ public final class Calculator extends JFrame {
         try{
             String s = SyntaxTree.stripBlanks(display.getText());
             if(s.startsWith("f(" + variable + ")=")){
-                f = SyntaxTree.parse(s.substring(5));
+                f = new SyntaxTree().parse(s.substring(5));
                 switch(mode){
                     case MODFZ: modfzW.functionChange(f); break;
                     case REFX: refxW.functionChange(f); break;
@@ -282,7 +285,8 @@ public final class Calculator extends JFrame {
         switch(i){
         
         case CALC:
-            EC.setArgPrincipal();
+            //EC.setArgPrincipal();
+            Complex$.MODULE$.setArgContinuous();
             display.clearAll();
             equalsButton.setEnabled(true);
             zButton.setEnabled(false);
@@ -294,7 +298,8 @@ public final class Calculator extends JFrame {
             break;
 
         case FZ:
-            EC.setArgContinuous();
+            //EC.setArgContinuous();
+            Complex$.MODULE$.setArgContinuous();
             variable = 'z';
             if(mode==REFX)
                 display.replace('x', 'z');
@@ -316,7 +321,8 @@ public final class Calculator extends JFrame {
             break;
 
         case MODFZ:
-            EC.setArgContinuous();
+            //EC.setArgContinuous();
+            Complex$.MODULE$.setArgContinuous();
             variable = 'z';
             if(mode ==REFX)
                 display.replace('x', 'z');
@@ -337,7 +343,8 @@ public final class Calculator extends JFrame {
             break;
 
         case REFX:
-        	EC.setArgContinuous();
+        	//EC.setArgContinuous();
+            Complex$.MODULE$.setArgContinuous();
             variable = 'x';
             if(mode ==CALC){
                 display.clearAll();

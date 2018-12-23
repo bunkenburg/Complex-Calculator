@@ -17,7 +17,9 @@
  * */
 package cat.inspiracio.calculator;
 
-import cat.inspiracio.numbers.EC;
+import cat.inspiracio.complex.Complex;
+//import cat.inspiracio.numbers.EC;
+import cat.inspiracio.complex.package$;
 import cat.inspiracio.numbers.ECList;
 
 import java.awt.*;
@@ -30,14 +32,21 @@ final class Sphere extends WorldRepresentation{
 
 	//State -------------------------------------------------------
 	
-    private static final EC marks[];
+    private final Complex marks[];
     private Matrix44 R;
     private Matrix44 R1;
     private double xyscale;
     private static int MARKLENGTH = 2;
 
-    static {
-        marks = (new EC[] {EC.ZERO, EC.INFINITY, EC.ONE, EC.mkCartesian(-1D, 0.0D), EC.I, EC.mkCartesian(0.0D, -1D)});
+    {
+        marks = (new Complex[] {
+                Real(0),
+                infinity,
+                Real(1),
+                Cartesian(-1D, 0.0D),
+                Cartesian(0, 1),
+                Cartesian(0.0D, -1D)
+        });
     }
 
 	//Constructor -------------------------------------------------
@@ -51,16 +60,17 @@ final class Sphere extends WorldRepresentation{
     
     //Methods ------------------------------------------------------
 
-    void drawComplex(Drawing drawing, EC ec){
+    @Override void drawComplex(Drawing drawing, Complex ec){
         double d;
         double d1;
         double d2;
-        if(ec.finite()){
-            double d3 = EC.sqr(ec.mod());
+        if( ec.isFinite() ){
+            double a = abs(ec);
+            double d3 = sqr( a );
             double d5 = 1.0D + d3;
-            d = ec.re() / d5;
+            d = Re(ec) / d5;
             d1 = d3 / d5 - 0.5D;
-            d2 = ec.im() / d5;
+            d2 = Im(ec) / d5;
         } else{
             d = 0.0D;
             d1 = 0.5D;
@@ -94,25 +104,25 @@ final class Sphere extends WorldRepresentation{
         }
     }
 
-    private static EC f3dC(Vector3 vector3){
+    private Complex f3dC(Vector3 vector3){
         if(vector3.y == 0.5D)
-            return EC.INFINITY;
+            return infinity;
         if(vector3.y == -0.5D)
-            return EC.ZERO;
+            return Real(0);
         else
-            return EC.mkCartesian(vector3.x / (0.5D - vector3.y), vector3.z / (0.5D - vector3.y));
+            return Cartesian(vector3.x / (0.5D - vector3.y), vector3.z / (0.5D - vector3.y));
     }
 
-    private boolean isFrontC(EC ec, Point point){
+    private boolean isFrontC(Complex ec, Point point){
         double d;
         double d1;
         double d2;
-        if(ec.finite()){
-            double d3 = EC.sqr(ec.mod());
+        if( ec.isFinite() ){
+            double d3 = sqr( package$.MODULE$.abs(ec) );
             double d5 = 1.0D + d3;
-            d = ec.re() / d5;
+            d = Re(ec) / d5;
             d1 = d3 / d5 - 0.5D;
-            d2 = ec.im() / d5;
+            d2 = Im(ec) / d5;
         } else{
             d = 0.0D;
             d1 = 0.5D;
@@ -130,16 +140,16 @@ final class Sphere extends WorldRepresentation{
         }
     }
 
-    void lineTo(Drawing drawing, EC ec){
+    @Override void lineTo(Drawing drawing, Complex ec){
         double d;
         double d1;
         double d2;
-        if(ec.finite()){
-            double d3 = EC.sqr(ec.mod());
+        if( ec.isFinite() ){
+            double d3 = sqr(abs(ec));
             double d5 = 1.0D + d3;
-            d = ec.re() / d5;
+            d = Re(ec) / d5;
             d1 = d3 / d5 - 0.5D;
-            d2 = ec.im() / d5;
+            d2 = Im(ec) / d5;
         } else{
             d = 0.0D;
             d1 = 0.5D;
@@ -153,16 +163,16 @@ final class Sphere extends WorldRepresentation{
         }
     }
 
-    void moveTo(Drawing drawing, EC ec){
+    @Override void moveTo(Drawing drawing, Complex ec){
         double d;
         double d1;
         double d2;
-        if(ec.finite()){
-            double d3 = EC.sqr(ec.mod());
+        if( ec.isFinite() ){
+            double d3 = sqr( abs(ec) );
             double d5 = 1.0D + d3;
-            d = ec.re() / d5;
+            d = Re(ec) / d5;
             d1 = d3 / d5 - 0.5D;
-            d2 = ec.im() / d5;
+            d2 = Im(ec) / d5;
         } else{
             d = 0.0D;
             d1 = 0.5D;
@@ -176,7 +186,7 @@ final class Sphere extends WorldRepresentation{
         }
     }
 
-    public void paint(Graphics g){
+    @Override public void paint(Graphics g){
         g = super.doubleBuffer.offScreen(g);
         xyscale = (double)Math.min(getSize().width, getSize().height) * 0.80000000000000004D;
         Drawing drawing = new Drawing(g);
@@ -187,7 +197,7 @@ final class Sphere extends WorldRepresentation{
         super.doubleBuffer.onScreen();
     }
 
-    EC Point2Complex(Point point){
+    Complex Point2Complex(Point point){
         double d = ((double)point.x - (double)getSize().width * 0.5D) / xyscale;
         double d1 = ((double)getSize().height * 0.5D - (double)point.y) / xyscale;
         double d2 = 0.25D - d * d - d1 * d1;

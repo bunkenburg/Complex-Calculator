@@ -17,15 +17,19 @@
  * */
 package cat.inspiracio.calculator;
 
+/** I'm sure this can be a nice class in Scala.
+ * Check it's really immutable. */
 final class Matrix44{
 
 	/** Not private because it's used from Sphere. */
     double data[][] = {new double[4], new double[4], new double[4], new double[4]};
 
     //Constructors -------------------------------------------------
-	
+
+    /** The 0 matrix */
     Matrix44(){}
 
+    /** Copying constructor */
     Matrix44(Matrix44 matrix44){
         this();
         for(int i = 0; i < 4; i++){
@@ -39,15 +43,18 @@ final class Matrix44{
     }
 
     //Methods -----------------------------------------------------
-    
+
+    /** rename to * */
     Vector3 multiply(double d, double d1, double d2){
         return new Vector3(data[0][0] * d + data[0][1] * d1 + data[0][2] * d2 + data[0][3], data[1][0] * d + data[1][1] * d1 + data[1][2] * d2 + data[1][3], data[2][0] * d + data[2][1] * d1 + data[2][2] * d2 + data[2][3]);
     }
 
+    /** rename to * */
     Vector3 multiply(Vector3 vector3){
         return new Vector3(data[0][0] * vector3.x + data[0][1] * vector3.y + data[0][2] * vector3.z + data[0][3], data[1][0] * vector3.x + data[1][1] * vector3.y + data[1][2] * vector3.z + data[1][3], data[2][0] * vector3.x + data[2][1] * vector3.y + data[2][2] * vector3.z + data[2][3]);
     }
 
+    /** rename to * */
     Matrix44 multiply(Matrix44 matrix44){
         double ad[][] = data;
         double ad1[][] = matrix44.data;
@@ -64,6 +71,7 @@ final class Matrix44{
         return matrix44_1;
     }
 
+    /** The 1 matrix */
     static Matrix44 ONE(){
         return new Matrix44(new double[][] {
             new double[] {1.0D, 0, 0, 0}, 

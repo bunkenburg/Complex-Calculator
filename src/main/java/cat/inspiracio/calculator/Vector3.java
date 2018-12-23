@@ -29,8 +29,6 @@ final class Vector3{
 
 	//Constructors ----------------------------------------
 	
-    Vector3(){}
-
     Vector3(double d, double d1, double d2){
         x = d;
         y = d1;

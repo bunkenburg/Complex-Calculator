@@ -17,7 +17,10 @@
  * */
 package cat.inspiracio.calculator;
 
-import cat.inspiracio.numbers.*;
+import cat.inspiracio.complex.Complex;
+import cat.inspiracio.complex.package$;
+import cat.inspiracio.numbers.ECList;
+import cat.inspiracio.numbers.Piclet;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,7 +48,7 @@ abstract class WorldRepresentation extends JComponent {
     
     //Methods ------------------------------------------------------
 
-    abstract void drawComplex(Drawing drawing, EC ec);
+    abstract void drawComplex(Drawing drawing, Complex ec);
 
     abstract void drawECList(Drawing drawing, ECList eclist);
 
@@ -56,11 +59,11 @@ abstract class WorldRepresentation extends JComponent {
     @Override public Dimension getPreferredSize(){return getMinimumSize();}
     @Override public Dimension getMinimumSize(){return MIN_SIZE;}
 
-    abstract void moveTo(Drawing drawing, EC ec);
+    abstract void moveTo(Drawing drawing, Complex ec);
 
-    abstract void lineTo(Drawing drawing, EC ec);
+    abstract void lineTo(Drawing drawing, Complex ec);
 
-    abstract EC Point2Complex(Point point);
+    abstract Complex Point2Complex(Point point);
 
     abstract void reset();
 
@@ -69,4 +72,35 @@ abstract class WorldRepresentation extends JComponent {
     abstract void zoomIn();
 
     abstract void zoomOut();
+
+    // helpers -----------------------------------
+
+    protected double Im(Complex c){ return cat.inspiracio.complex.package$.MODULE$.Im(c); }
+
+    protected double Re(Complex c){
+        return cat.inspiracio.complex.package$.MODULE$.Re(c);
+    }
+
+    protected String toString(double d){
+        return package$.MODULE$.double2Complex(d).toString();
+    }
+
+    protected static final double sqr(double d){return d * d;}
+
+    protected double abs(Complex z){
+        return package$.MODULE$.abs(z);
+    }
+
+    protected final Complex infinity = Real(1).$div(0);
+
+    protected Complex Cartesian(double re, double im){
+        Complex i = package$.MODULE$.i();
+        return i.$times(im).$plus(re);
+    }
+
+    protected Complex Real(double re){
+        Complex r = package$.MODULE$.double2Complex(re);
+        return r;
+    }
+
 }

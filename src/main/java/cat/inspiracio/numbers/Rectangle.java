@@ -21,116 +21,93 @@ package cat.inspiracio.numbers;
 // Referenced classes of package bunkenba.numbers:
 //            Piclet, EC, ECList, PartialException
 
-public class Rectangle extends Piclet
-{
+import cat.inspiracio.complex.Complex;
 
-    protected Rectangle()
-    {
+public class Rectangle extends Piclet {
+
+    protected Rectangle(){ }
+
+    public Rectangle(Complex ec, Complex ec1) {
+        double d = Math.abs( Re(ec) - Re(ec1));
+        double d1 = Math.abs( Im(ec) - Im(ec1));
+        botLeft = ec.$plus(Cartesian(-d, -d1));
+        topLeft = ec.$plus(Cartesian(-d, d1));
+        botRight = ec.$plus(Cartesian(d, -d1));
+        topRight = ec.$plus(Cartesian(d, d1));
     }
 
-    public Rectangle(EC ec, EC ec1)
-    {
-        double d = Math.abs(ec.re() - ec1.re());
-        double d1 = Math.abs(ec.im() - ec1.im());
-        try
-        {
-            botLeft = ec.add(EC.mkCartesian(-d, -d1));
-            topLeft = ec.add(EC.mkCartesian(-d, d1));
-            botRight = ec.add(EC.mkCartesian(d, -d1));
-            topRight = ec.add(EC.mkCartesian(d, d1));
-            return;
-        }
-        catch(PartialException _ex)
-        {
-            return;
-        }
-    }
-
-    public EC getCenter()
-    {
-        return EC.mkCartesian((botLeft.re() + topRight.re()) / 2D, (botLeft.im() + topRight.im()) / 2D);
+    public Complex getCenter() {
+        return Cartesian(
+                ( Re(botLeft) + Re(topRight)) / 2D,
+                ( Im(botLeft) + Im(topRight)) / 2D);
     }
 
     public double top()
     {
-        return topLeft.im();
+        return Im(topLeft);
     }
 
     public double bottom()
     {
-        return botLeft.im();
+        return Im(botLeft);
     }
 
     public double left()
     {
-        return topLeft.re();
+        return Re(topLeft);
     }
 
     public double right()
     {
-        return topRight.re();
+        return Re(topRight);
     }
 
     public double getHeight()
     {
-        return Math.abs(botLeft.im() - topLeft.im());
+        return Math.abs(Im(botLeft) - Im(topLeft));
     }
 
     public double getWidth()
     {
-        return Math.abs(botLeft.re() - botRight.re());
+        return Math.abs( Re(botLeft) - Re(botRight));
     }
 
-    protected void sample()
-    {
-        try
-        {
-            EC ec = botRight.subtract(botLeft).divide(30D);
-            EC ec1 = botLeft;
+    protected void sample() {
+            Complex ec = botRight.$minus(botLeft).$div(30D);
+            Complex ec1 = botLeft;
             super.samples = new ECList(ec1, super.samples);
-            for(int i = 0; i < 30; i++)
-            {
-                ec1 = ec1.add(ec);
+            for(int i = 0; i < 30; i++) {
+                ec1 = ec1.$plus(ec);
                 super.samples = new ECList(ec1, super.samples);
             }
 
-            ec = topRight.subtract(botRight).divide(30D);
+            ec = topRight.$minus(botRight).$div(30D);
             ec1 = botRight;
             super.samples = new ECList(ec1, super.samples);
-            for(int j = 0; j < 30; j++)
-            {
-                ec1 = ec1.add(ec);
+            for(int j = 0; j < 30; j++) {
+                ec1 = ec1.$plus(ec);
                 super.samples = new ECList(ec1, super.samples);
             }
 
-            ec = topLeft.subtract(topRight).divide(30D);
+            ec = topLeft.$minus(topRight).$div(30D);
             ec1 = topRight;
             super.samples = new ECList(ec1, super.samples);
-            for(int k = 0; k < 30; k++)
-            {
-                ec1 = ec1.add(ec);
+            for(int k = 0; k < 30; k++) {
+                ec1 = ec1.$plus(ec);
                 super.samples = new ECList(ec1, super.samples);
             }
 
-            ec = botLeft.subtract(topLeft).divide(30D);
+            ec = botLeft.$minus(topLeft).$div(30D);
             ec1 = topLeft;
             super.samples = new ECList(ec1, super.samples);
-            for(int l = 0; l < 30; l++)
-            {
-                ec1 = ec1.add(ec);
+            for(int l = 0; l < 30; l++) {
+                ec1 = ec1.$plus(ec);
                 super.samples = new ECList(ec1, super.samples);
             }
-
-            return;
-        }
-        catch(PartialException _ex)
-        {
-            return;
-        }
     }
 
-    public EC botLeft;
-    public EC topLeft;
-    public EC botRight;
-    public EC topRight;
+    public Complex botLeft;
+    public Complex topLeft;
+    public Complex botRight;
+    public Complex topRight;
 }

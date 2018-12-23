@@ -21,56 +21,37 @@ package cat.inspiracio.numbers;
 // Referenced classes of package bunkenba.numbers:
 //            Piclet, EC, ECList, PartialException
 
-public class Line extends Piclet
-{
+import cat.inspiracio.complex.Complex;
 
-    public Line(EC ec, EC ec1)
-    {
+public class Line extends Piclet {
+
+    public Line(Complex ec, Complex ec1) {
         start = ec;
         end = ec1;
     }
 
-    public double top()
-    {
-        return Math.max(start.im(), end.im());
+    public double top() { return Math.max(Im(start), Im(end)); }
+
+    public double bottom() { return Math.min(Im(start), Im(end)); }
+
+    public double left() {
+        return Math.max(Re(start), Re(end) );
     }
 
-    public double bottom()
-    {
-        return Math.min(start.im(), end.im());
+    public double right() {
+        return Math.min(Re(start), Re(end));
     }
 
-    public double left()
-    {
-        return Math.max(start.re(), end.re());
-    }
-
-    public double right()
-    {
-        return Math.min(start.re(), end.re());
-    }
-
-    protected void sample()
-    {
-        try
-        {
-            EC ec = end.subtract(start).divide(30D);
-            EC ec1 = start;
+    protected void sample() {
+            Complex ec = end.$minus(start).$div(30D);
+            Complex ec1 = start;
             super.samples = new ECList(ec1, super.samples);
-            for(int i = 0; i < 30; i++)
-            {
-                ec1 = ec1.add(ec);
+            for(int i = 0; i < 30; i++) {
+                ec1 = ec1.$plus(ec);
                 super.samples = new ECList(ec1, super.samples);
             }
-
-            return;
-        }
-        catch(PartialException _ex)
-        {
-            return;
-        }
     }
 
-    public EC start;
-    public EC end;
+    public Complex start;
+    public Complex end;
 }

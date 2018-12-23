@@ -17,8 +17,10 @@
  * */
 package cat.inspiracio.calculator;
 
+import cat.inspiracio.complex.Complex;
+import cat.inspiracio.complex.package$;
 import cat.inspiracio.numbers.Circle;
-import cat.inspiracio.numbers.EC;
+//import cat.inspiracio.numbers.EC;
 import cat.inspiracio.numbers.Rectangle;
 import cat.inspiracio.numbers.Square;
 import cat.inspiracio.parsing.SyntaxTree;
@@ -50,7 +52,8 @@ final class ThreeDWorld extends JFrame {
 	 * @param calculator1 Connected to this calculator. */
     ThreeDWorld(Calculator calculator1){
         super("|f(z)| World");
-        square = new Square(new Circle(EC.ZERO, 1.0D));
+        Complex zero = Real(0);
+        square = new Square(new Circle(zero, 1.0D));
         M = new double[21][];
         for(int i = 0; i < 21; i++)
             M[i] = new double[21];
@@ -90,12 +93,13 @@ final class ThreeDWorld extends JFrame {
             return;
         }
         double d1 = square.getSide() / 2D / 10D;
-        EC ec1 = square.getCenter();
+        Complex ec1 = square.getCenter();
         for(int j1 = -10; j1 <= 10; j1++){
             for(int j = -10; j <= 10; j++){
-                EC ec = EC.mkCartesian(d1 * (double)j1, d1 * (double)j);
+                Complex ec = Cartesian(d1 * (double)j1, d1 * (double)j);
                 try{
-                    M[10 + j1][10 + j] = f.evaluate(ec1.add(ec)).mod();
+                    Complex z = f.evaluate(ec1.$plus(ec));
+                    M[10 + j1][10 + j] = abs( z );
                 }
                 catch(Exception _ex){
                     M[10 + j1][10 + j] = -0.20000000000000001D;
@@ -127,12 +131,12 @@ final class ThreeDWorld extends JFrame {
         canvas.paint(canvas.getGraphics());
     }
 
-    public void setFont(Font font){
+    @Override public void setFont(Font font){
         super.setFont(font);
         canvas.setFont(font);
     }
 
-    public void update(Graphics g){paint(g);}
+    @Override public void update(Graphics g){paint(g);}
 
     //Inner class ThreeDCanvas ------------------------------------------------------------
     
@@ -556,8 +560,25 @@ final class ThreeDWorld extends JFrame {
             drawing.g.drawPolygon(tri);
         }
 
-        public void update(Graphics g){paint(g);}
+        @Override public void update(Graphics g){paint(g);}
 
     }//inner class ThreeDCanvas
+
+    // helpers -----------------------------------
+
+    protected double abs(Complex z){
+        return package$.MODULE$.abs(z);
+    }
+
+    protected Complex Cartesian(double re, double im){
+        Complex r = package$.MODULE$.double2Complex(re);
+        Complex i = package$.MODULE$.i();
+        return i.$times(im).$plus(re);
+    }
+
+    protected Complex Real(double re){
+        Complex r = package$.MODULE$.double2Complex(re);
+        return r;
+    }
 
 }

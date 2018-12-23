@@ -17,62 +17,55 @@
  * */
 package cat.inspiracio.parsing;
 
-import cat.inspiracio.numbers.*;
+import cat.inspiracio.complex.Complex;
+import cat.inspiracio.numbers.BugException;
+import cat.inspiracio.numbers.PartialException;
 
 // Referenced classes of package bunkenba.parsing:
 //            SyntaxTree
 
-public class SyntaxTreeBinary extends SyntaxTree
-{
+public class SyntaxTreeBinary extends SyntaxTree {
 
-    public SyntaxTreeBinary(int i, SyntaxTree syntaxtree, SyntaxTree syntaxtree1)
-    {
+    public SyntaxTreeBinary(int i, SyntaxTree syntaxtree, SyntaxTree syntaxtree1) {
         token = i;
         left = syntaxtree;
         right = syntaxtree1;
     }
 
-    public String unparse()
-        //throws BugException
-    {
+    public String unparse(){
         return "(" + left.unparse() + ")" + SyntaxTree.token2String(token) + "(" + right.unparse() + ")";
     }
 
-    public void partialEvaluate()
-        throws BugException
-    {
+    public void partialEvaluate() throws BugException {
         throw new BugException("SyntaxTreeBinary.partialEvaluate() not implemented yet.");
     }
 
-    public EC evaluate(EC ec)
-        throws BugException, PartialException
-    {
-        EC ec1 = left.evaluate(ec);
-        EC ec2 = right.evaluate(ec);
-        EC ec3 = EC.ZERO;
-        switch(token)
-        {
+    public Complex evaluate(Complex ec) throws BugException, PartialException {
+        Complex ec1 = left.evaluate(ec);
+        Complex ec2 = right.evaluate(ec);
+        Complex ec3 = Real(0);
+        switch(token) {
         case -1: 
             throw new BugException("SyntaxTreeBinary.evaluate(NOTOKEN)");
 
         case 0: // '\0'
-            ec3 = ec1.add(ec2);
+            ec3 = ec1.$plus(ec2);
             break;
 
         case 1: // '\001'
-            ec3 = ec1.subtract(ec2);
+            ec3 = ec1.$minus(ec2);
             break;
 
         case 2: // '\002'
-            ec3 = ec1.multiply(ec2);
+            ec3 = ec1.$times(ec2);
             break;
 
         case 3: // '\003'
-            ec3 = ec1.divide(ec2);
+            ec3 = ec1.$div(ec2);
             break;
 
         case 4: // '\004'
-            ec3 = ec1.power(ec2);
+            ec3 = ec1.$up(ec2);
             break;
 
         case 5: // '\005'

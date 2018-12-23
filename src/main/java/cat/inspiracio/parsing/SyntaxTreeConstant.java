@@ -17,16 +17,14 @@
  * */
 package cat.inspiracio.parsing;
 
-import cat.inspiracio.numbers.EC;
+import cat.inspiracio.complex.Complex;
 
 // Referenced classes of package bunkenba.parsing:
 //            SyntaxTree
 
-public class SyntaxTreeConstant extends SyntaxTree
-{
+public class SyntaxTreeConstant extends SyntaxTree {
 
-    protected SyntaxTreeConstant(EC ec)
-    {
+    protected SyntaxTreeConstant(Complex ec) {
         constant = ec;
     }
 
@@ -35,14 +33,11 @@ public class SyntaxTreeConstant extends SyntaxTree
         return constant.toString();
     }
 
-    public void partialEvaluate()
-    {
-    }
+    public void partialEvaluate() { }
 
-    public EC evaluate(EC ec)
-    {
+    public Complex evaluate(Complex ec) {
         return constant;
     }
 
-    private final EC constant;
+    private final Complex constant;
 }

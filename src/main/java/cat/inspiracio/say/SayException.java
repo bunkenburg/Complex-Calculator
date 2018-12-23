@@ -18,8 +18,7 @@
 package cat.inspiracio.say;
 
 
-public class SayException extends Exception
-{
+public class SayException extends Exception {
 	static final long serialVersionUID = 0;
 
     public SayException(String s)

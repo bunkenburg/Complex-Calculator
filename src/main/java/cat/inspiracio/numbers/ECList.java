@@ -21,22 +21,23 @@ package cat.inspiracio.numbers;
 // Referenced classes of package bunkenba.numbers:
 //            EC
 
-public class ECList
-{
+import cat.inspiracio.complex.Complex;
 
-    public ECList(EC ec, ECList eclist)
-    {
+/** Haskell-style list of complex numbers.
+ * In Scala, replace by List[Complex]. */
+public class ECList {
+
+    public ECList(Complex ec, ECList eclist) {
         head = ec;
         tail = eclist;
     }
 
-    public ECList cons(EC ec)
+    public ECList cons(Complex ec)
     {
         return new ECList(ec, this);
     }
 
-    public EC head()
-    {
+    public Complex head() {
         return head;
     }
 
@@ -50,6 +51,6 @@ public class ECList
         return tail;
     }
 
-    private EC head;
+    private Complex head;
     private ECList tail;
 }

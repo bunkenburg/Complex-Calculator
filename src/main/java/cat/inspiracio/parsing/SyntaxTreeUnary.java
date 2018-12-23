@@ -17,42 +17,36 @@
  * */
 package cat.inspiracio.parsing;
 
-import cat.inspiracio.numbers.*;
-
 // Referenced classes of package bunkenba.parsing:
 //            SyntaxTree
 
-public class SyntaxTreeUnary extends SyntaxTree
-{
+import cat.inspiracio.complex.Complex;
+import cat.inspiracio.complex.package$;
+import cat.inspiracio.numbers.BugException;
+import cat.inspiracio.numbers.PartialException;
 
-    public SyntaxTreeUnary(int i, SyntaxTree syntaxtree)
-    {
+public class SyntaxTreeUnary extends SyntaxTree {
+
+    public SyntaxTreeUnary(int i, SyntaxTree syntaxtree) {
         token = i;
         argument = syntaxtree;
     }
 
-    public String unparse()
-        //throws BugException
-    {
+    public String unparse(){
         if(token == 20)
             return "(" + argument.unparse() + ")!";
         else
             return SyntaxTree.token2String(token) + "(" + argument.unparse() + ")";
     }
 
-    public void partialEvaluate()
-        throws BugException
-    {
+    public void partialEvaluate() throws BugException{
         throw new BugException("SyntaxTreeUnary.partialEvaluate not implemented.");
     }
 
-    public EC evaluate(EC ec)
-        throws BugException, PartialException
-    {
-        EC ec1 = argument.evaluate(ec);
-        EC ec2 = null;
-        switch(token)
-        {
+    public Complex evaluate(Complex ec) throws BugException, PartialException {
+        Complex ec1 = argument.evaluate(ec);
+        Complex ec2 = null;
+        switch(token) {
         case -1: 
             throw new BugException("SyntaxTreeUnary.evaluate(NOTOKEN)");
 
@@ -62,7 +56,7 @@ public class SyntaxTreeUnary extends SyntaxTree
             throw new BugException("SyntaxTreeUnary.evaluate(acos,asin,atan)");
 
         case 20: // '\024'
-            ec2 = ec1.fac();
+            ec2 = package$.MODULE$.fac(ec1);
             break;
 
         case 0: // '\0'
@@ -70,7 +64,7 @@ public class SyntaxTreeUnary extends SyntaxTree
             break;
 
         case 1: // '\001'
-            ec2 = ec1.negate();
+            ec2 = ec1.unary_$minus();
             break;
 
         case 2: // '\002'
@@ -79,59 +73,59 @@ public class SyntaxTreeUnary extends SyntaxTree
             throw new BugException("SyntaxTreeUnary.evaluate with binary token " + SyntaxTree.token2String(token));
 
         case 5: // '\005'
-            ec2 = ec1.conj();
+            ec2 = package$.MODULE$.conj(ec1);
             break;
 
         case 19: // '\023'
-            ec2 = ec1.sinh();
+            ec2 = package$.MODULE$.sinh( ec1 );
             break;
 
         case 6: // '\006'
-            ec2 = ec1.cosh();
+            ec2 = package$.MODULE$.cosh(ec1 );
             break;
 
         case 7: // '\007'
-            ec2 = ec1.tanh();
+            ec2 = package$.MODULE$.tanh( ec1 );
             break;
 
         case 8: // '\b'
-            ec2 = ec1.argument();
+            ec2 = argument(ec1);
             break;
 
         case 9: // '\t'
-            ec2 = ec1.cos();
+            ec2 = package$.MODULE$.cos( ec1 );
             break;
 
         case 10: // '\n'
-            ec2 = ec1.exp();
+            ec2 = package$.MODULE$.exp( ec1 );
             break;
 
         case 11: // '\013'
-            ec2 = ec1.modulus();
+            ec2 = abs( ec1 );
             break;
 
         case 12: // '\f'
-            ec2 = ec1.opp();
+            ec2 = package$.MODULE$.opp( ec1 );
             break;
 
         case 13: // '\r'
-            ec2 = ec1.sin();
+            ec2 = package$.MODULE$.sin( ec1 );
             break;
 
         case 14: // '\016'
-            ec2 = ec1.tan();
+            ec2 = package$.MODULE$.tan( ec1 );
             break;
 
         case 15: // '\017'
-            ec2 = ec1.imPart();
+            ec2 = Im( ec1 );
             break;
 
         case 16: // '\020'
-            ec2 = ec1.ln();
+            ec2 = package$.MODULE$.ln( ec1 );
             break;
 
         case 17: // '\021'
-            ec2 = ec1.rePart();
+            ec2 = Re( ec1 );
             break;
 
         case 18: // '\022'

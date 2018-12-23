@@ -21,46 +21,28 @@ package cat.inspiracio.numbers;
 // Referenced classes of package bunkenba.numbers:
 //            Rectangle, Circle, EC, PartialException
 
-public class Square extends Rectangle
-{
+import cat.inspiracio.complex.Complex;
 
-    public Square(Circle circle)
-    {
-        try
-        {
-            super.botLeft = circle.center.add(EC.mkCartesian(-circle.radius, -circle.radius));
-            super.topLeft = circle.center.add(EC.mkCartesian(-circle.radius, circle.radius));
-            super.botRight = circle.center.add(EC.mkCartesian(circle.radius, -circle.radius));
-            super.topRight = circle.center.add(EC.mkCartesian(circle.radius, circle.radius));
-            return;
-        }
-        catch(PartialException _ex)
-        {
-            return;
-        }
+public class Square extends Rectangle {
+
+    public Square(Circle circle) {
+            super.botLeft = circle.center.$plus(Cartesian(-circle.radius, -circle.radius));
+            super.topLeft = circle.center.$plus(Cartesian(-circle.radius, circle.radius));
+            super.botRight = circle.center.$plus(Cartesian(circle.radius, -circle.radius));
+            super.topRight = circle.center.$plus(Cartesian(circle.radius, circle.radius));
     }
 
-    public Square(EC ec, EC ec1)
-    {
-        double d = Math.abs(ec.re() - ec1.re());
-        double d1 = Math.abs(ec.im() - ec1.im());
+    public Square(Complex ec, Complex ec1) {
+        double d = Math.abs( Re(ec) - Re(ec1) );
+        double d1 = Math.abs( Im(ec) - Im(ec1) );
         double d2 = (d + d1) / 2D;
-        try
-        {
-            super.botLeft = ec.add(EC.mkCartesian(-d2, -d2));
-            super.topLeft = ec.add(EC.mkCartesian(-d2, d2));
-            super.botRight = ec.add(EC.mkCartesian(d2, -d2));
-            super.topRight = ec.add(EC.mkCartesian(d2, d2));
-            return;
-        }
-        catch(PartialException _ex)
-        {
-            return;
-        }
+            super.botLeft = ec.$plus(Cartesian(-d2, -d2));
+            super.topLeft = ec.$plus(Cartesian(-d2, d2));
+            super.botRight = ec.$plus(Cartesian(d2, -d2));
+            super.topRight = ec.$plus(Cartesian(d2, d2));
     }
 
-    public double getSide()
-    {
-        return Math.abs(super.botLeft.re() - super.botRight.re());
+    public double getSide() {
+        return Math.abs( Re(super.botLeft) - Re(super.botRight) );
     }
 }

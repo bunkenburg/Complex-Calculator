@@ -17,7 +17,9 @@
  * */
 package cat.inspiracio.calculator;
 
-import cat.inspiracio.numbers.EC;
+//import cat.inspiracio.numbers.EC;
+import cat.inspiracio.complex.Complex;
+import cat.inspiracio.complex.package$;
 import cat.inspiracio.parsing.SyntaxTree;
 
 import javax.swing.*;
@@ -213,10 +215,11 @@ final class RefxWorld extends JFrame{
             int k = getSize().height;
             for(int l = getSize().width; i < l; i++)
                 try{
-                    EC ec = f.evaluate(EC.mkReal(pix2x(i)));
+                    Complex z = Real(pix2x(i));
+                    Complex ec = f.evaluate(z);
                     double d;
-                    if(ec.finite())
-                        d = ec.re();
+                    if( ec.isFinite() )
+                        d = Re(ec);
                     else
                         throw new Exception();
                     updateExtremes(d);
@@ -287,7 +290,7 @@ final class RefxWorld extends JFrame{
             for(; d3 < d4; d3 += d){
                 drawing.moveTo(i, j);
                 drawing.line(0, RefxWorld.MARKLENGTH);
-                g.drawString(EC.toString(d3), i + RefxWorld.MARKLENGTH, j + RefxWorld.FONTHEIGHT);
+                g.drawString(toString(d3), i + RefxWorld.MARKLENGTH, j + RefxWorld.FONTHEIGHT);
                 i += l;
             }
             xy2Point(d1, d5, point);
@@ -302,7 +305,7 @@ final class RefxWorld extends JFrame{
             d5 = d7 * d;
             for(int k = y2Pix(d5); d5 < d6; k -= l){
                 if(d5 != 0.0D || d1 != 0.0D){
-                    String s = EC.toString(d5);
+                    String s = toString(d5);
                     drawing.moveTo(i, k);
                     drawing.line(-RefxWorld.MARKLENGTH, 0);
                     g.drawString(s, i - RefxWorld.MARKLENGTH - g.getFontMetrics().stringWidth(s), k + RefxWorld.FONTHEIGHT);
@@ -361,6 +364,29 @@ final class RefxWorld extends JFrame{
         private void zoomIn(){ScaleFactor *= 2D;}
         private void zoomOut(){ScaleFactor /= 2D;}
 
+        // helpers ---------------------------------------
+
+        private String toString(double d){
+            return package$.MODULE$.double2Complex(d).toString();
+        }
+
+        protected Complex Cartesian(double re, double im){
+            Complex r = package$.MODULE$.double2Complex(re);
+            Complex i = package$.MODULE$.i();
+            return i.$times(im).$plus(re);
+        }
+
+        protected Complex Real(double re){
+            Complex r = package$.MODULE$.double2Complex(re);
+            return r;
+        }
+
     }//class RefxCanvas
+
+    // helpers -----------------------------------
+
+    protected double Im(Complex c){ return cat.inspiracio.complex.package$.MODULE$.Im(c); }
+    protected double Re(Complex c){ return cat.inspiracio.complex.package$.MODULE$.Re(c); }
+    private String toString(double d){ return package$.MODULE$.double2Complex(d).toString(); }
 
 }

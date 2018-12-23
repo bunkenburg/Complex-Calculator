@@ -17,29 +17,25 @@
  * */
 package cat.inspiracio.parsing;
 
-import cat.inspiracio.numbers.EC;
 
 // Referenced classes of package bunkenba.parsing:
 //            SyntaxTree
 
-public class SyntaxTreeVariable extends SyntaxTree
-{
+import cat.inspiracio.complex.Complex;
+
+public class SyntaxTreeVariable extends SyntaxTree {
 
     public String unparse()
     {
         return "z";
     }
 
-    public void partialEvaluate()
-    {
-    }
+    public void partialEvaluate() { }
 
-    public EC evaluate(EC ec)
+    @Override public Complex evaluate(Complex ec)
     {
         return ec;
     }
 
-    public SyntaxTreeVariable()
-    {
-    }
+    public SyntaxTreeVariable() { }
 }
