@@ -1,4 +1,4 @@
-/*	Copyright 2011 Alexander Bunkenburg alex@cat.inspiracio.com
+/*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
  * 
  * This file is part of Complex Calculator.
  * 

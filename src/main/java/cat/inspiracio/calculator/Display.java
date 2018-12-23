@@ -20,30 +20,33 @@ package cat.inspiracio.calculator;
 import javax.swing.*;
 
 /** The text area of the complex calculator. 
- * This class just adds some convenient methods for copy/paste functionality to TextArea. */
-final class Display extends JTextArea {
+ *
+ * This class just adds some convenient methods
+ * for copy/paste functionality to TextArea.
+ *
+ * This could really be a lot better. */
+class Display extends JTextArea {
 	
 	//Constructor ------------------------------------------
 	
-	/** @param fontSize Font size */
     Display(int fontSize){
         super("", 3, 1);
     }
 
     //Methods ------------------------------------------------
     
-    final void clearAll(){setText("");}
+    void clearAll(){setText("");}
 
-    final void delete(){
+    /** delete selected or backspace */
+    void delete(){
         int i = getSelectionStart();
         int j = getSelectionEnd();
         int k = getCaretPosition();
         if(i == j){
-            if(k > 0){
+            if(0 < k){
                 replaceRange("", k - 1, k);
                 select(k - 1, k - 1);
                 setCaretPosition(k - 1);
-                return;
             }
         } else{
             replaceRange("", i, j);
@@ -52,11 +55,11 @@ final class Display extends JTextArea {
         }
     }
 
-    final void paste(char c){
+    void paste(char c){
         paste(String.valueOf(c));
     }
 
-    final void paste(String s){
+    void paste(String s){
         int i = getSelectionStart();
         int j = getSelectionEnd();
         int k = getCaretPosition();
@@ -71,7 +74,8 @@ final class Display extends JTextArea {
         }
     }
 
-    final void prepend(String s){
+    /** Put s in from of displayed string */
+    void prepend(String s){
         int i = getSelectionStart();
         int j = getSelectionEnd();
         int k = getCaretPosition();
@@ -81,7 +85,8 @@ final class Display extends JTextArea {
         setCaretPosition(k + s.length());
     }
 
-    final void replace(char c, char c1){
+    /** Replace one char by another. */
+    void replace(char c, char c1){
         int i = getSelectionStart();
         int j = getSelectionEnd();
         int k = getCaretPosition();

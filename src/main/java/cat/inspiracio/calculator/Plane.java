@@ -1,4 +1,4 @@
-/*	Copyright 2011 Alexander Bunkenburg alex@cat.inspiracio.com
+/*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
  * 
  * This file is part of Complex Calculator.
  * 
@@ -18,7 +18,6 @@
 package cat.inspiracio.calculator;
 
 import cat.inspiracio.complex.Complex;
-import cat.inspiracio.complex.package$;
 import cat.inspiracio.numbers.Circle;
 import cat.inspiracio.numbers.ECList;
 import cat.inspiracio.numbers.Line;
@@ -34,6 +33,7 @@ final class Plane extends WorldRepresentation{
     private static int FONTHEIGHT = 10;
     private static int TRIANGLESIZE = 5;
     private static int MARKLENGTH = 2;
+
     private double ScaleFactor;
     private double CenterReal;
     private double CenterImaginary;
@@ -51,27 +51,27 @@ final class Plane extends WorldRepresentation{
 
     //Methods ------------------------------------------------------------------
     
-    private void cartesian2Point(double d, double d1, Point point){
-        point.x = (int)((d - LeftReal) * ScaleFactor);
-        point.y = -(int)((d1 - TopImaginary) * ScaleFactor);
+    private void cartesian2Point(double re, double im, Point point){
+        point.x = (int)((re - LeftReal) * ScaleFactor);
+        point.y = -(int)((im - TopImaginary) * ScaleFactor);
     }
 
-    @Override void drawComplex(Drawing drawing, Complex ec){
-        if( ec.isFinite() ){
-            int i = (int)(( Re(ec) - LeftReal) * ScaleFactor);
-            int j = -(int)(( Im(ec) - TopImaginary) * ScaleFactor);
-            drawing.cross( i, j, MARKLENGTH );
+    @Override void drawComplex(Drawing drawing, Complex z){
+        if( z.isFinite() ){
+            int x = (int)(( Re(z) - LeftReal) * ScaleFactor);
+            int y = -(int)(( Im(z) - TopImaginary) * ScaleFactor);
+            drawing.cross( x, y, MARKLENGTH );
             drawing.move(2, 2);
-            drawing.drawString(ec.toString());
+            drawing.drawString(z.toString());
         }
     }
 
-    void drawECList(Drawing drawing, ECList eclist){
-        if(eclist != null){
-            moveTo(drawing, eclist.head());
-            lineTo(drawing, eclist.head());
-            for(eclist = eclist.tail(); eclist != null; eclist = eclist.tail())
-                lineTo(drawing, eclist.head());
+    void drawECList(Drawing drawing, ECList list){
+        if(list != null){
+            moveTo(drawing, list.head());
+            lineTo(drawing, list.head());
+            for(list = list.tail(); list != null; list = list.tail())
+                lineTo(drawing, list.head());
         }
     }
 
@@ -79,41 +79,41 @@ final class Plane extends WorldRepresentation{
         if(piclet instanceof Line){
             moveTo(drawing, ((Line)piclet).start);
             lineTo(drawing, ((Line)piclet).end);
-            return;
         }
-        if(piclet instanceof Circle){
+
+        else if(piclet instanceof Circle){
             Circle circle = (Circle)piclet;
             drawing.drawCircle(
                     (int)((Re(circle.center) - LeftReal) * ScaleFactor),
                     -(int)((Im(circle.center) - TopImaginary) * ScaleFactor),
                     Math2Pix(circle.radius)
             );
-            return;
         }
-        if(piclet instanceof Rectangle){
+
+        else if(piclet instanceof Rectangle){
             Rectangle rectangle = (Rectangle)piclet;
             moveTo(drawing, rectangle.botLeft);
             lineTo(drawing, rectangle.botRight);
             lineTo(drawing, rectangle.topRight);
             lineTo(drawing, rectangle.topLeft);
             lineTo(drawing, rectangle.botLeft);
-            return;
-        } else{
+        }
+
+        else{
             drawECList(drawing, piclet.getSamples());
-            return;
         }
     }
 
     void lineTo(Drawing drawing, Complex c){
-        int i = (int)(( Re(c) - LeftReal) * ScaleFactor);
-        int j = -(int)(( Im(c) - TopImaginary) * ScaleFactor);
-        drawing.lineTo(i, j );
+        int x = (int)(( Re(c) - LeftReal) * ScaleFactor);
+        int y = -(int)(( Im(c) - TopImaginary) * ScaleFactor);
+        drawing.lineTo(x, y );
     }
 
     void moveTo(Drawing drawing, Complex c){
-        int i = (int)(( Re(c) - LeftReal) * ScaleFactor);
-        int j = -(int)(( Im(c) - TopImaginary) * ScaleFactor);
-        drawing.moveTo( i, j );
+        int x = (int)(( Re(c) - LeftReal) * ScaleFactor);
+        int y = -(int)(( Im(c) - TopImaginary) * ScaleFactor);
+        drawing.moveTo( x, y );
     }
 
     @Override Complex Point2Complex(Point point){
@@ -123,7 +123,7 @@ final class Plane extends WorldRepresentation{
     }
 
     @Override public void paint(Graphics g){
-        g = super.doubleBuffer.offScreen(g);
+        g = doubleBuffer.offScreen(g);
         Point point = new Point();
         Point point1 = new Point();
         Drawing drawing = new Drawing(g);
@@ -156,13 +156,13 @@ final class Plane extends WorldRepresentation{
         cartesian2Point(d3, d2, point);
         cartesian2Point(d4, d2, point1);
         drawing.drawLine(point, point1, Color.lightGray);
-        java.awt.Polygon polygon = Drawing.mkTriangle(point1, 1, TRIANGLESIZE);
+        Polygon polygon = Drawing.mkTriangle(point1, 1, TRIANGLESIZE);
         g.drawPolygon(polygon);
-        if(RightReal <= super.w.MaxReal)
+        if(RightReal <= w.MaxReal)
             g.fillPolygon(polygon);
         polygon = Drawing.mkTriangle(point, 3, TRIANGLESIZE);
         g.drawPolygon(polygon);
-        if(super.w.MinReal <= LeftReal)
+        if(w.MinReal <= LeftReal)
             g.fillPolygon(polygon);
         int j = point2.y;
         double d7 = Math.ceil(d3 / d);
@@ -179,11 +179,11 @@ final class Plane extends WorldRepresentation{
         drawing.drawLine(point, point1, Color.lightGray);
         polygon = Drawing.mkTriangle(point1, 0, TRIANGLESIZE);
         g.drawPolygon(polygon);
-        if(TopImaginary <= super.w.MaxImaginary)
+        if(TopImaginary <= w.MaxImaginary)
             g.fillPolygon(polygon);
         polygon = Drawing.mkTriangle(point, 2, TRIANGLESIZE);
         g.drawPolygon(polygon);
-        if(super.w.MinImaginary <= BottomImaginary)
+        if(w.MinImaginary <= BottomImaginary)
             g.fillPolygon(polygon);
         i = point2.x;
         d7 = Math.ceil(d5 / d);
@@ -197,8 +197,8 @@ final class Plane extends WorldRepresentation{
             }
             d5 += d;
         }
-        super.w.drawStuff(drawing);
-        super.doubleBuffer.onScreen();
+        w.drawStuff(drawing);
+        doubleBuffer.onScreen();
     }
 
     private static double raiseSmooth(double d){
@@ -254,9 +254,9 @@ final class Plane extends WorldRepresentation{
         MARKLENGTH = FONTHEIGHT / 5;
     }
 
-    void shift(int i, int j){
-        CenterImaginary -= Pix2Math(j);
-        CenterReal += Pix2Math(i);
+    void shift(int x, int y){
+        CenterReal += Pix2Math(x);
+        CenterImaginary -= Pix2Math(y);
     }
 
     void zoomIn(){ScaleFactor *= 2D;}

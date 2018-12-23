@@ -1,4 +1,4 @@
-/*	Copyright 2011 Alexander Bunkenburg alex@cat.inspiracio.com
+/*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
  * 
  * This file is part of Complex Calculator.
  * 
@@ -18,7 +18,6 @@
 package cat.inspiracio.calculator;
 
 import cat.inspiracio.complex.Complex;
-//import cat.inspiracio.numbers.EC;
 import cat.inspiracio.complex.package$;
 import cat.inspiracio.numbers.ECList;
 
@@ -30,24 +29,22 @@ import java.awt.*;
 
 final class Sphere extends WorldRepresentation{
 
+    private static int MARKLENGTH = 2;
+
 	//State -------------------------------------------------------
 	
-    private final Complex marks[];
     private Matrix44 R;
     private Matrix44 R1;
     private double xyscale;
-    private static int MARKLENGTH = 2;
 
-    {
-        marks = (new Complex[] {
+    private final Complex marks[] = {
                 Real(0),
                 infinity,
                 Real(1),
                 Cartesian(-1D, 0.0D),
                 Cartesian(0, 1),
                 Cartesian(0.0D, -1D)
-        });
-    }
+    };
 
 	//Constructor -------------------------------------------------
 	
@@ -60,17 +57,17 @@ final class Sphere extends WorldRepresentation{
     
     //Methods ------------------------------------------------------
 
-    @Override void drawComplex(Drawing drawing, Complex ec){
+    @Override void drawComplex(Drawing drawing, Complex z){
         double d;
         double d1;
         double d2;
-        if( ec.isFinite() ){
-            double a = abs(ec);
+        if( z.isFinite() ){
+            double a = abs(z);
             double d3 = sqr( a );
             double d5 = 1.0D + d3;
-            d = Re(ec) / d5;
+            d = Re(z) / d5;
             d1 = d3 / d5 - 0.5D;
-            d2 = Im(ec) / d5;
+            d2 = Im(z) / d5;
         } else{
             d = 0.0D;
             d1 = 0.5D;
@@ -82,7 +79,7 @@ final class Sphere extends WorldRepresentation{
             double d7 = R.data[1][0] * d + R.data[1][1] * d1 + R.data[1][2] * d2 + R.data[1][3];
             drawing.cross((int)(d6 * xyscale + (double)getSize().width * 0.5D), (int)(-d7 * xyscale + (double)getSize().height * 0.5D), MARKLENGTH);
             drawing.move(2, -2);
-            drawing.drawString(ec.toString());
+            drawing.drawString(z.toString());
         }
     }
 
@@ -104,25 +101,25 @@ final class Sphere extends WorldRepresentation{
         }
     }
 
-    private Complex f3dC(Vector3 vector3){
-        if(vector3.y == 0.5D)
+    private Complex f3dC(Vector3 v){
+        if(v.y == 0.5D)
             return infinity;
-        if(vector3.y == -0.5D)
+        if(v.y == -0.5D)
             return Real(0);
         else
-            return Cartesian(vector3.x / (0.5D - vector3.y), vector3.z / (0.5D - vector3.y));
+            return Cartesian(v.x / (0.5D - v.y), v.z / (0.5D - v.y));
     }
 
-    private boolean isFrontC(Complex ec, Point point){
+    private boolean isFrontC(Complex z, Point point){
         double d;
         double d1;
         double d2;
-        if( ec.isFinite() ){
-            double d3 = sqr( package$.MODULE$.abs(ec) );
+        if( z.isFinite() ){
+            double d3 = sqr( abs(z) );
             double d5 = 1.0D + d3;
-            d = Re(ec) / d5;
+            d = Re(z) / d5;
             d1 = d3 / d5 - 0.5D;
-            d2 = Im(ec) / d5;
+            d2 = Im(z) / d5;
         } else{
             d = 0.0D;
             d1 = 0.5D;
@@ -140,16 +137,16 @@ final class Sphere extends WorldRepresentation{
         }
     }
 
-    @Override void lineTo(Drawing drawing, Complex ec){
+    @Override void lineTo(Drawing drawing, Complex z){
         double d;
         double d1;
         double d2;
-        if( ec.isFinite() ){
-            double d3 = sqr(abs(ec));
+        if( z.isFinite() ){
+            double d3 = sqr( abs(z) );
             double d5 = 1.0D + d3;
-            d = Re(ec) / d5;
+            d = Re(z) / d5;
             d1 = d3 / d5 - 0.5D;
-            d2 = Im(ec) / d5;
+            d2 = Im(z) / d5;
         } else{
             d = 0.0D;
             d1 = 0.5D;
@@ -159,20 +156,23 @@ final class Sphere extends WorldRepresentation{
         if(d4 <= 0.0D){
             double d6 = R.data[0][0] * d + R.data[0][1] * d1 + R.data[0][2] * d2 + R.data[0][3];
             double d7 = R.data[1][0] * d + R.data[1][1] * d1 + R.data[1][2] * d2 + R.data[1][3];
-            drawing.lineTo((int)(d6 * xyscale + (double)getSize().width * 0.5D), (int)(-d7 * xyscale + (double)getSize().height * 0.5D));
+            drawing.lineTo(
+                    (int)(d6 * xyscale + (double)getSize().width * 0.5D),
+                    (int)(-d7 * xyscale + (double)getSize().height * 0.5D)
+            );
         }
     }
 
-    @Override void moveTo(Drawing drawing, Complex ec){
+    @Override void moveTo(Drawing drawing, Complex z){
         double d;
         double d1;
         double d2;
-        if( ec.isFinite() ){
-            double d3 = sqr( abs(ec) );
+        if( z.isFinite() ){
+            double d3 = sqr( abs(z) );
             double d5 = 1.0D + d3;
-            d = Re(ec) / d5;
+            d = Re(z) / d5;
             d1 = d3 / d5 - 0.5D;
-            d2 = Im(ec) / d5;
+            d2 = Im(z) / d5;
         } else{
             d = 0.0D;
             d1 = 0.5D;
@@ -182,19 +182,22 @@ final class Sphere extends WorldRepresentation{
         if(d4 <= 0.0D){
             double d6 = R.data[0][0] * d + R.data[0][1] * d1 + R.data[0][2] * d2 + R.data[0][3];
             double d7 = R.data[1][0] * d + R.data[1][1] * d1 + R.data[1][2] * d2 + R.data[1][3];
-            drawing.moveTo((int)(d6 * xyscale + (double)getSize().width * 0.5D), (int)(-d7 * xyscale + (double)getSize().height * 0.5D));
+            drawing.moveTo(
+                    (int)(d6 * xyscale + (double)getSize().width * 0.5D),
+                    (int)(-d7 * xyscale + (double)getSize().height * 0.5D)
+            );
         }
     }
 
     @Override public void paint(Graphics g){
-        g = super.doubleBuffer.offScreen(g);
+        g = doubleBuffer.offScreen(g);
         xyscale = (double)Math.min(getSize().width, getSize().height) * 0.80000000000000004D;
         Drawing drawing = new Drawing(g);
         drawing.drawCircle(getSize().width / 2, getSize().height / 2, 0.5D * xyscale);
         for(int i = 0; i < marks.length; i++)
             drawComplex(drawing, marks[i]);
-        super.w.drawStuff(drawing);
-        super.doubleBuffer.onScreen();
+        w.drawStuff(drawing);
+        doubleBuffer.onScreen();
     }
 
     Complex Point2Complex(Point point){

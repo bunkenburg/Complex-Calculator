@@ -17,17 +17,17 @@
  * */
 package cat.inspiracio.calculator;
 
-import static cat.inspiracio.calculator.World.Interaction.DRAW;
-import static cat.inspiracio.calculator.World.Interaction.MOVE;
-//import cat.inspiracio.numbers.EC;
 import cat.inspiracio.complex.Complex;
 import cat.inspiracio.numbers.ECList;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+
+import static cat.inspiracio.calculator.Interaction.DRAW;
 
 /** The complex world displays results of calculations
  * and allows graphical input of numbers.
@@ -40,78 +40,82 @@ final class ComplexWorld extends World{
 
 	//Constructor ------------------------------------------------------------
 	
-    ComplexWorld(final Calculator calculator){
-        super(calculator);
-        super.interaction =DRAW;
+    ComplexWorld(Calculator c){
+        super(c);
         setTitle("Complex World");
 
+        //GUI ---
+
         JButton button = new JButton("Clear");
-        button.addActionListener( e -> {
-                erase();
-                canvas.repaint();
-            });
-        JComboBox choice = new JComboBox();
-        choice.addItem("Draw");
-        choice.addItem("Move");
-        choice.setSelectedItem("Draw");
-        choice.addItemListener( e -> {
-        	    int state = e.getStateChange();
-        	    if(state!=ItemEvent.SELECTED)
-        	        return;
-                if(e.getItem() == "Draw"){
-                    interaction =DRAW;
-                    return;
-                } else{
-                    interaction =MOVE;
-                    return;
-                }
-            });
-        super.buttonPanel.add(button);
-        super.buttonPanel.add(choice);
-        MouseAdapter mouseadapter = new MouseAdapter() {
+        button.addActionListener( e -> clear() );
+        buttonPanel.add(button);
+
+        JComboBox interactionChoice = new JComboBox();
+        interactionChoice.addItem("Draw");
+        interactionChoice.addItem("Move");
+        interactionChoice.setSelectedItem("Draw");
+        interaction = DRAW;
+        interactionChoice.addItemListener( e -> {
+            int state = e.getStateChange();
+        	if( state != ItemEvent.SELECTED ) return;
+        	String s = e.getItem().toString();
+        	interaction = Interaction.parse(s);
+        });
+        buttonPanel.add(interactionChoice);
+
+        MouseAdapter mouse = new MouseAdapter() {
+
         	@Override public void mousePressed(MouseEvent mouseevent){
-                if(interaction==MOVE){
-                    prevx = mouseevent.getX();
-                    prevy = mouseevent.getY();
-                    mouseevent.consume();
-                    return;
-                }
-                java.awt.Point p = mouseevent.getPoint();
-                Complex c = canvas.Point2Complex(p);
-                if(c != null){
-                    calculator.add(c);
-                    add(c);
+        	    switch (interaction){
+                    case MOVE:
+                        prevx = mouseevent.getX();
+                        prevy = mouseevent.getY();
+                        mouseevent.consume();
+                        break;
+                    case DRAW:
+                        Point p = mouseevent.getPoint();
+                        Complex z = canvas.Point2Complex(p);
+                        if(z != null){
+                            calculator.add(z);
+                            add(z);
+                        }
+                        break;
                 }
             }
+
             @Override public void mouseReleased(MouseEvent mouseevent){
-                if(interaction ==MOVE){
-                    int i = mouseevent.getX();
-                    int j = mouseevent.getY();
-                    canvas.shift(prevx - i, prevy - j);
-                    canvas.paint(canvas.getGraphics());
-                    prevx = i;
-                    prevy = j;
-                    mouseevent.consume();
+        	    switch (interaction){
+                    case MOVE:
+                        int i = mouseevent.getX();
+                        int j = mouseevent.getY();
+                        canvas.shift(prevx - i, prevy - j);
+                        canvas.paint(canvas.getGraphics());
+                        prevx = i;
+                        prevy = j;
+                        mouseevent.consume();
                 }
             }
         };
-        MouseMotionAdapter mousemotionadapter = new MouseMotionAdapter() {
-            @Override public void mouseDragged(MouseEvent mouseevent){
-                if(interaction ==Interaction.MOVE){
-                    int i = mouseevent.getX();
-                    int j = mouseevent.getY();
-                    canvas.shift(prevx - i, prevy - j);
-                    canvas.paint(canvas.getGraphics());
-                    prevx = i;
-                    prevy = j;
-                    mouseevent.consume();
+
+        MouseMotionAdapter motion = new MouseMotionAdapter() {
+            @Override public void mouseDragged(MouseEvent e){
+                switch (interaction){
+                    case MOVE:
+                        int i = e.getX();
+                        int j = e.getY();
+                        canvas.shift(prevx - i, prevy - j);
+                        canvas.paint(canvas.getGraphics());
+                        prevx = i;
+                        prevy = j;
+                        e.consume();
                 }
             }
         };
-        super.plane.addMouseListener(mouseadapter);
-        super.plane.addMouseMotionListener(mousemotionadapter);
-        super.sphere.addMouseListener(mouseadapter);
-        super.sphere.addMouseMotionListener(mousemotionadapter);
+
+        plane.addMouseListener(mouse);
+        plane.addMouseMotionListener(motion);
+        sphere.addMouseListener(mouse);
+        sphere.addMouseMotionListener(motion);
 
         pack();
         setLocation();
@@ -120,6 +124,13 @@ final class ComplexWorld extends World{
 
     private void setLocation(){
         //setLocationByPlatform(true);
+    }
+
+    // event listeners -----------------------------
+
+    private void clear(){
+        erase();
+        canvas.repaint();
     }
 
     //Methods --------------------------------------------------------------

@@ -1,38 +1,49 @@
 /*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
- * 
+ *
  * This file is part of Complex Calculator.
- * 
+ *
  * Complex Calculator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Complex Calculator is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Complex Calculator. If not, see <http://www.gnu.org/licenses/>.
  * */
 package cat.inspiracio.calculator;
 
-final class Vector2{
+enum Interaction{
 
-    double x;
-    double y;
+    DRAW("Draw"),
+    MOVE("Move"),
+    LINE("Line"),
+    RECTANGLE("Rectangle"),
+    CIRCLE("Circle"),
+    GRID("Grid"),
+    SQUARE("Square");
 
-    Vector2(){}
+    /** visible in menu */
+    private String n;
 
-    Vector2(double d, double d1){
-        x = d;
-        y = d1;
+    Interaction(String n){this.n = n;}
+
+    @Override public String toString() { return n; }
+
+    public static Interaction parse(String n){
+        for( Interaction i : Interaction.values() ){
+            if(n.equals(i.n)) {
+                //say(n + " -> " + i);
+                return i;
+            }
+        }
+        throw new IllegalArgumentException(n);
     }
 
-    double length(){
-        return Math.sqrt(x * x + y * y);
-    }
-
-    public String toString(){return "(" + x + ", " + y + ")";}
-
+    private static void say(Object o){System.out.println(o);}
 }
+

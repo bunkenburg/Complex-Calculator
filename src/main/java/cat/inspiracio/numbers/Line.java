@@ -34,9 +34,7 @@ public class Line extends Piclet {
 
     public double bottom() { return Math.min(Im(start), Im(end)); }
 
-    public double left() {
-        return Math.max(Re(start), Re(end) );
-    }
+    public double left() { return Math.max(Re(start), Re(end) ); }
 
     public double right() {
         return Math.min(Re(start), Re(end));

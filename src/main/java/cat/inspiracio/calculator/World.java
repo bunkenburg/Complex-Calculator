@@ -1,4 +1,4 @@
-/*	Copyright 2011 Alexander Bunkenburg alex@cat.inspiracio.com
+/*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
  * 
  * This file is part of Complex Calculator.
  * 
@@ -28,80 +28,82 @@ import java.awt.event.*;
 /** A frame that shows complex number on the complex plane or the Riemann sphere. */
 abstract class World extends JFrame {
 
-    protected enum Interaction{DRAW, MOVE, LINE, RECTANGLE, CIRCLE, GRID, SQUARE}
-
     //State -------------------------------------------------------------
-	
+
+    //connections ---
+
+    /** serving this calculator */
     protected Calculator calculator;
+
+    //GUI ---
+
+    /** where I show my buttons */
     protected JPanel buttonPanel;
-    protected int prevx;
-    protected int prevy;
+
+    private JButton zInButton = new JButton("Zoom In");
+    private JButton zOutButton = new JButton("Zoom Out");;
+
+    /** selected interaction */
     protected Interaction interaction;
 
+    /** canvas: where I show stuff */
+    protected final Plane plane = new Plane(this);
+    protected final Sphere sphere = new Sphere(this);
+    protected WorldRepresentation canvas;
+
+    //logic ---
+
+    /** the previous mouse position */
+    protected int prevx;
+    protected int prevy;
+
+    /** maximal displayed stuff */
     double MaxImaginary;
     double MinImaginary;
     double MaxReal;
     double MinReal;
 
-    protected final Plane plane = new Plane(this);
-    protected final Sphere sphere = new Sphere(this);
-    protected WorldRepresentation canvas;
-
     //Constructor -------------------------------------------------------
-    
-	/** Make a new world. 
-	 * @param calculator1 In the same application as this calculator. */
-    protected World(Calculator calculator1){
-        canvas = plane;
-        calculator = calculator1;
+
+    void say(Object o){System.out.println(o);}
+
+    protected World(Calculator c){
+        //connections ---
+
+        calculator = c;
+
+        //logic ---
+
         resetExtremes();
-        final JButton zInButton = new JButton("Zoom In");
-        zInButton.addActionListener(new ActionListener(){
-        	@Override public void actionPerformed(ActionEvent actionevent){
-                canvas.zoomIn();
-                canvas.repaint();
-            }
-        });
-        final JButton zOutButton = new JButton("Zoom Out");
-        zOutButton.addActionListener(new ActionListener(){
-        	@Override public void actionPerformed(ActionEvent actionevent){
-                canvas.zoomOut();
-                canvas.repaint();
-            }
-        });
+
+        //gui ---
+
+        canvas = plane;
+
+        zInButton.addActionListener( e -> zoomIn() );
+        zOutButton.addActionListener( e -> zoomOut() );
+
         JComboBox choice = new JComboBox();
         choice.addItem("Plane");
         choice.addItem("Sphere");
         choice.setSelectedItem("Plane");
-        choice.addItemListener(new ItemListener(){
-        	@Override public void itemStateChanged(ItemEvent itemevent){
-        	    int state = itemevent.getStateChange();
-        	    if(state!=ItemEvent.SELECTED)
-        	        return;
-                if(itemevent.getItem() == "Plane"){
-                    remove(sphere);
-                    add("Center", plane);
-                    canvas = plane;
-                    zInButton.setEnabled(true);
-                    zOutButton.setEnabled(true);
-                } else{
-                    remove(plane);
-                    add("Center", sphere);
-                    canvas = sphere;
-                    zInButton.setEnabled(false);
-                    zOutButton.setEnabled(false);
-                }
-                validate();
-                canvas.repaint();
+        choice.addItemListener( e -> {
+            int state = e.getStateChange();
+            if (state != ItemEvent.SELECTED) return;
+            String item = e.getItem().toString();
+            switch (item) {
+                case "Plane":
+                    useSphere();
+                    break;
+                case "Sphere":
+                    usePlane();
+                    break;
             }
         });
+
         JButton button = new JButton("Reset");
-        button.addActionListener(new ActionListener() {
-        	@Override public void actionPerformed(ActionEvent actionevent){
-                canvas.reset();
-                canvas.repaint();
-            }
-        });
+        button.addActionListener( e -> reset() );
+
         buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.lightGray);
         buttonPanel.setLayout(new FlowLayout(0));
@@ -109,11 +111,12 @@ abstract class World extends JFrame {
         buttonPanel.add(zInButton);
         buttonPanel.add(zOutButton);
         buttonPanel.add(button);
+
         setLayout(new BorderLayout());
         add("North", buttonPanel);
         add("Center", canvas);
         addWindowListener(new WindowAdapter() {
-        	@Override public void windowClosing(WindowEvent windowevent){calculator.quit();}
+            @Override public void windowClosing(WindowEvent windowevent){calculator.quit();}
         });
 
         pack();
@@ -121,10 +124,49 @@ abstract class World extends JFrame {
         setVisible(true);
     }
 
+    // event listeners -------------------------
+
+    private void zoomIn(){
+        canvas.zoomIn();
+        canvas.repaint();
+    }
+
+    private void zoomOut(){
+        canvas.zoomOut();
+        canvas.repaint();
+    }
+
+    private void useSphere(){
+        remove(sphere);
+        add("Center", plane);
+        canvas = plane;
+        zInButton.setEnabled(true);
+        zOutButton.setEnabled(true);
+        validate();
+        canvas.repaint();
+    }
+
+    private void usePlane(){
+        remove(plane);
+        add("Center", sphere);
+        canvas = sphere;
+        zInButton.setEnabled(false);
+        zOutButton.setEnabled(false);
+        validate();
+        canvas.repaint();
+    }
+
+    private void reset(){
+        canvas.reset();
+        canvas.repaint();
+    }
+
     private void setLocation(){
         setLocationRelativeTo(this.calculator);
         setLocationByPlatform(true);
     }
+
+    // logic ---------------------
 
     abstract void add(Complex c);
 
@@ -143,10 +185,10 @@ abstract class World extends JFrame {
 
     protected void updateExtremes(Complex c){
         if( c.isFinite() ){
-            MaxImaginary = Math.max(MaxImaginary, package$.MODULE$.Im(c) );
-            MinImaginary = Math.min(MinImaginary, package$.MODULE$.Im(c) );
-            MaxReal = Math.max(MaxReal, package$.MODULE$.Re(c) );
-            MinReal = Math.min(MinReal, package$.MODULE$.Re(c) );
+            MaxImaginary = Math.max(MaxImaginary, Im(c) );
+            MinImaginary = Math.min(MinImaginary, Im(c) );
+            MaxReal = Math.max(MaxReal, Re(c) );
+            MinReal = Math.min(MinReal, Re(c) );
         }
     }
 
@@ -169,13 +211,9 @@ abstract class World extends JFrame {
     protected double Re(Complex z){ return package$.MODULE$.Re(z); }
 
     protected Complex Cartesian(double re, double im){
-        //Complex r = package$.MODULE$.double2Complex(re);
         Complex i = package$.MODULE$.i();
         return i.$times(im).$plus(re);
     }
 
-    protected Complex Real(double re){
-        Complex r = package$.MODULE$.double2Complex(re);
-        return r;
-    }
+    protected Complex Real(double re){ return package$.MODULE$.double2Complex(re); }
 }

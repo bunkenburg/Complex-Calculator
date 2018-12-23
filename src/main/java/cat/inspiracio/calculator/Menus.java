@@ -1,4 +1,4 @@
-/*	Copyright 2011 Alexander Bunkenburg alex@cat.inspiracio.com
+/*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
  * 
  * This file is part of Complex Calculator.
  * 
@@ -34,9 +34,9 @@ final class Menus extends JMenuBar {
 	private PropertyChangeListener precisionListener;
 
 	/** Make a menu bar for complex calculator windows. 
-	 * @param calculator The calculator. It has the state. */
-	Menus(Calculator calculator){
-		this.calculator=calculator;
+	 * @param c The calculator. It has the state. */
+	Menus(Calculator c){
+		calculator=c;
 		file();
 		mode();
 		precision();
@@ -45,12 +45,10 @@ final class Menus extends JMenuBar {
 	private void file(){
 		JMenu menu = new JMenu("File");
 		JMenuItem item = new JMenuItem("About ...");
-		item.addActionListener(
-			actionevent -> new About(calculator)
-		);
+		item.addActionListener( e -> new About(calculator) );
 		menu.add(item);
 		item = new JMenuItem("Quit", 'Q');//new MenuShortcut(81));
-		item.addActionListener(actionevent -> calculator.quit());
+		item.addActionListener( e -> calculator.quit() );
 		menu.add(item);
 		add(menu);
 	}
@@ -74,30 +72,38 @@ final class Menus extends JMenuBar {
 		group.add(miModFz);
 		group.add(miReFx);
 
-		miCalc.addActionListener(event -> calculator.setMode(CALC));
-		miFz.addActionListener( event -> calculator.setMode(FZ) );
-		miModFz.addActionListener( event -> calculator.setMode(MODFZ) );
-		miReFx.addActionListener( event ->  calculator.setMode(REFX) );
+		miCalc.addActionListener( e -> calculator.setMode(CALC) );
+		miFz.addActionListener( e -> calculator.setMode(FZ) );
+		miModFz.addActionListener( e -> calculator.setMode(MODFZ) );
+		miReFx.addActionListener( e ->  calculator.setMode(REFX) );
 		add(menu);
 	}
 
 	private void precision(){
 		final JMenu menu = new JMenu("Precision");
 
-		ButtonGroup group=new ButtonGroup();
-		int precision= Complex$.MODULE$.getPrecision();
+		ButtonGroup group = new ButtonGroup();
+		int precision = getPrecision();
 		for(int j : Calculator.precisions){
 			String s = Integer.toString(j);
 			boolean selected = precision==j;
 			JRadioButtonMenuItem item = new JRadioButtonMenuItem(s, selected );
-			item.addActionListener(
-					event -> Complex$.MODULE$.setPrecision(j)
-			);
+			item.addActionListener( e -> setPrecision(j) );
 			menu.add(item);
 			group.add(item);
 		}
 
 		add(menu);
+	}
+
+	// helpers ---------------------
+
+	private int getPrecision(){
+		return Complex$.MODULE$.getPrecision();
+	}
+
+	private void setPrecision(int n){
+		Complex$.MODULE$.setPrecision(n);
 	}
 
 }

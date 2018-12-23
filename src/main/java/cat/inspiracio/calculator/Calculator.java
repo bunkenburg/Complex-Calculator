@@ -21,8 +21,8 @@ import static cat.inspiracio.calculator.Calculator.Mode.CALC;
 import static cat.inspiracio.calculator.Calculator.Mode.FZ;
 import static cat.inspiracio.calculator.Calculator.Mode.MODFZ;
 import static cat.inspiracio.calculator.Calculator.Mode.REFX;
+
 import cat.inspiracio.numbers.BugException;
-//import cat.inspiracio.numbers.EC;
 import cat.inspiracio.numbers.PartialException;
 import cat.inspiracio.numbers.Square;
 import cat.inspiracio.parsing.SyntaxTree;
@@ -32,8 +32,6 @@ import javax.swing.*;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.ParseException;
@@ -49,22 +47,24 @@ public final class Calculator extends JFrame {
 	private static final String INF="\u221E";
     
     static final int precisions[] = {2, 4, 6, 8, 10};
-    private final static String ALLOWED_CHARS = " !sinhcoshtanhconjoppReImlnexp^modargiepi()789*/456+-123=0.z";
+    final static String ALLOWED_CHARS = " !sinhcoshtanhconjoppReImlnexp^modargiepi()789*/456+-123=0.z";
 
     //State -------------------------------------------
 
     /** The mode that the program is in: Calculation, z->fz mapping, z->|fz| mapping, or Re(fz). */
-    private Mode mode = CALC;
+    Mode mode = CALC;
     
-    private Display display;
+    Display display;
     private JButton equalsButton;
     private JButton zButton;
-    private char variable = 'z';
+    char variable = 'z';
+
     private ComplexWorld cW;
     private ZWorld zW;
     private FzWorld fzW;
     private ThreeDWorld modfzW;
     private RefxWorld refxW;
+
     private SyntaxTree f;
     private boolean inAnApplet = true;
 
@@ -82,15 +82,16 @@ public final class Calculator extends JFrame {
     private void buildFrame(){
         display = new Display(12);
         setResizable(false);
-        //EC.setPrecision(4);
-        Complex$.MODULE$.setPrecision(4);
+        setPrecision(4);
     }
+
+    private void setPrecision(int n){ Complex$.MODULE$.setPrecision(4); }
 
     private void buildButtons(){
         GridBagLayout layout = new GridBagLayout();
         GridBagConstraints constraints = new GridBagConstraints();
         setLayout(layout);
-        display.addKeyListener(new MyKeyListener());
+        display.addKeyListener(new MyKeyListener(this));
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.gridwidth = 5;
@@ -213,32 +214,31 @@ public final class Calculator extends JFrame {
     }
 
     /** Adds a complex number to the display. */
-    //final void add(EC ec){display.paste("(" + ec + ")");}
-    final void add(Complex c){display.paste("(" + c + ")");}
+    final void add(Complex c){
+        String s = "(" + c + ")";
+        display.paste(s);
+    }
 
     /** Gets the expression from the display, parses it, evaluates it,
      * and append the result to the display. */
-	private void doEquals(){
+	void doEquals(){
         String s=display.getText();
         display.append(" = ");
         try{
-            SyntaxTree tree=new SyntaxTree().parse(s);
+            SyntaxTree tree = new SyntaxTree().parse(s);
             Complex c = tree.evaluate(null);
             display.append(c.toString());
             cW.add(c);
-            return;
-        }catch(BugException bugexception){
-        	bugexception.printStackTrace();
-            return;
-        }catch(PartialException partialexception){
-        	partialexception.printStackTrace();
-            return;
-        }catch(ParseException parseexception){
-        	parseexception.printStackTrace();
+        }catch(BugException e){
+        	e.printStackTrace();
+        }catch(PartialException e){
+        	e.printStackTrace();
+        }catch(ParseException e){
+        	e.printStackTrace();
         }
     }
 
-    private void eraseOldResult(){
+    void eraseOldResult(){
         String s = display.getText();
         int i = s.lastIndexOf('=');
         if(i != -1){
@@ -251,7 +251,8 @@ public final class Calculator extends JFrame {
         }
     }
 
-    private void functionChange(){
+    /** Callback: f(z)=... has changed. */
+    void functionChange(){
         try{
             String s = SyntaxTree.stripBlanks(display.getText());
             if(s.startsWith("f(" + variable + ")=")){
@@ -280,13 +281,20 @@ public final class Calculator extends JFrame {
             System.exit(0);
     }
 
+    private void setArgPrincipal(){
+        Complex$.MODULE$.setArgPrincipal();
+    }
+
+    private void setArgContinuous(){
+        Complex$.MODULE$.setArgContinuous();
+    }
+
     /** Sets the mode, opening and closing windows. */
-    void setMode(Mode i){
-        switch(i){
+    void setMode(Mode m){
+        switch(m){
         
         case CALC:
-            //EC.setArgPrincipal();
-            Complex$.MODULE$.setArgContinuous();
+            setArgPrincipal();
             display.clearAll();
             equalsButton.setEnabled(true);
             zButton.setEnabled(false);
@@ -298,8 +306,7 @@ public final class Calculator extends JFrame {
             break;
 
         case FZ:
-            //EC.setArgContinuous();
-            Complex$.MODULE$.setArgContinuous();
+            setArgContinuous();
             variable = 'z';
             if(mode==REFX)
                 display.replace('x', 'z');
@@ -321,8 +328,7 @@ public final class Calculator extends JFrame {
             break;
 
         case MODFZ:
-            //EC.setArgContinuous();
-            Complex$.MODULE$.setArgContinuous();
+            setArgContinuous();
             variable = 'z';
             if(mode ==REFX)
                 display.replace('x', 'z');
@@ -343,8 +349,7 @@ public final class Calculator extends JFrame {
             break;
 
         case REFX:
-        	//EC.setArgContinuous();
-            Complex$.MODULE$.setArgContinuous();
+            setArgContinuous();
             variable = 'x';
             if(mode ==CALC){
                 display.clearAll();
@@ -362,7 +367,7 @@ public final class Calculator extends JFrame {
             refxWorld();
             break;
         }
-        mode = i;
+        mode = m;
         functionChange();
     }
 
@@ -423,72 +428,6 @@ public final class Calculator extends JFrame {
         if(refxW != null){
             refxW.dispose();
             refxW = null;
-        }
-    }
-
-    //private inner classes -----------------------------------------------------------
-    
-    private final class MyKeyListener extends KeyAdapter{
-        MyKeyListener(){}
-
-        @Override public void keyPressed(KeyEvent keyevent){
-            int i = keyevent.getKeyCode();
-            if(i==8 || i==127){
-                display.delete();
-                keyevent.consume();
-                return;
-            }
-            if(i==10){
-                if(mode==CALC){
-                    eraseOldResult();
-                    doEquals();
-                }
-                keyevent.consume();
-                return;
-            }
-            if(i==12){
-                display.clearAll();
-                if(mode!=CALC)
-                    display.prepend("f(" + variable + ") = ");
-                keyevent.consume();
-                return;
-            }
-            if(i!=37 && i!=39)
-                keyevent.consume();
-        }
-
-        @Override public void keyTyped(KeyEvent keyevent){
-            char c = keyevent.getKeyChar();
-            if(ALLOWED_CHARS.indexOf(c)==-1){
-                keyevent.consume();
-            }else{
-                if(mode==CALC)
-                    eraseOldResult();
-                if(c=='='){
-                    if(mode==CALC)
-                        doEquals();
-                }else
-                    display.paste(c);
-                if(mode!=CALC)
-                    functionChange();
-            }
-            keyevent.consume();
-        }
-
-    }//MyKeyListener
-
-    private final class Bx{
-        String label;
-        int gridx;
-        int gridy;
-        int gridheight;
-        ActionListener al;
-        Bx(String s, int i, int j, int k, ActionListener actionlistener){
-            label = s;
-            gridx = i;
-            gridy = j;
-            gridheight = k;
-            al = actionlistener;
         }
     }
 

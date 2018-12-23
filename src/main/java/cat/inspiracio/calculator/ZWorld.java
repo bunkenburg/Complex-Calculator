@@ -1,4 +1,4 @@
-/*	Copyright 2011 Alexander Bunkenburg alex@cat.inspiracio.com
+/*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
  * 
  * This file is part of Complex Calculator.
  * 
@@ -19,16 +19,11 @@ package cat.inspiracio.calculator;
 
 import static cat.inspiracio.calculator.Calculator.Mode.FZ;
 import static cat.inspiracio.calculator.Calculator.Mode.MODFZ;
-import static cat.inspiracio.calculator.World.Interaction.CIRCLE;
-import static cat.inspiracio.calculator.World.Interaction.DRAW;
-import static cat.inspiracio.calculator.World.Interaction.GRID;
-import static cat.inspiracio.calculator.World.Interaction.LINE;
-import static cat.inspiracio.calculator.World.Interaction.MOVE;
-import static cat.inspiracio.calculator.World.Interaction.SQUARE;
+import static cat.inspiracio.calculator.Interaction.*;
+
 import cat.inspiracio.calculator.Calculator.Mode;
 import cat.inspiracio.complex.Complex;
 import cat.inspiracio.complex.Complex$;
-import cat.inspiracio.complex.package$;
 import cat.inspiracio.numbers.Circle;
 import cat.inspiracio.numbers.ECList;
 import cat.inspiracio.numbers.Freeline;
@@ -46,95 +41,68 @@ import java.awt.event.MouseMotionAdapter;
 
 final class ZWorld extends World{
 
+    //XXX interaction menu down-arrow not showing. Do it like the place/sphere menu
+
 	//State ------------------------------------------------
-	
-    //private static final int GRID_DENSITY = 10;
+
+    private JComboBox interactionChoice;
+    private JButton eraseButton;
+    private Mode mode;
+
     private FzWorld fzW;
     private ThreeDWorld modfzW;
+
     private ECList current;
     private Complex start;
     private Complex end;
     private Piclet currentPiclet;
     private PicletList piclets;
     private Square square;
-    private JComboBox interactionChoice;
-    private JButton eraseButton;
-    private Mode mode;
-    
+
 	//Constructor ------------------------------------------
 
-	/** Makes a new z-world.
-	 * @param calculator Connected to this calculator. */
     ZWorld(Calculator calculator){
         super(calculator);
-        Complex zero = Real(0);
-        square = new Square(new Circle(zero, 1.0D));
-        super.interaction = DRAW;
         setTitle("z World");
+
+        square = new Square(0, 1);
+
         eraseButton = new JButton("Clear");
-        eraseButton.addActionListener( actionevent -> {
-                erase();
-                canvas.repaint();
-            }
-        );
+        eraseButton.addActionListener( e -> erase() );
+        buttonPanel.add(eraseButton);
+
+        interaction = DRAW;
         interactionChoice = new JComboBox();
-        interactionChoice.addItem("Move");
-        interactionChoice.addItem("Draw");
-        interactionChoice.setSelectedItem("Draw");
-        interactionChoice.addItemListener( itemevent -> {
-        	    int state = itemevent.getStateChange();
-        	    if(state!=ItemEvent.SELECTED)
-        	        return;
-                String s = (String)itemevent.getItem();
-                if(s == "Move"){
-                    interaction =MOVE;
-                    return;
-                }
-                if(s == "Draw"){
-                    interaction =DRAW;
-                    return;
-                }
-                if(s == "Line"){
-                    interaction =LINE;
-                    return;
-                }
-                if(s == "Circle"){
-                    interaction =CIRCLE;
-                    return;
-                }
-                if(s == "Grid"){
-                    interaction =GRID;
-                    return;
-                }
-                if(s == "Rectangle"){
-                    interaction =GRID;
-                    return;
-                }
-                if(s == "Square")
-                    interaction =SQUARE;
-            }
-        );
-        super.buttonPanel.add(eraseButton);
-        super.buttonPanel.add(interactionChoice);
+        interactionChoice.addItemListener(e -> {
+            int state = e.getStateChange();
+            if (state != ItemEvent.SELECTED) return;
+            String s = (String) e.getItem();
+            interaction = Interaction.parse(s);
+        });
+        buttonPanel.add(interactionChoice);
+
         MouseAdapter mouseadapter = new MouseAdapter() {
+
         	@Override public void mousePressed(MouseEvent mouseevent){
                 switch(interaction){
-                //case 5: default: break;
-                case MOVE: // '\001'
+
+                case MOVE:
                     prevx = mouseevent.getX();
                     prevy = mouseevent.getY();
                     mouseevent.consume();
                     return;
-                case DRAW: // '\0'
+
+                case DRAW:
                     Complex ec = canvas.Point2Complex(mouseevent.getPoint());
                     if(ec != null){
-                        Complex$.MODULE$.resetArg();
+                        resetArg();
                         add(ec);
                         canvas.paint(canvas.getGraphics());
                         return;
                     }
                     break;
-                case GRID: // '\006'
+
+                case GRID:
                     Complex ec1 = canvas.Point2Complex(mouseevent.getPoint());
                     if(ec1 != null){
                         start = ec1;
@@ -144,7 +112,8 @@ final class ZWorld extends World{
                         return;
                     }
                     break;
-                case LINE: // '\002'
+
+                case LINE:
                     Complex ec2 = canvas.Point2Complex(mouseevent.getPoint());
                     if(ec2 != null){
                         start = ec2;
@@ -154,7 +123,8 @@ final class ZWorld extends World{
                         return;
                     }
                     break;
-                case CIRCLE: // '\004'
+
+                case CIRCLE:
                     Complex ec3 = canvas.Point2Complex(mouseevent.getPoint());
                     if(ec3 != null){
                         start = ec3;
@@ -164,7 +134,8 @@ final class ZWorld extends World{
                         return;
                     }
                     break;
-                case RECTANGLE: // '\003'
+
+                case RECTANGLE:
                     Complex ec4 = canvas.Point2Complex(mouseevent.getPoint());
                     if(ec4 != null){
                         start = ec4;
@@ -174,7 +145,8 @@ final class ZWorld extends World{
                         return;
                     }
                     break;
-                case SQUARE: // '\007'
+
+                case SQUARE:
                     Complex ec5 = canvas.Point2Complex(mouseevent.getPoint());
                     if(ec5 == null)
                         break;
@@ -192,8 +164,8 @@ final class ZWorld extends World{
 
         	@Override public void mouseReleased(MouseEvent mouseevent){
                 switch(interaction){
-                //case 5: default: break;
-                case MOVE: // '\001'
+
+                case MOVE:
                     int i = mouseevent.getX();
                     int j = mouseevent.getY();
                     canvas.shift(prevx - i, prevy - j);
@@ -202,7 +174,8 @@ final class ZWorld extends World{
                     prevy = j;
                     mouseevent.consume();
                     return;
-                case DRAW: // '\0'
+
+                case DRAW:
                     if(current != null){
                         Complex ec = canvas.Point2Complex(mouseevent.getPoint());
                         if(ec != null)
@@ -214,7 +187,8 @@ final class ZWorld extends World{
                         return;
                     }
                     break;
-                case LINE: // '\002'
+
+                case LINE:
                     if(start != null){
                         Complex ec1 = canvas.Point2Complex(mouseevent.getPoint());
                         if(ec1 != null)
@@ -224,7 +198,8 @@ final class ZWorld extends World{
                     }
                     eraseCurrent();
                     return;
-                case CIRCLE: // '\004'
+
+                case CIRCLE:
                     if(start != null){
                         Complex ec2 = canvas.Point2Complex(mouseevent.getPoint());
                         if(ec2 != null)
@@ -234,7 +209,8 @@ final class ZWorld extends World{
                     }
                     eraseCurrent();
                     return;
-                case RECTANGLE: // '\003'
+
+                case RECTANGLE:
                     if(start != null){
                         Complex ec3 = canvas.Point2Complex(mouseevent.getPoint());
                         if(ec3 != null)
@@ -244,7 +220,8 @@ final class ZWorld extends World{
                     }
                     eraseCurrent();
                     return;
-                case SQUARE: // '\007'
+
+                case SQUARE:
                     if(start != null){
                         Complex ec4 = canvas.Point2Complex(mouseevent.getPoint());
                         if(ec4 != null)
@@ -259,7 +236,8 @@ final class ZWorld extends World{
                     }
                     eraseCurrent();
                     return;
-                case GRID: // '\006'
+
+                case GRID:
                     if(start != null){
                         Complex ec5 = canvas.Point2Complex(mouseevent.getPoint());
                         if(ec5 != null)
@@ -272,11 +250,12 @@ final class ZWorld extends World{
                 }
             }
         };
+
         MouseMotionAdapter mousemotionadapter = new MouseMotionAdapter() {
         	@Override public void mouseDragged(MouseEvent mouseevent){
                 switch(interaction){
-                //case 5: default: break;
-                case MOVE: // '\001'
+
+                case MOVE:
                     int i = mouseevent.getX();
                     int j = mouseevent.getY();
                     canvas.shift(prevx - i, prevy - j);
@@ -285,7 +264,8 @@ final class ZWorld extends World{
                     prevy = j;
                     mouseevent.consume();
                     return;
-                case DRAW: // '\0'
+
+                case DRAW:
                     Complex ec = canvas.Point2Complex(mouseevent.getPoint());
                     if(current != null){
                         if(ec != null){
@@ -299,13 +279,14 @@ final class ZWorld extends World{
                         return;
                     }
                     if(ec != null){
-                        Complex$.MODULE$.resetArg();
+                        resetArg();
                         add(ec);
                         canvas.paint(canvas.getGraphics());
                         return;
                     }
                     break;
-                case CIRCLE: // '\004'
+
+                case CIRCLE:
                     Complex ec1 = canvas.Point2Complex(mouseevent.getPoint());
                     if(ec1 != null){
                         end = ec1;
@@ -314,7 +295,8 @@ final class ZWorld extends World{
                         return;
                     }
                     break;
-                case GRID: // '\006'
+
+                case GRID:
                     Complex ec2 = canvas.Point2Complex(mouseevent.getPoint());
                     if(ec2 != null){
                         end = ec2;
@@ -323,7 +305,8 @@ final class ZWorld extends World{
                         return;
                     }
                     break;
-                case LINE: // '\002'
+
+                case LINE:
                     Complex ec3 = canvas.Point2Complex(mouseevent.getPoint());
                     if(ec3 != null){
                         end = ec3;
@@ -332,7 +315,8 @@ final class ZWorld extends World{
                         return;
                     }
                     break;
-                case RECTANGLE: // '\003'
+
+                case RECTANGLE:
                     Complex ec4 = canvas.Point2Complex(mouseevent.getPoint());
                     if(ec4 != null){
                         end = ec4;
@@ -341,7 +325,8 @@ final class ZWorld extends World{
                         return;
                     }
                     break;
-                case SQUARE: // '\007'
+
+                case SQUARE:
                     Complex ec5 = canvas.Point2Complex(mouseevent.getPoint());
                     if(ec5 == null)
                         break;
@@ -356,20 +341,21 @@ final class ZWorld extends World{
                 }
             }
         };
-        super.plane.addMouseListener(mouseadapter);
-        super.plane.addMouseMotionListener(mousemotionadapter);
-        super.sphere.addMouseListener(mouseadapter);
-        super.sphere.addMouseMotionListener(mousemotionadapter);
+        plane.addMouseListener(mouseadapter);
+        plane.addMouseMotionListener(mousemotionadapter);
+        sphere.addMouseListener(mouseadapter);
+        sphere.addMouseMotionListener(mousemotionadapter);
         pack();
-        setLocationRelativeTo(this.calculator);
-        //this.setLocationByPlatform(true);
+        setLocationRelativeTo(calculator);
         setVisible(true);
     }
 
-    @Override void add(Complex ec){
-        updateExtremes(ec);
-        current = new ECList(ec, current);
-        fzW.add(ec);
+    private void resetArg(){Complex$.MODULE$.resetArg();}
+
+    @Override void add(Complex c){
+        updateExtremes(c);
+        current = new ECList(c, current);
+        fzW.add(c);
     }
 
     void add(Piclet piclet){
@@ -402,25 +388,26 @@ final class ZWorld extends World{
 
     void drawStuff(Drawing drawing){
         if(current != null)
-            super.canvas.drawECList(drawing, current);
+            canvas.drawECList(drawing, current);
         if(currentPiclet != null)
-            super.canvas.drawPiclet(drawing, currentPiclet);
+            canvas.drawPiclet(drawing, currentPiclet);
         for(PicletList picletlist = piclets; picletlist != null; picletlist = picletlist.tail())
-            super.canvas.drawPiclet(drawing, picletlist.head());
-        if(mode ==MODFZ)
-            super.canvas.drawPiclet(drawing, square);
+            canvas.drawPiclet(drawing, picletlist.head());
+        if(mode == MODFZ)
+            canvas.drawPiclet(drawing, square);
     }
 
     void erase(){
         eraseCurrent();
         piclets = null;
         resetExtremes();
-        if(mode ==MODFZ){
+        if(mode == MODFZ){
             updateExtremes(square);
             return;
         }
         if(fzW != null)
             fzW.erase();
+        canvas.repaint();
     }
 
     void eraseCurrent(){
@@ -434,25 +421,17 @@ final class ZWorld extends World{
 
     Square getSquare(){return square;}
 
-    void setfzWorld(FzWorld fzworld){fzW = fzworld;}
+    void setfzWorld(FzWorld w){fzW = w;}
 
-    void setmodfzWorld(ThreeDWorld threedworld){modfzW = threedworld;}
+    void setmodfzWorld(ThreeDWorld w){modfzW = w;}
 
-    void setMode(Mode i){
-        mode = i;
-        interactionChoice.removeAll();
+    void setMode(Mode m){
+        mode = m;
         switch(mode){
-        case CALC:
-        	setTitle("Complex World");
-        	eraseButton.setEnabled(true);
-        	interactionChoice.addItem("Move");
-        	interactionChoice.addItem("Draw");
-        	interactionChoice.setSelectedItem("Draw");
-        	super.interaction=DRAW;
-        	break;
+
         case FZ:
-        	setTitle("z World");
         	eraseButton.setEnabled(true);
+            interactionChoice.removeAll();
         	interactionChoice.addItem("Move");
         	interactionChoice.addItem("Draw");
         	interactionChoice.addItem("Circle");
@@ -461,15 +440,16 @@ final class ZWorld extends World{
         	interactionChoice.addItem("Rectangle");
         	interactionChoice.addItem("Square");
         	interactionChoice.setSelectedItem("Draw");
-        	super.interaction=DRAW;
+        	interaction=DRAW;
         	break;
+
         case MODFZ:
-        	setTitle("z World");
         	eraseButton.setEnabled(false);
+            interactionChoice.removeAll();
         	interactionChoice.addItem("Move");
         	interactionChoice.addItem("Square");
         	interactionChoice.setSelectedItem("Square");
-        	super.interaction=SQUARE;
+        	interaction=SQUARE;
         	break;
         }
         erase();

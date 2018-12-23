@@ -1,4 +1,4 @@
-/*	Copyright 2011 Alexander Bunkenburg alex@cat.inspiracio.com
+/*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
  * 
  * This file is part of Complex Calculator.
  * 
@@ -30,11 +30,11 @@ import java.awt.*;
 
 abstract class WorldRepresentation extends JComponent {
 
-	//State ---------------------------------------------------------
+    /** Initial size wide enough so that the interaction menu is visible. */
+    private static final Dimension MIN_SIZE = new Dimension(550, 300);
+
+    //State ---------------------------------------------------------
 	
-	/** Initial size wide enough so that the interaction menu is visible. */
-    private static final Dimension MIN_SIZE = new Dimension(500, 300);
-    
     protected World w;
     protected DoubleBuffer doubleBuffer;
 
@@ -76,20 +76,12 @@ abstract class WorldRepresentation extends JComponent {
     // helpers -----------------------------------
 
     protected double Im(Complex c){ return cat.inspiracio.complex.package$.MODULE$.Im(c); }
+    protected double Re(Complex c) { return cat.inspiracio.complex.package$.MODULE$.Re(c); }
+    protected double abs(Complex z){ return package$.MODULE$.abs(z); }
 
-    protected double Re(Complex c){
-        return cat.inspiracio.complex.package$.MODULE$.Re(c);
-    }
-
-    protected String toString(double d){
-        return package$.MODULE$.double2Complex(d).toString();
-    }
+    protected String toString(double d){ return package$.MODULE$.double2Complex(d).toString(); }
 
     protected static final double sqr(double d){return d * d;}
-
-    protected double abs(Complex z){
-        return package$.MODULE$.abs(z);
-    }
 
     protected final Complex infinity = Real(1).$div(0);
 
@@ -98,9 +90,6 @@ abstract class WorldRepresentation extends JComponent {
         return i.$times(im).$plus(re);
     }
 
-    protected Complex Real(double re){
-        Complex r = package$.MODULE$.double2Complex(re);
-        return r;
-    }
+    protected Complex Real(double re){ return package$.MODULE$.double2Complex(re); }
 
 }

@@ -1,4 +1,4 @@
-/*	Copyright 2011 Alexander Bunkenburg alex@cat.inspiracio.com
+/*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
  * 
  * This file is part of Complex Calculator.
  * 
@@ -20,7 +20,6 @@ package cat.inspiracio.calculator;
 import cat.inspiracio.complex.Complex;
 import cat.inspiracio.complex.package$;
 import cat.inspiracio.numbers.Circle;
-//import cat.inspiracio.numbers.EC;
 import cat.inspiracio.numbers.Rectangle;
 import cat.inspiracio.numbers.Square;
 import cat.inspiracio.parsing.SyntaxTree;
@@ -35,30 +34,32 @@ import java.awt.event.*;
 
 final class ThreeDWorld extends JFrame {
 
+    private static final Dimension MIN_SIZE = new Dimension(400, 300);
+
 	//State ---------------------------------------------
 
-    private static final Dimension MIN_SIZE = new Dimension(400, 300);
-    static final double XYFACTOR = 0.6D;
+    private Calculator calculator;
     private ThreeDCanvas canvas;
+
+    static final double XYFACTOR = 0.6D;
     private Square square;
     private SyntaxTree f;
     double M[][];
     static final int n = 10;
-    private Calculator calculator;
 
 	//Constructor ---------------------------------------
 
-	/** Makes a new 3d world. 
-	 * @param calculator1 Connected to this calculator. */
-    ThreeDWorld(Calculator calculator1){
+    ThreeDWorld(Calculator c){
         super("|f(z)| World");
-        Complex zero = Real(0);
-        square = new Square(new Circle(zero, 1.0D));
+        calculator = c;
+
+        square = new Square(0, 1);
+        square = calculator.getSquare();
+
         M = new double[21][];
         for(int i = 0; i < 21; i++)
             M[i] = new double[21];
-        calculator = calculator1;
-        square = calculator1.getSquare();
+
         canvas = new ThreeDCanvas();
         setLayout(new BorderLayout());
         add("Center", canvas);
@@ -125,8 +126,8 @@ final class ThreeDWorld extends JFrame {
         }
     }
 
-    void squareChange(Square square1){
-        square = square1;
+    void squareChange(Square sq){
+        square = sq;
         setNeighbourhood();
         canvas.paint(canvas.getGraphics());
     }
@@ -180,12 +181,14 @@ final class ThreeDWorld extends JFrame {
             tri = new Polygon(new int[3], new int[3], 3);
             setBackground(Color.white);
             addMouseListener(new MouseAdapter() {
-                public void mousePressed(MouseEvent mouseevent){
+
+                @Override public void mousePressed(MouseEvent mouseevent){
                     prevx = mouseevent.getX();
                     prevy = mouseevent.getY();
                     mouseevent.consume();
                 }
-                public void mouseReleased(MouseEvent mouseevent){
+
+                @Override public void mouseReleased(MouseEvent mouseevent){
                     int j = mouseevent.getX();
                     int k = mouseevent.getY();
                     shift(prevx - j, prevy - k);
@@ -333,17 +336,11 @@ final class ThreeDWorld extends JFrame {
         }
 
         int cx(int i){
-            if(xforward)
-                return i;
-            else
-                return -i;
+            return xforward ? i : -i;
         }
 
         int cz(int i){
-            if(zforward)
-                return i;
-            else
-                return -i;
+            return zforward ? i : -i;
         }
 
         void drawIt(Drawing drawing){
@@ -410,12 +407,6 @@ final class ThreeDWorld extends JFrame {
                 }
             }
             drawFrontAxes(drawing, xforward, zforward);
-        }
-
-        @SuppressWarnings("unused")
-		void f2dPix(Vector2 vector2, Point point){
-            point.x = fx(vector2.x);
-            point.y = fy(vector2.y);
         }
 
         private void f3d2d(Vector3 vector3, Vector2 vector2){
@@ -571,14 +562,12 @@ final class ThreeDWorld extends JFrame {
     }
 
     protected Complex Cartesian(double re, double im){
-        Complex r = package$.MODULE$.double2Complex(re);
         Complex i = package$.MODULE$.i();
         return i.$times(im).$plus(re);
     }
 
     protected Complex Real(double re){
-        Complex r = package$.MODULE$.double2Complex(re);
-        return r;
+        return package$.MODULE$.double2Complex(re);
     }
 
 }

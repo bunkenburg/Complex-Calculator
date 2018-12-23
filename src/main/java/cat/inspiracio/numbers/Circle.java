@@ -26,53 +26,39 @@ import cat.inspiracio.complex.package$;
 
 public class Circle extends Piclet {
 
-    public Circle(Complex ec, double d) {
-        if( ec.isFinite() )
-            center = ec;
-        else
-            center = Real(0);
-        radius = d;
+    public Complex center;
+    public double radius;
+
+    public Circle(double c, double r) {
+        center = Double.isFinite(c) ? Real(c) : Real(0);
+        radius = r;
     }
 
-    public Circle(Complex ec, Complex ec1) {
-        if( ec.isFinite() )
-            center = ec;
-        else
-            center = Real(0);
-        if( ec1.isFinite() ) {
-            radius = distance(center, ec1);
-        } else {
-            radius = (1.0D / 0.0D);
-        }
+    public Circle(Complex c, double r) {
+        center = c.isFinite() ? c : Real(0);
+        radius = r;
     }
 
-    public double top()
-    {
-        return Im(center) + radius;
+    public Circle(Complex c, Complex r) {
+        center = c.isFinite() ? c : Real(0);
+        radius = r.isFinite() ? distance(center, r) : (1.0D / 0.0D);
     }
 
-    public double bottom()
-    {
-        return Im(center) - radius;
-    }
+    public double top() { return Im(center) + radius; }
 
-    public double left()
-    {
-        return Re(center) - radius;
-    }
+    public double bottom() { return Im(center) - radius; }
 
-    public double right()
-    {
-        return Re(center) + radius;
-    }
+    public double left() { return Re(center) - radius; }
+
+    public double right() { return Re(center) + radius; }
 
     protected void sample() {
         double d = 0.20943951023931953D;
-        double d1 = 0.0D;
+        double angle = 0.0D;
         for(int i = 0; i <= 30; i++) {
-            Complex z = Polar(radius, d1);
+            Complex z = Polar(radius, angle);
             super.samples = new ECList(center.$plus(z), super.samples);
-            d1 += d;
+            angle += d;
         }
 
     }
@@ -85,6 +71,4 @@ public class Circle extends Piclet {
         return exp.$times(radius);
     }
 
-    public Complex center;
-    public double radius;
 }

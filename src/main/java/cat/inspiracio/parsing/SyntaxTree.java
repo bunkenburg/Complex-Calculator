@@ -146,8 +146,7 @@ public class SyntaxTree {
             ec = Real(Math.PI);
             i++;
         } else
-        if(s.startsWith("\u221E", i))
-        {
+        if(s.startsWith("\u221E", i)) {
             ec = infinity;
             i++;
         } else
@@ -168,8 +167,7 @@ public class SyntaxTree {
         for(i = parseposition.getIndex(); i < parseposition1.getIndex() && in(s.charAt(i), "0123456789"); i++);
         Complex ec;
         if(parseposition1.getIndex() == i)
-            ec = Real(
-                    (new Double(s.substring(parseposition.getIndex(), i))).doubleValue());
+            ec = Real((new Double(s.substring(parseposition.getIndex(), i))).doubleValue());
         else if(s.charAt(i) == '.') {
             int j;
             for(j = i + 1; j < parseposition1.getIndex() && in(s.charAt(j), "0123456789"); j++);

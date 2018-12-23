@@ -25,6 +25,12 @@ import cat.inspiracio.complex.Complex;
 
 public class Rectangle extends Piclet {
 
+
+    public Complex botLeft;
+    public Complex topLeft;
+    public Complex botRight;
+    public Complex topRight;
+
     protected Rectangle(){ }
 
     public Rectangle(Complex ec, Complex ec1) {
@@ -37,13 +43,12 @@ public class Rectangle extends Piclet {
     }
 
     public Complex getCenter() {
-        return Cartesian(
-                ( Re(botLeft) + Re(topRight)) / 2D,
-                ( Im(botLeft) + Im(topRight)) / 2D);
+        double re = ( Re(botLeft) + Re(topRight)) / 2D;
+        double im = ( Im(botLeft) + Im(topRight)) / 2D;
+        return Cartesian( re, im );
     }
 
-    public double top()
-    {
+    public double top() {
         return Im(topLeft);
     }
 
@@ -57,8 +62,7 @@ public class Rectangle extends Piclet {
         return Re(topLeft);
     }
 
-    public double right()
-    {
+    public double right() {
         return Re(topRight);
     }
 
@@ -106,8 +110,4 @@ public class Rectangle extends Piclet {
             }
     }
 
-    public Complex botLeft;
-    public Complex topLeft;
-    public Complex botRight;
-    public Complex topRight;
 }

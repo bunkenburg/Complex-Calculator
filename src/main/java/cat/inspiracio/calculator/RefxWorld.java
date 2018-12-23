@@ -17,7 +17,6 @@
  * */
 package cat.inspiracio.calculator;
 
-//import cat.inspiracio.numbers.EC;
 import cat.inspiracio.complex.Complex;
 import cat.inspiracio.complex.package$;
 import cat.inspiracio.parsing.SyntaxTree;
@@ -37,52 +36,39 @@ final class RefxWorld extends JFrame{
     private static int FONTHEIGHT = 10;
     private static int TRIANGLESIZE = 5;
     private static int MARKLENGTH = 2;
+
     private Calculator calculator;
     protected JPanel buttonPanel;
+    private RefxCanvas canvas;
+
     protected int prevx;
     protected int prevy;
     private double Max;
     private double Min;
     private SyntaxTree f;
-    private RefxCanvas canvas;
 
     //Constructor ----------------------------------------------------------------
     
-    /** Make a new window for Re(f(x)).
-     * @param calculator1 Connected to this calculator.  */
-    RefxWorld(Calculator calculator1){
+    RefxWorld(Calculator c){
         canvas = new RefxCanvas();
-        calculator = calculator1;
+        calculator = c;
         setTitle("Re(f(x)) World");
         resetExtremes();
 
         JButton button = new JButton("Zoom In");
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionevent){
-                canvas.zoomIn();
-                canvas.repaint();
-            }
-        });
+        button.addActionListener(e -> zoomIn() );
         JButton button1 = new JButton("Zoom Out");
-        button1.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionevent){
-                canvas.zoomOut();
-                canvas.repaint();
-            }
-        });
+        button1.addActionListener( e -> zoomOut() );
         JButton button2 = new JButton("Reset");
-        button2.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionevent){
-                canvas.reset();
-                canvas.repaint();
-            }
-        });
+        button2.addActionListener(e -> reset() );
+
         buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.lightGray);
         buttonPanel.setLayout(new FlowLayout(0));
         buttonPanel.add(button);
         buttonPanel.add(button1);
         buttonPanel.add(button2);
+
         setLayout(new BorderLayout());
         add("North", buttonPanel);
         add("Center", canvas);
@@ -95,6 +81,23 @@ final class RefxWorld extends JFrame{
         setLocationByPlatform(true);
         setLocation();
         setVisible(true);
+    }
+
+    // event listeners -------------------
+
+    private void reset(){
+        canvas.reset();
+        canvas.repaint();
+    }
+
+    private void zoomOut(){
+        canvas.zoomOut();
+        canvas.repaint();
+    }
+
+    private void zoomIn(){
+        canvas.zoomIn();
+        canvas.repaint();
     }
 
     private void setLocation(){
@@ -137,7 +140,7 @@ final class RefxWorld extends JFrame{
         Max = (-1.0D / 0.0D);
     }
 
-    public void update(Graphics g){paint(g);}
+    @Override public void update(Graphics g){paint(g);}
 
     protected void updateExtremes(double d){
         Max = Math.max(Max, d);
@@ -152,9 +155,9 @@ final class RefxWorld extends JFrame{
     //Inner class --------------------------------------------------------
     
     private class RefxCanvas extends JComponent{
-    
+
     	//State ----------------------------------------------------
-    	
+
         private DoubleBuffer doubleBuffer;
         private double ScaleFactor;
         private double CenterX;
@@ -167,7 +170,7 @@ final class RefxWorld extends JFrame{
         private Polygon downTriangle;
 
         //Constructor ----------------------------------------------
-        
+
         RefxCanvas(){
         	ScaleFactor = 40D;
         	setBackground(Color.white);
@@ -202,10 +205,10 @@ final class RefxWorld extends JFrame{
         }//RefxCanvas()
 
         //Methods ------------------------------------------------------
-        
-        private void xy2Point(double d, double d1, Point point){
-            point.x = (int)((d - Left) * ScaleFactor);
-            point.y = -(int)((d1 - Top) * ScaleFactor);
+
+        private void xy2Point(double x, double y, Point point){
+            point.x = (int)((x - Left) * ScaleFactor);
+            point.y = -(int)((y - Top) * ScaleFactor);
         }
 
         private void drawIt(Drawing drawing){
@@ -330,12 +333,12 @@ final class RefxWorld extends JFrame{
             return (int)(d * ScaleFactor);
         }
 
-        private int x2Pix(double d){
-            return (int)((d - Left) * ScaleFactor);
+        private int x2Pix(double x){
+            return (int)((x - Left) * ScaleFactor);
         }
 
-        private int y2Pix(double d){
-            return -(int)((d - Top) * ScaleFactor);
+        private int y2Pix(double y){
+            return -(int)((y - Top) * ScaleFactor);
         }
 
         private double pix2x(int i){
@@ -371,14 +374,12 @@ final class RefxWorld extends JFrame{
         }
 
         protected Complex Cartesian(double re, double im){
-            Complex r = package$.MODULE$.double2Complex(re);
             Complex i = package$.MODULE$.i();
             return i.$times(im).$plus(re);
         }
 
         protected Complex Real(double re){
-            Complex r = package$.MODULE$.double2Complex(re);
-            return r;
+            return package$.MODULE$.double2Complex(re);
         }
 
     }//class RefxCanvas

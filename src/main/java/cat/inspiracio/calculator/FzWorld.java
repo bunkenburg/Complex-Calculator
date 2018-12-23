@@ -17,8 +17,6 @@
  * */
 package cat.inspiracio.calculator;
 
-import static cat.inspiracio.calculator.World.Interaction.MOVE;
-
 import cat.inspiracio.complex.Complex;
 import cat.inspiracio.complex.Complex$;
 import cat.inspiracio.numbers.*;
@@ -26,31 +24,39 @@ import cat.inspiracio.parsing.SyntaxTree;
 
 import java.awt.event.*;
 
+import static cat.inspiracio.calculator.Interaction.MOVE;
+
 final class FzWorld extends World {
+
+    // connections -----------------------------
+
+    private ZWorld zW;
 
 	//State --------------------------------------------------------------------
 	
     private ECList current;
     private PicletList piclets;
     private SyntaxTree f;
-    private ZWorld zW;
 
 	//Constructor --------------------------------------------------------------
 
-	/** Makes a new f(z) world.
-	 * @param calculator Connected to this calculator. */
     FzWorld(Calculator calculator){
         super(calculator);
-        super.interaction =MOVE;
         setTitle("f(z) World");
 
-        MouseAdapter mouseadapter = new MouseAdapter() {
-            public void mousePressed(MouseEvent mouseevent){
+        // GUI --------------------
+
+        super.interaction = MOVE;
+
+        MouseAdapter mouse = new MouseAdapter() {
+
+            @Override public void mousePressed(MouseEvent mouseevent){
                 prevx = mouseevent.getX();
                 prevy = mouseevent.getY();
                 mouseevent.consume();
             }
-            public void mouseReleased(MouseEvent mouseevent){
+
+            @Override public void mouseReleased(MouseEvent mouseevent){
                 int i = mouseevent.getX();
                 int j = mouseevent.getY();
                 canvas.shift(prevx - i, prevy - j);
@@ -60,8 +66,10 @@ final class FzWorld extends World {
                 mouseevent.consume();
             }
         };
-        MouseMotionAdapter mousemotionadapter = new MouseMotionAdapter() {
-            public void mouseDragged(MouseEvent mouseevent){
+
+        MouseMotionAdapter motion = new MouseMotionAdapter() {
+
+            @Override public void mouseDragged(MouseEvent mouseevent){
                 int i = mouseevent.getX();
                 int j = mouseevent.getY();
                 canvas.shift(prevx - i, prevy - j);
@@ -70,13 +78,15 @@ final class FzWorld extends World {
                 prevy = j;
                 mouseevent.consume();
             }
+
         };
-        super.plane.addMouseListener(mouseadapter);
-        super.plane.addMouseMotionListener(mousemotionadapter);
-        super.sphere.addMouseListener(mouseadapter);
-        super.sphere.addMouseMotionListener(mousemotionadapter);
+
+        plane.addMouseListener(mouse);
+        plane.addMouseMotionListener(motion);
+        sphere.addMouseListener(mouse);
+        sphere.addMouseMotionListener(motion);
         pack();
-        setLocationRelativeTo(this.calculator);
+        setLocationRelativeTo(calculator);
         setVisible(true);
     }
 
@@ -89,24 +99,24 @@ final class FzWorld extends World {
     @Override void add(Complex c){
         if(f != null){
             try{
-                Complex ec1 = f.evaluate(c);
-                current = new ECList(ec1, current);
-                updateExtremes(ec1);
+                Complex z = f.evaluate(c);
+                current = new ECList(z, current);
+                updateExtremes(z);
             }
             catch(Exception _ex) { }
-            super.canvas.paint(super.canvas.getGraphics());
+            canvas.paint(canvas.getGraphics());
         }
     }
 
     void add(Piclet piclet){
         if(f != null){
-            //EC.resetArg();
-            Complex$.MODULE$.resetArg();
-            ECList eclist = piclet.getSamples();
+            resetArg();
+            ECList samples = piclet.getSamples();
             current = null;
-            for(; eclist != null; eclist = eclist.tail())
+            for(; samples != null; samples = samples.tail() )
                 try{
-                    Complex c = f.evaluate(eclist.head());
+                    Complex z = samples.head();
+                    Complex c = f.evaluate(z);
                     updateExtremes(c);
                     current = new ECList(c, current);
                 }
@@ -116,38 +126,40 @@ final class FzWorld extends World {
         }
     }
 
-    void add(PicletList picletlist){
-        for(; picletlist != null; picletlist = picletlist.tail())
-            add(picletlist.head());
+    void add(PicletList ps){
+        for(; ps != null; ps = ps.tail())
+            add(ps.head());
     }
 
     void addCurrent(Piclet piclet){
         if(f != null){
-            //EC.resetArg();
-            Complex$.MODULE$.resetArg();
+            resetArg();
             current = null;
-            for(ECList eclist = piclet.getSamples(); eclist != null; eclist = eclist.tail())
+            for(ECList samples = piclet.getSamples(); samples != null; samples = samples.tail())
                 try{
-                    Complex c = f.evaluate(eclist.head());
+                    Complex z = samples.head();
+                    Complex c = f.evaluate(z);
                     current = new ECList(c, current);
                 }
                 catch(Exception _ex) { }
-            super.canvas.paint(super.canvas.getGraphics());
+            canvas.paint(canvas.getGraphics());
         }
     }
 
+    private void resetArg(){Complex$.MODULE$.resetArg();}
+
     final void drawStuff(Drawing drawing){
         if(current != null)
-            super.canvas.drawECList(drawing, current);
-        for(PicletList picletlist = piclets; picletlist != null; picletlist = picletlist.tail())
-            super.canvas.drawPiclet(drawing, picletlist.head());
+            canvas.drawECList(drawing, current);
+        for(PicletList ps = piclets; ps != null; ps = ps.tail())
+            canvas.drawPiclet(drawing, ps.head());
     }
 
     void erase(){
         current = null;
         piclets = null;
         resetExtremes();
-        super.canvas.repaint();
+        canvas.repaint();
     }
 
     void functionChange(SyntaxTree syntaxtree){
