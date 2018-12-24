@@ -218,7 +218,7 @@ case class Circle(centre: Complex, radius: Double)
 object RiemannSphere {
   import java.lang.Math.sqrt
 
-  type Point = (Double, Double, Double)
+  private type Point = (Double, Double, Double)
 
   /** From sphere to plane: x/(1−z) + i * y/(1−z)
     * Receives point in 3d space. Riemann sphere is centered

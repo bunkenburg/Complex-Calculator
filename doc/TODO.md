@@ -22,6 +22,8 @@
 * Nice About-menu
 * make a real executable application
 * Give World windows a toolbar instead of buttons and menus to read
+* complete test coverage for Complex
+* tests for GUI?
 
 # DONE
 
