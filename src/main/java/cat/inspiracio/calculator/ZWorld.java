@@ -41,8 +41,6 @@ import java.awt.event.MouseMotionAdapter;
 
 final class ZWorld extends World{
 
-    //XXX interaction menu down-arrow not showing. Do it like the place/sphere menu
-
 	//State ------------------------------------------------
 
     private JComboBox interactionChoice;
@@ -73,6 +71,8 @@ final class ZWorld extends World{
 
         interaction = DRAW;
         interactionChoice = new JComboBox();
+        interactionChoice.addItem("Move");
+        interactionChoice.addItem("Square");
         interactionChoice.addItemListener(e -> {
             int state = e.getStateChange();
             if (state != ItemEvent.SELECTED) return;
@@ -431,29 +431,34 @@ final class ZWorld extends World{
 
         case FZ:
         	eraseButton.setEnabled(true);
-            interactionChoice.removeAll();
-        	interactionChoice.addItem("Move");
+            //interactionChoice.removeAll();
+        	//keep interactionChoice.addItem("Move");
         	interactionChoice.addItem("Draw");
         	interactionChoice.addItem("Circle");
         	interactionChoice.addItem("Line");
         	interactionChoice.addItem("Grid");
         	interactionChoice.addItem("Rectangle");
-        	interactionChoice.addItem("Square");
+        	//keep interactionChoice.addItem("Square");
         	interactionChoice.setSelectedItem("Draw");
         	interaction=DRAW;
         	break;
 
         case MODFZ:
         	eraseButton.setEnabled(false);
-            interactionChoice.removeAll();
-        	interactionChoice.addItem("Move");
-        	interactionChoice.addItem("Square");
+            //interactionChoice.removeAll();
+        	//keep interactionChoice.addItem("Move");
+            interactionChoice.removeItem("Draw");
+        	//keep interactionChoice.addItem("Square");
+            interactionChoice.removeItem("Circle");
+            interactionChoice.removeItem("Line");
+            interactionChoice.removeItem("Grid");
+            interactionChoice.removeItem("Rectangle");
         	interactionChoice.setSelectedItem("Square");
         	interaction=SQUARE;
         	break;
         }
         erase();
-        super.canvas.repaint();
+        canvas.repaint();
     }
 
 }

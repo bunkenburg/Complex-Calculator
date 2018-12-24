@@ -43,9 +43,6 @@ public final class Calculator extends JFrame {
 	
     public enum Mode{CALC, FZ, MODFZ, REFX}
 
-    private static final String PI="\u03C0";
-	private static final String INF="\u221E";
-    
     static final int precisions[] = {2, 4, 6, 8, 10};
     final static String ALLOWED_CHARS = " !sinhcoshtanhconjoppReImlnexp^modargiepi()789*/456+-123=0.z";
 
@@ -144,7 +141,7 @@ public final class Calculator extends JFrame {
                 new Bx("arg", 4, 7, 1, listener),
                 new Bx("i", 0, 8, 1, listener),
                 new Bx("e", 1, 8, 1, listener),
-                new Bx(PI, 2, 8, 1, listener),
+                new Bx("π", 2, 8, 1, listener),
                 new Bx("(", 3, 8, 1, listener),
                 new Bx(")", 4, 8, 1, listener),
                 new Bx("7", 0, 9, 1, listener),
@@ -172,7 +169,7 @@ public final class Calculator extends JFrame {
                     }),
                 new Bx("0", 0, 12, 1, listener),
                 new Bx(".", 1, 12, 1, listener),
-                new Bx(INF, 2, 12, 1, listener)
+                new Bx("∞", 2, 12, 1, listener)
         };
         for(int i = 0; i < abx.length; i++){
             JButton button = new JButton(abx[i].label);
@@ -351,7 +348,7 @@ public final class Calculator extends JFrame {
         case REFX:
             setArgContinuous();
             variable = 'x';
-            if(mode ==CALC){
+            if(mode == CALC){
                 display.clearAll();
                 display.prepend("f(x) = ");
             } else{

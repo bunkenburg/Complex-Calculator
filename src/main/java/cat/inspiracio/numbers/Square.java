@@ -1,4 +1,4 @@
-/*	Copyright 2011 Alexander Bunkenburg alex@cat.inspiracio.com
+/*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
  * 
  * This file is part of Complex Calculator.
  * 
@@ -28,30 +28,30 @@ public class Square extends Rectangle {
     /** A square with c at the centre and side length 2*radius. */
     public Square(double c, double radius){
         Complex center = Real(c);
-        super.botLeft = center.$plus(Cartesian(-radius, -radius));
-        super.topLeft = center.$plus(Cartesian(-radius, radius));
-        super.botRight = center.$plus(Cartesian(radius, -radius));
-        super.topRight = center.$plus(Cartesian(radius, radius));
+        botLeft = center.$plus(Cartesian(-radius, -radius));
+        topLeft = center.$plus(Cartesian(-radius, radius));
+        botRight = center.$plus(Cartesian(radius, -radius));
+        topRight = center.$plus(Cartesian(radius, radius));
     }
 
     public Square(Circle circle) {
-        super.botLeft = circle.center.$plus(Cartesian(-circle.radius, -circle.radius));
-        super.topLeft = circle.center.$plus(Cartesian(-circle.radius, circle.radius));
-        super.botRight = circle.center.$plus(Cartesian(circle.radius, -circle.radius));
-        super.topRight = circle.center.$plus(Cartesian(circle.radius, circle.radius));
+        botLeft = circle.center.$plus(Cartesian(-circle.radius, -circle.radius));
+        topLeft = circle.center.$plus(Cartesian(-circle.radius, circle.radius));
+        botRight = circle.center.$plus(Cartesian(circle.radius, -circle.radius));
+        topRight = circle.center.$plus(Cartesian(circle.radius, circle.radius));
     }
 
     public Square(Complex ec, Complex ec1) {
         double d = Math.abs( Re(ec) - Re(ec1) );
         double d1 = Math.abs( Im(ec) - Im(ec1) );
         double d2 = (d + d1) / 2D;
-        super.botLeft = ec.$plus(Cartesian(-d2, -d2));
-        super.topLeft = ec.$plus(Cartesian(-d2, d2));
-        super.botRight = ec.$plus(Cartesian(d2, -d2));
-        super.topRight = ec.$plus(Cartesian(d2, d2));
+        botLeft = ec.$plus(Cartesian(-d2, -d2));
+        topLeft = ec.$plus(Cartesian(-d2, d2));
+        botRight = ec.$plus(Cartesian(d2, -d2));
+        topRight = ec.$plus(Cartesian(d2, d2));
     }
 
     public double getSide() {
-        return Math.abs( Re(super.botLeft) - Re(super.botRight) );
+        return Math.abs( Re(botLeft) - Re(botRight) );
     }
 }
