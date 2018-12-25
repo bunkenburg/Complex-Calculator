@@ -88,8 +88,6 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
     import Complex.lastQuad
     import Complex.k
 
-    /** Why results 0, 1, 2, 3, 4 ?
-      * I would expect only four results. */
     def quadrant: Int =
     if (0 <= re  && 0 <= im) 1
     else if (re < 0 && 0 <= im ) 2

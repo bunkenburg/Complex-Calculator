@@ -6,6 +6,9 @@ import cat.inspiracio.complex.imp.CartesianComplex
   *
   * import cat.inspiracio.complex._
   *
+  * Syntax of complex numbers should be as in
+  * Mathematics books, not as in object-oriented
+  * programming.
   * */
 package object complex {
 
@@ -16,6 +19,8 @@ package object complex {
   val π = Math.PI
 
   // functions ---------------------------------
+
+  def finite(c: Complex): Boolean = ∞ == c
 
   def abs(d: Double): Double = Math.abs(d)
 
@@ -37,9 +42,8 @@ package object complex {
     case ∞ => throw new ArithmeticException("Im(∞)")
   }
 
-  private def sqrt(d: Double): Double = Math.sqrt(d)
-
-  private def sqr(d: Double): Double = d*d
+  def sqrt(d: Double): Double = Math.sqrt(d)
+  def sqr(d: Double): Double = d*d
 
   /** Improves Math.sin for important values */
   def sin(a: Double): Double =
@@ -56,7 +60,7 @@ package object complex {
     case Real(r) => sin(r)
     case _ => {
       val zi = z * i
-      (exp(zi) - exp(-zi)) / (2 * i)
+      (exp(zi) - exp(-zi)) / (i * 2)
     }
   }
 
@@ -94,7 +98,6 @@ package object complex {
   }
 
   def cot(a: Double): Complex = 1 / tan(a)
-
   def acot(m: Double): Double = Math.atan(1/m)
 
   // hyperbolic functions -------------------

@@ -197,7 +197,7 @@ class Geometric extends FunSuite {
     }
   }
 
-  // lazy vals ------------------------
+  // arguments ------------------------
 
   test("lazy argument"){
     val z = 3 + 4*i
@@ -232,5 +232,12 @@ class Geometric extends FunSuite {
     assert( as1 === List(0, 1, 2, 3, π, 3.9999999999999996) )
 
     Complex.setArgPrincipal()
+  }
+
+  // finite and zero ---------------------
+
+  test("finite"){
+    assert( finite(3) )
+    assert( ! finite(∞) )
   }
 }

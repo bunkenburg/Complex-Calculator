@@ -33,7 +33,7 @@ import java.text.NumberFormat
 trait Complex {
 
   /** Just for easier Java compatibility */
-  def isFinite : Boolean = this != ∞
+  def isFinite : Boolean = ∞ != this
 
   // Operators ---------------------------------
 
