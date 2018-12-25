@@ -113,31 +113,6 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
 
   lazy val modulus: Double = sqrt(sqr(re) + sqr(im))
 
-  private def sqr(d: Double) = d * d
-
-  private def sqrt(d: Double): Double = Math.sqrt(d)
-
-  private def sqrt: Complex = {
-    val Polar(m, _) = this
-
-    if (m == 0 )
-      0
-
-    else if (0 < re) {
-      val real = sqrt(0.5 * (m + re))
-      val imaginary = im / real / 2
-      Cartesian(real, imaginary)
-    }
-
-    else {
-      var imaginary = sqrt(0.5 * (m - re))
-      if (im < 0)
-        imaginary = -imaginary
-      val real = im / imaginary / 2
-      Cartesian(real, imaginary)
-    }
-  }
-
   // operators of 2 parameters ----------------------------------
 
   override def + (d: Double): Complex = Cartesian(re + d, im)
