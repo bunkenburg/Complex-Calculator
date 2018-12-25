@@ -17,6 +17,8 @@
  * */
 package cat.inspiracio.complex
 
+import cat.inspiracio.complex.imp.Circle
+
 /** Complex numbers.
   *
   * The only implementations are:
@@ -182,12 +184,6 @@ trait Complex {
 
   private def log(d: Double): Double = Math.log(d)
 }
-
-/** A circle on the Riemann sphere surface around a
-  * complex number.
-  *
-  * Possible to hide Circle from client programmer? */
-case class Circle(centre: Complex, angle: Double)
 
 /** Complex object. Maybe all of this can disappear? */
 object Complex {
