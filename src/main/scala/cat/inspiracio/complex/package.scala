@@ -20,7 +20,7 @@ package object complex {
 
   // functions ---------------------------------
 
-  def finite(c: Complex): Boolean = ∞ == c
+  def finite(c: Complex): Boolean = ∞ != c
 
   def abs(d: Double): Double = Math.abs(d)
 

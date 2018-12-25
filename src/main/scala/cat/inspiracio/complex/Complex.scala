@@ -17,32 +17,20 @@
  * */
 package cat.inspiracio.complex
 
-import java.text.NumberFormat
-
 /** Complex numbers.
   *
   * The only implementations are:
   * - class CartesianComplex(re,im)
-  * - object Infinity
-  *
-  * The client programmer must import this trait
-  * and its companion object:
-  * - import Complex._
+  * - object ∞
   *
   * */
 trait Complex {
-
-  /** Just for easier Java compatibility */
-  def isFinite : Boolean = ∞ != this
 
   // Operators ---------------------------------
 
   def unary_+ : Complex = this
 
-  def unary_- : Complex = this match {
-    case ∞ => ∞
-    case Cartesian(re,im) => Cartesian(-re,-im)
-  }
+  def unary_- : Complex = 0 - this
 
   def + (d: Double): Complex = this + double2Complex(d)
   def + (c: Complex): Complex
@@ -99,9 +87,6 @@ trait Complex {
         }
         case _ => ∞
       }
-    case ∞ =>
-      if(c === 0) throw new ArithmeticException("∞^0")
-      else ∞
   }
 
   def === (c: Byte): Boolean = this match {
@@ -132,16 +117,7 @@ trait Complex {
   def === (c: Complex): Boolean = this == c
 
   def === (c: Circle): Boolean = {
-    import RiemannSphere._
-
-    /** too much nicety */
-    object sin {
-      /** val sin(a) = d */
-      def unapply(d: Double): Option[Double] = {
-        val a = Math.asin(d)
-        Some(a)
-      }
-    }
+    import imp.RiemannSphere._
 
     //Are they actually equal?
     if(this == c.centre)
@@ -166,7 +142,7 @@ trait Complex {
       // asin(0.5) = 0.5235987755982989
       // asin(1) = π/2
       // 0 <= halfAngle <= π/2
-      val sin(halfAngle) = halfDelta / 1
+      val halfAngle = Math.asin(halfDelta / 1)
 
       // 0 <= angle <= π
       val angle = 2 * halfAngle
@@ -207,65 +183,11 @@ trait Complex {
   private def log(d: Double): Double = Math.log(d)
 }
 
-case class Circle(centre: Complex, radius: Double)
-
-/** Riemann sphere
-  * https://en.wikipedia.org/wiki/Riemann_sphere
-  * x² + y² + z² = 1
-  * https://math.stackexchange.com/questions/1219406/how-do-i-convert-a-complex-number-to-a-point-on-the-riemann-sphere
+/** A circle on the Riemann sphere surface around a
+  * complex number.
   *
-  */
-object RiemannSphere {
-  import java.lang.Math.sqrt
-
-  private type Point = (Double, Double, Double)
-
-  /** From sphere to plane: x/(1−z) + i * y/(1−z)
-    * Receives point in 3d space. Riemann sphere is centered
-    * on (0,0,0) and has radius 1.
-    * @param x
-    * @param y
-    * @param z
-    * @return Complex number represented by this point.
-    * */
-  def sphere2plane(x: Double, y: Double, z: Double): Complex =
-    if(z== -1) 0
-    else if(z==1) ∞
-    else x/(1-z) + (y/(1-z))*i
-
-  /** From sphere to plane: x/(1−z) + i * y/(1−z).
-    * @param p = (x,y,z) In 3d space on the unit sphere
-    * @return Complex number represented by this point. */
-  def sphere2plane(p: Point): Complex =
-    p match { case (x,y,z) => sphere2plane(x,y,z) }
-
-  /** From plane to sphere (x,y,z) = ( 2X/(1+X²+Y²) , 2Y/(1+X²+Y²) , (X²+Y²−1)/(1+X²+Y²) )
-    * @param c Complex number
-    * @return 3d point on unit sphere */
-  def plane2sphere(c: Complex): Point =
-    c match {
-      case ∞ => (0,0,1)
-      case Cartesian(re, im) => {
-        val re2 = sqr(re) //maybe Double.Infinity
-        val im2 = sqr(im) //maybe Double.Infinity
-        if(re2.isInfinity || im.isInfinity)
-          (0,0,1)
-        else {
-          val d = 1 + re2 + im2
-          (
-            2 * re / d,
-            2 * im / d,
-            (re2 + im2 - 1) / d
-          )
-        }
-      }
-    }
-
-  def distance(a: Point, b: Point): Double =
-    sqrt(sqr(a._1-b._1) + sqr(a._2-b._2) + sqr(a._3-b._3))
-
-  private def sqr(d: Double): Double = d*d
-}
+  * Possible to hide Circle from client programmer? */
+case class Circle(centre: Complex, angle: Double)
 
 /** Complex object. Maybe all of this can disappear? */
 object Complex {
@@ -273,24 +195,27 @@ object Complex {
   // formatting, maybe disappears ---------------
 
   /** for formatting */
-  private var PRECISION: Int = 4
-  def setPrecision(np: Int): Unit = {
-    val op = PRECISION
-    PRECISION = np
-    ε = Math.pow(10D, -PRECISION)
-    nf.setMaximumFractionDigits(np)
+  private var precision: Int = 4
+  def setPrecision(p: Int): Unit = {
+    precision = p
+    ε = Math.pow(10D, -precision)
   }
-  def getPrecision: Int = PRECISION
-
-  private val nf = NumberFormat.getInstance()
-  nf.setGroupingUsed(false)
-  nf.setMaximumFractionDigits(10)
+  def getPrecision: Int = precision
 
   // state, maybe disappears --------------------
 
-  var ε: Double = Math.pow(10D, -PRECISION)
+  var ε: Double = Math.pow(10D, -precision)
 
-  /** important for curves in polar coordinates */
+  /** Should the argument function be continuous
+    * or always return the principal value?
+    *
+    * Important for curves that use some functions
+    * that use some functions implemented with
+    * polar coordinates.
+    *
+    * But this is very bad:
+    * I don't control all cases of strange behaviour.
+    * And of course not threadsafe. */
   private var argContinuous: Boolean = false
   var k = 0
   var lastQuad = 0

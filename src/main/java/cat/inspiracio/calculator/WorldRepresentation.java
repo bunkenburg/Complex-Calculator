@@ -75,6 +75,7 @@ abstract class WorldRepresentation extends JComponent {
 
     // helpers -----------------------------------
 
+    protected boolean finite(Complex z){return package$.MODULE$.finite(z);}
     protected double Im(Complex c){ return cat.inspiracio.complex.package$.MODULE$.Im(c); }
     protected double Re(Complex c) { return cat.inspiracio.complex.package$.MODULE$.Re(c); }
     protected double abs(Complex z){ return package$.MODULE$.abs(z); }

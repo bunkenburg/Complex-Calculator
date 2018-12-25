@@ -90,4 +90,12 @@ class ToString extends FunSuite {
     assert(c.toString === "1-i")
   }
 
+  // precision ---------------------
+
+  test("set get precision"){
+    Complex.setPrecision(17)
+    val p = Complex.getPrecision
+    assert( p === 17 )
+  }
+
 }

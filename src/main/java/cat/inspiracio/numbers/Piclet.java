@@ -56,22 +56,22 @@ public abstract class Piclet {
     }
 
     protected double distance(Complex a, Complex ec){
-        if( a.isFinite() && ec.isFinite() )
+        if( finite(a) && finite(ec) )
             return Math.sqrt(sqr(Re(a) - Re(ec)) + sqr(Im(a) - Im(ec) ));
-        return a.isFinite() != ec.isFinite() ? (1.0D / 0.0D) : 0.0D;
+        return finite(a) != finite(ec) ? (1.0D / 0.0D) : 0.0D;
     }
 
     protected double sqr(double d){return d*d;}
 
+    protected boolean finite(Complex z){return package$.MODULE$.finite(z);}
+
     protected Complex Cartesian(double re, double im){
-        //Complex r = package$.MODULE$.double2Complex(re);
         Complex i = package$.MODULE$.i();
         return i.$times(im).$plus(re);
     }
 
     protected Complex Real(double re){
-        Complex r = package$.MODULE$.double2Complex(re);
-        return r;
+        return package$.MODULE$.double2Complex(re);
     }
 
 }

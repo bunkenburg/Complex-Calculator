@@ -19,7 +19,7 @@ package cat.inspiracio.complextests
 
 import org.scalatest.FunSuite
 import cat.inspiracio.complex._
-import cat.inspiracio.complex.RiemannSphere._
+import cat.inspiracio.complex.imp.RiemannSphere._
 
 // Riemann sphere ---------------------------------------
 // https://en.wikipedia.org/wiki/Riemann_sphere

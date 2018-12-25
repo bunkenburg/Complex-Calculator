@@ -184,7 +184,7 @@ abstract class World extends JFrame {
     public void update(Graphics g){paint(g);}
 
     protected void updateExtremes(Complex c){
-        if( c.isFinite() ){
+        if( finite(c) ){
             MaxImaginary = Math.max(MaxImaginary, Im(c) );
             MinImaginary = Math.min(MinImaginary, Im(c) );
             MaxReal = Math.max(MaxReal, Re(c) );
@@ -207,6 +207,7 @@ abstract class World extends JFrame {
 
     // helpers -----------------------------------
 
+    protected boolean finite(Complex z){return package$.MODULE$.finite(z);}
     protected double Im(Complex z){ return package$.MODULE$.Im(z); }
     protected double Re(Complex z){ return package$.MODULE$.Re(z); }
 

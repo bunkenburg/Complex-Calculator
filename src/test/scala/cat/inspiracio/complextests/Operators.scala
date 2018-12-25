@@ -55,6 +55,13 @@ class Operators extends FunSuite {
     assert( c === d )
   }
 
+  test("-(3+i)"){
+    val c: Complex = 3+i
+    val z = -c
+    val d = -3 - i
+    assert( z === d )
+  }
+
   test("-∞"){
     val c = - ∞
     assert( c === ∞ )
@@ -71,7 +78,8 @@ class Operators extends FunSuite {
   test("i + 0"){
     val a = i
     val b = 0
-    assert( a+b === i )
+    val z = a + b
+    assert( z === i )
   }
 
   test("3 + i"){
@@ -85,6 +93,11 @@ class Operators extends FunSuite {
     val a = π
     val b = ∞
     assert( a+b === ∞ )
+  }
+
+  test("∞ + 3"){
+    val z = ∞ + 3
+    assert( z === ∞ )
   }
 
   test("∞ + ∞"){
@@ -106,7 +119,8 @@ class Operators extends FunSuite {
   test("i - 0"){
     val a = i
     val b = 0
-    assert( a-b === i )
+    val z = a - b
+    assert( z === i )
   }
 
   test("3 - i"){
@@ -120,6 +134,11 @@ class Operators extends FunSuite {
     val a = π
     val b = ∞
     assert( a-b === ∞ )
+  }
+
+  test("∞ - 3"){
+    val z = ∞ - 3
+    assert( z === ∞ )
   }
 
   test("∞ - ∞"){
@@ -256,6 +275,29 @@ class Operators extends FunSuite {
     }
   }
 
+  test("0 ^ (0: Double)"){
+    assertThrows[ArithmeticException] {
+      val a: Complex = 0
+      val b: Double = 0
+      val c = a^b
+      assert( c === 0)
+    }
+  }
+
+  test("0 ^ (3: Double)"){
+      val a: Complex = 0
+      val b: Double = 3
+      val c = a^b
+      assert( c === 0)
+  }
+
+  test("3 ^ (1/0: Double)"){
+      val a: Complex = 3
+      val b: Double = Double.PositiveInfinity
+      val c = a^b
+      assert( c === ∞)
+  }
+
   test("0 ^ i"){
     val c = 0^i
     assert( c === 0 )
@@ -304,8 +346,28 @@ class Operators extends FunSuite {
     assert( c === ∞ )
   }
 
-  test("∞ ^ ∞"){
+  test("∞ ^ 0.0"){
+    assertThrows[ArithmeticException] {
+      val a: Complex = ∞
+      val c = a ^ 0.0
+      assert(c === ∞)
+    }
+  }
+
+  test("∞ ^ 3"){
     val a = ∞
+    val c = a ^ 3
+    assert( c === ∞ )
+  }
+
+  test("∞ ^ 3.0"){
+    val a = ∞
+    val c = a ^ 3.0
+    assert( c === ∞ )
+  }
+
+  test("∞ ^ ∞"){
+    val a: Complex = ∞
     val b = ∞
     val c = a^b
     assert( c === ∞ )
@@ -314,6 +376,15 @@ class Operators extends FunSuite {
   test("∞^0"){
     assertThrows[ArithmeticException] {
       val c = ∞ ^ 0
+      assert( c === ∞)
+    }
+  }
+
+  test("∞ ^ (0: Complex)"){
+    assertThrows[ArithmeticException] {
+      val a: Complex = ∞
+      val b: Complex = 0.0
+      val c = a ^ b
       assert( c === ∞)
     }
   }

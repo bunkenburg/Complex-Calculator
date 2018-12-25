@@ -221,7 +221,7 @@ final class RefxWorld extends JFrame{
                     Complex z = Real(pix2x(i));
                     Complex ec = f.evaluate(z);
                     double d;
-                    if( ec.isFinite() )
+                    if( finite(ec) )
                         d = Re(ec);
                     else
                         throw new Exception();
@@ -386,6 +386,7 @@ final class RefxWorld extends JFrame{
 
     // helpers -----------------------------------
 
+    protected boolean finite(Complex z){return package$.MODULE$.finite(z);}
     protected double Im(Complex c){ return cat.inspiracio.complex.package$.MODULE$.Im(c); }
     protected double Re(Complex c){ return cat.inspiracio.complex.package$.MODULE$.Re(c); }
     private String toString(double d){ return package$.MODULE$.double2Complex(d).toString(); }

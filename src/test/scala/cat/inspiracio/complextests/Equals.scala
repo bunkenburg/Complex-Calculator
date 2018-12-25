@@ -34,6 +34,13 @@ class Equals extends FunSuite {
     assert(c === e )
   }
 
+  test("i === (3: Byte)") {
+    val c: Complex = i
+    val e: Byte = 3
+    val b = c === e
+    assert( !b )
+  }
+
   test("0 === 0 Int") {
     val c: Complex = 0
     val e: Int = 0
@@ -46,16 +53,37 @@ class Equals extends FunSuite {
     assert(c === e )
   }
 
+  test("i === (3: Long)") {
+    val c: Complex = i
+    val e: Long = 3
+    val b = c === e
+    assert( !b )
+  }
+
   test("0 === 0F") {
     val c: Complex = 0
     val e: Float = 0
     assert(c === e )
   }
 
+  test("i === (3: Float)") {
+    val c: Complex = i
+    val e: Float = 3
+    val b = c === e
+    assert( !b )
+  }
+
   test("0 === 0D") {
     val c: Complex = 0
     val e: Double = 0
     assert(c === e )
+  }
+
+  test("i === (3: Double)") {
+    val c: Complex = i
+    val e: Double = 3
+    val b = c === e
+    assert( !b )
   }
 
   test("∞ === 0") {

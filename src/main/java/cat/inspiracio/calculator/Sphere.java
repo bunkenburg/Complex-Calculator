@@ -61,7 +61,7 @@ final class Sphere extends WorldRepresentation{
         double d;
         double d1;
         double d2;
-        if( z.isFinite() ){
+        if( finite(z) ){
             double a = abs(z);
             double d3 = sqr( a );
             double d5 = 1.0D + d3;
@@ -114,7 +114,7 @@ final class Sphere extends WorldRepresentation{
         double d;
         double d1;
         double d2;
-        if( z.isFinite() ){
+        if( finite(z) ){
             double d3 = sqr( abs(z) );
             double d5 = 1.0D + d3;
             d = Re(z) / d5;
@@ -141,7 +141,7 @@ final class Sphere extends WorldRepresentation{
         double d;
         double d1;
         double d2;
-        if( z.isFinite() ){
+        if( finite(z) ){
             double d3 = sqr( abs(z) );
             double d5 = 1.0D + d3;
             d = Re(z) / d5;
@@ -167,7 +167,7 @@ final class Sphere extends WorldRepresentation{
         double d;
         double d1;
         double d2;
-        if( z.isFinite() ){
+        if( finite(z) ){
             double d3 = sqr( abs(z) );
             double d5 = 1.0D + d3;
             d = Re(z) / d5;

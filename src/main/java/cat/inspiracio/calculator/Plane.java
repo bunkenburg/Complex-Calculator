@@ -57,7 +57,7 @@ final class Plane extends WorldRepresentation{
     }
 
     @Override void drawComplex(Drawing drawing, Complex z){
-        if( z.isFinite() ){
+        if( finite(z) ){
             int x = (int)(( Re(z) - LeftReal) * ScaleFactor);
             int y = -(int)(( Im(z) - TopImaginary) * ScaleFactor);
             drawing.cross( x, y, MARKLENGTH );

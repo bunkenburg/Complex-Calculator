@@ -214,6 +214,7 @@ class Geometric extends FunSuite {
 
   def f(a: Double): Double = arg(Polar(1, a))
 
+  /*
   test("principal argument"){
     Complex.setArgPrincipal()
 
@@ -232,6 +233,27 @@ class Geometric extends FunSuite {
     assert( as1 === List(0, 1, 2, 3, π, 3.9999999999999996) )
 
     Complex.setArgPrincipal()
+  }
+
+  test("continuous argument reset"){
+    Complex.setArgContinuous()
+
+    val as = List(0, 1, 2, 3, π, 4)
+    val as1 = as map f
+    assert( as1 === List(0, 1, 2, 3, π, 3.9999999999999996) )
+
+    Complex.resetArg()
+
+    assert( as1 === (as map f) )
+
+    Complex.setArgPrincipal()
+  }
+  */
+
+  test("fake arg principal"){
+    Complex.setArgContinuous()
+    Complex.setArgPrincipal()
+    Complex.resetArg()
   }
 
   // finite and zero ---------------------

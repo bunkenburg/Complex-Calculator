@@ -51,7 +51,7 @@ class Trigonometry extends FunSuite {
   test("sin(2kπ)") {
     val k = 16
     val z = sin(2*k*π)
-    assert( z === 0 +- 1e-14)
+    assert( z === 0 +- 1e-14 )
   }
 
   test("sin(i)") {

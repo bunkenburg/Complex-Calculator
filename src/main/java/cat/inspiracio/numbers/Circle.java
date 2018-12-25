@@ -35,13 +35,13 @@ public class Circle extends Piclet {
     }
 
     public Circle(Complex c, double r) {
-        center = c.isFinite() ? c : Real(0);
+        center = finite(c) ? c : Real(0);
         radius = r;
     }
 
     public Circle(Complex c, Complex r) {
-        center = c.isFinite() ? c : Real(0);
-        radius = r.isFinite() ? distance(center, r) : (1.0D / 0.0D);
+        center = finite(c) ? c : Real(0);
+        radius = finite(r) ? distance(center, r) : (1.0D / 0.0D);
     }
 
     public double top() { return Im(center) + radius; }
