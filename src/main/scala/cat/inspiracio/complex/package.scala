@@ -179,6 +179,7 @@ package object complex {
   val E = e
   val I = i
   val Pi = π
+  val Infinity = ∞
 
   // unapply methods for pattern matching
 

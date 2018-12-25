@@ -189,6 +189,12 @@ class Operators extends FunSuite {
     }
   }
 
+  test("∞ * 3"){
+      val a = ∞
+      val b = 3
+      assert(a * b === ∞)
+  }
+
   test("0 * ∞"){
     assertThrows[ArithmeticException] {
       val a = 0
