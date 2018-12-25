@@ -34,4 +34,14 @@ object ∞ extends Complex{
     case _ => ∞
   }
 
+  override def === (c: Byte): Boolean = false
+  override def === (c: Int): Boolean = false
+  override def === (c: Long): Boolean = false
+  override def === (c: Float): Boolean = c.isInfinity
+  override def === (c: Double): Boolean = c.isInfinity
+  override def === (c: Complex): Boolean = c match {
+    case ∞ => true
+    case _ => false
+  }
+
 }

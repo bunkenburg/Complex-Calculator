@@ -83,16 +83,17 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
 
   // methods with 0 parameters ------------------------------------
 
+  override def unary_- : Complex = Cartesian(-re,-im)
 
   lazy val argument: Double = {
     import Complex.lastQuad
     import Complex.k
 
     def quadrant: Int =
-    if (0 <= re  && 0 <= im) 1
-    else if (re < 0 && 0 <= im ) 2
-    else if (re < 0 && im < 0) 3
-    else 4
+      if (0 <= re  && 0 <= im) 1
+      else if (re < 0 && 0 <= im ) 2
+      else if (re < 0 && im < 0) 3
+      else 4
 
     if (!(this === 0)) {
       val d = Math.atan2(im, re)
@@ -139,27 +140,23 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
 
   // operators of 2 parameters ----------------------------------
 
-  override def unary_- : Complex = Cartesian(-re,-im)
-
   override def + (d: Double): Complex = Cartesian(re + d, im)
 
-  override def + (c: Complex): Complex =
-    c match {
+  override def + (c: Complex): Complex = c match {
       case ∞ => ∞
       case Cartesian(cre, cim) => Cartesian(re + cre, im + cim)
     }
 
   override def - (d: Double): Complex = Cartesian(re-d, im)
 
-  override def - (c: Complex): Complex =
-    c match {
+  override def - (c: Complex): Complex = c match {
       case ∞ => ∞
       case Cartesian(cre, cim) => Cartesian (re - cre, im - cim)
     }
 
   override def * (d: Double): Complex = Cartesian(re * d, im * d)
 
-  override def * (c: Complex): Complex = {
+  override def * (c: Complex): Complex =
     if (this === 0) {
       c match {
         case ∞ => throw new ArithmeticException("0 * ∞")
@@ -173,15 +170,12 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
       }
     }
 
-  }
-
-  override def / (d: Double): Complex = {
+  override def / (d: Double): Complex =
     if(this === 0) {
       if (d == 0) throw new ArithmeticException("0/0")
       else 0
     }
     else Cartesian(re / d, im / d)
-  }
 
   /** Division for two Cartesian
     *
@@ -213,7 +207,7 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
     Cartesian(d6 / d10, d7 / d10)
   }
 
-  override def / (c: Complex): Complex = {
+  override def / (c: Complex): Complex =
     // See http://www.mesacc.edu/~scotz47781/mat120/notes/complex/dividing/dividing_complex.html
     // for a better algorithm.
 
@@ -232,7 +226,8 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
         case Cartesian(cre, cim) => div(re, im, cre, cim)
       }
     }
-  }
+
+  override def === (c: Int): Boolean = re==c && im==0
 
   /** Copes with null and ∞;
     * accepts Byte, Int, Long, Float, Double,
@@ -240,8 +235,7 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
     * This comparison uses == on Double and is
     * therefore sometimes not useful.
     * */
-  override def equals(other: Any): Boolean = {
-    other match {
+  override def equals(other: Any): Boolean = other match {
       case null => false
 
       case b: Byte => this == byte2Complex(b)
@@ -257,7 +251,6 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
 
       case _ => false
     }
-  }
 
   override def hashCode = (re,im).##
 
