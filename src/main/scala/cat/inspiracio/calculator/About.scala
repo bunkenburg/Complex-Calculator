@@ -38,26 +38,34 @@ import java.awt.event._
 import javax.swing._
 import javax.swing.text.{SimpleAttributeSet, StyleConstants}
 
+/** Modal dialog from "About" */
 @SerialVersionUID(0)
 class About(val frame: JFrame) extends JDialog(frame, "About ...", true) {
+
   setResizable(false)
   addWindowListener(new WindowAdapter() {
     override def windowClosing(windowevent: WindowEvent): Unit = dispose()
   })
+
   add("Center", pane)
   val panel = new JPanel
+
   val button = new JButton("Continue")
-  button.addActionListener((actionevent: ActionEvent) => dispose())
+  button.addActionListener( _ => dispose() )
   panel.add(button)
+
   add("South", panel)
+
+  addDismissers()
+
   button.requestFocus()
   pack()
   setLocationRelativeTo(frame)
   setVisible(true)
 
   private def pane = {
-    val text = "\nComplex Calculator\n" + "6. 1. 1999\n" + "by Alexander Bunkenburg\n" + "http://www.inspiracio.cat\n"
-    val textpane = new JTextPane //, 5, 34);
+    val text = "\nComplex Calculator\n" + "6. 1. 2019\n" + "by Alexander Bunkenburg\n" + "http://www.inspiracio.cat\n"
+    val textpane = new JTextPane
     textpane.setText(text)
     textpane.setEditable(false)
     //align pane
@@ -67,5 +75,35 @@ class About(val frame: JFrame) extends JDialog(frame, "About ...", true) {
     StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER)
     doc.setParagraphAttributes(0, doc.getLength, center, false)
     textpane
+  }
+
+  /** Enter dismisses dialog
+    * https://stackoverflow.com/questions/29734287/can-i-keep-a-jdialog-from-closing-on-escape-enter-press
+    */
+  private def addDismissers(): Unit = {
+
+    val condition = JComponent.WHEN_IN_FOCUSED_WINDOW
+    val contentPane = getContentPane.asInstanceOf[JPanel]
+    val inputMap = contentPane.getInputMap(condition)
+    val actionMap = contentPane.getActionMap
+
+    //Dismiss dialog with enter key. Does not work.
+    val enterKs = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0)
+    inputMap.put(enterKs, enterKs.toString)
+    actionMap.put(enterKs.toString, new AbstractAction() {
+      override def actionPerformed(e: ActionEvent): Unit = {
+        dispose()
+      }
+
+    })
+
+    //Dismiss dialog with escape key. Does work.
+    val escKs = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0)
+    inputMap.put(escKs, escKs.toString)
+    actionMap.put(escKs.toString, new AbstractAction() {
+      override def actionPerformed(e: ActionEvent): Unit = {
+        dispose()
+      }
+    })
   }
 }
