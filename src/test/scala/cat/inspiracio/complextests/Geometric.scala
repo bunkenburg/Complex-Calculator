@@ -206,4 +206,31 @@ class Geometric extends FunSuite {
     assert( m == m1)
     assert( a == a1 )
   }
+
+  def arg(z: Complex) = {
+    val Polar(_, a) = z
+    a
+  }
+
+  def f(a: Double): Double = arg(Polar(1, a))
+
+  test("principal argument"){
+    Complex.setArgPrincipal()
+
+    val as = List(0, 1, 2, 3, π, 4)
+    val as1 = as map f
+
+    assert( as1 === List(0, 1, 2, 3, π, -2.28318530717958670) )
+  }
+
+  test("continuous argument"){
+    Complex.setArgContinuous()
+
+    val as = List(0, 1, 2, 3, π, 4)
+    val as1 = as map f
+
+    assert( as1 === List(0, 1, 2, 3, π, 3.9999999999999996) )
+
+    Complex.setArgPrincipal()
+  }
 }

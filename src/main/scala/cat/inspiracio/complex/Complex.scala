@@ -291,7 +291,7 @@ object Complex {
   var ε: Double = Math.pow(10D, -PRECISION)
 
   /** important for curves in polar coordinates */
-  var argContinuous: Boolean = false
+  private var argContinuous: Boolean = false
   var k = 0
   var lastQuad = 0
   def resetArg(): Unit = {
@@ -300,5 +300,6 @@ object Complex {
   }
   def setArgContinuous(): Unit = argContinuous = true
   def setArgPrincipal(): Unit = argContinuous = false
+  def isArgContinuous : Boolean = argContinuous
 
 }

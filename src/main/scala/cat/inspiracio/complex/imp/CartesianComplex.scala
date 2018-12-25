@@ -23,7 +23,9 @@ import cat.inspiracio.complex._
 class CartesianComplex(val re: Double, val im: Double) extends Complex {
   require( !re.isInfinite && !im.isInfinite, "Infinite: " + re + " " + im)
 
-  /** Format real number nicely, with e and π. */
+  /** Format real number nicely, with e and π.
+    * Cuts off zeros after decimal point.
+    * Cuts off decimal point for integers. */
   private def toString(d: Double): String = {
 
     //Some special real numbers
@@ -35,16 +37,20 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
     //General formatting
     else {
       val s = d.toString
-      if (s.contains('.')) { //Cuts off trailing zeros.
+      if (s.contains('.')) {
         val b = new StringBuilder(s)
+
+        //Cuts off trailing zeros.
         while ( b.charAt(b.length - 1) == '0')
           b.setLength(b.length - 1)
+
         //Maybe cut off trailing '.' too.
         if (b.charAt(b.length - 1) == '.')
           b.setLength(b.length - 1)
+
         b.toString
       }
-      else s
+      else s  //NaN and other special cases
     }
   }
 
@@ -77,24 +83,22 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
 
   // methods with 0 parameters ------------------------------------
 
-  /** Why results 0, 1, 2, 3, 4 ?
-    * I would expect only four results. */
-  private def quadrant: Int =
-    if (0 <= re  && 0 <= im) 1
-    else if (re < 0 && 0 <= im ) 2
-    else if (re < 0 && im < 0) 3
-    else if (re < 0 || 0 <= im) 0
-    else 4
 
   lazy val argument: Double = {
-    import Math.atan2
-    import Complex.argContinuous
     import Complex.lastQuad
     import Complex.k
 
+    /** Why results 0, 1, 2, 3, 4 ?
+      * I would expect only four results. */
+    def quadrant: Int =
+    if (0 <= re  && 0 <= im) 1
+    else if (re < 0 && 0 <= im ) 2
+    else if (re < 0 && im < 0) 3
+    else 4
+
     if (!(this === 0)) {
-      val d = atan2(im, re)
-      if (argContinuous) {
+      val d = Math.atan2(im, re)
+      if (Complex.isArgContinuous) {
         val q = quadrant
         if (lastQuad == 2 && q == 3)
           k += 1
