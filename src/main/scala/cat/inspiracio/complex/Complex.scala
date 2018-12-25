@@ -31,7 +31,6 @@ trait Complex {
   // Operators ---------------------------------
 
   def unary_+ : Complex = this
-
   def unary_- : Complex = 0 - this
 
   def + (d: Double): Complex = this + double2Complex(d)
@@ -96,10 +95,7 @@ trait Complex {
     case _ => false
   }
 
-  def === (c: Int): Boolean = this match {
-    case Integer(n) => n == c.toLong
-    case _ => false
-  }
+  def === (c: Int): Boolean
 
   def === (c: Long): Boolean = this match {
     case Integer(n) => n == c

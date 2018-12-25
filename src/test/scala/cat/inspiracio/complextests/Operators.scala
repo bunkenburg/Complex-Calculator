@@ -209,8 +209,25 @@ class Operators extends FunSuite {
     assertThrows[ArithmeticException] {
       val a = 0
       val b: Complex = 0
-      assert(a / b === 0)
+      val c = a / b
+      assert( c === 0)
     }
+  }
+
+  test("0 / (0: Double)"){
+    assertThrows[ArithmeticException] {
+      val a: Complex = 0
+      val b: Double = 0
+      val c = a / b
+      assert( c === 0)
+    }
+  }
+
+  test("0 / (3: Double)"){
+    val a: Complex = 0
+    val b: Double = 3
+    val c = a / b
+    assert( c === 0)
   }
 
   test("0 / i"){

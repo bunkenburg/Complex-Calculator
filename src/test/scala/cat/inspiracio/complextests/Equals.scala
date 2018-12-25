@@ -86,6 +86,55 @@ class Equals extends FunSuite {
     assert( !b )
   }
 
+  test("∞ === (0: Byte)") {
+    val c: Complex = ∞
+    val e: Byte = 0
+    val b = c === e
+    assert( !b )
+  }
+
+  test("∞ === (0: Int)") {
+    val c: Complex = ∞
+    val e: Int = 0
+    val b = c === e
+    assert( !b )
+  }
+
+  test("∞ === (0: Long)") {
+    val c: Complex = ∞
+    val e: Long = 0
+    val b = c === e
+    assert( !b )
+  }
+
+  test("∞ === (0: Float)") {
+    val c: Complex = ∞
+    val e: Float = 0
+    val b = c === e
+    assert( !b )
+  }
+
+  test("∞ === (∞: Float)") {
+    val c: Complex = ∞
+    val e: Float = Float.PositiveInfinity
+    val b = c === e
+    assert( b )
+  }
+
+  test("∞ === (0: Double)") {
+    val c: Complex = ∞
+    val e: Double = 0
+    val b = c === e
+    assert( !b )
+  }
+
+  test("∞ === (∞: Double)") {
+    val c: Complex = ∞
+    val e: Double = Double.PositiveInfinity
+    val b = c === e
+    assert( b )
+  }
+
   test("∞ === 0") {
     val c: Complex = ∞
     val e: Complex = 0
@@ -96,6 +145,13 @@ class Equals extends FunSuite {
   test("13+3*i === 0") {
     val c: Complex = 13 + 3*i
     val e: Complex = 0
+    val b = c === e
+    assert( !b )
+  }
+
+  test("13+3*i === (0: Int)") {
+    val c: Complex = 13 + 3*i
+    val e: Int = 0
     val b = c === e
     assert( !b )
   }
@@ -122,6 +178,18 @@ class Equals extends FunSuite {
     val c: Complex = π+i
     val e: Complex = π+i
     assert( c === e )
+  }
+
+  test("π+i == bla ") {
+    val c: Complex = π+i
+    val b = c.equals("bla")
+    assert( !b )
+  }
+
+  test("(π+i).hashCode") {
+    val c: Complex = π+i
+    val h = c.hashCode()
+    assert( h == -1605897715 )
   }
 
 }

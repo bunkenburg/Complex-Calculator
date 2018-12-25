@@ -118,16 +118,16 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
   override def + (d: Double): Complex = Cartesian(re + d, im)
 
   override def + (c: Complex): Complex = c match {
-      case ∞ => ∞
-      case Cartesian(cre, cim) => Cartesian(re + cre, im + cim)
-    }
+    case ∞ => ∞
+    case Cartesian(cre, cim) => new CartesianComplex(re + cre, im + cim)
+  }
 
   override def - (d: Double): Complex = Cartesian(re-d, im)
 
   override def - (c: Complex): Complex = c match {
-      case ∞ => ∞
-      case Cartesian(cre, cim) => Cartesian (re - cre, im - cim)
-    }
+    case ∞ => ∞
+    case Cartesian(cre, cim) => new CartesianComplex(re - cre, im - cim)
+  }
 
   override def * (d: Double): Complex = Cartesian(re * d, im * d)
 
@@ -159,6 +159,7 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
   private def div(ar: Double, ai: Double, br: Double, bi: Double): Complex = {
     //I don't understand this anymore.
     //It is from decompiled code.
+    //XXX Better multiply divisor by conjugate.
     val d4 = Math.abs(br)
     val d5 = Math.abs(bi)
     var d6 = .0
@@ -212,18 +213,13 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
     * */
   override def equals(other: Any): Boolean = other match {
       case null => false
-
       case b: Byte => this == byte2Complex(b)
       case n: Int => this == int2Complex(n)
       case l: Long => this == long2Complex(l)
       case f: Float => this == float2Complex(f)
       case d: Double => this == double2Complex(d)
-
-      case c: CartesianComplex =>
-        this.re==c.re && this.im==c.im
-
+      case c: CartesianComplex => this.re==c.re && this.im==c.im
       case ∞ => false
-
       case _ => false
     }
 
