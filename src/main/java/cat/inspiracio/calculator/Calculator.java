@@ -17,11 +17,6 @@
  * */
 package cat.inspiracio.calculator;
 
-import static cat.inspiracio.calculator.Calculator.Mode.CALC;
-import static cat.inspiracio.calculator.Calculator.Mode.FZ;
-import static cat.inspiracio.calculator.Calculator.Mode.MODFZ;
-import static cat.inspiracio.calculator.Calculator.Mode.REFX;
-
 import cat.inspiracio.numbers.BugException;
 import cat.inspiracio.numbers.PartialException;
 import cat.inspiracio.numbers.Square;
@@ -36,24 +31,26 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.ParseException;
 
+import static cat.inspiracio.calculator.Mode.*;
+
 /** The Calculator application.
  * This is a frame, the main window.
  * This class has the main method. */
 public final class Calculator extends JFrame {
-	
-    public enum Mode{CALC, FZ, MODFZ, REFX}
-
-    final static String ALLOWED_CHARS = " !sinhcoshtanhconjoppReImlnexp^modargiepi()789*/456+-123=0.z";
 
     //State -------------------------------------------
 
     /** The mode that the program is in: Calculation, z->fz mapping, z->|fz| mapping, or Re(fz). */
-    Mode mode = CALC;
+    private Mode mode = CALC;
+    Mode mode(){return mode;}
     
-    Display display;
+    private Display display;
+
     private JButton equalsButton;
     private JButton zButton;
-    char variable = 'z';
+
+    private char variable = 'z';
+    char variable(){return variable;}
 
     private ComplexWorld cW;
     private ZWorld zW;
@@ -82,7 +79,7 @@ public final class Calculator extends JFrame {
         setPrecision(4);
     }
 
-    private void setPrecision(int n){ Complex$.MODULE$.setPrecision(4); }
+    private void setPrecision(int n){ Complex$.MODULE$.setPrecision(n); }
 
     private void buildButtons(){
         GridBagLayout layout = new GridBagLayout();
@@ -101,26 +98,27 @@ public final class Calculator extends JFrame {
         constraints.gridwidth = 1;
         constraints.gridheight = 1;
         ActionListener listener = e -> {
-                if(mode ==CALC)
+                if(mode == CALC)
                     eraseOldResult();
-                display.paste(e.getActionCommand());
+                String command = e.getActionCommand();
+                display.paste(command);
                 display.requestFocus();
-                if(mode !=CALC)
+                if(mode != CALC)
                     functionChange();
             };
         Bx abx[] = {
                 new Bx("!", 0, 3, 1, listener),
                 new Bx("del", 3, 3, 1, e -> {
-                        if(mode ==CALC)
+                        if(mode == CALC)
                             eraseOldResult();
                         display.delete();
                         display.requestFocus();
-                        if(mode !=CALC)
+                        if(mode != CALC)
                             functionChange();
                     }),
                 new Bx("C", 4, 3, 1, e -> {
                         display.clearAll();
-                        if(mode !=CALC)
+                        if(mode != CALC)
                             display.prepend("f(" + variable + ") = ");
                         display.requestFocus();
                     }),
@@ -160,7 +158,7 @@ public final class Calculator extends JFrame {
                 new Bx("z", 3, 11, 1, e -> {
                         display.paste(variable);
                         display.requestFocus();
-                        if(mode !=CALC)
+                        if(mode != CALC)
                             functionChange();
                     }),
                 new Bx("=", 4, 11, 2, e -> {
@@ -305,7 +303,7 @@ public final class Calculator extends JFrame {
         case FZ:
             setArgContinuous();
             variable = 'z';
-            if(mode==REFX)
+            if(mode == REFX)
                 display.replace('x', 'z');
             else if(mode ==CALC){
                 display.clearAll();
@@ -428,4 +426,10 @@ public final class Calculator extends JFrame {
         }
     }
 
+    // display -------------------------
+
+    void delete(){display.delete();}
+    void clearAll(){display.clearAll();}
+    void prepend(String s){display.prepend(s);}
+    void paste(char c){display.paste(c);}
 }

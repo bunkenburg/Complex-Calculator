@@ -36,7 +36,7 @@ package cat.inspiracio.calculator
 import java.awt.Toolkit
 import java.awt.event.KeyEvent
 
-import cat.inspiracio.calculator.Calculator.Mode.{CALC, FZ, MODFZ, REFX}
+import cat.inspiracio.calculator.Mode.{CALC, FZ, MODFZ, REFX}
 import cat.inspiracio.complex.Complex
 import javax.swing._
 

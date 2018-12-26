@@ -20,9 +20,11 @@ package cat.inspiracio.calculator;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import static cat.inspiracio.calculator.Calculator.Mode.CALC;
+import static cat.inspiracio.calculator.Mode.CALC;
 
 class MyKeyListener extends KeyAdapter {
+
+    private final static String ALLOWED_CHARS = " !sinhcoshtanhconjoppReImlnexp^modargiepi()789*/456+-123=0.z";
 
     private Calculator calculator;
 
@@ -30,45 +32,54 @@ class MyKeyListener extends KeyAdapter {
 
     @Override public void keyPressed(KeyEvent keyevent){
         int i = keyevent.getKeyCode();
+
+        //backspace delete
         if(i==8 || i==127){
-            calculator.display.delete();
+            calculator.delete();
             keyevent.consume();
             return;
         }
+
+        //line feed
         if(i==10){
-            if(calculator.mode == CALC){
+            if(calculator.mode() == CALC){
                 calculator.eraseOldResult();
                 calculator.doEquals();
             }
             keyevent.consume();
             return;
         }
+
+        //form feed
         if(i==12){
-            calculator.display.clearAll();
-            if(calculator.mode!=CALC) {
-                String s = "f(" + calculator.variable + ") = ";
-                calculator.display.prepend(s);
+            calculator.clearAll();
+            if(calculator.mode() != CALC) {
+                String s = "f(" + calculator.variable() + ") = ";
+                calculator.prepend(s);
             }
             keyevent.consume();
             return;
         }
+
+        // % '
         if(i!=37 && i!=39)
             keyevent.consume();
     }
 
     @Override public void keyTyped(KeyEvent keyevent){
         char c = keyevent.getKeyChar();
-        if(calculator.ALLOWED_CHARS.indexOf(c)==-1){
+        if( ALLOWED_CHARS.indexOf(c) == -1 ){
             keyevent.consume();
-        }else{
-            if(calculator.mode==CALC)
+        }
+        else{
+            if(calculator.mode() == CALC)
                 calculator.eraseOldResult();
             if(c=='='){
-                if(calculator.mode==CALC)
+                if(calculator.mode() == CALC)
                     calculator.doEquals();
             }else
-                calculator.display.paste(c);
-            if(calculator.mode!=CALC)
+                calculator.paste(c);
+            if(calculator.mode() != CALC)
                 calculator.functionChange();
         }
         keyevent.consume();

@@ -17,11 +17,11 @@
  * */
 package cat.inspiracio.calculator;
 
-import static cat.inspiracio.calculator.Calculator.Mode.FZ;
-import static cat.inspiracio.calculator.Calculator.Mode.MODFZ;
+import static cat.inspiracio.calculator.Mode.FZ;
+import static cat.inspiracio.calculator.Mode.MODFZ;
 import static cat.inspiracio.calculator.Interaction.*;
 
-import cat.inspiracio.calculator.Calculator.Mode;
+import cat.inspiracio.calculator.Mode;
 import cat.inspiracio.complex.Complex;
 import cat.inspiracio.complex.Complex$;
 import cat.inspiracio.numbers.Circle;
