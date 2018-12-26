@@ -1,5 +1,6 @@
 # TODO
 
+* input from keyboard broken
 * Better initial window positions
     x About
     - mode Calculate
