@@ -45,7 +45,10 @@ final class Menus extends JMenuBar {
 	private void file(){
 		JMenu menu = new JMenu("File");
 		JMenuItem item = new JMenuItem("About ...");
+
 		item.addActionListener( e -> new About(calculator) );
+		//item.addActionListener( e -> new DemoDialog(calculator) );
+
 		menu.add(item);
 		item = new JMenuItem("Quit", 'Q');//new MenuShortcut(81));
 		item.addActionListener( e -> calculator.quit() );

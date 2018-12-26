@@ -38,72 +38,57 @@ import java.awt.event._
 import javax.swing._
 import javax.swing.text.{SimpleAttributeSet, StyleConstants}
 
-/** Modal dialog from "About" */
-@SerialVersionUID(0)
+/** Modal dialog from "About"
+  *
+  * */
 class About(val frame: JFrame) extends JDialog(frame, "About ...", true) {
 
-  setResizable(false)
-  addWindowListener(new WindowAdapter() {
-    override def windowClosing(windowevent: WindowEvent): Unit = dispose()
-  })
+  fill()
+  ready()
 
-  add("Center", pane)
-  val panel = new JPanel
+  private def fill(): Unit ={
+    val t = text()
+    add("Center", t)
 
-  val button = new JButton("Continue")
-  button.addActionListener( _ => dispose() )
-  panel.add(button)
+    val button = new JButton("Continue")
+    button.addActionListener( _ => dispose() )
+    val root = getRootPane
+    root.setDefaultButton(button)
 
-  add("South", panel)
+    val panel = new JPanel
+    panel.add(button)
+    add("South", panel)
+  }
 
-  addDismissers()
+  private def text(): JComponent = {
+    val s = "\nComplex Calculator\n" + "6. 1. 2019\n" + "by Alexander Bunkenburg\n" + "http://www.inspiracio.cat\n"
 
-  button.requestFocus()
-  pack()
-  setLocationRelativeTo(frame)
-  setVisible(true)
-
-  private def pane = {
-    val text = "\nComplex Calculator\n" + "6. 1. 2019\n" + "by Alexander Bunkenburg\n" + "http://www.inspiracio.cat\n"
     val textpane = new JTextPane
-    textpane.setText(text)
+    textpane.setText(s)
     textpane.setEditable(false)
+    textpane.setFocusable(false)  //necessary so that enter and space dismiss dialog
+
     //align pane
     //https://stackoverflow.com/questions/3213045/centering-text-in-a-jtextarea-or-jtextpane-horizontal-text-alignment
     val doc = textpane.getStyledDocument
     val center = new SimpleAttributeSet
     StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER)
     doc.setParagraphAttributes(0, doc.getLength, center, false)
+
     textpane
   }
 
-  /** Enter dismisses dialog
-    * https://stackoverflow.com/questions/29734287/can-i-keep-a-jdialog-from-closing-on-escape-enter-press
-    */
-  private def addDismissers(): Unit = {
-
-    val condition = JComponent.WHEN_IN_FOCUSED_WINDOW
-    val contentPane = getContentPane.asInstanceOf[JPanel]
-    val inputMap = contentPane.getInputMap(condition)
-    val actionMap = contentPane.getActionMap
-
-    //Dismiss dialog with enter key. Does not work.
-    val enterKs = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0)
-    inputMap.put(enterKs, enterKs.toString)
-    actionMap.put(enterKs.toString, new AbstractAction() {
-      override def actionPerformed(e: ActionEvent): Unit = {
-        dispose()
-      }
-
-    })
-
-    //Dismiss dialog with escape key. Does work.
-    val escKs = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0)
-    inputMap.put(escKs, escKs.toString)
-    actionMap.put(escKs.toString, new AbstractAction() {
-      override def actionPerformed(e: ActionEvent): Unit = {
-        dispose()
-      }
-    })
+  private val action = new AbstractAction() {
+    override def actionPerformed(e: ActionEvent): Unit = {
+      dispose()
+    }
   }
+
+  private def ready(): Unit ={
+    setResizable(false)
+    pack()
+    setLocationRelativeTo(frame)
+    setVisible(true)
+  }
+
 }
