@@ -43,7 +43,6 @@ public final class Calculator extends JFrame {
 	
     public enum Mode{CALC, FZ, MODFZ, REFX}
 
-    static final int precisions[] = {2, 4, 6, 8, 10};
     final static String ALLOWED_CHARS = " !sinhcoshtanhconjoppReImlnexp^modargiepi()789*/456+-123=0.z";
 
     //State -------------------------------------------
@@ -73,6 +72,7 @@ public final class Calculator extends JFrame {
         buildFrame();
         buildButtons();
         setJMenuBar(new Menus(this));
+        pack();
         becomeVisible();
     }
 
