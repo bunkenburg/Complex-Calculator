@@ -1,4 +1,4 @@
-/*	Copyright 2011 Alexander Bunkenburg alex@cat.inspiracio.com
+/*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
  * 
  * This file is part of Complex Calculator.
  * 
@@ -39,19 +39,19 @@ class Display extends JTextArea {
 
     /** delete selected or backspace */
     void delete(){
-        int i = getSelectionStart();
-        int j = getSelectionEnd();
-        int k = getCaretPosition();
-        if(i == j){
-            if(0 < k){
-                replaceRange("", k - 1, k);
-                select(k - 1, k - 1);
-                setCaretPosition(k - 1);
+        int start = getSelectionStart();
+        int end = getSelectionEnd();
+        int caret = getCaretPosition();
+        if(start == end){
+            if(0 < caret){
+                replaceRange("", caret - 1, caret);
+                select(caret - 1, caret - 1);
+                setCaretPosition(caret - 1);
             }
         } else{
-            replaceRange("", i, j);
-            setSelectionEnd(i);
-            setCaretPosition(i);
+            replaceRange("", start, end);
+            setSelectionEnd(start);
+            setCaretPosition(start);
         }
     }
 
@@ -60,38 +60,38 @@ class Display extends JTextArea {
     }
 
     void paste(String s){
-        int i = getSelectionStart();
-        int j = getSelectionEnd();
-        int k = getCaretPosition();
-        if(i == j){
-            insert(s, k);
-            setCaretPosition(k + s.length());
-            select(k + s.length(), k + s.length());
-        } else{
-            replaceRange(s, i, j);
-            setCaretPosition(i + s.length());
-            select(i + s.length(), i + s.length());
+        int start = getSelectionStart();
+        int end = getSelectionEnd();
+        int caret = getCaretPosition();
+        if(start == end){
+            insert(s, caret);
+            setCaretPosition(caret + s.length());
+            select(caret + s.length(), caret + s.length());
+        } else {
+            replaceRange(s, start, end);
+            setCaretPosition(start + s.length());
+            select(start + s.length(), start + s.length());
         }
     }
 
     /** Put s in from of displayed string */
     void prepend(String s){
-        int i = getSelectionStart();
-        int j = getSelectionEnd();
-        int k = getCaretPosition();
+        int start = getSelectionStart();
+        int end = getSelectionEnd();
+        int caret = getCaretPosition();
         replaceRange(s, 0, 0);
-        setSelectionStart(i + s.length());
-        setSelectionEnd(j + s.length());
-        setCaretPosition(k + s.length());
+        setSelectionStart(start + s.length());
+        setSelectionEnd(end + s.length());
+        setCaretPosition(caret + s.length());
     }
 
     /** Replace one char by another. */
     void replace(char c, char c1){
-        int i = getSelectionStart();
-        int j = getSelectionEnd();
-        int k = getCaretPosition();
+        int start = getSelectionStart();
+        int end = getSelectionEnd();
+        int caret = getCaretPosition();
         setText(getText().replace(c, c1));
-        select(i, j);
-        setCaretPosition(k);
+        select(start, end);
+        setCaretPosition(caret);
     }
 }
