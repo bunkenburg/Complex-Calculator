@@ -27,6 +27,7 @@ import javax.swing.*;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.ParseException;
@@ -85,7 +86,8 @@ public final class Calculator extends JFrame {
         GridBagLayout layout = new GridBagLayout();
         GridBagConstraints constraints = new GridBagConstraints();
         setLayout(layout);
-        display.addKeyListener(new MyKeyListener(this));
+        KeyListener kl = new MyKeyListener(this);
+        display.addKeyListener( kl );
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.gridwidth = 5;

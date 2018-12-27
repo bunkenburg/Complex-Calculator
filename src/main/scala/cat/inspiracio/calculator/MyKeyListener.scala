@@ -37,51 +37,78 @@ import java.awt.event.{KeyAdapter, KeyEvent}
 
 import cat.inspiracio.calculator.Mode.CALC
 
-object MyKeyListener {
-  private val ALLOWED_CHARS = " !sinhcoshtanhconjoppReImlnexp^modargiepi()789*/456+-123=0.z"
-}
-
+/** Maybe this can be a singleton object? */
 class MyKeyListener private[calculator](var calculator: Calculator) extends KeyAdapter {
+
+  private val ALLOWED_CHARS = " !sinhcoshtanhconjoppReImlnexp^modargiepi()789*/456+-123=0.z"
+
+  /** User pressed a key, including shift key. */
   override def keyPressed(keyevent: KeyEvent): Unit = {
+
+    val m = calculator.mode()
     val i = keyevent.getKeyCode
+
     //backspace delete
     if (i == 8 || i == 127) {
       calculator.delete()
       keyevent.consume()
-      return
     }
+
     //line feed
-    if (i == 10) {
-      if (calculator.mode eq CALC) {
+    else if (i == 10) {
+      if ( m == CALC ) {
         calculator.eraseOldResult()
         calculator.doEquals()
       }
       keyevent.consume()
-      return
     }
+
     //form feed
-    if (i == 12) {
+    else if (i == 12) {
       calculator.clearAll()
-      if (calculator.mode ne CALC) {
+      if ( m != CALC ) {
         val s = "f(" + calculator.variable + ") = "
         calculator.prepend(s)
       }
       keyevent.consume()
-      return
     }
+
     // % '
-    if (i != 37 && i != 39) keyevent.consume()
+    else if (i != 37 && i != 39) {
+      keyevent.consume()
+    }
   }
 
+  /** User typed a character. */
   override def keyTyped(keyevent: KeyEvent): Unit = {
+
     val c = keyevent.getKeyChar
-    if (MyKeyListener.ALLOWED_CHARS.indexOf(c) == -1) keyevent.consume()
+
+    val forbidden = ALLOWED_CHARS.indexOf(c) == -1
+    if ( forbidden ) {
+      keyevent.consume()
+    }
     else {
-      if (calculator.mode eq CALC) calculator.eraseOldResult()
-      if (c == '=') if (calculator.mode eq CALC) calculator.doEquals()
-      else calculator.paste(c)
-      if (calculator.mode ne CALC) calculator.functionChange()
+
+      val m = calculator.mode()
+
+      if ( m == CALC )
+        calculator.eraseOldResult()
+
+      if (c == '=') {
+        if ( m == CALC )
+          calculator.doEquals()
+        else
+          calculator.paste(c)
+      }
+      else {
+        calculator.paste(c)
+      }
+
+      if ( m != CALC)
+        calculator.functionChange()
     }
     keyevent.consume()
   }
+
 }
