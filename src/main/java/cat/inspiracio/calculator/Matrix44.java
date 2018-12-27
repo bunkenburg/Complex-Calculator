@@ -128,6 +128,7 @@ final class Matrix44{
         return m;
     }
 
+    /** Make this matrix be the uunit matrix. */
     void unit(){
         for(int i = 0; i <= 3; i++){
             for(int j = 0; j <= 3; j++)

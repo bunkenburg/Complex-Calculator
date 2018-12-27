@@ -41,7 +41,6 @@ import java.awt._
   * These are like extra methods on Graphics. */
 final class Drawing private[calculator](var g: Graphics) {
 
-  pen = new Point
   private var pen: Point = new Point
 
   private[calculator] def graphics = g

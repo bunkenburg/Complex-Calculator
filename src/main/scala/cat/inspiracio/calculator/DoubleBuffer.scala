@@ -46,7 +46,7 @@ final class DoubleBuffer private[calculator](val component: JComponent) {
   private var offGraphics: Graphics = null
   private var onGraphics: Graphics = null
 
-  private[calculator] def offScreen(g: Graphics) = {
+  private[calculator] def offScreen(g: Graphics): Graphics = {
     onGraphics = g
     val dimension: Dimension = component.getSize
     if (offGraphics == null || dimension.width != offDimension.width || dimension.height != offDimension.height) {
@@ -60,6 +60,6 @@ final class DoubleBuffer private[calculator](val component: JComponent) {
     offGraphics
   }
 
-  private[calculator] def onScreen() =
+  private[calculator] def onScreen(): Unit =
     onGraphics.drawImage(offImage, 0, 0, component)
 }
