@@ -282,9 +282,9 @@ final class RefxWorld extends JFrame{
             xy2Point(d3, d2, point);
             xy2Point(d4, d2, point1);
             drawing.drawLine(point, point1, Color.lightGray);
-            Polygon polygon = Drawing.mkTriangle(point1, Direction.EAST, RefxWorld.TRIANGLESIZE);
+            Polygon polygon = drawing.mkTriangle(point1, Direction.EAST, RefxWorld.TRIANGLESIZE);
             g.drawPolygon(polygon);
-            polygon = Drawing.mkTriangle(point, Direction.WEST, RefxWorld.TRIANGLESIZE);
+            polygon = drawing.mkTriangle(point, Direction.WEST, RefxWorld.TRIANGLESIZE);
             g.drawPolygon(polygon);
             int j = point2.y;
             double d7 = Math.ceil(d3 / d);
@@ -299,9 +299,9 @@ final class RefxWorld extends JFrame{
             xy2Point(d1, d5, point);
             xy2Point(d1, d6, point1);
             drawing.drawLine(point, point1, Color.lightGray);
-            upTriangle = Drawing.mkTriangle(point1, Direction.NORTH, RefxWorld.TRIANGLESIZE);
+            upTriangle = drawing.mkTriangle(point1, Direction.NORTH, RefxWorld.TRIANGLESIZE);
             g.drawPolygon(upTriangle);
-            downTriangle = Drawing.mkTriangle(point, Direction.SOUTH, RefxWorld.TRIANGLESIZE);
+            downTriangle = drawing.mkTriangle(point, Direction.SOUTH, RefxWorld.TRIANGLESIZE);
             g.drawPolygon(downTriangle);
             i = point2.x;
             d7 = Math.ceil(d5 / d);

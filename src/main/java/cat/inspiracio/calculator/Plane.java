@@ -156,11 +156,11 @@ final class Plane extends WorldRepresentation{
         cartesian2Point(d3, d2, point);
         cartesian2Point(d4, d2, point1);
         drawing.drawLine(point, point1, Color.lightGray);
-        Polygon polygon = Drawing.mkTriangle(point1, Direction.EAST, TRIANGLESIZE);
+        Polygon polygon = drawing.mkTriangle(point1, Direction.EAST, TRIANGLESIZE);
         g.drawPolygon(polygon);
         if(RightReal <= w.MaxReal)
             g.fillPolygon(polygon);
-        polygon = Drawing.mkTriangle(point, Direction.WEST, TRIANGLESIZE);
+        polygon = drawing.mkTriangle(point, Direction.WEST, TRIANGLESIZE);
         g.drawPolygon(polygon);
         if(w.MinReal <= LeftReal)
             g.fillPolygon(polygon);
@@ -177,11 +177,11 @@ final class Plane extends WorldRepresentation{
         cartesian2Point(d1, d5, point);
         cartesian2Point(d1, d6, point1);
         drawing.drawLine(point, point1, Color.lightGray);
-        polygon = Drawing.mkTriangle(point1, Direction.NORTH, TRIANGLESIZE);
+        polygon = drawing.mkTriangle(point1, Direction.NORTH, TRIANGLESIZE);
         g.drawPolygon(polygon);
         if(TopImaginary <= w.MaxImaginary)
             g.fillPolygon(polygon);
-        polygon = Drawing.mkTriangle(point, Direction.SOUTH, TRIANGLESIZE);
+        polygon = drawing.mkTriangle(point, Direction.SOUTH, TRIANGLESIZE);
         g.drawPolygon(polygon);
         if(w.MinImaginary <= BottomImaginary)
             g.fillPolygon(polygon);
