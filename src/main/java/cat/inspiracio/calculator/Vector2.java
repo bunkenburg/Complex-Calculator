@@ -24,15 +24,6 @@ final class Vector2{
 
     Vector2(){}
 
-    Vector2(double d, double d1){
-        x = d;
-        y = d1;
-    }
-
-    double length(){
-        return Math.sqrt(x * x + y * y);
-    }
-
     public String toString(){return "(" + x + ", " + y + ")";}
 
 }

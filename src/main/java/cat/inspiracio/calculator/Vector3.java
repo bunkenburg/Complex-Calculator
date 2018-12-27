@@ -37,23 +37,6 @@ final class Vector3{
 
     //Methods ----------------------------------------------
     
-    double delta3d(Vector3 vector3){
-        return (new Vector3(x - vector3.x, y - vector3.y, z - vector3.z)).length();
-    }
-
-    double length(){
-        return Math.sqrt(x * x + y * y + z * z);
-    }
-
-    static Vector3 negate(Vector3 vector3){
-        return new Vector3(-vector3.x, -vector3.y, -vector3.z);
-    }
-
-    Vector3 multiply(Matrix44 matrix44){
-        double ad[][] = matrix44.data;
-        return new Vector3(x * ad[0][0] + y * ad[1][0] + z * ad[2][0] + ad[3][0], x * ad[0][1] + y * ad[1][1] + z * ad[2][1] + ad[3][1], x * ad[0][2] + y * ad[1][2] + z * ad[2][2] + ad[3][2]);
-    }
-
     public String toString(){return "(" + x + ", " + y + ", " + z + ")";}
 
 }

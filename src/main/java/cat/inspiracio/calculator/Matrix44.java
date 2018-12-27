@@ -44,15 +44,6 @@ final class Matrix44{
         );
     }
 
-    /** rename to * */
-    Vector3 multiply(Vector3 v){
-        return new Vector3(
-                data[0][0] * v.x + data[0][1] * v.y + data[0][2] * v.z + data[0][3],
-                data[1][0] * v.x + data[1][1] * v.y + data[1][2] * v.z + data[1][3],
-                data[2][0] * v.x + data[2][1] * v.y + data[2][2] * v.z + data[2][3]
-        );
-    }
-
     void preRot(char c, double d){
         double d1 = Math.cos(d);
         double d2 = Math.sin(d);
@@ -128,7 +119,7 @@ final class Matrix44{
         return m;
     }
 
-    /** Make this matrix be the uunit matrix. */
+    /** Make this matrix be the unit matrix. */
     void unit(){
         for(int i = 0; i <= 3; i++){
             for(int j = 0; j <= 3; j++)
