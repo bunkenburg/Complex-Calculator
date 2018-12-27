@@ -1,4 +1,4 @@
-/*	Copyright 2011 Alexander Bunkenburg alex@cat.inspiracio.com
+/*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
  * 
  * This file is part of Complex Calculator.
  * 
@@ -20,18 +20,17 @@ package cat.inspiracio.calculator;
 import java.awt.*;
 
 /** Make it easy to draw lines, circles, crosses, ...
- * Keeps a pen position. */
+ * Keeps a pen position.
+ *
+ * These are like extra methods on Graphics. */
 final class Drawing{
-
-    public static final int NORTH = 0;
-    public static final int EAST = 1;
-    public static final int SOUTH = 2;
-    public static final int WEST = 3;
 
 	//State -------------------------------------------------------
 	
     private Point pen;
-    Graphics g;
+
+    private Graphics g;
+    Graphics graphics(){return g;}
 
     //Constructor --------------------------------------------------
     
@@ -42,26 +41,12 @@ final class Drawing{
 
     //Methods ------------------------------------------------------
 
-    /** cross at pen position */
-    void cross(){
-        g.drawLine(pen.x - 2, pen.y - 2, pen.x + 2, pen.y + 2);
-        g.drawLine(pen.x + 2, pen.y - 2, pen.x - 2, pen.y + 2);
-    }
-
     /** cross at (x,y) */
     void cross(int x, int y, int width){
         pen.x = x;
         pen.y = y;
         g.drawLine(pen.x - width, pen.y - width, pen.x + width, pen.y + width);
         g.drawLine(pen.x + width, pen.y - width, pen.x - width, pen.y + width);
-    }
-
-    /** cross at point */
-    void cross(Point point){
-        g.drawLine(point.x - 2, point.y - 2, point.x + 2, point.y + 2);
-        g.drawLine(point.x + 2, point.y - 2, point.x - 2, point.y + 2);
-        pen.x = point.x;
-        pen.y = point.y;
     }
 
     /** circle at (x,y) radius */
@@ -71,22 +56,6 @@ final class Drawing{
         int width = (int)(2D * radius);
         int height = (int)(2D * radius);
         g.drawOval(topleftx, toplefty, width, height);
-    }
-
-    /** circle at point, radius */
-    void drawCircle(Point point, double d){
-        int topleftx = (int)((double)point.x - d);
-        int toplefty = (int)((double)point.y - d);
-        int width = (int)(2D * d);
-        int height = (int)(2D * d);
-        g.drawOval(topleftx, toplefty, width, height);
-    }
-
-    /** line from a to b */
-    void drawLine(Point a, Point b){
-        g.drawLine(a.x, a.y, b.x, b.y);
-        pen.x = b.x;
-        pen.y = b.y;
     }
 
     /** line from a to b in colour */
@@ -111,12 +80,6 @@ final class Drawing{
         g.setColor(color1);
     }
 
-    /** line from pen to point */
-    void line(Point point){
-        g.drawLine(pen.x, pen.y, pen.x + point.x, pen.y + point.y);
-        pen.translate(point.x, point.y);
-    }
-
     /** line (x,y) at pen */
     void line(int x, int y){
         g.drawLine(pen.x, pen.y, pen.x + x, pen.y + y);
@@ -130,17 +93,11 @@ final class Drawing{
         pen.y = y;
     }
 
-    void lineTo(Point point){
-        g.drawLine(pen.x, pen.y, point.x, point.y);
-        pen.x = point.x;
-        pen.y = point.y;
-    }
-
     /** Makes a triangle.
      * @param point Triangle tip is here.
      * @param direction Points this direction.
      * @param size Size of the triangle. */
-    static Polygon mkTriangle(Point point, int direction, int size){
+    static Polygon mkTriangle(Point point, Direction direction, int size){
         switch(direction){
             case NORTH: return new Polygon(new int[] {point.x - size, point.x, point.x + size}, new int[] {point.y + size, point.y, point.y + size}, 3);
             case EAST: return new Polygon(new int[] {point.x - size, point.x, point.x - size}, new int[] {point.y - size, point.y, point.y + size}, 3);
@@ -153,12 +110,6 @@ final class Drawing{
     /** move pen by (x,y) */
     void move(int x, int y){
         pen.translate(x, y);
-    }
-
-    /** move pen to point */
-    void moveTo(Point point){
-        pen.x = point.x;
-        pen.y = point.y;
     }
 
     /** move pen to (x,y) */

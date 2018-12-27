@@ -180,6 +180,7 @@ final class ThreeDWorld extends JFrame {
             quad = new Polygon(new int[4], new int[4], 4);
             tri = new Polygon(new int[3], new int[3], 3);
             setBackground(Color.white);
+
             addMouseListener(new MouseAdapter() {
 
                 @Override public void mousePressed(MouseEvent mouseevent){
@@ -198,6 +199,7 @@ final class ThreeDWorld extends JFrame {
                     mouseevent.consume();
                 }
             });
+
             addMouseMotionListener(new MouseMotionAdapter() {
                 public void mouseDragged(MouseEvent mouseevent){
                     int j = mouseevent.getX();
@@ -209,6 +211,7 @@ final class ThreeDWorld extends JFrame {
                     mouseevent.consume();
                 }
             });
+
             initQ();
         }
 
@@ -220,7 +223,7 @@ final class ThreeDWorld extends JFrame {
             if(flag && flag1)
                 drawing.move(2, -2);
             else if(flag && !flag1)
-                drawing.move(-drawing.g.getFontMetrics().stringWidth(s) - 2, FONT_HEIGHT);
+                drawing.move(-drawing.graphics().getFontMetrics().stringWidth(s) - 2, FONT_HEIGHT);
             else if(!flag && flag1)
                 drawing.move(2, FONT_HEIGHT);
             else if(!flag && !flag1)
@@ -229,7 +232,7 @@ final class ThreeDWorld extends JFrame {
             moveTo3(drawing, 0.5D, 0.0D, -0.5D);
             s = ((Rectangle) (square)).botRight.toString();
             if(flag && flag1)
-                drawing.move(-drawing.g.getFontMetrics().stringWidth(s) - 2, FONT_HEIGHT);
+                drawing.move(-drawing.graphics().getFontMetrics().stringWidth(s) - 2, FONT_HEIGHT);
             else if(flag && !flag1)
                 drawing.move(2, FONT_HEIGHT);
             else if(!flag && flag1)
@@ -246,7 +249,7 @@ final class ThreeDWorld extends JFrame {
             else if(!flag && flag1)
                 drawing.move(2, FONT_HEIGHT);
             else if(!flag && !flag1)
-                drawing.move(-drawing.g.getFontMetrics().stringWidth(s) - 2, FONT_HEIGHT);
+                drawing.move(-drawing.graphics().getFontMetrics().stringWidth(s) - 2, FONT_HEIGHT);
             drawing.drawString(s);
             moveTo3(drawing, 0.5D, 0.0D, 0.5D);
             s = ((Rectangle) (square)).topRight.toString();
@@ -255,7 +258,7 @@ final class ThreeDWorld extends JFrame {
             else if(flag && !flag1)
                 drawing.move(2, FONT_HEIGHT);
             else if(!flag && flag1)
-                drawing.move(-drawing.g.getFontMetrics().stringWidth(s) - 2, FONT_HEIGHT);
+                drawing.move(-drawing.graphics().getFontMetrics().stringWidth(s) - 2, FONT_HEIGHT);
             else if(!flag && !flag1)
                 drawing.move(2, -2);
             drawing.drawString(s);
@@ -527,7 +530,7 @@ final class ThreeDWorld extends JFrame {
             quad.ypoints[2] = fy(vector2_2.y);
             quad.ypoints[3] = fy(vector2_3.y);
             drawing.fillPolygon(quad, Color.lightGray);
-            drawing.g.drawPolygon(quad);
+            drawing.graphics().drawPolygon(quad);
         }
 
         public void setFont(Font font){
@@ -548,7 +551,7 @@ final class ThreeDWorld extends JFrame {
             tri.ypoints[1] = fy(vector2_1.y);
             tri.ypoints[2] = fy(vector2_2.y);
             drawing.fillPolygon(tri, Color.lightGray);
-            drawing.g.drawPolygon(tri);
+            drawing.graphics().drawPolygon(tri);
         }
 
         @Override public void update(Graphics g){paint(g);}
