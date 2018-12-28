@@ -207,15 +207,16 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     doubleBuffer.onScreen
   }
 
-  override private[calculator] def Point2Complex(point: Point) = {
-    val d = (point.x.toDouble - getSize.width.toDouble * 0.5) / xyscale
-    val d1 = (getSize.height.toDouble * 0.5 - point.y.toDouble) / xyscale
+  override private[calculator] def Point2Complex(point: Point): Complex = {
+    val d = (point.x - getSize.width * 0.5) / xyscale
+    val d1 = (getSize.height * 0.5 - point.y) / xyscale
     val d2 = 0.25D - d * d - d1 * d1
     if (d2 >= 0.0D) {
       val vector3 = R1 * (d, d1, -sqrt(d2) )
       f3dC(vector3)
     }
-    else null
+    else
+      null
   }
 
   override private[calculator] def reset() = {
