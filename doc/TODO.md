@@ -1,5 +1,16 @@
 # TODO
 
+* repair JAR
+* convert from Maven to SBT
+* convert enum Direction
+* convert enum Interaction
+* convert Matrixx with operators
+* convert enum Mode
+* convert Vector2 with operators or remove it
+* convert Vector3 with operators
+* convert or remove cat.inspiracio.numbers.*
+* convert cat.inspiracio.parsing.*
+* remove cat.inspiracio.say.*
 * input from keyboard broken
 * Better initial window positions
     x About

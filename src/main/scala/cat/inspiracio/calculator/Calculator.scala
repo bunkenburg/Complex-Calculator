@@ -93,111 +93,121 @@ final class Calculator() extends JFrame("Complex Calculator") {
   }
 
   private def buildButtons() = {
+
     val layout = new GridBagLayout
-    val constraints = new GridBagConstraints
     setLayout(layout)
-    val kl = new MyKeyListener(this)
-    display.addKeyListener(kl)
+
+    display.addKeyListener(new MyKeyListener(this))
+
+    val constraints = new GridBagConstraints
     constraints.gridx = 0
     constraints.gridy = 0
     constraints.gridwidth = 5
     constraints.gridheight = 3
-    constraints.weightx = 1.0D
-    constraints.weighty = 1.0D
+    constraints.weightx = 1
+    constraints.weighty = 1
     constraints.fill = 1
+
     layout.setConstraints(display, constraints)
     add(display)
-    constraints.gridwidth = 1
-    constraints.gridheight = 1
 
-    val listener: ActionListener = (e: ActionEvent) => {
-        if (mode == CALC) eraseOldResult()
+    val listener: ActionListener = e => {
+        if (mode == CALC)
+          eraseOldResult()
         val command = e.getActionCommand
         display.paste(command)
         display.requestFocus()
-        if (mode != CALC) functionChange()
+        if (mode != CALC)
+          functionChange()
     }
 
-    val abx = Array(
+    /** Makes a button and adds it. */
+    def bx(label: String, gridx: Int, gridy: Int, gridheight: Int, listener: ActionListener): JButton = {
+      val button = new JButton(label)
+      button.addActionListener(listener)
 
-      new Bx("!", 0, 3, 1, listener),
+      val constraints = new GridBagConstraints
+      constraints.gridwidth = 1
+      constraints.gridheight = 1
+      constraints.weightx = 1
+      constraints.weighty = 1
+      constraints.fill = 1
+      constraints.gridx = gridx
+      constraints.gridy = gridy
+      constraints.gridheight = gridheight
 
-      new Bx("del", 3, 3, 1, (e: ActionEvent) => {
-        if (mode eq CALC) eraseOldResult()
-        display.delete()
-        display.requestFocus()
-        if (mode ne CALC) functionChange()
-    }),
-
-      new Bx("C", 4, 3, 1, (e: ActionEvent) => {
-        display.clearAll()
-        if (mode ne CALC) display.prepend("f(" + variable + ") = ")
-        display.requestFocus()
-    }),
-
-      new Bx("sinh", 0, 4, 1, listener),
-      new Bx("cosh", 1, 4, 1, listener),
-      new Bx("tanh", 2, 4, 1, listener),
-      new Bx("conj", 3, 4, 1, listener),
-      new Bx("opp", 4, 4, 1, listener),
-      new Bx("sin", 0, 5, 1, listener),
-      new Bx("cos", 1, 5, 1, listener),
-      new Bx("tan", 2, 5, 1, listener),
-      new Bx("Re", 3, 5, 1, listener),
-      new Bx("Im", 4, 5, 1, listener),
-      new Bx("ln", 0, 7, 1, listener),
-      new Bx("exp", 1, 7, 1, listener),
-      new Bx("^", 2, 7, 1, listener),
-      new Bx("mod", 3, 7, 1, listener),
-      new Bx("arg", 4, 7, 1, listener),
-      new Bx("i", 0, 8, 1, listener),
-      new Bx("e", 1, 8, 1, listener),
-      new Bx("π", 2, 8, 1, listener),
-      new Bx("(", 3, 8, 1, listener),
-      new Bx(")", 4, 8, 1, listener),
-      new Bx("7", 0, 9, 1, listener),
-      new Bx("8", 1, 9, 1, listener),
-      new Bx("9", 2, 9, 1, listener),
-      new Bx("*", 3, 9, 1, listener),
-      new Bx("/", 4, 9, 1, listener),
-      new Bx("4", 0, 10, 1, listener),
-      new Bx("5", 1, 10, 1, listener),
-      new Bx("6", 2, 10, 1, listener),
-      new Bx("+", 3, 10, 1, listener),
-      new Bx("-", 4, 10, 1, listener),
-      new Bx("1", 0, 11, 1, listener),
-      new Bx("2", 1, 11, 1, listener),
-      new Bx("3", 2, 11, 1, listener),
-
-      new Bx("z", 3, 11, 1, (e: ActionEvent) => {
-        display.paste(variable)
-        display.requestFocus()
-        if (mode ne CALC) functionChange()
-    }),
-
-      new Bx("=", 4, 11, 2, (e: ActionEvent) => {
-        doEquals()
-        display.requestFocus()
-    }),
-
-      new Bx("0", 0, 12, 1, listener),
-      new Bx(".", 1, 12, 1, listener),
-      new Bx("∞", 2, 12, 1, listener)
-    )
-
-    for( b <- abx){
-      val button = new JButton(b.label)
-      if (b.label == "z")
-        zButton = button
-      else if (b.label == "=")
-        equalsButton = button
-      button.addActionListener(b.al)
-      constraints.gridx = b.gridx
-      constraints.gridy = b.gridy
-      constraints.gridheight = b.gridheight
       layout.setConstraints(button, constraints)
       add(button)
+      button
     }
+
+    bx("!", 0, 3, 1, listener)
+
+    bx("del", 3, 3, 1, _ => {
+        if (mode == CALC)
+          eraseOldResult()
+        display.delete()
+        display.requestFocus()
+        if (mode != CALC)
+          functionChange()
+    })
+
+    bx("C", 4, 3, 1, _ => {
+        display.clearAll()
+        if (mode != CALC)
+          display.prepend("f(" + variable + ") = ")
+        display.requestFocus()
+    })
+
+    bx("sinh", 0, 4, 1, listener)
+    bx("cosh", 1, 4, 1, listener)
+    bx("tanh", 2, 4, 1, listener)
+    bx("conj", 3, 4, 1, listener)
+    bx("opp", 4, 4, 1, listener)
+    bx("sin", 0, 5, 1, listener)
+    bx("cos", 1, 5, 1, listener)
+    bx("tan", 2, 5, 1, listener)
+    bx("Re", 3, 5, 1, listener)
+    bx("Im", 4, 5, 1, listener)
+    bx("ln", 0, 7, 1, listener)
+    bx("exp", 1, 7, 1, listener)
+    bx("^", 2, 7, 1, listener)
+    bx("mod", 3, 7, 1, listener)
+    bx("arg", 4, 7, 1, listener)
+    bx("i", 0, 8, 1, listener)
+    bx("e", 1, 8, 1, listener)
+    bx("π", 2, 8, 1, listener)
+    bx("(", 3, 8, 1, listener)
+    bx(")", 4, 8, 1, listener)
+    bx("7", 0, 9, 1, listener)
+    bx("8", 1, 9, 1, listener)
+    bx("9", 2, 9, 1, listener)
+    bx("*", 3, 9, 1, listener)
+    bx("/", 4, 9, 1, listener)
+    bx("4", 0, 10, 1, listener)
+    bx("5", 1, 10, 1, listener)
+    bx("6", 2, 10, 1, listener)
+    bx("+", 3, 10, 1, listener)
+    bx("-", 4, 10, 1, listener)
+    bx("1", 0, 11, 1, listener)
+    bx("2", 1, 11, 1, listener)
+    bx("3", 2, 11, 1, listener)
+
+    zButton = bx("z", 3, 11, 1, _ => {
+        display.paste(variable)
+        display.requestFocus()
+        if (mode != CALC)
+          functionChange()
+    })
+
+    equalsButton = bx("=", 4, 11, 2, _ => {
+        doEquals()
+        display.requestFocus()
+    })
+
+    bx("0", 0, 12, 1, listener)
+    bx(".", 1, 12, 1, listener)
+    bx("∞", 2, 12, 1, listener)
   }
 
   private def becomeVisible() = {
