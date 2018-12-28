@@ -46,12 +46,17 @@ import javax.swing._
   * */
 final class Menus private[calculator](var calculator: Calculator) extends JMenuBar {
 
-  file()
-  mode()
-  precision()
   private val precisionListener = null
-
   private val mask = Toolkit.getDefaultToolkit.getMenuShortcutKeyMask
+
+  init()
+
+  private def init()= {
+    file()
+    mode()
+    precision()
+  }
+
 
   private def file(): Unit = {
     val menu = new JMenu("File")

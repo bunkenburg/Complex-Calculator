@@ -45,7 +45,7 @@ class MyKeyListener private[calculator](var calculator: Calculator) extends KeyA
   /** User pressed a key, including shift key. */
   override def keyPressed(keyevent: KeyEvent): Unit = {
 
-    val m = calculator.mode()
+    val m = calculator.mode
     val i = keyevent.getKeyCode
 
     //backspace delete
@@ -90,7 +90,7 @@ class MyKeyListener private[calculator](var calculator: Calculator) extends KeyA
     }
     else {
 
-      val m = calculator.mode()
+      val m = calculator.mode
 
       if ( m == CALC )
         calculator.eraseOldResult()
