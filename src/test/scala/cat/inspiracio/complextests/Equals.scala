@@ -156,31 +156,31 @@ class Equals extends FunSuite {
     assert( !b )
   }
 
-  test("∞ == ∞") {
+  test("∞ === ∞") {
     val c: Complex = ∞
     val e: Complex = ∞
     assert( c === e )
   }
 
-  test("i == i") {
+  test("i === i") {
     val c: Complex = i
     val e: Complex = i
     assert( c === e )
   }
 
-  test("π == π") {
+  test("π === π") {
     val c: Complex = π
     val e: Complex = π
     assert( c === e )
   }
 
-  test("π+i == π+i") {
+  test("π+i === π+i") {
     val c: Complex = π+i
     val e: Complex = π+i
     assert( c === e )
   }
 
-  test("π+i == bla ") {
+  test("π+i === bla ") {
     val c: Complex = π+i
     val b = c.equals("bla")
     assert( !b )

@@ -36,6 +36,7 @@ package cat.inspiracio.calculator
 import java.awt._
 
 import cat.inspiracio.complex._
+import cat.inspiracio.geometry.Matrix44
 import cat.inspiracio.numbers.ECList
 
 // Referenced classes of package bunkenba.calculator:
@@ -48,8 +49,8 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
 
   private var MARKLENGTH = 2
 
-  private var R: Matrix44 = new Matrix44
-  private var R1: Matrix44 = new Matrix44
+  private var R: Matrix44 = null
+  private var R1: Matrix44 = null
 
   reset()
 
@@ -75,10 +76,10 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
       d1 = 0.5D
       d2 = 0.0D
     }
-    val d4 = R.data(2)(0) * d + R.data(2)(1) * d1 + R.data(2)(2) * d2 + R.data(2)(3)
+    val d4 = R(2,0) * d + R(2,1) * d1 + R(2,2) * d2 + R(2,3)
     if (d4 <= 0.0D) {
-      val d6 = R.data(0)(0) * d + R.data(0)(1) * d1 + R.data(0)(2) * d2 + R.data(0)(3)
-      val d7 = R.data(1)(0) * d + R.data(1)(1) * d1 + R.data(1)(2) * d2 + R.data(1)(3)
+      val d6 = R(0,0) * d + R(0,1) * d1 + R(0,2) * d2 + R(0,3)
+      val d7 = R(1,0) * d + R(1,1) * d1 + R(1,2) * d2 + R(1,3)
 
       val x = (d6 * xyscale + getSize.width.toDouble * 0.5).toInt
       val y = (-d7 * xyscale + getSize.height.toDouble * 0.5).toInt
@@ -134,10 +135,10 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
       d1 = 0.5D
       d2 = 0.0D
     }
-    val d4 = R.data(2)(0) * d + R.data(2)(1) * d1 + R.data(2)(2) * d2 + R.data(2)(3)
+    val d4 = R(2,0) * d + R(2,1) * d1 + R(2,2) * d2 + R(2,3)
     if (d4 <= 0.0D) {
-      val d6 = R.data(0)(0) * d + R.data(0)(1) * d1 + R.data(0)(2) * d2 + R.data(0)(3)
-      val d7 = R.data(1)(0) * d + R.data(1)(1) * d1 + R.data(1)(2) * d2 + R.data(1)(3)
+      val d6 = R(0,0) * d + R(0,1) * d1 + R(0,2) * d2 + R(0,3)
+      val d7 = R(1,0) * d + R(1,1) * d1 + R(1,2) * d2 + R(1,3)
       point.x = (d6 * xyscale + getSize.width.toDouble * 0.5D).toInt
       point.y = (-d7 * xyscale + getSize.height.toDouble * 0.5D).toInt
       true
@@ -161,10 +162,10 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
       d1 = 0.5
       d2 = 0.0
     }
-    val d4 = R.data(2)(0) * d + R.data(2)(1) * d1 + R.data(2)(2) * d2 + R.data(2)(3)
+    val d4 = R(2,0) * d + R(2,1) * d1 + R(2,2) * d2 + R(2,3)
     if (d4 <= 0.0D) {
-      val d6 = R.data(0)(0) * d + R.data(0)(1) * d1 + R.data(0)(2) * d2 + R.data(0)(3)
-      val d7 = R.data(1)(0) * d + R.data(1)(1) * d1 + R.data(1)(2) * d2 + R.data(1)(3)
+      val d6 = R(0,0) * d + R(0,1) * d1 + R(0,2) * d2 + R(0,3)
+      val d7 = R(1,0) * d + R(1,1) * d1 + R(1,2) * d2 + R(1,3)
       drawing.lineTo((d6 * xyscale + getSize.width.toDouble * 0.5D).toInt, (-d7 * xyscale + getSize.height.toDouble * 0.5D).toInt)
     }
   }
@@ -185,10 +186,10 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
       d1 = 0.5D
       d2 = 0.0D
     }
-    val d4 = R.data(2)(0) * d + R.data(2)(1) * d1 + R.data(2)(2) * d2 + R.data(2)(3)
+    val d4 = R(2,0) * d + R(2,1) * d1 + R(2,2) * d2 + R(2,3)
     if (d4 <= 0.0D) {
-      val d6 = R.data(0)(0) * d + R.data(0)(1) * d1 + R.data(0)(2) * d2 + R.data(0)(3)
-      val d7 = R.data(1)(0) * d + R.data(1)(1) * d1 + R.data(1)(2) * d2 + R.data(1)(3)
+      val d6 = R(0,0) * d + R(0,1) * d1 + R(0,2) * d2 + R(0,3)
+      val d7 = R(1,0) * d + R(1,1) * d1 + R(1,2) * d2 + R(1,3)
       drawing.moveTo((d6 * xyscale + getSize.width.toDouble * 0.5D).toInt, (-d7 * xyscale + getSize.height.toDouble * 0.5D).toInt)
     }
   }
@@ -211,15 +212,15 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     val d1 = (getSize.height.toDouble * 0.5 - point.y.toDouble) / xyscale
     val d2 = 0.25D - d * d - d1 * d1
     if (d2 >= 0.0D) {
-      val vector3 = R1.multiply(d, d1, -Math.sqrt(d2))
+      val vector3 = R1 * (d, d1, -sqrt(d2) )
       f3dC(vector3)
     }
     else null
   }
 
   override private[calculator] def reset() = {
-    R.unit()
-    R1.unit()
+    R = Matrix44.unit
+    R1 = Matrix44.unit
   }
 
   override def setFont(font: Font): Unit = {
@@ -229,12 +230,12 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
   }
 
   override private[calculator] def shift(i: Int, j: Int) = {
-    val d = j.toDouble * (6.2831853071795862D / getSize.width.toDouble)
-    val d1 = i.toDouble * (6.2831853071795862D / getSize.height.toDouble)
-    R.preRot('x', -d)
-    R.preRot('y', -d1)
-    R1.postRot('x', d)
-    R1.postRot('y', d1)
+    val d = j * 2 * π / getSize.width
+    val d1 = i * 2 * π / getSize.height
+    R = R.preRot('x', -d)
+    R = R.preRot('y', -d1)
+    R1 = R1.postRot('x', d)
+    R1 = R1.postRot('y', d1)
   }
 
   override private[calculator] def zoomIn() = {}

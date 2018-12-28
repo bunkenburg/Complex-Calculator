@@ -21,22 +21,36 @@ package cat.inspiracio.calculator;
 // Referenced classes of package bunkenba.calculator:
 //            Matrix44
 
-final class Vector3{
+import cat.inspiracio.geometry.Matrix44;
 
-    double x;
-    double y;
-    double z;
+public final class Vector3{
+
+    public double x;
+    public double y;
+    public double z;
 
 	//Constructors ----------------------------------------
 	
-    Vector3(double d, double d1, double d2){
+    public Vector3(double d, double d1, double d2){
         x = d;
         y = d1;
         z = d2;
     }
 
     //Methods ----------------------------------------------
-    
+
+    /** With exact equality for doubles. */
+    @Override public boolean equals(Object other){
+        if(other==null)
+            return false;
+
+        if(!(other instanceof Vector3))
+            return false;
+
+        Vector3 v = (Vector3)other;
+        return x == v.x && y == v.y && z == v.z;
+    }
+
     public String toString(){return "(" + x + ", " + y + ", " + z + ")";}
 
 }

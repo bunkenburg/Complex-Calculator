@@ -37,6 +37,7 @@ import java.awt._
 import java.awt.event._
 
 import cat.inspiracio.complex._
+import cat.inspiracio.geometry.Matrix44
 import cat.inspiracio.numbers.Square
 import cat.inspiracio.parsing.SyntaxTree
 import javax.swing._
@@ -218,7 +219,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
 
       eye = new Vector3(3D, 0.5D, 1.0D)
       direct = new Vector3(2.5D, 0.5D, 0.5D)
-      Q = new Matrix44
+      Q = Matrix44.zero
       v5 = new Vector2
       quad = new Polygon(new Array[Int](4), new Array[Int](4), 4)
       tri = new Polygon(new Array[Int](3), new Array[Int](3), 3)
@@ -265,6 +266,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     //Methods -------------------------------------------------------
 
     private[calculator] def drawBackAxes(drawing: Drawing, flag: Boolean, flag1: Boolean) = {
+
       var s = square.botLeft.toString
       moveTo3(drawing, -0.5D, 0.0D, -0.5D)
       if (flag && flag1) drawing.move(2, -2)
@@ -397,8 +399,8 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       var i = -10
       while ( i <= 10 ) {
         val d5 = M(10 + cx(i))(10 + cz(-10))
-        v(0)(10 + i).x = Q.data(0)(0) * d + Q.data(0)(1) * d5 + Q.data(0)(2) * d7
-        v(0)(10 + i).y = Q.data(1)(0) * d + Q.data(1)(1) * d5 + Q.data(1)(2) * d7
+        v(0)(10 + i).x = Q(0,0) * d + Q(0,1) * d5 + Q(0,2) * d7
+        v(0)(10 + i).y = Q(1,0) * d + Q(1,1) * d5 + Q(1,2) * d7
         d += d4
         i = i+1
       }
@@ -412,8 +414,8 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
         var j = -10
         while ( j <= 10 ) {
           val d6 = M(10 + cx(j))(10 + cz(i1))
-          v(1)(10 + j).x = Q.data(0)(0) * d1 + Q.data(0)(1) * d6 + Q.data(0)(2) * d7
-          v(1)(10 + j).y = Q.data(1)(0) * d1 + Q.data(1)(1) * d6 + Q.data(1)(2) * d7
+          v(1)(10 + j).x = Q(0,0) * d1 + Q(0,1) * d6 + Q(0,2) * d7
+          v(1)(10 + j).y = Q(1,0) * d1 + Q(1,1) * d6 + Q(1,2) * d7
           d1 += d4
           j = j+1
         }
@@ -441,14 +443,14 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
 
     //XXX make it return Vector2
     private def f3d2d(vector3: Vector3, vector2: Vector2) = {
-      vector2.x = Q.data(0)(0) * vector3.x + Q.data(0)(1) * vector3.y + Q.data(0)(2) * vector3.z
-      vector2.y = Q.data(1)(0) * vector3.x + Q.data(1)(1) * vector3.y + Q.data(1)(2) * vector3.z
+      vector2.x = Q(0,0) * vector3.x + Q(0,1) * vector3.y + Q(0,2) * vector3.z
+      vector2.y = Q(1,0) * vector3.x + Q(1,1) * vector3.y + Q(1,2) * vector3.z
     }
 
     //XXX Make it return Point
     private def f3dPix(d: Double, d1: Double, d2: Double, point: Point) = {
-      point.x = fx(Q.data(0)(0) * d + Q.data(0)(1) * d1 + Q.data(0)(2) * d2)
-      point.y = fy(Q.data(1)(0) * d + Q.data(1)(1) * d1 + Q.data(1)(2) * d2)
+      point.x = fx(Q(0,0) * d + Q(0,1) * d1 + Q(0,2) * d2)
+      point.y = fy(Q(1,0) * d + Q(1,1) * d1 + Q(1,2) * d2)
     }
 
     private[calculator] def angle(d: Double, d1: Double): Double = Math.atan2(d1, d)
@@ -461,17 +463,16 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     override def getMinimumSize: Dimension = MIN_SIZE
 
     private[calculator] def initQ() = {
-      Q = Matrix44.tran3(eye)
+      Q = Matrix44.translation(eye)
       val d = angle(-direct.x, -direct.y)
-      Q.preRot('z', d)
+      Q = Q.preRot('z', d)
       val d3 = Math.sqrt(direct.x * direct.x + direct.y * direct.y)
       val d1 = angle(-direct.z, d3)
-      Q.preRot('y', d1)
+      Q = Q.preRot('y', d1)
       val d4 = Math.sqrt(d3 * d3 + direct.z * direct.z)
       val d2 = angle(-direct.x * d4, direct.y * direct.z)
-      Q.preRot('z', -d2)
-      //XXX What is this? pi/2 ?
-      Q.postRot('y', 1.5707963267948966D)
+      Q = Q.preRot('z', -d2)
+      Q = Q.postRot('y', π/2)
     }
 
     private[calculator] def lineTo3(drawing: Drawing, d: Double, d1: Double, d2: Double) = {
@@ -568,9 +569,8 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
 
     private[calculator] def shift(i: Int, j: Int) = {
       val size: Dimension = getSize
-      //XXX What is that number? 2 pi ?
-      val d = i.toDouble * (6.2831853071795862D / size.height.toDouble)
-      Q.postRot('y', -d)
+      val d = i * 2 * π / size.height
+      Q = Q.postRot('y', -d)
     }
 
     private[calculator] def triangle(drawing: Drawing, vector2: Vector2, vector2_1: Vector2, vector2_2: Vector2) = {
