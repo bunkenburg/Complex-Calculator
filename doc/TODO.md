@@ -4,7 +4,6 @@
 * convert from Maven to SBT
 * convert enum Direction
 * convert enum Interaction
-* convert Matrixx with operators
 * convert enum Mode
 * convert Vector2 with operators or remove it
 * convert Vector3 with operators
