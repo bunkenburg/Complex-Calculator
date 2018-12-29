@@ -35,7 +35,7 @@ package cat.inspiracio.calculator
 
 import java.awt.event.{ItemEvent, MouseAdapter, MouseEvent, MouseMotionAdapter}
 
-import cat.inspiracio.calculator.Interaction.DRAW
+import cat.inspiracio.calculator.Interaction._
 import cat.inspiracio.complex.Complex
 import cat.inspiracio.numbers.ECList
 import javax.swing._
@@ -73,12 +73,12 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
 
       override def mousePressed(mouseevent: MouseEvent): Unit = interaction match {
 
-        case Interaction.MOVE =>
+        case MOVE =>
           prevx = mouseevent.getX
           prevy = mouseevent.getY
           mouseevent.consume()
 
-        case Interaction.DRAW =>
+        case DRAW =>
           val p = mouseevent.getPoint
           val z = canvas.Point2Complex(p)
           if (z != null) {
@@ -91,7 +91,7 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
 
       override def mouseReleased(mouseevent: MouseEvent): Unit = interaction match {
 
-        case Interaction.MOVE =>
+        case MOVE =>
           val i = mouseevent.getX
           val j = mouseevent.getY
           canvas.shift(prevx - i, prevy - j)
@@ -108,7 +108,7 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
 
       override def mouseDragged(e: MouseEvent): Unit = interaction match {
 
-        case Interaction.MOVE =>
+        case MOVE =>
           val i = e.getX
           val j = e.getY
           canvas.shift(prevx - i, prevy - j)
@@ -126,13 +126,13 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
     sphere.addMouseListener(mouse)
     sphere.addMouseMotionListener(motion)
     pack()
-    setLocation()
+    locate()
     setVisible(true)
   }
 
   private var numbers: ECList = null
 
-  override def setLocation() = {
+  def locate() = {
     //setLocationByPlatform(true);
   }
 

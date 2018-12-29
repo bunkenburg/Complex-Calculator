@@ -3,9 +3,6 @@
 * use singleton objects: Calculator, Display, worlds, panels
 * repair JAR
 * convert from Maven to SBT
-* convert enum Direction
-* convert enum Interaction
-* convert enum Mode
 * convert or remove cat.inspiracio.numbers.*
 * convert cat.inspiracio.parsing.*
 * remove cat.inspiracio.say.*

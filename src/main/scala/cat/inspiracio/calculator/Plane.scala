@@ -37,6 +37,7 @@ import java.awt._
 
 import cat.inspiracio.complex._
 import cat.inspiracio.numbers.{Rectangle => _, _}
+import cat.inspiracio.calculator.Direction._
 
 final class Plane private[calculator](val world: World) extends WorldRepresentation(world) {
 
@@ -205,11 +206,11 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     cartesian2Point(d4, d2, point1)
 
     drawing.drawLine(point, point1, Color.lightGray)
-    var polygon = drawing.mkTriangle(point1, Direction.EAST, TRIANGLESIZE)
+    var polygon = drawing.mkTriangle(point1, EAST, TRIANGLESIZE)
     g.drawPolygon(polygon)
 
     if (RightReal <= w.MaxReal) g.fillPolygon(polygon)
-    polygon = drawing.mkTriangle(point, Direction.WEST, TRIANGLESIZE)
+    polygon = drawing.mkTriangle(point, WEST, TRIANGLESIZE)
     g.drawPolygon(polygon)
 
     if (w.MinReal <= LeftReal) g.fillPolygon(polygon)
@@ -227,11 +228,11 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     cartesian2Point(d1, d5, point)
     cartesian2Point(d1, d6, point1)
     drawing.drawLine(point, point1, Color.lightGray)
-    polygon = drawing.mkTriangle(point1, Direction.NORTH, TRIANGLESIZE)
+    polygon = drawing.mkTriangle(point1, NORTH, TRIANGLESIZE)
     g.drawPolygon(polygon)
 
     if (TopImaginary <= w.MaxImaginary) g.fillPolygon(polygon)
-    polygon = drawing.mkTriangle(point, Direction.SOUTH, TRIANGLESIZE)
+    polygon = drawing.mkTriangle(point, SOUTH, TRIANGLESIZE)
     g.drawPolygon(polygon)
 
     if (w.MinImaginary <= BottomImaginary) g.fillPolygon(polygon)

@@ -118,21 +118,22 @@ final class Drawing private[calculator](var g: Graphics) {
 
   /** Makes a triangle.
     *
-    * @param point     Triangle tip is here.
+    * @param p     Triangle tip is here.
     * @param direction Points this direction.
     * @param size      Size of the triangle. */
-  private[calculator] def mkTriangle(point: Point, direction: Direction, size: Int): Polygon = {
+  private[calculator] def mkTriangle(p: Point, direction: Direction, size: Int): Polygon = {
+    import Direction._
+
     direction match {
-      case Direction.NORTH =>
-        return new Polygon(Array[Int](point.x - size, point.x, point.x + size), Array[Int](point.y + size, point.y, point.y + size), 3)
-      case Direction.EAST =>
-        return new Polygon(Array[Int](point.x - size, point.x, point.x - size), Array[Int](point.y - size, point.y, point.y + size), 3)
-      case Direction.SOUTH =>
-        return new Polygon(Array[Int](point.x - size, point.x, point.x + size), Array[Int](point.y - size, point.y, point.y - size), 3)
-      case Direction.WEST =>
-        return new Polygon(Array[Int](point.x + size, point.x, point.x + size), Array[Int](point.y - size, point.y, point.y + size), 3)
+      case NORTH =>
+        new Polygon(Array(p.x - size, p.x, p.x + size), Array(p.y + size, p.y, p.y + size), 3)
+      case EAST =>
+        new Polygon(Array(p.x - size, p.x, p.x - size), Array(p.y - size, p.y, p.y + size), 3)
+      case SOUTH =>
+        new Polygon(Array(p.x - size, p.x, p.x + size), Array(p.y - size, p.y, p.y - size), 3)
+      case WEST =>
+        new Polygon(Array(p.x + size, p.x, p.x + size), Array(p.y - size, p.y, p.y + size), 3)
     }
-    null
   }
 
 }

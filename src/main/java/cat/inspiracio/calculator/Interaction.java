@@ -36,14 +36,11 @@ enum Interaction{
 
     public static Interaction parse(String n){
         for( Interaction i : Interaction.values() ){
-            if(n.equals(i.n)) {
-                //say(n + " -> " + i);
+            if(n.equals(i.n))
                 return i;
-            }
         }
         throw new IllegalArgumentException(n);
     }
 
-    private static void say(Object o){System.out.println(o);}
 }
 

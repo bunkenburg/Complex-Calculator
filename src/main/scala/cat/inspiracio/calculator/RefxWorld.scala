@@ -36,6 +36,7 @@ package cat.inspiracio.calculator
 import java.awt._
 import java.awt.event._
 
+import cat.inspiracio.calculator.Direction._
 import cat.inspiracio.complex._
 import cat.inspiracio.parsing.SyntaxTree
 import javax.swing._
@@ -324,9 +325,9 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
       xy2Point(d4, d2, point1)
 
       drawing.drawLine(point, point1, Color.lightGray)
-      var polygon = drawing.mkTriangle(point1, Direction.EAST, TRIANGLESIZE)
+      var polygon = drawing.mkTriangle(point1, EAST, TRIANGLESIZE)
       g.drawPolygon(polygon)
-      polygon = drawing.mkTriangle(point, Direction.WEST, TRIANGLESIZE)
+      polygon = drawing.mkTriangle(point, WEST, TRIANGLESIZE)
       g.drawPolygon(polygon)
       val j = point2.y
       var d7 = Math.ceil(d3 / d)
@@ -343,9 +344,9 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
       xy2Point(d1, d5, point)
       xy2Point(d1, d6, point1)
       drawing.drawLine(point, point1, Color.lightGray)
-      upTriangle = drawing.mkTriangle(point1, Direction.NORTH, TRIANGLESIZE)
+      upTriangle = drawing.mkTriangle(point1, NORTH, TRIANGLESIZE)
       g.drawPolygon(upTriangle)
-      downTriangle = drawing.mkTriangle(point, Direction.SOUTH, TRIANGLESIZE)
+      downTriangle = drawing.mkTriangle(point, SOUTH, TRIANGLESIZE)
       g.drawPolygon(downTriangle)
       i = point2.x
       d7 = Math.ceil(d5 / d)
