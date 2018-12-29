@@ -37,6 +37,7 @@ import java.awt._
 import java.awt.event._
 
 import cat.inspiracio.complex._
+import cat.inspiracio.geometry
 import cat.inspiracio.geometry.Matrix44
 import cat.inspiracio.numbers.Square
 import cat.inspiracio.parsing.SyntaxTree
@@ -187,7 +188,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     private var FONT_HEIGHT = 0
     private var prevx = 0
     private var prevy = 0
-    private[calculator] var v: Array[Array[Vector2]] = null
+    private[calculator] var v: Array[Array[geometry.Vector2]] = null
     private[calculator] var eye: Vector3 = null
     private[calculator] var direct: Vector3 = null
     private[calculator] var nxpix = 0
@@ -196,7 +197,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     private[calculator] var xforward = false
     private[calculator] var zforward = false
     private[calculator] var xyscale = .0
-    private[calculator] var v5: Vector2 = null
+    private[calculator] var v5: geometry.Vector2 = null
     private var quad: Polygon = null
     private var tri: Polygon = null
 
@@ -207,20 +208,20 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     private def init()= {
       FONT_HEIGHT = 12
 
-      v = new Array[Array[Vector2]](2)
-      v(0) = new Array[Vector2](21)
-      v(1) = new Array[Vector2](21)
+      v = new Array[Array[geometry.Vector2]](2)
+      v(0) = new Array[geometry.Vector2](21)
+      v(1) = new Array[geometry.Vector2](21)
       var i = 0
       while ( i < 21 ) {
-        v(0)(i) = new Vector2
-        v(1)(i) = new Vector2
+        v(0)(i) = new geometry.Vector2
+        v(1)(i) = new geometry.Vector2
         i = i+1
       }
 
       eye = new Vector3(3D, 0.5D, 1.0D)
       direct = new Vector3(2.5D, 0.5D, 0.5D)
       Q = Matrix44.zero
-      v5 = new Vector2
+      v5 = new geometry.Vector2
       quad = new Polygon(new Array[Int](4), new Array[Int](4), 4)
       tri = new Polygon(new Array[Int](3), new Array[Int](3), 3)
       setBackground(Color.white)
@@ -363,8 +364,8 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     private[calculator] def cz(i: Int) = if (zforward) i else -i
 
     private[calculator] def drawIt(drawing: Drawing) = {
-      val vector2 = new Vector2
-      val vector2_1 = new Vector2
+      val vector2 = new geometry.Vector2
+      val vector2_1 = new geometry.Vector2
       val vector3 = new Vector3(0.0D, 0.0D, 0.0D)
       f3d2d(vector3, vector2)
       var vector3_1 = new Vector3(1.0D, 0.0D, 0.0D)
@@ -442,7 +443,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     }
 
     //XXX make it return Vector2
-    private def f3d2d(vector3: Vector3, vector2: Vector2) = {
+    private def f3d2d(vector3: Vector3, vector2: geometry.Vector2) = {
       vector2.x = Q(0,0) * vector3.x + Q(0,1) * vector3.y + Q(0,2) * vector3.z
       vector2.y = Q(1,0) * vector3.x + Q(1,1) * vector3.y + Q(1,2) * vector3.z
     }
@@ -498,7 +499,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       doubleBuffer.onScreen()
     }
 
-    private[calculator] def patch(drawing: Drawing, vector2: Vector2, vector2_1: Vector2, vector2_2: Vector2, vector2_3: Vector2): Unit = {
+    private[calculator] def patch(drawing: Drawing, vector2: geometry.Vector2, vector2_1: geometry.Vector2, vector2_2: geometry.Vector2, vector2_3: geometry.Vector2): Unit = {
       //XXX vector methods
 
       var d = (vector2_1.x - vector2.x) * (vector2_3.y - vector2_2.y) - (vector2_1.y - vector2.y) * (vector2_3.x - vector2_2.x)
@@ -549,7 +550,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
         quadrilateral(drawing, vector2, vector2_1, vector2_3, vector2_2)
     }
 
-    private[calculator] def quadrilateral(drawing: Drawing, vector2: Vector2, vector2_1: Vector2, vector2_2: Vector2, vector2_3: Vector2) = {
+    private[calculator] def quadrilateral(drawing: Drawing, vector2: geometry.Vector2, vector2_1: geometry.Vector2, vector2_2: geometry.Vector2, vector2_3: geometry.Vector2) = {
       quad.xpoints(0) = fx(vector2.x)
       quad.xpoints(1) = fx(vector2_1.x)
       quad.xpoints(2) = fx(vector2_2.x)
@@ -573,7 +574,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       Q = Q.postRot('y', -d)
     }
 
-    private[calculator] def triangle(drawing: Drawing, vector2: Vector2, vector2_1: Vector2, vector2_2: Vector2) = {
+    private[calculator] def triangle(drawing: Drawing, vector2: geometry.Vector2, vector2_1: geometry.Vector2, vector2_2: geometry.Vector2) = {
       tri.xpoints(0) = fx(vector2.x)
       tri.xpoints(1) = fx(vector2_1.x)
       tri.xpoints(2) = fx(vector2_2.x)
