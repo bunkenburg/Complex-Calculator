@@ -40,10 +40,12 @@ import cat.inspiracio.numbers.{ECList, Piclet}
 
 object Circle {
 
-  /** val c = Circle(c, r) */
-  def apply(c: Complex, r: Complex): Circle = {
-    val center: Complex = if (finite(c)) c else 0
-    val radius = if (finite(r)) distance(center, r) else Double.PositiveInfinity
+  /** val c = Circle(c, z)
+    * @param centre of the circle in the complex plane
+    * @param z a point on the circumference */
+  def apply(centre: Complex, z: Complex): Circle = {
+    val center: Complex = if (finite(centre)) centre else 0
+    val radius = if (finite(z)) distance(center, z) else Double.PositiveInfinity
     new Circle(center, radius)
   }
 
@@ -58,7 +60,7 @@ object Circle {
 
 }
 
-class Circle (val c: Complex, val r: Double) extends Piclet {
+class Circle private (val c: Complex, val r: Double) extends Piclet {
 
   def center: Complex = c
   def radius: Double = r
