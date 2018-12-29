@@ -40,11 +40,11 @@ import cat.inspiracio.numbers.{ECList, Piclet}
 
 object Rectangle {
 
-  def apply(c: Complex, corner: Complex): Rectangle = new Rectangle(c, corner)
+  def apply(center: Complex, corner: Complex): Rectangle = new Rectangle(center, corner)
 
 }
 
-class Rectangle (val center: Complex, corner: Complex) extends Piclet {
+class Rectangle private (val center: Complex, corner: Complex) extends Piclet {
 
   val width = 2 * abs( Re(center) - Re(corner) )
   val height = 2 * abs( Im(center) - Im(corner) )
@@ -95,4 +95,7 @@ class Rectangle (val center: Complex, corner: Complex) extends Piclet {
     }
 
   }
+
+  override def toString: String = s"Rectangle($center, corner = $corner )"
+
 }
