@@ -22,7 +22,6 @@ package cat.inspiracio.parsing;
 
 import cat.inspiracio.complex.Complex;
 import cat.inspiracio.complex.package$;
-import cat.inspiracio.numbers.PartialException;
 
 public class SyntaxTreeUnary extends SyntaxTree {
 
@@ -38,7 +37,7 @@ public class SyntaxTreeUnary extends SyntaxTree {
             return SyntaxTree.token2String(token) + "(" + argument.unparse() + ")";
     }
 
-    public Complex evaluate(Complex ec) throws PartialException {
+    public Complex evaluate(Complex ec) {
         Complex ec1 = argument.evaluate(ec);
         Complex ec2 = null;
         switch(token) {

@@ -18,7 +18,6 @@
 package cat.inspiracio.parsing;
 
 import cat.inspiracio.complex.Complex;
-import cat.inspiracio.numbers.PartialException;
 
 // Referenced classes of package bunkenba.parsing:
 //            SyntaxTree
@@ -35,7 +34,7 @@ public class SyntaxTreeBinary extends SyntaxTree {
         return "(" + left.unparse() + ")" + SyntaxTree.token2String(token) + "(" + right.unparse() + ")";
     }
 
-    public Complex evaluate(Complex ec) throws PartialException {
+    public Complex evaluate(Complex ec) {
         Complex ec1 = left.evaluate(ec);
         Complex ec2 = right.evaluate(ec);
         Complex ec3 = Real(0);

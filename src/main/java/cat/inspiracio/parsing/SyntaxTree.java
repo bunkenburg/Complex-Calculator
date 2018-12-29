@@ -19,7 +19,6 @@ package cat.inspiracio.parsing;
 
 import cat.inspiracio.complex.Complex;
 import cat.inspiracio.complex.package$;
-import cat.inspiracio.numbers.PartialException;
 
 import java.text.ParseException;
 import java.text.ParsePosition;
@@ -281,7 +280,7 @@ public class SyntaxTree {
     }
 
     //XXX rename "apply" to make it disappear
-    public Complex evaluate(Complex ec) throws PartialException{
+    public Complex evaluate(Complex ec) {
         throw new RuntimeException();
     }
 
