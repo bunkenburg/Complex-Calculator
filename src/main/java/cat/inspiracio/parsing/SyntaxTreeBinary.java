@@ -18,7 +18,6 @@
 package cat.inspiracio.parsing;
 
 import cat.inspiracio.complex.Complex;
-import cat.inspiracio.numbers.BugException;
 import cat.inspiracio.numbers.PartialException;
 
 // Referenced classes of package bunkenba.parsing:
@@ -36,17 +35,13 @@ public class SyntaxTreeBinary extends SyntaxTree {
         return "(" + left.unparse() + ")" + SyntaxTree.token2String(token) + "(" + right.unparse() + ")";
     }
 
-    public void partialEvaluate() throws BugException {
-        throw new BugException("SyntaxTreeBinary.partialEvaluate() not implemented yet.");
-    }
-
-    public Complex evaluate(Complex ec) throws BugException, PartialException {
+    public Complex evaluate(Complex ec) throws PartialException {
         Complex ec1 = left.evaluate(ec);
         Complex ec2 = right.evaluate(ec);
         Complex ec3 = Real(0);
         switch(token) {
         case -1: 
-            throw new BugException("SyntaxTreeBinary.evaluate(NOTOKEN)");
+            throw new RuntimeException("SyntaxTreeBinary.evaluate(NOTOKEN)");
 
         case 0: // '\0'
             ec3 = ec1.$plus(ec2);
@@ -82,7 +77,7 @@ public class SyntaxTreeBinary extends SyntaxTree {
         case 16: // '\020'
         case 17: // '\021'
         case 18: // '\022'
-            throw new BugException("SyntaxTreeBinary.evaluate with unary token " + SyntaxTree.token2String(token));
+            throw new RuntimeException("SyntaxTreeBinary.evaluate with unary token " + SyntaxTree.token2String(token));
         }
         return ec3;
     }

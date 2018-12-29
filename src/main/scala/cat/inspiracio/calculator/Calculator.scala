@@ -39,7 +39,6 @@ import java.text.ParseException
 
 import cat.inspiracio.calculator.Mode._
 import cat.inspiracio.complex._
-import cat.inspiracio.numbers.{BugException, PartialException}
 import cat.inspiracio.parsing.SyntaxTree
 import javax.swing._
 
@@ -240,11 +239,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
       display.append(c.toString)
       cW.add(c)
     } catch {
-      case e: BugException =>
-        e.printStackTrace()
-      case e: PartialException =>
-        e.printStackTrace()
-      case e: ParseException =>
+      case e: Exception =>
         e.printStackTrace()
     }
   }

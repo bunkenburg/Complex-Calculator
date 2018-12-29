@@ -19,11 +19,8 @@ package cat.inspiracio.parsing;
 
 import cat.inspiracio.complex.Complex;
 import cat.inspiracio.complex.package$;
-import cat.inspiracio.numbers.BugException;
 import cat.inspiracio.numbers.PartialException;
-import scala.Tuple2;
 
-import javax.management.relation.RelationNotFoundException;
 import java.text.ParseException;
 import java.text.ParsePosition;
 
@@ -283,12 +280,8 @@ public class SyntaxTree {
         return unparse();
     }
 
-    public void partialEvaluate() throws BugException, PartialException{
-        throw new RuntimeException();
-    }
-
     //XXX rename "apply" to make it disappear
-    public Complex evaluate(Complex ec) throws BugException, PartialException{
+    public Complex evaluate(Complex ec) throws PartialException{
         throw new RuntimeException();
     }
 

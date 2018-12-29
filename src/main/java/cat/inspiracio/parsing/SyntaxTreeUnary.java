@@ -22,7 +22,6 @@ package cat.inspiracio.parsing;
 
 import cat.inspiracio.complex.Complex;
 import cat.inspiracio.complex.package$;
-import cat.inspiracio.numbers.BugException;
 import cat.inspiracio.numbers.PartialException;
 
 public class SyntaxTreeUnary extends SyntaxTree {
@@ -39,21 +38,17 @@ public class SyntaxTreeUnary extends SyntaxTree {
             return SyntaxTree.token2String(token) + "(" + argument.unparse() + ")";
     }
 
-    public void partialEvaluate() throws BugException{
-        throw new BugException("SyntaxTreeUnary.partialEvaluate not implemented.");
-    }
-
-    public Complex evaluate(Complex ec) throws BugException, PartialException {
+    public Complex evaluate(Complex ec) throws PartialException {
         Complex ec1 = argument.evaluate(ec);
         Complex ec2 = null;
         switch(token) {
         case -1: 
-            throw new BugException("SyntaxTreeUnary.evaluate(NOTOKEN)");
+            throw new RuntimeException("SyntaxTreeUnary.evaluate(NOTOKEN)");
 
         case 21: // '\025'
         case 22: // '\026'
         case 23: // '\027'
-            throw new BugException("SyntaxTreeUnary.evaluate(acos,asin,atan)");
+            throw new RuntimeException("SyntaxTreeUnary.evaluate(acos,asin,atan)");
 
         case 20: // '\024'
             ec2 = package$.MODULE$.fac(ec1);
@@ -70,7 +65,7 @@ public class SyntaxTreeUnary extends SyntaxTree {
         case 2: // '\002'
         case 3: // '\003'
         case 4: // '\004'
-            throw new BugException("SyntaxTreeUnary.evaluate with binary token " + SyntaxTree.token2String(token));
+            throw new RuntimeException("SyntaxTreeUnary.evaluate with binary token " + SyntaxTree.token2String(token));
 
         case 5: // '\005'
             ec2 = package$.MODULE$.conj(ec1);
@@ -129,7 +124,7 @@ public class SyntaxTreeUnary extends SyntaxTree {
             break;
 
         case 18: // '\022'
-            throw new BugException("SyntaxTreeUnary.evaluate with unexpected token " + SyntaxTree.token2String(token));
+            throw new RuntimeException("SyntaxTreeUnary.evaluate with unexpected token " + SyntaxTree.token2String(token));
         }
         return ec2;
     }
