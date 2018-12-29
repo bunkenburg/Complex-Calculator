@@ -1,4 +1,4 @@
-/*	Copyright 2011 Alexander Bunkenburg alex@cat.inspiracio.com
+/*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
  * 
  * This file is part of Complex Calculator.
  * 
@@ -24,8 +24,10 @@ import cat.inspiracio.complex.Complex;
 
 public class SyntaxTreeConstant extends SyntaxTree {
 
-    protected SyntaxTreeConstant(Complex ec) {
-        constant = ec;
+    private final Complex constant;
+
+    public SyntaxTreeConstant(Complex z) {
+        constant = z;
     }
 
     public String unparse()
@@ -35,9 +37,8 @@ public class SyntaxTreeConstant extends SyntaxTree {
 
     public void partialEvaluate() { }
 
-    public Complex evaluate(Complex ec) {
+    public Complex evaluate(Complex z) {
         return constant;
     }
 
-    private final Complex constant;
 }

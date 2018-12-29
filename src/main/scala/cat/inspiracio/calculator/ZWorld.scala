@@ -55,7 +55,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
   private var end: Complex = null
   private var currentPiclet: Piclet = null
   private var piclets: PicletList = null
-  private var square: Square = null
+  private var square = new Square(0, 1)
 
   init()
 
@@ -64,7 +64,6 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
   private def init()= {
 
     setTitle("z World")
-    square = new Square(0, 1)
 
     eraseButton = new JButton("Clear")
     eraseButton.addActionListener((e: ActionEvent) => erase())

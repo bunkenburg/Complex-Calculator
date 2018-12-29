@@ -287,6 +287,7 @@ public class SyntaxTree {
         throw new RuntimeException();
     }
 
+    //XXX rename "apply" to make it disappear
     public Complex evaluate(Complex ec) throws BugException, PartialException{
         throw new RuntimeException();
     }
