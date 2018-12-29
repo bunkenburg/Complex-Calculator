@@ -17,7 +17,6 @@
  * */
 package cat.inspiracio.geometry
 
-import cat.inspiracio.calculator.Vector3
 import org.scalatest.FunSuite
 
 class Matrix44Test extends FunSuite {
@@ -56,7 +55,7 @@ class Matrix44Test extends FunSuite {
       0, 0, 0, 0
     )
     val v = m * (1, 1, 1)
-    val r = new Vector3(1, 1, 1)
+    val r = Vector3(1, 1, 1)
     assert( v === r )
   }
 

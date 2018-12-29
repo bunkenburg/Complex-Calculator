@@ -33,7 +33,6 @@
  * */
 package cat.inspiracio.geometry
 
-import cat.inspiracio.calculator.Vector3
 import Math._
 
 /** Makes fresh matrices. */
@@ -122,7 +121,7 @@ final class Matrix44 {
   }
 
   def * (x: Double, y: Double, z: Double): Vector3 =
-    new Vector3(
+    Vector3(
       data(0)(0) * x + data(0)(1) * y + data(0)(2) * z + data(0)(3),
       data(1)(0) * x + data(1)(1) * y + data(1)(2) * z + data(1)(3),
       data(2)(0) * x + data(2)(1) * y + data(2)(2) * z + data(2)(3)

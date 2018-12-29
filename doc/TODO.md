@@ -5,8 +5,6 @@
 * convert enum Direction
 * convert enum Interaction
 * convert enum Mode
-* convert Vector2 with operators or remove it
-* convert Vector3 with operators
 * convert or remove cat.inspiracio.numbers.*
 * convert cat.inspiracio.parsing.*
 * remove cat.inspiracio.say.*
@@ -33,7 +31,6 @@
 * Nice About-menu
 * make a real executable application
 * Give World windows a toolbar instead of buttons and menus to read
-* complete test coverage for Complex
 * tests for GUI?
 
 # DONE

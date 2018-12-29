@@ -35,10 +35,10 @@ package cat.inspiracio.calculator
 
 import java.awt._
 import java.awt.event._
+import java.lang.Math.{atan2, min}
 
 import cat.inspiracio.complex._
-import cat.inspiracio.geometry
-import cat.inspiracio.geometry.{Matrix44, Vector2}
+import cat.inspiracio.geometry.{Matrix44, Vector2, Vector3}
 import cat.inspiracio.numbers.Square
 import cat.inspiracio.parsing.SyntaxTree
 import javax.swing._
@@ -187,41 +187,42 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     //State ----------------------------------------------------------
 
     final private val doubleBuffer = new DoubleBuffer(this)
-    private var FONT_HEIGHT = 0
+
+    private var FONT_HEIGHT = 12
+
+    /** previous mouse position */
     private var prevx = 0
     private var prevy = 0
 
-    /** What are these? */
-    private[calculator] var vs: Array[Array[Vector2]] = null
+    /** What are these? 2 * 20 vectors */
+    private[calculator] val vs = new Array[Array[Vector2]](2)
 
-    private[calculator] var eye: Vector3 = null
-    private[calculator] var direct: Vector3 = null
+    private[calculator] val eye = Vector3(3, 0.5, 1)
+    private[calculator] val direct = Vector3(2.5, 0.5, 0.5)
+
     private[calculator] var nxpix = 0
     private[calculator] var nypix = 0
+    private[calculator] var xyscale = .0
+
     private var Q: Matrix44 = null
+
     private[calculator] var xforward = false
     private[calculator] var zforward = false
-    private[calculator] var xyscale = .0
+
 
     init()
 
     //Constructor ---------------------------------------------------
 
     private def init()= {
-      FONT_HEIGHT = 12
 
-      vs = new Array[Array[Vector2]](2)
       vs(0) = new Array[Vector2](21)
       vs(1) = new Array[Vector2](21)
-      var i = 0
-      while ( i < 21 ) {
+      for ( i <- 0 to 20 ) {    // i < 21
         vs(0)(i) = Vector2(0,0)
         vs(1)(i) = Vector2(0,0)
-        i = i+1
       }
 
-      eye = new Vector3(3D, 0.5D, 1.0D)
-      direct = new Vector3(2.5D, 0.5D, 0.5D)
       Q = Matrix44.zero
       setBackground(Color.white)
 
@@ -234,12 +235,12 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
         }
 
         override def mouseReleased(mouseevent: MouseEvent): Unit = {
-          val j = mouseevent.getX
-          val k = mouseevent.getY
-          shift(prevx - j, prevy - k)
+          val x = mouseevent.getX
+          val y = mouseevent.getY
+          shift(prevx - x, prevy - y)
           paint(getGraphics)
-          prevx = j
-          prevy = k
+          prevx = x
+          prevy = y
           mouseevent.consume()
         }
 
@@ -248,12 +249,12 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       addMouseMotionListener(new MouseMotionAdapter() {
 
         override def mouseDragged(mouseevent: MouseEvent): Unit = {
-          val j = mouseevent.getX
-          val k = mouseevent.getY
-          shift(prevx - j, prevy - k)
+          val x = mouseevent.getX
+          val y = mouseevent.getY
+          shift(prevx - x, prevy - y)
           paint(getGraphics)
-          prevx = j
-          prevy = k
+          prevx = x
+          prevy = y
           mouseevent.consume()
         }
 
@@ -353,9 +354,9 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
 
     private[calculator] def drawRealAxis(drawing: Drawing) = drawLine3(drawing, -0.5D, 0.0D, 0.0D, 0.5D, 0.0D, 0.0D)
 
-    private[calculator] def drawLine3(drawing: Drawing, d: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double) = {
-      moveTo3(drawing, d, d1, d2)
-      lineTo3(drawing, d3, d4, d5)
+    private[calculator] def drawLine3(drawing: Drawing, x1: Double, y1: Double, z1: Double, x2: Double, y2: Double, z2: Double) = {
+      moveTo3(drawing, x1, y1, z1)
+      lineTo3(drawing, x2, y2, z2)
     }
 
     private[calculator] def cx(i: Int) = if (xforward) i else -i
@@ -364,12 +365,12 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
 
     private[calculator] def drawIt(drawing: Drawing) = {
 
-      val v2 = f3d2d(new Vector3(0, 0, 0))
+      val v2 = f3d2d(Vector3(0, 0, 0))
 
-      val vector2_1 = f3d2d(new Vector3(1, 0, 0))
+      val vector2_1 = f3d2d(Vector3(1, 0, 0))
       xforward = v2.y >= vector2_1.y
 
-      val vector2_2 = f3d2d(new Vector3(0, 0, 1))
+      val vector2_2 = f3d2d(Vector3(0, 0, 1))
       zforward = v2.y >= vector2_2.y
 
       drawBackAxes(drawing, xforward, zforward)
@@ -459,17 +460,17 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
         Q(1,0) * v.x + Q(1,1) * v.y + Q(1,2) * v.z
       )
 
-    private def f3dPix(d: Double, d1: Double, d2: Double): Point =
+    private def f3dPix(x: Double, y: Double, z: Double): Point =
       new Point(
-        fx(Q(0,0) * d + Q(0,1) * d1 + Q(0,2) * d2),
-        fy(Q(1,0) * d + Q(1,1) * d1 + Q(1,2) * d2)
+        fx(Q(0,0) * x + Q(0,1) * y + Q(0,2) * z),
+        fy(Q(1,0) * x + Q(1,1) * y + Q(1,2) * z)
       )
 
-    private[calculator] def angle(d: Double, d1: Double): Double = Math.atan2(d1, d)
+    private[calculator] def angle(x: Double, y: Double): Double = Math.atan2(y, x)
 
-    private[calculator] def fx(d: Double): Int = (d * xyscale + nxpix * 0.5D).toInt
+    private[calculator] def fx(x: Double): Int = (x * xyscale + nxpix * 0.5).toInt
 
-    private[calculator] def fy(d: Double): Int = (-d * xyscale + nypix * 0.80000000000000004D).toInt
+    private[calculator] def fy(y: Double): Int = (-y * xyscale + nypix * 0.80000000000000004D).toInt
 
     override def getPreferredSize: Dimension = getMinimumSize
     override def getMinimumSize: Dimension = MIN_SIZE
@@ -478,20 +479,20 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       Q = Matrix44.translation(eye)
       val d = angle(-direct.x, -direct.y)
       Q = Q.preRot('z', d)
-      val d3 = Math.sqrt(direct.x * direct.x + direct.y * direct.y)
+      val d3 = sqrt(direct.x * direct.x + direct.y * direct.y)
       val d1 = angle(-direct.z, d3)
       Q = Q.preRot('y', d1)
-      val d4 = Math.sqrt(d3 * d3 + direct.z * direct.z)
+      val d4 = sqrt(d3 * d3 + direct.z * direct.z)
       val d2 = angle(-direct.x * d4, direct.y * direct.z)
       Q = Q.preRot('z', -d2)
       Q = Q.postRot('y', π/2)
     }
 
-    private[calculator] def lineTo3(drawing: Drawing, d: Double, d1: Double, d2: Double) =
-      drawing.lineTo(f3dPix(d, d1, d2 ))
+    private[calculator] def lineTo3(drawing: Drawing, x: Double, y: Double, z: Double) =
+      drawing.lineTo(f3dPix(x, y, z ))
 
-    private[calculator] def moveTo3(drawing: Drawing, d: Double, d1: Double, d2: Double) =
-      drawing.moveTo(f3dPix(d, d1, d2 ))
+    private[calculator] def moveTo3(drawing: Drawing, x: Double, y: Double, z: Double) =
+      drawing.moveTo(f3dPix(x, y, z ))
 
     override def paint(g0: Graphics): Unit = {
       val size: Dimension = getSize
@@ -499,7 +500,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       val drawing = new Drawing(g)
       nxpix = size.width
       nypix = size.height
-      xyscale = Math.min(nxpix, nypix) * XYFACTOR
+      xyscale = min(nxpix, nypix) * XYFACTOR
       drawIt(drawing)
       doubleBuffer.onScreen()
     }

@@ -36,7 +36,7 @@ package cat.inspiracio.calculator
 import java.awt._
 
 import cat.inspiracio.complex._
-import cat.inspiracio.geometry.Matrix44
+import cat.inspiracio.geometry.{Matrix44, Vector3}
 import cat.inspiracio.numbers.ECList
 
 // Referenced classes of package bunkenba.calculator:
@@ -112,8 +112,8 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
 
   private def f3dC(v: Vector3): Complex = {
     if (v.y == 0.5 )
-      return ∞
-    if (v.y == -0.5 )
+      ∞
+    else if (v.y == -0.5 )
       0
     else
       Cartesian(v.x / (0.5 - v.y), v.z / (0.5 - v.y))
