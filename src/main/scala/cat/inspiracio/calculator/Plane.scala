@@ -38,6 +38,7 @@ import java.awt._
 import cat.inspiracio.complex._
 import cat.inspiracio.numbers.{Rectangle => _, _}
 import cat.inspiracio.calculator.Direction._
+import cat.inspiracio.geometry.Circle
 
 final class Plane private[calculator](val world: World) extends WorldRepresentation(world) {
 
@@ -136,9 +137,9 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
 
     else if (piclet.isInstanceOf[Circle]) {
       val circle = piclet.asInstanceOf[Circle]
-      val x = ((Re(circle.center) - LeftReal) * ScaleFactor).asInstanceOf[Int]
-      val y = -((Im(circle.center) - TopImaginary) * ScaleFactor).asInstanceOf[Int]
-      val radius = Math2Pix(circle.radius)
+      val x = ((Re(circle.c) - LeftReal) * ScaleFactor).asInstanceOf[Int]
+      val y = -((Im(circle.c) - TopImaginary) * ScaleFactor).asInstanceOf[Int]
+      val radius = Math2Pix(circle.r)
       drawing.drawCircle( x, y, radius )
     }
 

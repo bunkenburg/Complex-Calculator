@@ -55,12 +55,6 @@ public abstract class Piclet {
         return cat.inspiracio.complex.package$.MODULE$.Re(c);
     }
 
-    protected double distance(Complex a, Complex ec){
-        if( finite(a) && finite(ec) )
-            return Math.sqrt(sqr(Re(a) - Re(ec)) + sqr(Im(a) - Im(ec) ));
-        return finite(a) != finite(ec) ? (1.0D / 0.0D) : 0.0D;
-    }
-
     protected double sqr(double d){return d*d;}
 
     protected boolean finite(Complex z){return package$.MODULE$.finite(z);}

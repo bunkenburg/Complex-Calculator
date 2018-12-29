@@ -22,6 +22,7 @@ package cat.inspiracio.numbers;
 //            Rectangle, Circle, EC, PartialException
 
 import cat.inspiracio.complex.Complex;
+import cat.inspiracio.geometry.Circle;
 
 public class Square extends Rectangle {
 
@@ -35,10 +36,12 @@ public class Square extends Rectangle {
     }
 
     public Square(Circle circle) {
-        botLeft = circle.center.$plus(Cartesian(-circle.radius, -circle.radius));
-        topLeft = circle.center.$plus(Cartesian(-circle.radius, circle.radius));
-        botRight = circle.center.$plus(Cartesian(circle.radius, -circle.radius));
-        topRight = circle.center.$plus(Cartesian(circle.radius, circle.radius));
+        Complex c = circle.center();
+        double r = circle.radius();
+        botLeft = c.$plus(Cartesian(-r, -r));
+        topLeft = c.$plus(Cartesian(-r, +r));
+        botRight = c.$plus(Cartesian(+r, -r));
+        topRight = c.$plus(Cartesian(+r, +r));
     }
 
     public Square(Complex ec, Complex ec1) {

@@ -38,6 +38,7 @@ import java.awt.event._
 import cat.inspiracio.calculator.Interaction._
 import cat.inspiracio.calculator.Mode.{FZ, MODFZ}
 import cat.inspiracio.complex.Complex
+import cat.inspiracio.geometry.Circle
 import cat.inspiracio.numbers._
 import javax.swing._
 
@@ -122,7 +123,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           if (ec3 != null) {
             start = ec3
             end = ec3
-            addCurrent(new Circle(start, end))
+            addCurrent(Circle(start, end))
             canvas.paint(canvas.getGraphics)
           }
 
@@ -183,7 +184,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           if (start != null) {
             val ec2 = canvas.Point2Complex(mouseevent.getPoint)
             if (ec2 != null) end = ec2
-            add(new Circle(start, end))
+            add(Circle(start, end))
             canvas.paint(canvas.getGraphics)
           }
           eraseCurrent()
@@ -258,7 +259,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           val ec1 = canvas.Point2Complex(mouseevent.getPoint)
           if (ec1 != null) {
             end = ec1
-            addCurrent(new Circle(start, end))
+            addCurrent(Circle(start, end))
             canvas.paint(canvas.getGraphics)
           }
 
