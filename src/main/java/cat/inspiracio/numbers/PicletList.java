@@ -21,6 +21,8 @@ package cat.inspiracio.numbers;
 // Referenced classes of package bunkenba.numbers:
 //            Piclet
 
+import cat.inspiracio.geometry.Piclet;
+
 /** Haskell-style list of Piclets. */
 public class PicletList {
 

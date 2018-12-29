@@ -38,7 +38,8 @@ import java.awt._
 import cat.inspiracio.complex
 import cat.inspiracio.complex._
 import cat.inspiracio.complex.Complex
-import cat.inspiracio.numbers.{ECList, Piclet}
+import cat.inspiracio.geometry.Piclet
+import cat.inspiracio.numbers.ECList
 import javax.swing._
 
 // Referenced classes of package bunkenba.calculator:

@@ -130,8 +130,8 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
   override private[calculator] def drawPiclet(drawing: Drawing, piclet: Piclet) =
 
     if (piclet.isInstanceOf[Line]) {
-      moveTo(drawing, piclet.asInstanceOf[Line].start)
-      lineTo(drawing, piclet.asInstanceOf[Line].end)
+      moveTo(drawing, piclet.asInstanceOf[Line].a)
+      lineTo(drawing, piclet.asInstanceOf[Line].b)
     }
 
     else if (piclet.isInstanceOf[Circle]) {

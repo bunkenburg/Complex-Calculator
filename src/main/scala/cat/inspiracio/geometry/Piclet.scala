@@ -33,53 +33,24 @@
  * */
 package cat.inspiracio.geometry
 
-// Referenced classes of package bunkenba.numbers:
-//            Piclet, EC, ECList, PartialException
-import cat.inspiracio.complex._
 import cat.inspiracio.numbers.ECList
 
-object Circle {
+// Referenced classes of package bunkenba.numbers:
+//            ECList
 
-  /** val c = Circle(c, z)
-    * @param centre of the circle in the complex plane
-    * @param z a point on the circumference */
-  def apply(centre: Complex, z: Complex): Circle = {
-    val center: Complex = if (finite(centre)) centre else 0
-    val radius = if (finite(z)) distance(center, z) else Double.PositiveInfinity
-    new Circle(center, radius)
+abstract class Piclet() {
+
+  protected var samples: ECList = null
+  protected def sample(): Unit
+
+  def getSamples: ECList = {
+    if (samples == null) sample()
+    samples
   }
 
-  private def distance(a: Complex, b: Complex): Double = {
-    if (finite(a) && finite(b))
-      sqrt(sqr(Re(a) - Re(b)) + sqr(Im(a) - Im(b)))
-    else if (finite(a) != finite(b))
-      Double.PositiveInfinity
-    else
-      0
-  }
-
-}
-
-class Circle private (val c: Complex, val r: Double) extends Piclet {
-
-  def center: Complex = c
-  def radius: Double = r
-
-  override def top: Double = Im(c) + r
-  override def bottom: Double = Im(c) - r
-  override def left: Double = Re(c) - r
-  override def right: Double = Re(c) + r
-
-  override protected def sample(): Unit = {
-    val d = 0.20943951023931953D
-    var angle = 0.0D
-    for ( i <- 0 to 30 ) {
-      val z = Polar(r, angle)
-      samples = new ECList( c + z, samples)
-      angle += d
-    }
-  }
-
-  override def toString: String = s"Circle($center, radius = $radius )"
+  def top: Double
+  def bottom: Double
+  def left: Double
+  def right: Double
 
 }

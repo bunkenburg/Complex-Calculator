@@ -37,49 +37,32 @@ package cat.inspiracio.geometry
 //            Piclet, EC, ECList, PartialException
 import cat.inspiracio.complex._
 import cat.inspiracio.numbers.ECList
+import java.lang.Math.{max,min}
 
-object Circle {
-
-  /** val c = Circle(c, z)
-    * @param centre of the circle in the complex plane
-    * @param z a point on the circumference */
-  def apply(centre: Complex, z: Complex): Circle = {
-    val center: Complex = if (finite(centre)) centre else 0
-    val radius = if (finite(z)) distance(center, z) else Double.PositiveInfinity
-    new Circle(center, radius)
-  }
-
-  private def distance(a: Complex, b: Complex): Double = {
-    if (finite(a) && finite(b))
-      sqrt(sqr(Re(a) - Re(b)) + sqr(Im(a) - Im(b)))
-    else if (finite(a) != finite(b))
-      Double.PositiveInfinity
-    else
-      0
-  }
-
+object Line {
+  def apply(a: Complex, b: Complex): Line = new Line(a,b)
 }
 
-class Circle private (val c: Complex, val r: Double) extends Piclet {
+class Line(var a: Complex, var b: Complex) extends Piclet {
 
-  def center: Complex = c
-  def radius: Double = r
+  override def top: Double = max(Im(a), Im(b))
+  override def bottom: Double = min(Im(a), Im(b))
+  override def left: Double = max(Re(a), Re(b))
+  override def right: Double = min(Re(a), Re(b))
 
-  override def top: Double = Im(c) + r
-  override def bottom: Double = Im(c) - r
-  override def left: Double = Re(c) - r
-  override def right: Double = Re(c) + r
+  def length: Double = abs(a-b)
 
   override protected def sample(): Unit = {
-    val d = 0.20943951023931953D
-    var angle = 0.0D
+    val ec = ( b - a) / 30
+    var ec1 = a
+    samples = new ECList(ec1, samples)
+    var i = 0
     for ( i <- 0 to 30 ) {
-      val z = Polar(r, angle)
-      samples = new ECList( c + z, samples)
-      angle += d
+      ec1 = ec1 + ec
+      samples = new ECList(ec1, samples)
     }
   }
 
-  override def toString: String = s"Circle($center, radius = $radius )"
+  override def toString: String = s"Line( $a, $b )"
 
 }

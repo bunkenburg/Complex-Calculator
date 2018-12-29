@@ -37,7 +37,8 @@ import java.awt.event._
 
 import cat.inspiracio.calculator.Interaction.MOVE
 import cat.inspiracio.complex.Complex
-import cat.inspiracio.numbers._
+import cat.inspiracio.geometry.{Freeline,Piclet}
+import cat.inspiracio.numbers.{ECList, PicletList}
 import cat.inspiracio.parsing.SyntaxTree
 
 final class FzWorld private[calculator](override val calculator: Calculator) extends World(calculator) {
@@ -183,7 +184,7 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
   private[calculator] def setzWorld(zworld: ZWorld) = zW = zworld
 
   private[calculator] def stopDynamicMap() = {
-    piclets = new PicletList(new Freeline(current), piclets)
+    piclets = new PicletList(Freeline(current), piclets)
     current = null
   }
 }

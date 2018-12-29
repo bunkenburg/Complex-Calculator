@@ -38,7 +38,7 @@ import java.awt.event._
 
 import cat.inspiracio.complex
 import cat.inspiracio.complex.Complex
-import cat.inspiracio.numbers.Piclet
+import cat.inspiracio.geometry.Piclet
 import javax.swing._
 
 /** A frame that shows complex number on the complex plane or the Riemann sphere. */

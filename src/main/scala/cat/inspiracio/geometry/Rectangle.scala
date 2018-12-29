@@ -36,7 +36,7 @@ package cat.inspiracio.geometry
 // Referenced classes of package bunkenba.numbers:
 //            Piclet, EC, ECList, PartialException
 import cat.inspiracio.complex.{Im, Re, _}
-import cat.inspiracio.numbers.{ECList, Piclet}
+import cat.inspiracio.numbers.ECList
 
 object Rectangle {
 
@@ -44,7 +44,7 @@ object Rectangle {
 
 }
 
-class Rectangle private (val center: Complex, corner: Complex) extends Piclet {
+class Rectangle private[geometry] (val center: Complex, corner: Complex) extends Piclet {
 
   val width = 2 * abs( Re(center) - Re(corner) )
   val height = 2 * abs( Im(center) - Im(corner) )

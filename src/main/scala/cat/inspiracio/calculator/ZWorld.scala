@@ -105,7 +105,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           if (ec1 != null) {
             start = ec1
             end = ec1
-            addCurrent(new Rectangle(start, end))
+            addCurrent(Rectangle(start, end))
             canvas.paint(canvas.getGraphics)
           }
 
@@ -165,7 +165,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           if (current != null) {
             val ec = canvas.Point2Complex(mouseevent.getPoint)
             if (ec != null) add(ec)
-            piclets = new PicletList(new Freeline(current), piclets)
+            piclets = new PicletList(Freeline(current), piclets)
             current = null
             canvas.paint(canvas.getGraphics)
             fzW.stopDynamicMap()
@@ -243,7 +243,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           if (current != null) {
             if (ec != null) add(ec)
             else {
-              piclets = new PicletList(new Freeline(current), piclets)
+              piclets = new PicletList(Freeline(current), piclets)
               current = null
               fzW.stopDynamicMap()
             }
