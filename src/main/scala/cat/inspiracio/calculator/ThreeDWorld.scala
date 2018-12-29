@@ -38,8 +38,7 @@ import java.awt.event._
 import java.lang.Math.{atan2, max, min}
 
 import cat.inspiracio.complex._
-import cat.inspiracio.geometry.{Matrix44, Vector2, Vector3}
-import cat.inspiracio.numbers.Square
+import cat.inspiracio.geometry.{Matrix44, Square, Vector2, Vector3}
 import cat.inspiracio.parsing.{SyntaxTree, SyntaxTreeConstant}
 import javax.swing._
 

@@ -33,13 +33,13 @@ public class Rectangle extends Piclet {
 
     protected Rectangle(){ }
 
-    public Rectangle(Complex ec, Complex ec1) {
-        double d = Math.abs( Re(ec) - Re(ec1));
-        double d1 = Math.abs( Im(ec) - Im(ec1));
-        botLeft = ec.$plus(Cartesian(-d, -d1));
-        topLeft = ec.$plus(Cartesian(-d, d1));
-        botRight = ec.$plus(Cartesian(d, -d1));
-        topRight = ec.$plus(Cartesian(d, d1));
+    public Rectangle(Complex center, Complex corner) {
+        double width = Math.abs( Re(center) - Re(corner));
+        double height = Math.abs( Im(center) - Im(corner));
+        botLeft = center.$plus(Cartesian(-width, -height));
+        topLeft = center.$plus(Cartesian(-width, height));
+        botRight = center.$plus(Cartesian(width, -height));
+        topRight = center.$plus(Cartesian(width, height));
     }
 
     public Complex getCenter() {

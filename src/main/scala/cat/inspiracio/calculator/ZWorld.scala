@@ -38,7 +38,7 @@ import java.awt.event._
 import cat.inspiracio.calculator.Interaction._
 import cat.inspiracio.calculator.Mode.{FZ, MODFZ}
 import cat.inspiracio.complex.Complex
-import cat.inspiracio.geometry.Circle
+import cat.inspiracio.geometry.{Circle, Square}
 import cat.inspiracio.numbers._
 import javax.swing._
 
@@ -141,7 +141,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           if (ec5 != null) {
             start = ec5
             end = ec5
-            square = new Square(start, end)
+            square = Square(start, end)
             if (mode eq FZ) addCurrent(square)
             else if (mode eq MODFZ) modfzW.change(square)
             canvas.paint(canvas.getGraphics)
@@ -203,7 +203,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
             val ec4 = canvas.Point2Complex(mouseevent.getPoint)
             if (ec4 != null)
               end = ec4
-            square = new Square(start, end)
+            square = Square(start, end)
             if (mode == FZ)
               add(square)
             else if (mode == MODFZ)
@@ -291,7 +291,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           val ec5 = canvas.Point2Complex(mouseevent.getPoint)
           if (ec5 != null) {
             end = ec5
-            square = new Square(start, end)
+            square = Square(start, end)
             if (mode eq FZ) addCurrent(square)
             else if (mode eq MODFZ) modfzW.change(square)
             canvas.paint(canvas.getGraphics)
