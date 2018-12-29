@@ -22,21 +22,20 @@ package cat.inspiracio.geometry;
 //            Rectangle, Circle, EC, PartialException
 
 import cat.inspiracio.complex._
-import cat.inspiracio.numbers.Rectangle
 
 object Square {
 
-    def apply(c: Complex, corner: Complex): Square = {
-        val width = abs( Re(c) - Re(corner) )
-        val height = abs( Im(c) - Im(corner) )
+    def apply(center: Complex, corner: Complex): Square = {
+        val width = abs( Re(center) - Re(corner) )
+        val height = abs( Im(center) - Im(corner) )
         val r = (width + height) / 2.0
-        new Square(c, r)
+        new Square(center, r)
     }
 
 }
 
 /** A square with c at the centre and side length 2*radius. */
-class Square(c: Complex, r: Double) extends Rectangle(c, c + r + r*i ) {
+class Square(center: Complex, radius: Double) extends Rectangle(center, center + radius + radius*i ) {
 
     def getSide: Double = abs( Re(botLeft) - Re(botRight) )
 

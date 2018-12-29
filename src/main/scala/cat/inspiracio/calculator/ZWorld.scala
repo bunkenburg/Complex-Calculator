@@ -37,8 +37,8 @@ import java.awt.event._
 
 import cat.inspiracio.calculator.Interaction._
 import cat.inspiracio.calculator.Mode.{FZ, MODFZ}
-import cat.inspiracio.complex.Complex
-import cat.inspiracio.geometry.{Circle, Square}
+import cat.inspiracio.complex._
+import cat.inspiracio.geometry._
 import cat.inspiracio.numbers._
 import javax.swing._
 
@@ -56,7 +56,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
   private var end: Complex = null
   private var currentPiclet: Piclet = null
   private var piclets: PicletList = null
-  private var square = new Square(0, 1)
+  private var square = Square(0, 1+i)
 
   init()
 
@@ -132,7 +132,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           if (ec4 != null) {
             start = ec4
             end = ec4
-            addCurrent(new Rectangle(start, end))
+            addCurrent(Rectangle(start, end))
             canvas.paint(canvas.getGraphics)
           }
 
@@ -193,7 +193,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           if (start != null) {
             val ec3 = canvas.Point2Complex(mouseevent.getPoint)
             if (ec3 != null) end = ec3
-            add(new Rectangle(start, end))
+            add(Rectangle(start, end))
             canvas.paint(canvas.getGraphics)
           }
           eraseCurrent()
@@ -217,7 +217,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           if (start != null) {
             val ec5 = canvas.Point2Complex(mouseevent.getPoint)
             if (ec5 != null) end = ec5
-            addGrid(new Rectangle(start, end))
+            addGrid(Rectangle(start, end))
             canvas.paint(canvas.getGraphics)
           }
           eraseCurrent()
@@ -267,7 +267,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           val ec2 = canvas.Point2Complex(mouseevent.getPoint)
           if (ec2 != null) {
             end = ec2
-            addCurrent(new Rectangle(start, end))
+            addCurrent(Rectangle(start, end))
             canvas.paint(canvas.getGraphics)
           }
 
@@ -283,7 +283,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           val ec4 = canvas.Point2Complex(mouseevent.getPoint)
           if (ec4 != null) {
             end = ec4
-            addCurrent(new Rectangle(start, end))
+            addCurrent(Rectangle(start, end))
             canvas.paint(canvas.getGraphics)
           }
 
@@ -334,8 +334,8 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
         val d1 = Im(rectangle.botLeft)
         val d2 = Re(rectangle.botRight)
         val d3 = Re(rectangle.botLeft)
-        val d4 = rectangle.getWidth / 10
-        val d5 = rectangle.getHeight / 10
+        val d4 = rectangle.width / 10
+        val d5 = rectangle.height / 10
         var d6 = d3
         var d7 = d1
         var i = 0

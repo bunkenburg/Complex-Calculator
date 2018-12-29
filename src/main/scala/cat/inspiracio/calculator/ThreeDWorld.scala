@@ -101,7 +101,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       f = new SyntaxTreeConstant(0)
 
     val step: Double = square.getSide / 2.0 / 10.0
-    val center: Complex = square.getCenter
+    val center: Complex = square.center
 
     // Find all |f(z)|
     for( x <- -10 to +10 ; y <- -10 to +10 ){

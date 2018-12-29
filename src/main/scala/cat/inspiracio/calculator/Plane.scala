@@ -33,12 +33,11 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt._
-
+import java.awt.{Color, Font, Graphics, Point}
 import cat.inspiracio.complex._
-import cat.inspiracio.numbers.{Rectangle => _, _}
+import cat.inspiracio.numbers._
 import cat.inspiracio.calculator.Direction._
-import cat.inspiracio.geometry.Circle
+import cat.inspiracio.geometry._
 
 final class Plane private[calculator](val world: World) extends WorldRepresentation(world) {
 
@@ -143,8 +142,8 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
       drawing.drawCircle( x, y, radius )
     }
 
-    else if (piclet.isInstanceOf[cat.inspiracio.numbers.Rectangle]) {
-      val rectangle = piclet.asInstanceOf[cat.inspiracio.numbers.Rectangle]
+    else if (piclet.isInstanceOf[Rectangle]) {
+      val rectangle = piclet.asInstanceOf[Rectangle]
       moveTo(drawing, rectangle.botLeft)
       lineTo(drawing, rectangle.botRight)
       lineTo(drawing, rectangle.topRight)
