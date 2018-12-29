@@ -57,7 +57,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
   private val canvas = new ThreeDCanvas
 
   /** the square for which to show |f(z)| */
-  private var square = new Square(0, 1)
+  private var square = calculator.getSquare
 
   private var f: SyntaxTree = null
 
@@ -69,13 +69,8 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
   init()
 
   private def init()= {
-    square = calculator.getSquare
-
-    var i = 0
-    while ( i < 21 ) {
+    for ( i <- 0 to 20 )
       M(i) = new Array[Double](21)
-      i = i+1
-    }
 
     setLayout(new BorderLayout)
     add("Center", canvas)
@@ -327,7 +322,6 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     private[calculator] def cx(x: Int) = if (xforward) x else -x
     private[calculator] def cz(z: Int) = if (zforward) z else -z
 
-    //XXX suppress argument drawing?
     private[calculator] def drawIt(drawing: Drawing) = {
 
       //On the screen, the two edges of one line of patches
@@ -468,56 +462,57 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
 
       var something = (b.x - a.x) * (d.y - c.y) - (b.y - a.y) * (d.x - c.x)
 
-      if (Math.abs(something) > 0.0001D) {
+      if ( 0.0001 < abs(something) ) {
         val d1 = ((c.x - a.x) * (d.y - c.y) - (c.y - a.y) * (d.x - c.x)) / something
-        if (d1 >= 0.0D && d1 <= 1.0D) {
+
+        if ( 0 <= d1 && d1 <= 1 ) {
           val v5 = Vector2(
             (1 - d1) * a.x + d1 * b.x,
             (1 - d1) * a.y + d1 * b.y
           )
           triangle(drawing, a, c, v5)
           triangle(drawing, b, d, v5)
-          return
         }
-        something = (c.x - a.x) * (d.y - b.y) - (c.y - a.y) * (d.x - b.x)
-        if (Math.abs(something) > 0.0001D) {
-          val d2 = ((b.x - a.x) * (d.y - b.y) - (b.y - a.y) * (d.x - b.x)) / something
-          if (d2 >= 0.0D && d2 <= 1.0D) {
-            val v5 = Vector2(
-              (1 - d2) * a.x + d2 * c.x,
-              (1.0D - d2) * a.y + d2 * c.y
-            )
-            triangle(drawing, a, b, v5)
-            triangle(drawing, c, d, v5)
-            return
-          }
-          else {
-            quadrilateral(drawing, a, b, d, c)
-            return
-          }
-        }
+
         else {
-          quadrilateral(drawing, a, b, d, c)
-          return
+          something = (c.x - a.x) * (d.y - b.y) - (c.y - a.y) * (d.x - b.x)
+          if ( 0.0001D < abs(something) ) {
+            val d2 = ((b.x - a.x) * (d.y - b.y) - (b.y - a.y) * (d.x - b.x)) / something
+            if ( 0 <= d2 && d2 <= 1 ) {
+              val v5 = Vector2(
+                (1 - d2) * a.x + d2 * c.x,
+                (1.0D - d2) * a.y + d2 * c.y
+              )
+              triangle(drawing, a, b, v5)
+              triangle(drawing, c, d, v5)
+            }
+            else
+              quadrilateral(drawing, a, b, d, c)
+          }
+          else
+            quadrilateral(drawing, a, b, d, c)
         }
       }
 
-      something = (c.x - a.x) * (d.y - b.y) - (c.y - a.y) * (d.x - b.x)
-      if (Math.abs(something) > 0.0001D) {
-        val d3 = ((b.x - a.x) * (d.y - b.y) - (b.y - a.y) * (d.x - b.x)) / something
-        if (0 <= d3 && d3 <= 1) {
-          val v5 = Vector2(
-            (1 - d3) * a.x + d3 * c.x,
-            (1 - d3) * a.y + d3 * c.y
-          )
-          triangle(drawing, a, b, v5)
-          triangle(drawing, c, d, v5)
+      else {
+        something = (c.x - a.x) * (d.y - b.y) - (c.y - a.y) * (d.x - b.x)
+        if ( 0.0001 < abs(something) ) {
+          val d3 = ((b.x - a.x) * (d.y - b.y) - (b.y - a.y) * (d.x - b.x)) / something
+          if (0 <= d3 && d3 <= 1) {
+            val v5 = Vector2(
+              (1 - d3) * a.x + d3 * c.x,
+              (1 - d3) * a.y + d3 * c.y
+            )
+            triangle(drawing, a, b, v5)
+            triangle(drawing, c, d, v5)
+          }
+          else
+            quadrilateral(drawing, a, b, d, c)
         }
         else
           quadrilateral(drawing, a, b, d, c)
       }
-      else
-        quadrilateral(drawing, a, b, d, c)
+
     }
 
     private[calculator] def quadrilateral(drawing: Drawing, a: Vector2, b: Vector2, c: Vector2, d: Vector2) = {

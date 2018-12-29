@@ -62,7 +62,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
   /** The mode that the program is in: Calculation, z->fz mapping, z->|fz| mapping, or Re(fz). */
   var mode = CALC
 
-  private var display: Display = null
+  private val display: Display = new Display(12)
   private var equalsButton: JButton = null
   private var zButton: JButton = null
 
@@ -87,7 +87,6 @@ final class Calculator() extends JFrame("Complex Calculator") {
   }
 
   private def buildFrame() = {
-    display = new Display(12)
     setResizable(false)
     Complex.setPrecision(4)
   }
