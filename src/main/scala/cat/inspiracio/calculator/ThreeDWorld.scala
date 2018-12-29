@@ -38,7 +38,7 @@ import java.awt.event._
 
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry
-import cat.inspiracio.geometry.Matrix44
+import cat.inspiracio.geometry.{Matrix44, Vector2}
 import cat.inspiracio.numbers.Square
 import cat.inspiracio.parsing.SyntaxTree
 import javax.swing._
@@ -113,16 +113,16 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       return
     }
 
-    val d1: Double = square.getSide / 2D / 10D
-    val ec1: Complex = square.getCenter
+    val step: Double = square.getSide / 2.0 / 10.0
+    val center: Complex = square.getCenter
     var j1 = -10
     while ( j1 <= 10 ) {
       var j = -10
       while ( j <= 10 ) {
-        val ec: Complex = Cartesian(d1 * j1, d1 * j)
+        val z: Complex = Cartesian(step * j1, step * j)
         try {
-          val z = f.evaluate( ec1 + ec )
-          M(10 + j1)(10 + j) = abs(z)
+          val fz = f.evaluate( center + z )
+          M(10 + j1)(10 + j) = abs(fz)
         } catch {
           case _ex: Exception =>
             //XXX Why -0.2 ?
@@ -188,7 +188,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     private var FONT_HEIGHT = 0
     private var prevx = 0
     private var prevy = 0
-    private[calculator] var v: Array[Array[geometry.Vector2]] = null
+    private[calculator] var v: Array[Array[Vector2]] = null
     private[calculator] var eye: Vector3 = null
     private[calculator] var direct: Vector3 = null
     private[calculator] var nxpix = 0
@@ -197,9 +197,9 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     private[calculator] var xforward = false
     private[calculator] var zforward = false
     private[calculator] var xyscale = .0
-    private[calculator] var v5: geometry.Vector2 = null
-    private var quad: Polygon = null
-    private var tri: Polygon = null
+    //private[calculator] var v5: Vector2 = null
+    //private var quad: Polygon = null
+    //private var tri: Polygon = null
 
     init()
 
@@ -213,17 +213,17 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       v(1) = new Array[geometry.Vector2](21)
       var i = 0
       while ( i < 21 ) {
-        v(0)(i) = new geometry.Vector2
-        v(1)(i) = new geometry.Vector2
+        v(0)(i) = Vector2(0,0)
+        v(1)(i) = Vector2(0,0)
         i = i+1
       }
 
       eye = new Vector3(3D, 0.5D, 1.0D)
       direct = new Vector3(2.5D, 0.5D, 0.5D)
       Q = Matrix44.zero
-      v5 = new geometry.Vector2
-      quad = new Polygon(new Array[Int](4), new Array[Int](4), 4)
-      tri = new Polygon(new Array[Int](3), new Array[Int](3), 3)
+      //v5 = Vector2(0,0)
+      //quad = new Polygon(new Array[Int](4), new Array[Int](4), 4)
+      //tri = new Polygon(new Array[Int](3), new Array[Int](3), 3)
       setBackground(Color.white)
 
       addMouseListener(new MouseAdapter() {
@@ -364,17 +364,17 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     private[calculator] def cz(i: Int) = if (zforward) i else -i
 
     private[calculator] def drawIt(drawing: Drawing) = {
-      val vector2 = new geometry.Vector2
-      val vector2_1 = new geometry.Vector2
-      val vector3 = new Vector3(0.0D, 0.0D, 0.0D)
-      f3d2d(vector3, vector2)
-      var vector3_1 = new Vector3(1.0D, 0.0D, 0.0D)
-      f3d2d(vector3_1, vector2_1)
-      xforward = vector2.y >= vector2_1.y
-      vector3_1 = new Vector3(0.0D, 0.0D, 1.0D)
-      f3d2d(vector3_1, vector2_1)
-      zforward = vector2.y >= vector2_1.y
+
+      val v2 = f3d2d(new Vector3(0, 0, 0))
+
+      val vector2_1 = f3d2d(new Vector3(1, 0, 0))
+      xforward = v2.y >= vector2_1.y
+
+      val vector2_2 = f3d2d(new Vector3(0, 0, 1))
+      zforward = v2.y >= vector2_2.y
+
       drawBackAxes(drawing, xforward, zforward)
+
       var d2 = -0.5D
       var d3 = 0.5D
       //byte byte0 = 20;
@@ -400,8 +400,12 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       var i = -10
       while ( i <= 10 ) {
         val d5 = M(10 + cx(i))(10 + cz(-10))
-        v(0)(10 + i).x = Q(0,0) * d + Q(0,1) * d5 + Q(0,2) * d7
-        v(0)(10 + i).y = Q(1,0) * d + Q(1,1) * d5 + Q(1,2) * d7
+
+        v(0)(10 + i) = Vector2(
+          Q(0,0) * d + Q(0,1) * d5 + Q(0,2) * d7,
+          Q(1,0) * d + Q(1,1) * d5 + Q(1,2) * d7
+        )
+
         d += d4
         i = i+1
       }
@@ -415,8 +419,12 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
         var j = -10
         while ( j <= 10 ) {
           val d6 = M(10 + cx(j))(10 + cz(i1))
-          v(1)(10 + j).x = Q(0,0) * d1 + Q(0,1) * d6 + Q(0,2) * d7
-          v(1)(10 + j).y = Q(1,0) * d1 + Q(1,1) * d6 + Q(1,2) * d7
+
+          v(1)(10 + j) = Vector2(
+            Q(0,0) * d1 + Q(0,1) * d6 + Q(0,2) * d7,
+            Q(1,0) * d1 + Q(1,1) * d6 + Q(1,2) * d7
+          )
+
           d1 += d4
           j = j+1
         }
@@ -433,8 +441,12 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
 
         var l = -10
         while ( l <= 10 ) {
-          v(0)(10 + l).x = v(1)(10 + l).x
-          v(0)(10 + l).y = v(1)(10 + l).y
+
+          v(0)(10 + l) = Vector2(
+            v(1)(10 + l).x,
+            v(1)(10 + l).y
+          )
+
           l = l+1
         }
         i1 = i1+1
@@ -442,11 +454,11 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       drawFrontAxes(drawing, xforward, zforward)
     }
 
-    //XXX make it return Vector2
-    private def f3d2d(vector3: Vector3, vector2: geometry.Vector2) = {
-      vector2.x = Q(0,0) * vector3.x + Q(0,1) * vector3.y + Q(0,2) * vector3.z
-      vector2.y = Q(1,0) * vector3.x + Q(1,1) * vector3.y + Q(1,2) * vector3.z
-    }
+    private def f3d2d(v: Vector3): Vector2 =
+      Vector2(
+        Q(0,0) * v.x + Q(0,1) * v.y + Q(0,2) * v.z,
+        Q(1,0) * v.x + Q(1,1) * v.y + Q(1,2) * v.z
+      )
 
     //XXX Make it return Point
     private def f3dPix(d: Double, d1: Double, d2: Double, point: Point) = {
@@ -499,66 +511,79 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       doubleBuffer.onScreen()
     }
 
-    private[calculator] def patch(drawing: Drawing, vector2: geometry.Vector2, vector2_1: geometry.Vector2, vector2_2: geometry.Vector2, vector2_3: geometry.Vector2): Unit = {
+    private[calculator] def patch(drawing: Drawing, a: Vector2, b: Vector2, c: Vector2, d: Vector2): Unit = {
       //XXX vector methods
 
-      var d = (vector2_1.x - vector2.x) * (vector2_3.y - vector2_2.y) - (vector2_1.y - vector2.y) * (vector2_3.x - vector2_2.x)
+      var something = (b.x - a.x) * (d.y - c.y) - (b.y - a.y) * (d.x - c.x)
 
-      if (Math.abs(d) > 0.0001D) {
-        val d1 = ((vector2_2.x - vector2.x) * (vector2_3.y - vector2_2.y) - (vector2_2.y - vector2.y) * (vector2_3.x - vector2_2.x)) / d
+      if (Math.abs(something) > 0.0001D) {
+        val d1 = ((c.x - a.x) * (d.y - c.y) - (c.y - a.y) * (d.x - c.x)) / something
         if (d1 >= 0.0D && d1 <= 1.0D) {
-          v5.x = (1.0D - d1) * vector2.x + d1 * vector2_1.x
-          v5.y = (1.0D - d1) * vector2.y + d1 * vector2_1.y
-          triangle(drawing, vector2, vector2_2, v5)
-          triangle(drawing, vector2_1, vector2_3, v5)
+          val v5 = Vector2(
+            (1 - d1) * a.x + d1 * b.x,
+            (1 - d1) * a.y + d1 * b.y
+          )
+          triangle(drawing, a, c, v5)
+          triangle(drawing, b, d, v5)
           return
         }
-        d = (vector2_2.x - vector2.x) * (vector2_3.y - vector2_1.y) - (vector2_2.y - vector2.y) * (vector2_3.x - vector2_1.x)
-        if (Math.abs(d) > 0.0001D) {
-          val d2 = ((vector2_1.x - vector2.x) * (vector2_3.y - vector2_1.y) - (vector2_1.y - vector2.y) * (vector2_3.x - vector2_1.x)) / d
+        something = (c.x - a.x) * (d.y - b.y) - (c.y - a.y) * (d.x - b.x)
+        if (Math.abs(something) > 0.0001D) {
+          val d2 = ((b.x - a.x) * (d.y - b.y) - (b.y - a.y) * (d.x - b.x)) / something
           if (d2 >= 0.0D && d2 <= 1.0D) {
-            v5.x = (1.0D - d2) * vector2.x + d2 * vector2_2.x
-            v5.y = (1.0D - d2) * vector2.y + d2 * vector2_2.y
-            triangle(drawing, vector2, vector2_1, v5)
-            triangle(drawing, vector2_2, vector2_3, v5)
+            val v5 = Vector2(
+              (1 - d2) * a.x + d2 * c.x,
+              (1.0D - d2) * a.y + d2 * c.y
+            )
+            triangle(drawing, a, b, v5)
+            triangle(drawing, c, d, v5)
             return
           }
           else {
-            quadrilateral(drawing, vector2, vector2_1, vector2_3, vector2_2)
+            quadrilateral(drawing, a, b, d, c)
             return
           }
         }
         else {
-          quadrilateral(drawing, vector2, vector2_1, vector2_3, vector2_2)
+          quadrilateral(drawing, a, b, d, c)
           return
         }
       }
 
-      d = (vector2_2.x - vector2.x) * (vector2_3.y - vector2_1.y) - (vector2_2.y - vector2.y) * (vector2_3.x - vector2_1.x)
-      if (Math.abs(d) > 0.0001D) {
-        val d3 = ((vector2_1.x - vector2.x) * (vector2_3.y - vector2_1.y) - (vector2_1.y - vector2.y) * (vector2_3.x - vector2_1.x)) / d
-        if (d3 >= 0.0D && d3 <= 1.0D) {
-          v5.x = (1.0D - d3) * vector2.x + d3 * vector2_2.x
-          v5.y = (1.0D - d3) * vector2.y + d3 * vector2_2.y
-          triangle(drawing, vector2, vector2_1, v5)
-          triangle(drawing, vector2_2, vector2_3, v5)
+      something = (c.x - a.x) * (d.y - b.y) - (c.y - a.y) * (d.x - b.x)
+      if (Math.abs(something) > 0.0001D) {
+        val d3 = ((b.x - a.x) * (d.y - b.y) - (b.y - a.y) * (d.x - b.x)) / something
+        if (0 <= d3 && d3 <= 1) {
+          val v5 = Vector2(
+            (1 - d3) * a.x + d3 * c.x,
+            (1 - d3) * a.y + d3 * c.y
+          )
+          triangle(drawing, a, b, v5)
+          triangle(drawing, c, d, v5)
         }
         else
-          quadrilateral(drawing, vector2, vector2_1, vector2_3, vector2_2)
+          quadrilateral(drawing, a, b, d, c)
       }
       else
-        quadrilateral(drawing, vector2, vector2_1, vector2_3, vector2_2)
+        quadrilateral(drawing, a, b, d, c)
     }
 
-    private[calculator] def quadrilateral(drawing: Drawing, vector2: geometry.Vector2, vector2_1: geometry.Vector2, vector2_2: geometry.Vector2, vector2_3: geometry.Vector2) = {
-      quad.xpoints(0) = fx(vector2.x)
-      quad.xpoints(1) = fx(vector2_1.x)
-      quad.xpoints(2) = fx(vector2_2.x)
-      quad.xpoints(3) = fx(vector2_3.x)
-      quad.ypoints(0) = fy(vector2.y)
-      quad.ypoints(1) = fy(vector2_1.y)
-      quad.ypoints(2) = fy(vector2_2.y)
-      quad.ypoints(3) = fy(vector2_3.y)
+    private[calculator] def quadrilateral(drawing: Drawing, a: Vector2, b: Vector2, c: Vector2, d: Vector2) = {
+      val quad = new Polygon
+      quad.addPoint(fx(a.x), fy(a.y))
+      quad.addPoint(fx(b.x), fy(b.y))
+      quad.addPoint(fx(c.x), fy(c.y))
+      quad.addPoint(fx(d.x), fy(d.y))
+      /*
+      quad.xpoints(0) = fx(a.x)
+      quad.xpoints(1) = fx(b.x)
+      quad.xpoints(2) = fx(c.x)
+      quad.xpoints(3) = fx(d.x)
+      quad.ypoints(0) = fy(a.y)
+      quad.ypoints(1) = fy(b.y)
+      quad.ypoints(2) = fy(c.y)
+      quad.ypoints(3) = fy(d.y)
+      */
       drawing.fillPolygon(quad, Color.lightGray)
       drawing.graphics.drawPolygon(quad)
     }
@@ -574,15 +599,21 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       Q = Q.postRot('y', -d)
     }
 
-    private[calculator] def triangle(drawing: Drawing, vector2: geometry.Vector2, vector2_1: geometry.Vector2, vector2_2: geometry.Vector2) = {
-      tri.xpoints(0) = fx(vector2.x)
-      tri.xpoints(1) = fx(vector2_1.x)
-      tri.xpoints(2) = fx(vector2_2.x)
-      tri.ypoints(0) = fy(vector2.y)
-      tri.ypoints(1) = fy(vector2_1.y)
-      tri.ypoints(2) = fy(vector2_2.y)
-      drawing.fillPolygon(tri, Color.lightGray)
-      drawing.graphics.drawPolygon(tri)
+    private[calculator] def triangle(drawing: Drawing, a: Vector2, b: Vector2, c: Vector2) = {
+      val triangle = new Polygon
+      triangle.addPoint(fx(a.x), fy(a.y))
+      triangle.addPoint(fx(b.x), fy(b.y))
+      triangle.addPoint(fx(c.x), fy(c.y))
+      /*
+      triangle.xpoints(0) = fx(a.x)
+      triangle.xpoints(1) = fx(b.x)
+      triangle.xpoints(2) = fx(c.x)
+      triangle.ypoints(0) = fy(a.y)
+      triangle.ypoints(1) = fy(b.y)
+      triangle.ypoints(2) = fy(c.y)
+      */
+      drawing.fillPolygon(triangle, Color.lightGray)
+      drawing.graphics.drawPolygon(triangle)
     }
 
     override def update(g: Graphics): Unit = paint(g)
