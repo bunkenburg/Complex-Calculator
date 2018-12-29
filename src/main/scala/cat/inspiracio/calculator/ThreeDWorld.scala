@@ -100,7 +100,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     if (f == null)
       f = new SyntaxTreeConstant(0)
 
-    val step: Double = square.getSide / 2.0 / 10.0
+    val step: Double = square.side / 2.0 / 10.0
     val center: Complex = square.center
 
     // Find all |f(z)|

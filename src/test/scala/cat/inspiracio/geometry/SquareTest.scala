@@ -20,28 +20,36 @@ package cat.inspiracio.geometry
 import cat.inspiracio.complex._
 import org.scalatest.FunSuite
 
-class CircleTest extends FunSuite {
+class SquareTest extends FunSuite {
 
-  test("Circle(0, 1)"){
-    val c = Circle(0, 1)
+  test("Square(0, 1+i)"){
+    val c = Square(0, 1+i)
     assert( c.center === 0 )
-    assert( c.radius === 1 )
+    assert( c.side === 2 )
     assert( c.top === 1 )
     assert( c.bottom === -1 )
     assert( c.left === -1 )
     assert( c.right === +1 )
-    assert( c.toString === "Circle(0, radius = 1.0 )" )
   }
 
-  test("Circle(3+i, π)"){
-    val c = Circle(3+i, π)
+  test("Square(3+i, π)"){
+    val c = Square(3+i, π)
     assert( c.center === 3+i )
-    assert( c.radius === 1.0099744945049844 )
-    assert( c.top === 2.009974494504984 )
-    assert( c.bottom === -0.009974494504984444 )
-    assert( c.left === 1.9900255054950156 )
-    assert( c.right === 4.009974494504984 )
-    assert( c.toString === "Circle(3+i, radius = 1.0099744945049844 )" )
+    assert( c.side === 1.1415926535897931 )
+    assert( c.top === 1.5707963267948966 )
+    assert( c.bottom === 0.42920367320510344 )
+    assert( c.left === 2.4292036732051034 )
+    assert( c.right === 3.57079632679489664 )
+  }
+
+  test("Square(0, 1+i).toString"){
+    val c = Square(0, 1+i)
+    assert( c.toString === "Square(0, radius = 1.0 )" )
+  }
+
+  test("Square(3+i, π).toString"){
+    val c = Square(3+i, π)
+    assert( c.toString === "Square(3+i, radius = 0.5707963267948966 )" )
   }
 
 }

@@ -80,4 +80,6 @@ class Circle private (val c: Complex, val r: Double) extends Piclet {
     }
   }
 
+  override def toString: String = s"Circle($center, radius = $radius )"
+
 }

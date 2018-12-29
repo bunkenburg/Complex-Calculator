@@ -25,6 +25,9 @@ import cat.inspiracio.complex._
 
 object Square {
 
+    /** Makes a square.
+      * @param center of the square
+      * @param corner if this can be a corner to this center, otherwise approximate */
     def apply(center: Complex, corner: Complex): Square = {
         val width = abs( Re(center) - Re(corner) )
         val height = abs( Im(center) - Im(corner) )
@@ -35,8 +38,10 @@ object Square {
 }
 
 /** A square with c at the centre and side length 2*radius. */
-class Square(center: Complex, radius: Double) extends Rectangle(center, center + radius + radius*i ) {
+class Square private (center: Complex, radius: Double) extends Rectangle(center, center + radius + radius*i ) {
 
-    def getSide: Double = abs( Re(botLeft) - Re(botRight) )
+    def side: Double = abs( Re(botLeft) - Re(botRight) )
+
+    override def toString: String = s"Square($center, radius = $radius )"
 
 }
