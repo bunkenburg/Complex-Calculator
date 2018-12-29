@@ -33,12 +33,7 @@
  * */
 package cat.inspiracio.geometry
 
-/** 2d vector.
-  * XXX Make it immutable, with operators. */
-object Vector2{
-
-}
-
+/** 2d vector. */
 case class Vector2(val x: Double, val y: Double) {
 
   override def toString: String = "(" + x + ", " + y + ")"

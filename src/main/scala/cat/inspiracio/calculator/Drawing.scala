@@ -98,6 +98,9 @@ final class Drawing private[calculator](var g: Graphics) {
     pen.y = y
   }
 
+  /** line to (x,y) */
+  private[calculator] def lineTo(p: Point): Unit = lineTo(p.x, p.y)
+
   /** move pen by (x,y) */
   private[calculator] def move(x: Int, y: Int) = pen.translate(x, y)
 
@@ -105,6 +108,12 @@ final class Drawing private[calculator](var g: Graphics) {
   private[calculator] def moveTo(x: Int, y: Int) = {
     pen.x = x
     pen.y = y
+  }
+
+  /** move pen to (x,y) */
+  private[calculator] def moveTo(p : Point) = {
+    pen.x = p.x
+    pen.y = p.y
   }
 
   /** Makes a triangle.

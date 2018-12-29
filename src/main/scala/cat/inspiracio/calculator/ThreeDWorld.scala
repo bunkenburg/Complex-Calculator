@@ -59,6 +59,8 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
   private var canvas: ThreeDCanvas = null
   private var square: Square = null
   private var f: SyntaxTree = null
+
+  //XXX improve
   private[calculator] var M: Array[Array[Double]] = null
 
   init()
@@ -165,7 +167,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     }
   }
 
-  private[calculator] def squareChange(sq: Square) = {
+  private[calculator] def change(sq: Square) = {
     square = sq
     setNeighbourhood()
     canvas.paint(canvas.getGraphics)
@@ -188,7 +190,10 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     private var FONT_HEIGHT = 0
     private var prevx = 0
     private var prevy = 0
-    private[calculator] var v: Array[Array[Vector2]] = null
+
+    /** What are these? */
+    private[calculator] var vs: Array[Array[Vector2]] = null
+
     private[calculator] var eye: Vector3 = null
     private[calculator] var direct: Vector3 = null
     private[calculator] var nxpix = 0
@@ -197,9 +202,6 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     private[calculator] var xforward = false
     private[calculator] var zforward = false
     private[calculator] var xyscale = .0
-    //private[calculator] var v5: Vector2 = null
-    //private var quad: Polygon = null
-    //private var tri: Polygon = null
 
     init()
 
@@ -208,22 +210,19 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     private def init()= {
       FONT_HEIGHT = 12
 
-      v = new Array[Array[geometry.Vector2]](2)
-      v(0) = new Array[geometry.Vector2](21)
-      v(1) = new Array[geometry.Vector2](21)
+      vs = new Array[Array[Vector2]](2)
+      vs(0) = new Array[Vector2](21)
+      vs(1) = new Array[Vector2](21)
       var i = 0
       while ( i < 21 ) {
-        v(0)(i) = Vector2(0,0)
-        v(1)(i) = Vector2(0,0)
+        vs(0)(i) = Vector2(0,0)
+        vs(1)(i) = Vector2(0,0)
         i = i+1
       }
 
       eye = new Vector3(3D, 0.5D, 1.0D)
       direct = new Vector3(2.5D, 0.5D, 0.5D)
       Q = Matrix44.zero
-      //v5 = Vector2(0,0)
-      //quad = new Polygon(new Array[Int](4), new Array[Int](4), 4)
-      //tri = new Polygon(new Array[Int](3), new Array[Int](3), 3)
       setBackground(Color.white)
 
       addMouseListener(new MouseAdapter() {
@@ -401,7 +400,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       while ( i <= 10 ) {
         val d5 = M(10 + cx(i))(10 + cz(-10))
 
-        v(0)(10 + i) = Vector2(
+        vs(0)(10 + i) = Vector2(
           Q(0,0) * d + Q(0,1) * d5 + Q(0,2) * d7,
           Q(1,0) * d + Q(1,1) * d5 + Q(1,2) * d7
         )
@@ -420,7 +419,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
         while ( j <= 10 ) {
           val d6 = M(10 + cx(j))(10 + cz(i1))
 
-          v(1)(10 + j) = Vector2(
+          vs(1)(10 + j) = Vector2(
             Q(0,0) * d1 + Q(0,1) * d6 + Q(0,2) * d7,
             Q(1,0) * d1 + Q(1,1) * d6 + Q(1,2) * d7
           )
@@ -435,16 +434,16 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
             drawModAxis(drawing)
             drawImaginaryAxis(drawing)
           }
-          patch(drawing, v(0)(10 + k), v(0)(10 + k + 1), v(1)(10 + k), v(1)(10 + k + 1))
+          patch(drawing, vs(0)(10 + k), vs(0)(10 + k + 1), vs(1)(10 + k), vs(1)(10 + k + 1))
           k += 1
         }
 
         var l = -10
         while ( l <= 10 ) {
 
-          v(0)(10 + l) = Vector2(
-            v(1)(10 + l).x,
-            v(1)(10 + l).y
+          vs(0)(10 + l) = Vector2(
+            vs(1)(10 + l).x,
+            vs(1)(10 + l).y
           )
 
           l = l+1
@@ -460,11 +459,11 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
         Q(1,0) * v.x + Q(1,1) * v.y + Q(1,2) * v.z
       )
 
-    //XXX Make it return Point
-    private def f3dPix(d: Double, d1: Double, d2: Double, point: Point) = {
-      point.x = fx(Q(0,0) * d + Q(0,1) * d1 + Q(0,2) * d2)
-      point.y = fy(Q(1,0) * d + Q(1,1) * d1 + Q(1,2) * d2)
-    }
+    private def f3dPix(d: Double, d1: Double, d2: Double): Point =
+      new Point(
+        fx(Q(0,0) * d + Q(0,1) * d1 + Q(0,2) * d2),
+        fy(Q(1,0) * d + Q(1,1) * d1 + Q(1,2) * d2)
+      )
 
     private[calculator] def angle(d: Double, d1: Double): Double = Math.atan2(d1, d)
 
@@ -488,17 +487,11 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       Q = Q.postRot('y', π/2)
     }
 
-    private[calculator] def lineTo3(drawing: Drawing, d: Double, d1: Double, d2: Double) = {
-      val point = new Point
-      f3dPix(d, d1, d2, point)
-      drawing.lineTo(point.x, point.y)
-    }
+    private[calculator] def lineTo3(drawing: Drawing, d: Double, d1: Double, d2: Double) =
+      drawing.lineTo(f3dPix(d, d1, d2 ))
 
-    private[calculator] def moveTo3(drawing: Drawing, d: Double, d1: Double, d2: Double) = {
-      val point = new Point
-      f3dPix(d, d1, d2, point)
-      drawing.moveTo(point.x, point.y)
-    }
+    private[calculator] def moveTo3(drawing: Drawing, d: Double, d1: Double, d2: Double) =
+      drawing.moveTo(f3dPix(d, d1, d2 ))
 
     override def paint(g0: Graphics): Unit = {
       val size: Dimension = getSize
@@ -512,7 +505,6 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     }
 
     private[calculator] def patch(drawing: Drawing, a: Vector2, b: Vector2, c: Vector2, d: Vector2): Unit = {
-      //XXX vector methods
 
       var something = (b.x - a.x) * (d.y - c.y) - (b.y - a.y) * (d.x - c.x)
 
@@ -574,16 +566,6 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       quad.addPoint(fx(b.x), fy(b.y))
       quad.addPoint(fx(c.x), fy(c.y))
       quad.addPoint(fx(d.x), fy(d.y))
-      /*
-      quad.xpoints(0) = fx(a.x)
-      quad.xpoints(1) = fx(b.x)
-      quad.xpoints(2) = fx(c.x)
-      quad.xpoints(3) = fx(d.x)
-      quad.ypoints(0) = fy(a.y)
-      quad.ypoints(1) = fy(b.y)
-      quad.ypoints(2) = fy(c.y)
-      quad.ypoints(3) = fy(d.y)
-      */
       drawing.fillPolygon(quad, Color.lightGray)
       drawing.graphics.drawPolygon(quad)
     }
@@ -604,14 +586,6 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       triangle.addPoint(fx(a.x), fy(a.y))
       triangle.addPoint(fx(b.x), fy(b.y))
       triangle.addPoint(fx(c.x), fy(c.y))
-      /*
-      triangle.xpoints(0) = fx(a.x)
-      triangle.xpoints(1) = fx(b.x)
-      triangle.xpoints(2) = fx(c.x)
-      triangle.ypoints(0) = fy(a.y)
-      triangle.ypoints(1) = fy(b.y)
-      triangle.ypoints(2) = fy(c.y)
-      */
       drawing.fillPolygon(triangle, Color.lightGray)
       drawing.graphics.drawPolygon(triangle)
     }

@@ -143,7 +143,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
             end = ec5
             square = new Square(start, end)
             if (mode eq FZ) addCurrent(square)
-            else if (mode eq MODFZ) modfzW.squareChange(square)
+            else if (mode eq MODFZ) modfzW.change(square)
             canvas.paint(canvas.getGraphics)
             return
           }
@@ -207,7 +207,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
             if (mode == FZ)
               add(square)
             else if (mode == MODFZ)
-              modfzW.squareChange(square)
+              modfzW.change(square)
             updateExtremes(square)
             canvas.paint(canvas.getGraphics)
           }
@@ -293,7 +293,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
             end = ec5
             square = new Square(start, end)
             if (mode eq FZ) addCurrent(square)
-            else if (mode eq MODFZ) modfzW.squareChange(square)
+            else if (mode eq MODFZ) modfzW.change(square)
             canvas.paint(canvas.getGraphics)
             return
           }
