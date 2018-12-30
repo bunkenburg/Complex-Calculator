@@ -38,7 +38,7 @@ import java.awt.event._
 import cat.inspiracio.calculator.Interaction.MOVE
 import cat.inspiracio.complex.Complex
 import cat.inspiracio.geometry.{Freeline,Piclet}
-import cat.inspiracio.numbers.{ECList, PicletList}
+import cat.inspiracio.numbers._
 import cat.inspiracio.parsing.SyntaxTree
 
 final class FzWorld private[calculator](override val calculator: Calculator) extends World(calculator) {
@@ -49,7 +49,10 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
 
   //State --------------------------------------------------------------------
 
-  private var current: ECList = null
+  /** During dragging, the sampled points of the free line.
+    * Otherwise null. */
+  private var zs: List[Complex] = null
+
   private var piclets: PicletList = null
   private var f: SyntaxTree = null
 
@@ -68,12 +71,12 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
       }
 
       override def mouseReleased(mouseevent: MouseEvent): Unit = {
-        val i = mouseevent.getX
-        val j = mouseevent.getY
-        canvas.shift(prevx - i, prevy - j)
+        val x = mouseevent.getX
+        val y = mouseevent.getY
+        canvas.shift(prevx - x, prevy - y)
         canvas.paint(canvas.getGraphics)
-        prevx = i
-        prevy = j
+        prevx = x
+        prevy = y
         mouseevent.consume()
       }
 
@@ -82,12 +85,12 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
     val motion: MouseMotionAdapter = new MouseMotionAdapter() {
 
       override def mouseDragged(mouseevent: MouseEvent): Unit = {
-        val i = mouseevent.getX
-        val j = mouseevent.getY
-        canvas.shift(prevx - i, prevy - j)
+        val x = mouseevent.getX
+        val y = mouseevent.getY
+        canvas.shift(prevx - x, prevy - y)
         canvas.paint(canvas.getGraphics)
-        prevx = i
-        prevy = j
+        prevx = x
+        prevy = y
         mouseevent.consume()
       }
 
@@ -106,7 +109,11 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
   override private[calculator] def add(c: Complex) = if (f != null) {
     try {
       val z = f.evaluate(c)
-      current = new ECList(z, current)
+
+      if(zs == null)
+        zs = Nil
+      zs = z :: zs
+
       updateExtremes(z)
     } catch {
       case _ex: Exception =>
@@ -115,19 +122,22 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
   }
 
   private[calculator] def add(piclet: Piclet) = if (f != null) {
-    resetArg()
+    Complex.resetArg()
     var samples = piclet.getSamples
-    current = null
+
+    zs = Nil
     while ( samples != null ) {
-      try {
-        val z = samples.head
-        val c = f.evaluate(z)
-        updateExtremes(c)
-        current = new ECList(c, current)
-      } catch {
-        case _ex: Exception =>
+
+      samples.foreach{ z =>
+        try {
+          val fz = f.evaluate(z)
+          updateExtremes(fz)
+          zs = fz :: zs
+        } catch {
+          case _ex: Exception =>
+        }
       }
-      samples = samples.tail
+
     }
     stopDynamicMap()
     canvas.repaint()
@@ -143,33 +153,38 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
 
   private[calculator] def addCurrent(piclet: Piclet) =
     if (f != null) {
-      resetArg()
-      current = null
+      Complex.resetArg()
+      zs = Nil
       var samples = piclet.getSamples
-      while ( samples != null ) {
-      try {
-        val z = samples.head
-        val c = f.evaluate(z)
-        current = new ECList(c, current)
-      } catch {
-        case _ex: Exception =>
+
+      if ( samples != null ) {
+
+        samples.foreach{ z =>
+          try {
+            val fz = f.evaluate(z)
+            zs = fz :: zs
+          } catch {
+            case _ex: Exception =>
+          }
+        }
+
       }
-      samples = samples.tail
-    }
     canvas.paint(canvas.getGraphics)
   }
 
   override final private[calculator] def drawStuff(drawing: Drawing) = {
-    if (current != null) canvas.drawECList(drawing, current)
+    if (zs != null)
+      canvas.draw(drawing, zs)
+
     var ps = piclets
     while ( ps != null ) {
-      canvas.drawPiclet(drawing, ps.head)
+      canvas.draw(drawing, ps.head)
       ps = ps.tail
     }
   }
 
   override private[calculator] def erase() = {
-    current = null
+    zs = null
     piclets = null
     resetExtremes()
     canvas.repaint()
@@ -184,7 +199,7 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
   private[calculator] def setzWorld(zworld: ZWorld) = zW = zworld
 
   private[calculator] def stopDynamicMap() = {
-    piclets = new PicletList(Freeline(current), piclets)
-    current = null
+    piclets = new PicletList(Freeline(zs), piclets)
+    zs = null
   }
 }

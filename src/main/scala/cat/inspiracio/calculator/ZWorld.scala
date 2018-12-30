@@ -46,14 +46,18 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
   //State ------------------------------------------------
 
-  private var interactionChoice: JComboBox[String] = null
-  private var eraseButton: JButton = null
+  private var interactionChoice: JComboBox[String] = new JComboBox[String]
+  private var eraseButton: JButton = new JButton("Clear")
   private var mode: Mode = null
   private var fzW: FzWorld = null
   private var modfzW: ThreeDWorld = null
-  private var current: ECList = null
+
+  /** During dragging of a free line, the points, otherwise null. */
+  private var zs: List[Complex] = Nil
+
   private var start: Complex = null
   private var end: Complex = null
+
   private var currentPiclet: Piclet = null
   private var piclets: PicletList = null
   private var square = Square(0, 1+i)
@@ -66,12 +70,10 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
     setTitle("z World")
 
-    eraseButton = new JButton("Clear")
     eraseButton.addActionListener((e: ActionEvent) => erase())
     buttonPanel.add(eraseButton)
 
     interaction = DRAW
-    interactionChoice = new JComboBox[String]
     interactionChoice.addItem("Move")
     interactionChoice.addItem("Square")
     interactionChoice.addItemListener( e => {
@@ -92,107 +94,120 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           prevy = mouseevent.getY
           mouseevent.consume()
 
-        case DRAW =>
-          val ec = canvas.Point2Complex(mouseevent.getPoint)
-          if (ec != null) {
-            resetArg()
-            add(ec)
+        case DRAW => {
+          val z = canvas.point2Complex(mouseevent.getPoint)
+          if (z != null) {
+            Complex.resetArg()
+            add(z)
             canvas.paint(canvas.getGraphics)
           }
+        }
 
-        case GRID =>
-          val ec1 = canvas.Point2Complex(mouseevent.getPoint)
-          if (ec1 != null) {
-            start = ec1
-            end = ec1
+        case GRID => {
+          val z = canvas.point2Complex(mouseevent.getPoint)
+          if (z != null) {
+            start = z
+            end = z
             addCurrent(Rectangle(start, end))
             canvas.paint(canvas.getGraphics)
           }
+        }
 
-        case LINE =>
-          val ec2 = canvas.Point2Complex(mouseevent.getPoint)
-          if (ec2 != null) {
-            start = ec2
-            end = ec2
-            addCurrent(new Line(start, end))
+        case LINE => {
+          val z = canvas.point2Complex(mouseevent.getPoint)
+          if (z != null) {
+            start = z
+            end = z
+            addCurrent(Line(start, end))
             canvas.paint(canvas.getGraphics)
           }
+        }
 
-        case CIRCLE =>
-          val ec3 = canvas.Point2Complex(mouseevent.getPoint)
-          if (ec3 != null) {
-            start = ec3
-            end = ec3
+        case CIRCLE => {
+          val z = canvas.point2Complex(mouseevent.getPoint)
+          if (z != null) {
+            start = z
+            end = z
             addCurrent(Circle(start, end))
             canvas.paint(canvas.getGraphics)
           }
+        }
 
-        case RECTANGLE =>
-          val ec4 = canvas.Point2Complex(mouseevent.getPoint)
-          if (ec4 != null) {
-            start = ec4
-            end = ec4
+        case RECTANGLE => {
+          val z = canvas.point2Complex(mouseevent.getPoint)
+          if (z != null) {
+            start = z
+            end = z
             addCurrent(Rectangle(start, end))
             canvas.paint(canvas.getGraphics)
           }
+        }
 
-        case SQUARE =>
-          val ec5 = canvas.Point2Complex(mouseevent.getPoint)
-          if (ec5 != null) {
-            start = ec5
-            end = ec5
+        case SQUARE => {
+          val z = canvas.point2Complex(mouseevent.getPoint)
+          if (z != null) {
+            start = z
+            end = z
             square = Square(start, end)
-            if (mode eq FZ) addCurrent(square)
-            else if (mode eq MODFZ) modfzW.change(square)
+            if (mode == FZ)
+              addCurrent(square)
+            else if (mode == MODFZ)
+              modfzW.change(square)
             canvas.paint(canvas.getGraphics)
-            return
           }
+        }
 
       }//match
 
       override def mouseReleased(mouseevent: MouseEvent): Unit = interaction match {
 
         case MOVE =>
-          val i = mouseevent.getX
-          val j = mouseevent.getY
-          canvas.shift(prevx - i, prevy - j)
+          val x = mouseevent.getX
+          val y = mouseevent.getY
+          canvas.shift(prevx - x, prevy - y)
           repaint()
-          prevx = i
-          prevy = j
+          prevx = x
+          prevy = y
           mouseevent.consume()
 
-        case DRAW =>
-          if (current != null) {
-            val ec = canvas.Point2Complex(mouseevent.getPoint)
-            if (ec != null) add(ec)
-            piclets = new PicletList(Freeline(current), piclets)
-            current = null
+        case DRAW => {
+          if (zs != null) {
+            val z = canvas.point2Complex(mouseevent.getPoint)
+            if (z != null)
+              add(z)
+            piclets = new PicletList(Freeline(zs), piclets)
+            zs = null   //mouse released => finish free line
             canvas.paint(canvas.getGraphics)
             fzW.stopDynamicMap()
           }
+        }
 
         case LINE =>
           if (start != null) {
-            val ec1 = canvas.Point2Complex(mouseevent.getPoint)
-            if (ec1 != null) end = ec1
-            add(new Line(start, end))
+            val z = canvas.point2Complex(mouseevent.getPoint)
+            if (z != null)
+              end = z
+            add(Line(start, end))
             canvas.paint(canvas.getGraphics)
           }
           eraseCurrent()
 
-        case CIRCLE =>
+        case CIRCLE => {
           if (start != null) {
-            val ec2 = canvas.Point2Complex(mouseevent.getPoint)
-            if (ec2 != null) end = ec2
+            val z = canvas.point2Complex(mouseevent.getPoint)
+            if (z != null)
+              end = z
             add(Circle(start, end))
             canvas.paint(canvas.getGraphics)
           }
           eraseCurrent()
+        }
 
         case RECTANGLE =>
           if (start != null) {
-            val ec3 = canvas.Point2Complex(mouseevent.getPoint)
-            if (ec3 != null) end = ec3
+            val z = canvas.point2Complex(mouseevent.getPoint)
+            if (z != null)
+              end = z
             add(Rectangle(start, end))
             canvas.paint(canvas.getGraphics)
           }
@@ -200,9 +215,9 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
         case SQUARE =>
           if (start != null) {
-            val ec4 = canvas.Point2Complex(mouseevent.getPoint)
-            if (ec4 != null)
-              end = ec4
+            val z = canvas.point2Complex(mouseevent.getPoint)
+            if (z != null)
+              end = z
             square = Square(start, end)
             if (mode == FZ)
               add(square)
@@ -215,8 +230,9 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
         case GRID =>
           if (start != null) {
-            val ec5 = canvas.Point2Complex(mouseevent.getPoint)
-            if (ec5 != null) end = ec5
+            val z = canvas.point2Complex(mouseevent.getPoint)
+            if (z != null)
+              end = z
             addGrid(Rectangle(start, end))
             canvas.paint(canvas.getGraphics)
           }
@@ -229,74 +245,83 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
     val mousemotionadapter: MouseMotionAdapter = new MouseMotionAdapter() {
 
       override def mouseDragged(mouseevent: MouseEvent): Unit = interaction match {
-        case MOVE =>
-          val i = mouseevent.getX
-          val j = mouseevent.getY
-          canvas.shift(prevx - i, prevy - j)
+        case MOVE => {
+          val x = mouseevent.getX
+          val y = mouseevent.getY
+          canvas.shift(prevx - x, prevy - y)
           canvas.paint(canvas.getGraphics)
-          prevx = i
-          prevy = j
+          prevx = x
+          prevy = y
           mouseevent.consume()
+        }
 
-        case DRAW =>
-          val ec = canvas.Point2Complex(mouseevent.getPoint)
-          if (current != null) {
-            if (ec != null) add(ec)
+        case DRAW => {
+          val z = canvas.point2Complex(mouseevent.getPoint)
+          if (zs != null) {
+            if (z != null)
+              add(z)
             else {
-              piclets = new PicletList(Freeline(current), piclets)
-              current = null
+              piclets = new PicletList(Freeline(zs), piclets)
+              zs = null
               fzW.stopDynamicMap()
             }
             canvas.paint(canvas.getGraphics)
           }
-          else if (ec != null) {
-            resetArg()
-            add(ec)
+          else if (z != null) {
+            Complex.resetArg()
+            add(z)
             canvas.paint(canvas.getGraphics)
           }
+        }
 
-        case CIRCLE =>
-          val ec1 = canvas.Point2Complex(mouseevent.getPoint)
-          if (ec1 != null) {
-            end = ec1
+        case CIRCLE => {
+          val z = canvas.point2Complex(mouseevent.getPoint)
+          if (z != null) {
+            end = z
             addCurrent(Circle(start, end))
             canvas.paint(canvas.getGraphics)
           }
+        }
 
-        case GRID =>
-          val ec2 = canvas.Point2Complex(mouseevent.getPoint)
-          if (ec2 != null) {
-            end = ec2
+        case GRID => {
+          val z = canvas.point2Complex(mouseevent.getPoint)
+          if (z != null) {
+            end = z
             addCurrent(Rectangle(start, end))
             canvas.paint(canvas.getGraphics)
           }
+        }
 
-        case LINE =>
-          val ec3 = canvas.Point2Complex(mouseevent.getPoint)
-          if (ec3 != null) {
-            end = ec3
-            addCurrent(new Line(start, end))
+        case LINE => {
+          val z = canvas.point2Complex(mouseevent.getPoint)
+          if (z != null) {
+            end = z
+            addCurrent(Line(start, end))
             canvas.paint(canvas.getGraphics)
           }
+        }
 
-        case RECTANGLE =>
-          val ec4 = canvas.Point2Complex(mouseevent.getPoint)
-          if (ec4 != null) {
-            end = ec4
+        case RECTANGLE => {
+          val z = canvas.point2Complex(mouseevent.getPoint)
+          if (z != null) {
+            end = z
             addCurrent(Rectangle(start, end))
             canvas.paint(canvas.getGraphics)
           }
+        }
 
-        case SQUARE =>
-          val ec5 = canvas.Point2Complex(mouseevent.getPoint)
-          if (ec5 != null) {
-            end = ec5
+        case SQUARE => {
+          val z = canvas.point2Complex(mouseevent.getPoint)
+          if (z != null) {
+            end = z
             square = Square(start, end)
-            if (mode eq FZ) addCurrent(square)
-            else if (mode eq MODFZ) modfzW.change(square)
+            if (mode == FZ)
+              addCurrent(square)
+            else if (mode == MODFZ)
+              modfzW.change(square)
             canvas.paint(canvas.getGraphics)
-            return
           }
+        }
 
       }//match
 
@@ -314,7 +339,9 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
       override private[calculator] def add(c: Complex) = {
         updateExtremes(c)
-        current = new ECList(c, current)
+        if(zs==null)
+          zs = Nil
+        zs = c :: zs
         fzW.add(c)
       }
 
@@ -340,26 +367,28 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
         var d7 = d1
         var i = 0
         while ( i <= 10 ) {
-          add(new Line(Cartesian(d6, d), Cartesian(d6, d1)))
+          add(Line(Cartesian(d6, d), Cartesian(d6, d1)))
           d6 += d4
-          add(new Line(Cartesian(d3, d7), Cartesian(d2, d7)))
+          add(Line(Cartesian(d3, d7), Cartesian(d2, d7)))
           d7 += d5
           i = i+1
         }
       }
 
       override private[calculator] def drawStuff(drawing: Drawing) = {
-        if (current != null)
-          canvas.drawECList(drawing, current)
+        if (zs != null)
+          canvas.draw(drawing, zs)
         if (currentPiclet != null)
-          canvas.drawPiclet(drawing, currentPiclet)
+          canvas.draw(drawing, currentPiclet)
+
         var picletlist = piclets
         while ( picletlist != null ) {
-          canvas.drawPiclet(drawing, picletlist.head)
+          canvas.draw(drawing, picletlist.head)
           picletlist = picletlist.tail
         }
+
         if (mode == MODFZ)
-          canvas.drawPiclet(drawing, square)
+          canvas.draw(drawing, square)
       }
 
       override private[calculator] def erase(): Unit = {
@@ -376,18 +405,15 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
       }
 
       private[calculator] def eraseCurrent() = {
-        current = null
+        zs = null
         currentPiclet = null
         start = null
         end = null
       }
 
       private[calculator] def getPiclets = piclets
-
       private[calculator] def getSquare = square
-
       private[calculator] def setfzWorld(w: FzWorld) = fzW = w
-
       private[calculator] def setmodfzWorld(w: ThreeDWorld) = modfzW = w
 
       private[calculator] def setMode(m: Mode) = {
@@ -396,14 +422,11 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
           case FZ =>
             eraseButton.setEnabled(true)
-            //interactionChoice.removeAll();
-            //keep interactionChoice.addItem("Move");
             interactionChoice.addItem("Draw")
             interactionChoice.addItem("Circle")
             interactionChoice.addItem("Line")
             interactionChoice.addItem("Grid")
             interactionChoice.addItem("Rectangle")
-            //keep interactionChoice.addItem("Square");
             interactionChoice.setSelectedItem("Draw")
             interaction = DRAW
 

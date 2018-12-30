@@ -33,17 +33,18 @@
  * */
 package cat.inspiracio.geometry
 
+import cat.inspiracio.complex.Complex
+
 // Referenced classes of package bunkenba.numbers:
 //            Piclet, ECList
-import cat.inspiracio.numbers.ECList
 
 object Freeline {
-  def apply(list: ECList): Freeline = new Freeline(list)
+  def apply(list: List[Complex]): Freeline = new Freeline(list)
 }
 
-class Freeline(val eclist: ECList) extends Piclet {
+class Freeline(val list: List[Complex]) extends Piclet {
 
-  samples = eclist
+  samples = list
 
   //Better: bounding rectangle
   override def top = 0

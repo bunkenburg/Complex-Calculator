@@ -36,7 +36,6 @@ package cat.inspiracio.geometry
 // Referenced classes of package bunkenba.numbers:
 //            Piclet, EC, ECList, PartialException
 import cat.inspiracio.complex._
-import cat.inspiracio.numbers.ECList
 
 object Circle {
 
@@ -75,7 +74,7 @@ class Circle private (val c: Complex, val r: Double) extends Piclet {
     var angle = 0.0D
     for ( i <- 0 to 30 ) {
       val z = Polar(r, angle)
-      samples = new ECList( c + z, samples)
+      samples = c+z :: samples
       angle += d
     }
   }

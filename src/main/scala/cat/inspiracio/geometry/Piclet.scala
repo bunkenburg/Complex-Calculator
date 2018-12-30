@@ -33,17 +33,17 @@
  * */
 package cat.inspiracio.geometry
 
-import cat.inspiracio.numbers.ECList
+import cat.inspiracio.complex._
 
 // Referenced classes of package bunkenba.numbers:
 //            ECList
 
 abstract class Piclet() {
 
-  protected var samples: ECList = null
+  protected var samples: List[Complex] = null
   protected def sample(): Unit
 
-  def getSamples: ECList = {
+  def getSamples: List[Complex] = {
     if (samples == null) sample()
     samples
   }

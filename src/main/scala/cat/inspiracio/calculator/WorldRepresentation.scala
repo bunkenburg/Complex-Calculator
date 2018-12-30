@@ -33,13 +33,10 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt._
+import java.awt.{Color,Dimension,Point}
 
-import cat.inspiracio.complex
 import cat.inspiracio.complex._
-import cat.inspiracio.complex.Complex
 import cat.inspiracio.geometry.Piclet
-import cat.inspiracio.numbers.ECList
 import javax.swing._
 
 // Referenced classes of package bunkenba.calculator:
@@ -47,39 +44,33 @@ import javax.swing._
 
 abstract class WorldRepresentation protected(var w: World) extends JComponent {
 
-  //State ---------------------------------------------------------
-
   setBackground(Color.white)
+
+  //State ---------------------------------------------------------
 
   protected var doubleBuffer: DoubleBuffer = new DoubleBuffer(this)
 
   //Methods ------------------------------------------------------
 
-  override def getSize: Dimension = super.getSize
-
-  private[calculator] def drawComplex(drawing: Drawing, ec: Complex)
-
-  private[calculator] def drawECList(drawing: Drawing, eclist: ECList)
-
-  private[calculator] def drawPiclet(drawing: Drawing, piclet: Piclet) = drawECList(drawing, piclet.getSamples)
+  private[calculator] def draw(drawing: Drawing, z: Complex)
+  private[calculator] def draw(drawing: Drawing, zs: List[Complex] )
+  private[calculator] def draw(drawing: Drawing, p: Piclet): Unit = draw(drawing, p.getSamples)
 
   override def getPreferredSize: Dimension = getMinimumSize
 
   /** Initial size wide enough so that the interaction menu is visible. */
   override def getMinimumSize: Dimension = new Dimension(550, 300)
 
-  private[calculator] def moveTo(drawing: Drawing, ec: Complex)
+  private[calculator] def moveTo(drawing: Drawing, z: Complex)
+  private[calculator] def lineTo(drawing: Drawing, z: Complex)
 
-  private[calculator] def lineTo(drawing: Drawing, ec: Complex)
-
-  private[calculator] def Point2Complex(point: Point): Complex
+  private[calculator] def point2Complex(p: Point): Complex
 
   private[calculator] def reset()
 
-  private[calculator] def shift(i: Int, j: Int)
+  private[calculator] def shift(x: Int, y: Int)
 
   private[calculator] def zoomIn()
-
   private[calculator] def zoomOut()
 
   // helpers -----------------------------------

@@ -33,11 +33,10 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt._
+import java.awt.{Dimension, Font, Graphics, Point}
 
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.{Matrix44, Vector3}
-import cat.inspiracio.numbers.ECList
 
 // Referenced classes of package bunkenba.calculator:
 //            WorldRepresentation, DoubleBuffer, Drawing, Matrix44,
@@ -59,10 +58,11 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
 
   //Methods ------------------------------------------------------
 
-  override private[calculator] def drawComplex(drawing: Drawing, z: Complex) = {
+  override private[calculator] def draw(drawing: Drawing, z: Complex) = {
     var d = .0
     var d1 = .0
     var d2 = .0
+
     if (finite(z)) {
       val a = abs(z)
       val d3 = sqr(a)
@@ -76,27 +76,33 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
       d1 = 0.5D
       d2 = 0.0D
     }
+
     val d4 = R(2,0) * d + R(2,1) * d1 + R(2,2) * d2 + R(2,3)
     if (d4 <= 0.0D) {
       val d6 = R(0,0) * d + R(0,1) * d1 + R(0,2) * d2 + R(0,3)
       val d7 = R(1,0) * d + R(1,1) * d1 + R(1,2) * d2 + R(1,3)
 
-      val x = (d6 * xyscale + getSize.width.toDouble * 0.5).toInt
-      val y = (-d7 * xyscale + getSize.height.toDouble * 0.5).toInt
+      val size: Dimension = getSize
+      val width = size.width
+      val height = size.height
+      val x = (d6 * xyscale + width.toDouble * 0.5).toInt
+      val y = (-d7 * xyscale + height.toDouble * 0.5).toInt
       drawing.cross( x, y, MARKLENGTH )
       drawing.move(2, -2)
       drawing.drawString(z.toString)
     }
   }
 
-  override private[calculator] def drawECList(drawing: Drawing, eclist: ECList) = {
+  override private[calculator] def draw(drawing: Drawing, eclist: List[Complex]) = {
     var list = eclist
     val point = new Point
-    if ( list != null ) {
+    if ( list != null && !list.isEmpty ) {
+
       var flag = isFrontC( list.head, point)
       drawing.moveTo(point.x, point.y)
-      while ( list != null ) {
-        if (isFrontC( list.head, point )) {
+
+      list.foreach{ z =>
+        if (isFrontC( z, point )) {
           if (flag)
             drawing.lineTo(point.x, point.y)
           else
@@ -105,8 +111,8 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
         }
         else
           flag = false
-        list = list.tail
       }
+
     }
   }
 
@@ -119,7 +125,8 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
       Cartesian(v.x / (0.5 - v.y), v.z / (0.5 - v.y))
   }
 
-  private def isFrontC(z: Complex, point: Point) = {
+  /** Also sets point (very bad style) */
+  private def isFrontC(z: Complex, point: Point): Boolean = {
     var d = .0
     var d1 = .0
     var d2 = .0
@@ -139,8 +146,11 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     if (d4 <= 0.0D) {
       val d6 = R(0,0) * d + R(0,1) * d1 + R(0,2) * d2 + R(0,3)
       val d7 = R(1,0) * d + R(1,1) * d1 + R(1,2) * d2 + R(1,3)
-      point.x = (d6 * xyscale + getSize.width.toDouble * 0.5D).toInt
-      point.y = (-d7 * xyscale + getSize.height.toDouble * 0.5D).toInt
+      val size: Dimension = getSize()
+      val width = size.width
+      val height = size.height
+      point.x = (d6 * xyscale + width.toDouble * 0.5).toInt
+      point.y = (-d7 * xyscale + height.toDouble * 0.5).toInt
       true
     }
     else false
@@ -166,7 +176,13 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     if (d4 <= 0.0D) {
       val d6 = R(0,0) * d + R(0,1) * d1 + R(0,2) * d2 + R(0,3)
       val d7 = R(1,0) * d + R(1,1) * d1 + R(1,2) * d2 + R(1,3)
-      drawing.lineTo((d6 * xyscale + getSize.width.toDouble * 0.5D).toInt, (-d7 * xyscale + getSize.height.toDouble * 0.5D).toInt)
+      val size: Dimension = getSize
+      val width = size.width
+      val height = size.height
+      drawing.lineTo(
+        (d6 * xyscale + width.toDouble * 0.5).toInt,
+        (-d7 * xyscale + height.toDouble * 0.5).toInt
+      )
     }
   }
 
@@ -190,26 +206,37 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     if (d4 <= 0.0D) {
       val d6 = R(0,0) * d + R(0,1) * d1 + R(0,2) * d2 + R(0,3)
       val d7 = R(1,0) * d + R(1,1) * d1 + R(1,2) * d2 + R(1,3)
-      drawing.moveTo((d6 * xyscale + getSize.width.toDouble * 0.5D).toInt, (-d7 * xyscale + getSize.height.toDouble * 0.5D).toInt)
+      val size: Dimension = getSize
+      val width = size.width
+      val height = size.height
+      drawing.moveTo(
+        (d6 * xyscale + width.toDouble * 0.5).toInt,
+        (-d7 * xyscale + height.toDouble * 0.5).toInt
+      )
     }
   }
 
   override def paint(g: Graphics): Unit = {
     val off = doubleBuffer.offScreen(g)
-    xyscale = Math.min(getSize.width, getSize.height).toDouble * 0.80000000000000004D
+    val size: Dimension = getSize
+    xyscale = Math.min(size.width, size.height).toDouble * 0.80000000000000004D
     val drawing = new Drawing(off)
-    drawing.drawCircle(getSize.width / 2, getSize.height / 2, 0.5 * xyscale)
+    drawing.drawCircle(size.width / 2, size.height / 2, 0.5 * xyscale)
 
     for( m <- marks )
-      drawComplex(drawing, m)
+      draw(drawing, m)
 
     w.drawStuff(drawing)
     doubleBuffer.onScreen
   }
 
-  override private[calculator] def Point2Complex(point: Point): Complex = {
-    val d = (point.x - getSize.width * 0.5) / xyscale
-    val d1 = (getSize.height * 0.5 - point.y) / xyscale
+  /** Can return null. */
+  override private[calculator] def point2Complex(p: Point): Complex = {
+    val size: Dimension = getSize
+    val width = size.width
+    val height = size.height
+    val d = (p.x - width * 0.5) / xyscale
+    val d1 = (height * 0.5 - p.y) / xyscale
     val d2 = 0.25D - d * d - d1 * d1
     if (d2 >= 0.0D) {
       val vector3 = R1 * (d, d1, -sqrt(d2) )
@@ -230,9 +257,12 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     MARKLENGTH = i / 5
   }
 
-  override private[calculator] def shift(i: Int, j: Int) = {
-    val d = j * 2 * π / getSize.width
-    val d1 = i * 2 * π / getSize.height
+  override private[calculator] def shift(x: Int, y: Int) = {
+    val size: Dimension = getSize()
+    val width = size.width
+    val height = size.height
+    val d = y * 2 * π / width
+    val d1 = x * 2 * π / height
     R = R.preRot('x', -d)
     R = R.preRot('y', -d1)
     R1 = R1.postRot('x', d)

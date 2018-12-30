@@ -36,8 +36,7 @@ package cat.inspiracio.calculator
 import java.awt.event.{ItemEvent, MouseAdapter, MouseEvent, MouseMotionAdapter}
 
 import cat.inspiracio.calculator.Interaction._
-import cat.inspiracio.complex.Complex
-import cat.inspiracio.numbers.ECList
+import cat.inspiracio.complex._
 import javax.swing._
 
 /** The complex world displays results of calculations
@@ -80,7 +79,7 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
 
         case DRAW =>
           val p = mouseevent.getPoint
-          val z = canvas.Point2Complex(p)
+          val z = canvas.point2Complex(p)
           if (z != null) {
             calculator.add(z)
             add(z)
@@ -92,12 +91,12 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
       override def mouseReleased(mouseevent: MouseEvent): Unit = interaction match {
 
         case MOVE =>
-          val i = mouseevent.getX
-          val j = mouseevent.getY
-          canvas.shift(prevx - i, prevy - j)
+          val x = mouseevent.getX
+          val y = mouseevent.getY
+          canvas.shift(prevx - x, prevy - y)
           canvas.paint(canvas.getGraphics)
-          prevx = i
-          prevy = j
+          prevx = x
+          prevy = y
           mouseevent.consume()
 
         case _ =>
@@ -109,12 +108,12 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
       override def mouseDragged(e: MouseEvent): Unit = interaction match {
 
         case MOVE =>
-          val i = e.getX
-          val j = e.getY
-          canvas.shift(prevx - i, prevy - j)
+          val x = e.getX
+          val y = e.getY
+          canvas.shift(prevx - x, prevy - y)
           canvas.paint(canvas.getGraphics)
-          prevx = i
-          prevy = j
+          prevx = x
+          prevy = y
           e.consume()
 
         case _ =>
@@ -130,7 +129,7 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
     setVisible(true)
   }
 
-  private var numbers: ECList = null
+  private var numbers: List[Complex] = Nil
 
   def locate() = {
     //setLocationByPlatform(true);
@@ -142,21 +141,16 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
   }
 
   override private[calculator] def add(c: Complex) = {
-    numbers = new ECList(c, numbers)
+    numbers = c :: numbers
     updateExtremes(c)
     canvas.repaint()
   }
 
-  override private[calculator] def drawStuff(drawing: Drawing) = {
-    var eclist = numbers
-    while ( eclist != null ) {
-      canvas.drawComplex(drawing, eclist.head)
-      eclist = eclist.tail
-    }
-  }
+  override private[calculator] def drawStuff(drawing: Drawing) =
+    if(numbers!=null) numbers.foreach{ canvas.draw(drawing, _) }
 
   override private[calculator] def erase() = {
-    numbers = null
+    numbers = Nil
     resetExtremes()
   }
 }

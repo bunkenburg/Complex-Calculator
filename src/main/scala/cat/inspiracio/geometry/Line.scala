@@ -36,7 +36,6 @@ package cat.inspiracio.geometry
 // Referenced classes of package bunkenba.numbers:
 //            Piclet, EC, ECList, PartialException
 import cat.inspiracio.complex._
-import cat.inspiracio.numbers.ECList
 import java.lang.Math.{max,min}
 
 object Line {
@@ -53,13 +52,13 @@ class Line(var a: Complex, var b: Complex) extends Piclet {
   def length: Double = abs(a-b)
 
   override protected def sample(): Unit = {
-    val ec = ( b - a) / 30
-    var ec1 = a
-    samples = new ECList(ec1, samples)
+    val step = ( b - a) / 30
+    var z = a
+    samples = z :: samples
     var i = 0
     for ( i <- 0 to 30 ) {
-      ec1 = ec1 + ec
-      samples = new ECList(ec1, samples)
+      z = z + step
+      samples = z :: samples
     }
   }
 

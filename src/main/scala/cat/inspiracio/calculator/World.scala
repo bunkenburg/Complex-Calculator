@@ -35,9 +35,9 @@ package cat.inspiracio.calculator
 
 import java.awt._
 import java.awt.event._
+import java.lang.Math.{max,min}
 
-import cat.inspiracio.complex
-import cat.inspiracio.complex.Complex
+import cat.inspiracio.complex._
 import cat.inspiracio.geometry.Piclet
 import javax.swing._
 
@@ -56,17 +56,17 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
   /** canvas: where I show stuff */
   final protected val plane = new Plane(this)
   final protected val sphere = new Sphere(this)
-  protected var canvas: WorldRepresentation = null
+  protected var canvas: WorldRepresentation = plane
 
   /** the previous mouse position */
   protected var prevx = 0
   protected var prevy = 0
 
   /** maximal displayed stuff */
-  private[calculator] var MaxImaginary = .0
-  private[calculator] var MinImaginary = .0
-  private[calculator] var MaxReal = .0
-  private[calculator] var MinReal = .0
+  private[calculator] var MaxImaginary = 0.0
+  private[calculator] var MinImaginary = 0.0
+  private[calculator] var MaxReal = 0.0
+  private[calculator] var MinReal = 0.0
 
   init()
 
@@ -77,8 +77,6 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     resetExtremes()
 
     //gui ---
-
-    canvas = plane
 
     zInButton.addActionListener(_ => zoomIn())
     zOutButton.addActionListener(_ => zoomOut())
@@ -171,27 +169,27 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
   private[calculator] def erase()
 
   protected def resetExtremes(): Unit = {
-    MinReal = 1.0D / 0.0D
-    MaxReal = -(1.0D) / 0.0D
-    MinImaginary = 1.0D / 0.0D
-    MaxImaginary = -(1.0D) / 0.0D
+    MinReal = Double.PositiveInfinity
+    MaxReal = Double.NegativeInfinity
+    MinImaginary = Double.PositiveInfinity
+    MaxImaginary = Double.NegativeInfinity
   }
 
   override def update(g: Graphics): Unit = paint(g)
 
   protected def updateExtremes(c: Complex): Unit =
     if (finite(c)) {
-      MaxImaginary = Math.max(MaxImaginary, Im(c))
-      MinImaginary = Math.min(MinImaginary, Im(c))
-      MaxReal = Math.max(MaxReal, Re(c))
-      MinReal = Math.min(MinReal, Re(c))
+      MaxImaginary = max(MaxImaginary, Im(c))
+      MinImaginary = min(MinImaginary, Im(c))
+      MaxReal = max(MaxReal, Re(c))
+      MinReal = min(MinReal, Re(c))
     }
 
   protected def updateExtremes(piclet: Piclet): Unit = {
-    MaxImaginary = Math.max(MaxImaginary, piclet.top)
-    MinImaginary = Math.min(MinImaginary, piclet.bottom)
-    MaxReal = Math.max(MaxReal, piclet.right)
-    MinReal = Math.min(MinReal, piclet.left)
+    MaxImaginary = max(MaxImaginary, piclet.top)
+    MinImaginary = min(MinImaginary, piclet.bottom)
+    MaxReal = max(MaxReal, piclet.right)
+    MinReal = min(MinReal, piclet.left)
   }
 
   override def setFont(font: Font): Unit = {
@@ -199,20 +197,5 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     plane.setFont(font)
     sphere.setFont(font)
   }
-
-  protected def finite(z: Complex): Boolean = complex.finite(z)
-
-  protected def Im(z: Complex): Double = complex.Im(z)
-
-  protected def Re(z: Complex): Double = complex.Re(z)
-
-  protected def Cartesian(re: Double, im: Double): Complex = {
-    val i = complex.i
-    i * im + re
-  }
-
-  protected def Real(re: Double): Complex = complex.double2Complex(re)
-
-  protected def resetArg() = Complex.resetArg()
 
 }

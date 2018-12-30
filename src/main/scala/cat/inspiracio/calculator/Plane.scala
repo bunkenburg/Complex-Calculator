@@ -33,9 +33,9 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt.{Color, Font, Graphics, Point}
+import java.awt.{Color, Dimension, Font, Graphics, Point}
+
 import cat.inspiracio.complex._
-import cat.inspiracio.numbers._
 import cat.inspiracio.calculator.Direction._
 import cat.inspiracio.geometry._
 
@@ -58,6 +58,7 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
   private var RightReal = 0.0
 
   //XXX unit tests
+  //XXX unify with repeated method
   private def raiseSmooth(d1: Double): Double = {
     var d = d1
     var i = 0
@@ -100,8 +101,7 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     point.y = -((im - TopImaginary) * ScaleFactor).toInt
   }
 
-  //XXX rename to draw
-  override private[calculator] def drawComplex(drawing: Drawing, z: Complex) =
+  override private[calculator] def draw(drawing: Drawing, z: Complex) =
     if (finite(z)) {
       val x = ((Re(z) - LeftReal) * ScaleFactor).asInstanceOf[Int]
       val y = -((Im(z) - TopImaginary) * ScaleFactor).asInstanceOf[Int]
@@ -110,24 +110,19 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
       drawing.drawString(z.toString)
   }
 
-  //XXX rename to draw
-  override private[calculator] def drawECList(drawing: Drawing, eclist: ECList) =
-    if (eclist != null) {
+  override private[calculator] def draw(drawing: Drawing, eclist: List[Complex]) =
+    if (eclist != null && !eclist.isEmpty) {
       var list = eclist
 
       moveTo(drawing, list.head)
       lineTo(drawing, list.head)
       list = list.tail
 
-      while ( list != null ) {
-        lineTo(drawing, list.head)
-        list = list.tail
+      list.foreach{ lineTo(drawing, _) }
     }
-  }
 
-  //XXX rename to draw
   //XXX remove isInstanceOf
-  override private[calculator] def drawPiclet(drawing: Drawing, piclet: Piclet) =
+  override private[calculator] def draw(drawing: Drawing, piclet: Piclet) =
 
     if (piclet.isInstanceOf[Line]) {
       moveTo(drawing, piclet.asInstanceOf[Line].a)
@@ -138,7 +133,7 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
       val circle = piclet.asInstanceOf[Circle]
       val x = ((Re(circle.c) - LeftReal) * ScaleFactor).asInstanceOf[Int]
       val y = -((Im(circle.c) - TopImaginary) * ScaleFactor).asInstanceOf[Int]
-      val radius = Math2Pix(circle.r)
+      val radius = math2Pix(circle.r)
       drawing.drawCircle( x, y, radius )
     }
 
@@ -152,7 +147,7 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     }
 
     else
-      drawECList(drawing, piclet.getSamples)
+      draw(drawing, piclet.getSamples)
 
   override private[calculator] def lineTo(drawing: Drawing, c: Complex) = {
     val x = ((Re(c) - LeftReal) * ScaleFactor).asInstanceOf[Int]
@@ -166,7 +161,7 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     drawing.moveTo(x, y)
   }
 
-  override private[calculator] def Point2Complex(point: Point): Complex = {
+  override private[calculator] def point2Complex(point: Point): Complex = {
     val re = LeftReal + point.x.toDouble / ScaleFactor
     val im = TopImaginary - point.y.toDouble / ScaleFactor
     Cartesian(re, im)
@@ -180,19 +175,22 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     val drawing = new Drawing(g)
     val point2 = new Point
 
-    TopImaginary = CenterImaginary + Pix2Math(getSize.height / 2)
-    BottomImaginary = CenterImaginary - Pix2Math(getSize.height / 2)
-    LeftReal = CenterReal - Pix2Math(getSize.width / 2)
-    RightReal = CenterReal + Pix2Math(getSize.width / 2)
+    val size: Dimension = getSize()
+    val width = size.width
+    val height = size.height
+    TopImaginary = CenterImaginary + pix2Math( height / 2)
+    BottomImaginary = CenterImaginary - pix2Math( height / 2)
+    LeftReal = CenterReal - pix2Math( width / 2)
+    RightReal = CenterReal + pix2Math( width / 2)
 
-    val d = raiseSmooth(Pix2Math(AXISMARKING))
-    val l = Math2Pix(d)
+    val d = raiseSmooth(pix2Math(AXISMARKING))
+    val l = math2Pix(d)
     var d1 = 0.0D
     var d2 = 0.0D
-    var d3 = LeftReal + Pix2Math(AXISSPACE)
-    val d4 = RightReal - Pix2Math(AXISSPACE)
-    var d5 = BottomImaginary + Pix2Math(AXISSPACE)
-    val d6 = TopImaginary - Pix2Math(AXISSPACE)
+    var d3 = LeftReal + pix2Math(AXISSPACE)
+    val d4 = RightReal - pix2Math(AXISSPACE)
+    var d5 = BottomImaginary + pix2Math(AXISSPACE)
+    val d6 = TopImaginary - pix2Math(AXISSPACE)
 
     if (d3 <= 0.0D && d4 >= 0.0D) d1 = 0.0D
     else if (d3 > 0.0D) d1 = d3
@@ -260,12 +258,10 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     CenterImaginary = 0.0D
   }
 
-  private def Pix2Math(i: Int): Double = i.toDouble / ScaleFactor
-
-  private def Math2Pix(d: Double): Int = (d * ScaleFactor).toInt
+  private def pix2Math(i: Int): Double = i.toDouble / ScaleFactor
+  private def math2Pix(d: Double): Int = (d * ScaleFactor).toInt
 
   private def real2Pix(d: Double): Int = ((d - LeftReal) * ScaleFactor).toInt
-
   private def imag2Pix(d: Double): Int = ((TopImaginary - d) * ScaleFactor).toInt
 
   override def setFont(font: Font): Unit = {
@@ -278,8 +274,8 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
   }
 
   override private[calculator] def shift(x: Int, y: Int) = {
-    CenterReal += Pix2Math(x)
-    CenterImaginary -= Pix2Math(y)
+    CenterReal += pix2Math(x)
+    CenterImaginary -= pix2Math(y)
   }
 
   override private[calculator] def zoomIn() = ScaleFactor *= 2

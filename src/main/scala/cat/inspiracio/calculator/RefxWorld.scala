@@ -56,10 +56,13 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
 
   protected var buttonPanel: JPanel = null
   private var canvas: RefxCanvas = null
+
   protected var prevx: Int = 0
   protected var prevy: Int = 0
+
   private var Max: Double = .0
   private var Min: Double = .0
+
   private var f: SyntaxTree = null
 
   init()
@@ -188,13 +191,17 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
     //State ----------------------------------------------------
 
     private var doubleBuffer: DoubleBuffer = null
+
     private var ScaleFactor: Double = 40
+
     private var CenterX = .0
     private var CenterY = .0
+
     private var Top = .0
     private var Left = .0
     private var Bottom = .0
     private var Right = .0
+
     private var upTriangle: Polygon = null
     private var downTriangle: Polygon = null
 
@@ -202,6 +209,7 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
 
     private def init()= {
       setBackground(Color.white)
+
       doubleBuffer = new DoubleBuffer(this)
 
       addMouseListener(new MouseAdapter() {
@@ -213,12 +221,12 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
         }
 
         override def mouseReleased(mouseevent: MouseEvent): Unit = {
-          val i = mouseevent.getX
-          val j = mouseevent.getY
-          shift(prevx - i, prevy - j)
+          val x = mouseevent.getX
+          val y = mouseevent.getY
+          shift(prevx - x, prevy - y)
           paint(getGraphics)
-          prevx = i
-          prevy = j
+          prevx = x
+          prevy = y
           mouseevent.consume()
         }
 
@@ -227,12 +235,12 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
       addMouseMotionListener(new MouseMotionAdapter() {
 
         override def mouseDragged(mouseevent: MouseEvent): Unit = {
-          val i = mouseevent.getX
-          val j = mouseevent.getY
-          shift(prevx - i, prevy - j)
+          val x = mouseevent.getX
+          val y = mouseevent.getY
+          shift(prevx - x, prevy - y)
           paint(getGraphics)
-          prevx = i
-          prevy = j
+          prevx = x
+          prevy = y
           mouseevent.consume()
         }
 
@@ -250,24 +258,26 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
 
     private def drawIt(drawing: Drawing) = {
       resetExtremes()
+
       var flag = false
       var i = 0
       val dimension = getSize()
-      val k = dimension.height
-      val l = dimension.width
-      while ( i < l ) {
+      val height = dimension.height
+      val width = dimension.width
+
+      while ( i < width ) {
         try {
           val z = Real(pix2x(i))
-          val ec = f.evaluate(z)
+          val fz = f.evaluate(z)
           var d = .0
-          if (finite(ec))
-            d = Re(ec)
+          if (finite(fz))
+            d = Re(fz)
           else
             throw new Exception
           updateExtremes(d)
           var j = 0
           if (d < Bottom)
-            j = k
+            j = height
           else if (Top < d)
             j = -1
           else
@@ -390,9 +400,9 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
       MARKLENGTH = FONTHEIGHT / 5
     }
 
-    private[calculator] def shift(i: Int, j: Int) = {
-      CenterY -= Pix2Math(j)
-      CenterX += Pix2Math(i)
+    private[calculator] def shift(x: Int, y: Int) = {
+      CenterY -= Pix2Math(y)
+      CenterX += Pix2Math(x)
     }
 
     def zoomIn() = ScaleFactor *= 2D

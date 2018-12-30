@@ -35,8 +35,7 @@ package cat.inspiracio.geometry
 
 // Referenced classes of package bunkenba.numbers:
 //            Piclet, EC, ECList, PartialException
-import cat.inspiracio.complex.{Im, Re, _}
-import cat.inspiracio.numbers.ECList
+import cat.inspiracio.complex._
 
 object Rectangle {
 
@@ -59,39 +58,41 @@ class Rectangle private[geometry] (val center: Complex, corner: Complex) extends
   override def right: Double = Re(topRight)
 
   override protected def sample(): Unit = {
+    samples = Nil
+
     var ec = (botRight - botLeft) / 30
     var ec1 = botLeft
-    samples = new ECList(ec1, samples)
+    samples = ec1 :: samples
     var i = 0
     for ( i <- 0 to 30 ) {
       ec1 = ec1 + ec
-      samples = new ECList(ec1, samples)
+      samples = ec1 :: samples
     }
 
     ec = ( topRight - botRight) / 30
     ec1 = botRight
-    samples = new ECList(ec1, samples)
+    samples = ec1 :: samples
     var j = 0
     for ( j <- 0 to 30 ) {
       ec1 = ec1 + ec
-      samples = new ECList(ec1, samples)
+      samples = ec1 :: samples
     }
 
     ec = (topLeft - topRight) / 30
     ec1 = topRight
-    samples = new ECList(ec1, samples)
+    samples = ec1 :: samples
     var k = 0
     for ( k <- 0 to 30 ) {
       ec1 = ec1 + ec
-      samples = new ECList(ec1, samples)
+      samples = ec1 :: samples
     }
 
     ec = ( botLeft - topLeft) / 30
     ec1 = topLeft
-    samples = new ECList(ec1, samples)
+    samples = ec1 :: samples
     for ( l <- 0 to 30 ) {
       ec1 = ec1 + ec
-      samples = new ECList(ec1, samples)
+      samples = ec1 :: samples
     }
 
   }
