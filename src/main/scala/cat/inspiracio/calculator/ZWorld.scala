@@ -360,22 +360,17 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
         fzW.addCurrent(piclet)
       }
 
-      private[calculator] def addGrid(rectangle: Rectangle) = {
-        val d = Im(rectangle.topLeft)
-        val d1 = Im(rectangle.botLeft)
-        val d2 = Re(rectangle.botRight)
-        val d3 = Re(rectangle.botLeft)
-        val d4 = rectangle.width / 10
-        val d5 = rectangle.height / 10
-        var d6 = d3
-        var d7 = d1
-        var i = 0
-        while ( i <= 10 ) {
-          add(Line(Cartesian(d6, d), Cartesian(d6, d1)))
-          d6 += d4
-          add(Line(Cartesian(d3, d7), Cartesian(d2, d7)))
-          d7 += d5
-          i = i+1
+      private[calculator] def addGrid(r: Rectangle) = {
+        val N = 10
+
+        val hStep = r.width / N
+        val vStep = r.height / N
+
+        for ( i <- 0 to N ) {
+          val re = r.left + i*hStep
+          add(Line(Cartesian(re, r.top), Cartesian(re, r.bottom)))
+          val im = r.bottom + i*vStep
+          add(Line(Cartesian(r.left, im), Cartesian(r.right, im)))
         }
       }
 
@@ -386,7 +381,9 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
         if (currentPiclet != null)
           canvas.draw(drawing, currentPiclet)
 
-        piclets.foreach{ canvas.draw(drawing, _) }
+        piclets.foreach{
+          canvas.draw(drawing, _)
+        }
 
         if (mode == MODFZ)
           canvas.draw(drawing, square)

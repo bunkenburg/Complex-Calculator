@@ -52,14 +52,19 @@ class Line(var a: Complex, var b: Complex) extends Piclet {
   def length: Double = abs(a-b)
 
   override protected def sample(): Unit = {
-    val step = ( b - a) / 30
-    var z = a
-    samples = z :: Nil
-    var i = 0
-    for ( i <- 0 to 30 ) {
+    samples = b :: Nil
+
+    //30 steps from b to a
+    val step = ( a - b) / 30
+    var z = b
+    for ( i <- 0 until 30 ) {
       z = z + step
       samples = z :: samples
     }
+
+    //For precision, add a rather than b + 30*step which should be equal to a,
+    //but sometimes is not, because of imprecise doubles.
+    samples = a :: samples
   }
 
   override def toString: String = s"Line( $a, $b )"

@@ -54,4 +54,49 @@ class RectangleTest extends FunSuite {
     assert( c.toString === "Rectangle(3+i, corner = π )" )
   }
 
+  test("sample points on rectangle"){
+    val centre: Complex = 0 // 3+i
+    val corner: Complex = 1+i // π + 3*π*i
+
+    val r = Rectangle(centre, corner)
+
+    val samples: List[Complex] = r.getSamples
+    val eps = 0.01
+    samples.foreach{ z =>
+      val Cartesian(re,im) = z
+      assert( on(r, z) )
+    }
+  }
+
+  def on(r: Rectangle, z: Complex): Boolean = {
+    val Cartesian(re,im) = z
+    //only checks whether z is on the right infinite lines
+    //re==r.left || re==r.right || im==r.top || im==r.bottom
+
+    // aproximately right, but for floating point imprecision
+    //((r.left <= re && re <= r.right) && (im==r.top || im==r.bottom)) ||
+    //((r.bottom <= im && im <= r.top) && (re==r.left || re==r.right))
+
+    on(Line(r.topLeft, r.topRight), z) ||
+    on(Line(r.topRight, r.botRight), z) ||
+    on(Line(r.botRight, r.botLeft), z) ||
+    on(Line(r.botLeft, r.topLeft), z)
+  }
+
+  def on(line: Line, z: Complex): Boolean = {
+    val a = line.a
+    val b = line.b
+    val v = b - a
+    if(v === 0)
+      return false
+    //E r: Real. a + r*v == z
+    //E r: Real. r*v == z-a
+    //E r: Real. r == (z-a)/v
+    val r = (z-a)/v
+    //Is r Real?
+    var Cartesian(re,im) = r
+    im==0 && 0<=re && re<=1
+  }
+
+
 }

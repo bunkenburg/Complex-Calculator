@@ -1,13 +1,10 @@
 # TODO
 
-* bug: fz mode: squares, rectangle, grid, not mapped well under f(z) = z
 * use singleton objects: Calculator, Display, worlds, panels
 * repair JAR
 * convert from Maven to SBT
-* convert or remove cat.inspiracio.numbers.*
 * convert cat.inspiracio.parsing.*
 * remove cat.inspiracio.say.*
-* input from keyboard broken
 * Better initial window positions
     x About
     - mode Calculate

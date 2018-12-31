@@ -44,4 +44,24 @@ class CircleTest extends FunSuite {
     assert( c.toString === "Circle(3+i, radius = 1.0099744945049844 )" )
   }
 
+  test("sample points on circle"){
+    val centre: Complex = 3+i
+    val b: Complex = π + 3*π*i
+    val c = Circle(centre, b)
+    val radius = c.radius
+    val samples: List[Complex] = c.getSamples
+    samples.foreach{ z =>
+
+      val d = abs( c.center - z )
+      assert( radius === d +- 1e-10 )
+      //assert( on(c, z) )
+    }
+  }
+
+  def on(c: Circle, z: Complex): Boolean = {
+    val radius = c.radius
+    val d = abs( c.center - z )
+    radius === d
+  }
+
 }
