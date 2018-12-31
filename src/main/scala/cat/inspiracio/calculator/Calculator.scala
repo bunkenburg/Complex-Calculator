@@ -234,7 +234,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
     val s = display.getText
     display.append(" = ")
     try {
-      val tree = new SyntaxTree().parse(s)
+      val tree = SyntaxTree.parse(s)
       val c = tree.evaluate(null)
       display.append(c.toString)
       cW.add(c)
@@ -262,7 +262,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
   private[calculator] def functionChange() = try {
     val s = SyntaxTree.stripBlanks(display.getText)
     if (s.startsWith("f(" + variable + ")=")) {
-      f = new SyntaxTree().parse(s.substring(5))
+      f = SyntaxTree.parse(s.substring(5))
       mode match {
         case MODFZ => modfzW.functionChange(f)
         case REFX => refxW.functionChange(f)
