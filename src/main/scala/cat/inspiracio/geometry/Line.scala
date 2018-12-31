@@ -54,7 +54,7 @@ class Line(var a: Complex, var b: Complex) extends Piclet {
   override protected def sample(): Unit = {
     val step = ( b - a) / 30
     var z = a
-    samples = z :: samples
+    samples = z :: Nil
     var i = 0
     for ( i <- 0 to 30 ) {
       z = z + step

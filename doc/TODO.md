@@ -1,5 +1,6 @@
 # TODO
 
+* bug: fz mode: squares, rectangle, grid, not mapped well under f(z) = z
 * use singleton objects: Calculator, Display, worlds, panels
 * repair JAR
 * convert from Maven to SBT

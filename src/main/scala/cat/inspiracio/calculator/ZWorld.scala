@@ -39,7 +39,6 @@ import cat.inspiracio.calculator.Interaction._
 import cat.inspiracio.calculator.Mode.{FZ, MODFZ}
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry._
-import cat.inspiracio.numbers._
 import javax.swing._
 
 final class ZWorld private[calculator](override val calculator: Calculator) extends World(calculator) {
@@ -48,18 +47,22 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
   private var interactionChoice: JComboBox[String] = new JComboBox[String]
   private var eraseButton: JButton = new JButton("Clear")
+
   private var mode: Mode = null
+
   private var fzW: FzWorld = null
   private var modfzW: ThreeDWorld = null
 
   /** During dragging of a free line, the points, otherwise null. */
-  private var zs: List[Complex] = Nil
+  private var zs: List[Complex] = null
 
   private var start: Complex = null
   private var end: Complex = null
 
   private var currentPiclet: Piclet = null
-  private var piclets: PicletList = null
+
+  private var piclets: List[Piclet] = Nil
+
   private var square = Square(0, 1+i)
 
   init()
@@ -175,7 +178,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
             val z = canvas.point2Complex(mouseevent.getPoint)
             if (z != null)
               add(z)
-            piclets = new PicletList(Freeline(zs), piclets)
+            piclets = Freeline(zs) :: piclets
             zs = null   //mouse released => finish free line
             canvas.paint(canvas.getGraphics)
             fzW.stopDynamicMap()
@@ -245,6 +248,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
     val mousemotionadapter: MouseMotionAdapter = new MouseMotionAdapter() {
 
       override def mouseDragged(mouseevent: MouseEvent): Unit = interaction match {
+
         case MOVE => {
           val x = mouseevent.getX
           val y = mouseevent.getY
@@ -261,7 +265,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
             if (z != null)
               add(z)
             else {
-              piclets = new PicletList(Freeline(zs), piclets)
+              piclets = Freeline(zs) :: piclets
               zs = null
               fzW.stopDynamicMap()
             }
@@ -339,16 +343,16 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
       override private[calculator] def add(c: Complex) = {
         updateExtremes(c)
-        if(zs==null)
+        if( zs == null )
           zs = Nil
         zs = c :: zs
         fzW.add(c)
       }
 
-      private[calculator] def add(piclet: Piclet) = {
-        updateExtremes(piclet)
-        piclets = new PicletList(piclet, piclets)
-        fzW.add(piclet)
+      private[calculator] def add(p: Piclet) = {
+        updateExtremes(p)
+        piclets = p :: piclets
+        fzW.add(p)
       }
 
       private[calculator] def addCurrent(piclet: Piclet) = {
@@ -378,14 +382,11 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
       override private[calculator] def drawStuff(drawing: Drawing) = {
         if (zs != null)
           canvas.draw(drawing, zs)
+
         if (currentPiclet != null)
           canvas.draw(drawing, currentPiclet)
 
-        var picletlist = piclets
-        while ( picletlist != null ) {
-          canvas.draw(drawing, picletlist.head)
-          picletlist = picletlist.tail
-        }
+        piclets.foreach{ canvas.draw(drawing, _) }
 
         if (mode == MODFZ)
           canvas.draw(drawing, square)
@@ -393,12 +394,15 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
       override private[calculator] def erase(): Unit = {
         eraseCurrent()
-        piclets = null
+
+        piclets = Nil
+
         resetExtremes()
         if (mode == MODFZ) {
           updateExtremes(square)
           return
         }
+
         if (fzW != null)
           fzW.erase()
         canvas.repaint()

@@ -38,7 +38,6 @@ import java.awt.event._
 import cat.inspiracio.calculator.Interaction.MOVE
 import cat.inspiracio.complex.Complex
 import cat.inspiracio.geometry.{Freeline,Piclet}
-import cat.inspiracio.numbers._
 import cat.inspiracio.parsing.SyntaxTree
 
 final class FzWorld private[calculator](override val calculator: Calculator) extends World(calculator) {
@@ -53,7 +52,8 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
     * Otherwise null. */
   private var zs: List[Complex] = null
 
-  private var piclets: PicletList = null
+  private var piclets: List[Piclet] = Nil
+
   private var f: SyntaxTree = null
 
   init()
@@ -126,9 +126,8 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
     var samples = piclet.getSamples
 
     zs = Nil
-    while ( samples != null ) {
 
-      samples.foreach{ z =>
+    samples.foreach{ z =>
         try {
           val fz = f.evaluate(z)
           updateExtremes(fz)
@@ -136,20 +135,13 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
         } catch {
           case _ex: Exception =>
         }
-      }
-
     }
+
     stopDynamicMap()
     canvas.repaint()
   }
 
-  private[calculator] def add( list: PicletList): Unit = {
-    var ps: PicletList = list
-    while ( ps != null ) {
-      add(ps.head)
-      ps = ps.tail
-    }
-  }
+  private[calculator] def add( list: List[Piclet]): Unit = list foreach add
 
   private[calculator] def addCurrent(piclet: Piclet) =
     if (f != null) {
@@ -176,16 +168,12 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
     if (zs != null)
       canvas.draw(drawing, zs)
 
-    var ps = piclets
-    while ( ps != null ) {
-      canvas.draw(drawing, ps.head)
-      ps = ps.tail
-    }
+    piclets.foreach{ canvas.draw(drawing, _) }
   }
 
   override private[calculator] def erase() = {
-    zs = null
-    piclets = null
+    zs = null //forget current free line
+    piclets = Nil //Forget all piclets
     resetExtremes()
     canvas.repaint()
   }
@@ -199,7 +187,7 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
   private[calculator] def setzWorld(zworld: ZWorld) = zW = zworld
 
   private[calculator] def stopDynamicMap() = {
-    piclets = new PicletList(Freeline(zs), piclets)
+    piclets = Freeline(zs) :: piclets
     zs = null
   }
 }

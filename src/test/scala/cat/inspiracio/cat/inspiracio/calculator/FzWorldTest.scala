@@ -1,46 +1,41 @@
-/*	Copyright 2011 Alexander Bunkenburg alex@cat.inspiracio.com
- * 
+/*	Copyright 2018 Alexander Bunkenburg alex@inspiracio.cat
+ *
  * This file is part of Complex Calculator.
- * 
+ *
  * Complex Calculator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Complex Calculator is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Complex Calculator. If not, see <http://www.gnu.org/licenses/>.
  * */
-package cat.inspiracio.numbers;
+package cat.inspiracio.calculator
 
+import cat.inspiracio.complex._
+import cat.inspiracio.geometry.Square
+import cat.inspiracio.parsing.SyntaxTreeVariable
+import org.scalatest.FunSuite
 
-// Referenced classes of package bunkenba.numbers:
-//            Piclet
+class FzWorldTest extends FunSuite {
 
-import cat.inspiracio.geometry.Piclet;
+  test("loop"){
 
-/** Haskell-style list of Piclets. */
-public class PicletList {
+    val calculator = new Calculator
+    val zW = new ZWorld(calculator)
+    val fzw = new FzWorld(calculator)
+    fzw.setzWorld(zW)
+    val tree = new SyntaxTreeVariable
+    fzw.functionChange(tree)
+    val z = 3+i
+    val p = Square(z, z)
+    fzw.add(p)
 
-    public PicletList(Piclet piclet, PicletList picletlist) {
-        head = piclet;
-        tail = picletlist;
-    }
+  }
 
-    public Piclet head()
-    {
-        return head;
-    }
-
-    public PicletList tail()
-    {
-        return tail;
-    }
-
-    private Piclet head;
-    private PicletList tail;
 }
