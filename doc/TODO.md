@@ -1,6 +1,5 @@
 # TODO
 
-* use singleton objects: Calculator, Display, worlds, panels
 * repair JAR
 * convert from Maven to SBT
 * convert cat.inspiracio.parsing.*

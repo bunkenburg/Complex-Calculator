@@ -267,14 +267,12 @@ object SyntaxTree {
     else -1
   }
 
+  /** removes all white space from the string */
   def stripBlanks(s: String): String = {
     val builder = new StringBuilder(s.length)
-    var i = 0
-    while ( i < s.length ) {
-      if (!Character.isWhitespace(s.charAt(i))) builder.append(s.charAt(i)) {
-        i += 1; i - 1
-      }
-    }
+    for ( i <- 0 until s.length )
+      if ( !Character.isWhitespace(s.charAt(i)) )
+        builder.append(s.charAt(i))
     builder.toString
   }
 
@@ -343,7 +341,7 @@ object SyntaxTree {
     var c: Complex = null
     var i = start.getIndex
 
-    if (s.startsWith("start", i)) {
+    if (s.startsWith("i", i)) {
       c = Cartesian(0, 1)
       i += 1
     }
