@@ -38,7 +38,7 @@ import java.awt.event._
 import cat.inspiracio.calculator.Interaction.MOVE
 import cat.inspiracio.complex.Complex
 import cat.inspiracio.geometry.{Freeline,Piclet}
-import cat.inspiracio.parsing.SyntaxTree
+import cat.inspiracio.parsing.Syntax
 
 final class FzWorld private[calculator](override val calculator: Calculator) extends World(calculator) {
 
@@ -54,7 +54,7 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
 
   private var piclets: List[Piclet] = Nil
 
-  private var f: SyntaxTree = null
+  private var f: Syntax = null
 
   init()
 
@@ -108,7 +108,7 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
 
   override private[calculator] def add(c: Complex) = if (f != null) {
     try {
-      val z = f.evaluate(c)
+      val z = f(c)
 
       if(zs == null)
         zs = Nil
@@ -129,7 +129,7 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
 
     samples.foreach{ z =>
         try {
-          val fz = f.evaluate(z)
+          val fz = f(z)
           updateExtremes(fz)
           zs = fz :: zs
         } catch {
@@ -153,7 +153,7 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
 
         samples.foreach{ z =>
           try {
-            val fz = f.evaluate(z)
+            val fz = f(z)
             zs = fz :: zs
           } catch {
             case _ex: Exception =>
@@ -178,7 +178,7 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
     canvas.repaint()
   }
 
-  private[calculator] def functionChange(syntaxtree: SyntaxTree) = {
+  private[calculator] def functionChange(syntaxtree: Syntax) = {
     f = syntaxtree
     erase()
     add(zW.getPiclets)

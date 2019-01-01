@@ -18,101 +18,110 @@
 package cat.inspiracio.parsing
 
 import cat.inspiracio.complex._
+import Syntax._
 import org.scalatest.FunSuite
 
-class SyntaxTreeTest extends FunSuite {
+class SyntaxTest extends FunSuite {
 
   test("3"){
-    val t = SyntaxTree.parse("3")
+    val t = parse("3")
     assert( t.toString === "3")
   }
 
   test("i"){
-    val t = SyntaxTree.parse("i")
+    val t = parse("i")
     assert( t.toString === "i")
   }
 
   test("∞"){
-    val t = SyntaxTree.parse("∞")
+    val t = parse("∞")
     assert( t.toString === "∞")
   }
 
   test("π"){
-    val t = SyntaxTree.parse("π")
+    val t = parse("π")
     assert( t.toString === "π")
   }
 
   // --------------------------------
 
   test("z"){
-    val t = SyntaxTree.parse("z")
+    val t = parse("z")
     assert( t.toString === "z")
   }
 
   // --------------------------------
 
   test("-3"){
-    val t = SyntaxTree.parse("-3")
+    val t = parse("-3")
     assert( t.toString === "-(3)")
   }
 
   test("+3"){
-    val t = SyntaxTree.parse("+3")
+    val t = parse("+3")
     assert( t.toString === "+(3)")
   }
 
   test("3!"){
-    val t = SyntaxTree.parse("3!")
+    val t = parse("3!")
     assert( t.toString === "(3)!")
   }
 
   test("ln(3)"){
-    val t = SyntaxTree.parse("ln(3)")
+    val t = parse("ln(3)")
     assert( t.toString === "ln(3)")
   }
 
   test("sinz"){
-    val t = SyntaxTree.parse("sinz ")
+    val t = parse("sinz ")
     assert( t.toString === "sin(z)")
   }
 
   test("sinπ"){
-    val t = SyntaxTree.parse("sinπ")
+    val t = parse("sinπ")
     assert( t.toString === "sin(π)")
   }
 
   // -------------------------------------
 
   test("π + i "){
-    val t = SyntaxTree.parse("π + i ")
+    val t = parse("π + i ")
     assert( t.toString === "(π)+(i)")
   }
 
   test(" π - i "){
-    val t = SyntaxTree.parse(" π - i ")
+    val t = parse(" π - i ")
     assert( t.toString === "(π)-(i)")
   }
 
   test("  π * i "){
-    val t = SyntaxTree.parse("  π * i ")
+    val t = parse("  π * i ")
     assert( t.toString === "(π)*(i)")
   }
 
   test("π / i "){
-    val t = SyntaxTree.parse("π / i ")
+    val t = parse("π / i ")
     assert( t.toString === "(π)/(i)")
   }
 
   test(" π ^ i "){
-    val t = SyntaxTree.parse("π ^ i ")
+    val t = parse("π ^ i ")
     assert( t.toString === "(π)^(i)")
   }
 
   // ---------------------------------------
 
   test("3e^πi"){
-    val t = SyntaxTree.parse("3e^πi")
+    val t = parse("3e^πi")
     assert( t.toString === "(3)*((e)^((π)*(i)))")
+  }
+
+  // ----------------------------------------
+
+  test("e^πiz"){
+    val f = parse("e^πiz")
+    val fz = f(1)
+    assert( fz === -1 )
   }
 
 }

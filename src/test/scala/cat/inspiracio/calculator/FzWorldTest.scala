@@ -19,7 +19,7 @@ package cat.inspiracio.calculator
 
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.Square
-import cat.inspiracio.parsing.SyntaxTreeVariable
+import cat.inspiracio.parsing.Variable
 import org.scalatest.FunSuite
 
 class FzWorldTest extends FunSuite {
@@ -30,7 +30,7 @@ class FzWorldTest extends FunSuite {
     val zW = new ZWorld(calculator)
     val fzw = new FzWorld(calculator)
     fzw.setzWorld(zW)
-    val tree = new SyntaxTreeVariable
+    val tree = new Variable
     fzw.functionChange(tree)
     val z = 3+i
     val p = Square(z, z)

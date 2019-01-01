@@ -38,7 +38,7 @@ import java.awt.event._
 
 import cat.inspiracio.calculator.Direction._
 import cat.inspiracio.complex._
-import cat.inspiracio.parsing.SyntaxTree
+import cat.inspiracio.parsing.Syntax
 import javax.swing._
 
 // Referenced classes of package bunkenba.calculator:
@@ -63,7 +63,7 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
   private var Max: Double = .0
   private var Min: Double = .0
 
-  private var f: SyntaxTree = null
+  private var f: Syntax = null
 
   init()
 
@@ -162,7 +162,7 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
     setLocationByPlatform(true)
   }
 
-  private[calculator] def functionChange(syntaxtree: SyntaxTree) = {
+  private[calculator] def functionChange(syntaxtree: Syntax) = {
     f = syntaxtree
     canvas.repaint()
   }
@@ -267,9 +267,9 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
 
       while ( i < width ) {
         try {
-          val z = Real(pix2x(i))
-          val fz = f.evaluate(z)
-          var d = .0
+          val z: Complex = pix2x(i)
+          val fz = f(z)
+          var d = 0.0
           if (finite(fz))
             d = Re(fz)
           else

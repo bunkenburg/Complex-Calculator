@@ -39,47 +39,47 @@ import java.text.ParsePosition
 
 // Referenced classes of package bunkenba.parsing:
 //            SyntaxTreeBinary, SyntaxTreeConstant, SyntaxTreeUnary, SyntaxTreeVariable
-object SyntaxTree {
+object Syntax {
 
   /** The main client method: parses a tree from a String. */
   @throws[ParseException]
-  def parse(s: String): SyntaxTree = {
-    val s_ = SyntaxTree.stripBlanks(s)
+  def parse(s: String): Syntax = {
+    val s_ = stripBlanks(s)
     parse(s_, 0, s_.length)
   }
 
   @throws[ParseException]
-  private def parse(s: String, start: Int, end: Int): SyntaxTree = {
+  private def parse(s: String, start: Int, end: Int): Syntax = {
 
-    if ( end <= start) throw new ParseException("SyntaxTree.parse(empty)", start)
+    if ( end <= start ) throw new ParseException("SyntaxTree.parse(empty)", start)
 
-    var k = SyntaxTree.last('+', s, start, end)
+    var k = last('+', s, start, end)
     if ( -1 < k )
-      bracketPlusMinus(s, start, k, end, 0)
+      plusMinus(s, start, k, end, 0)
 
     else {
 
-      k = SyntaxTree.last('-', s, start, end)
+      k = last('-', s, start, end)
       if ( -1 < k )
-        bracketPlusMinus(s, start, k, end, 1)
+        plusMinus(s, start, k, end, 1)
 
       else {
-        k = SyntaxTree.last('*', s, start, end)
+        k = last('*', s, start, end)
         if ( -1 < k )
-          bracketBin(s, start, k, end, 2)
+          binary(s, start, k, end, 2)
 
         else {
-          k = SyntaxTree.last('/', s, start, end)
+          k = last('/', s, start, end)
           if ( -1 < k )
-            bracketBin(s, start, k, end, 3)
+            binary(s, start, k, end, 3)
 
           else {
             val p0 = new ParsePosition(start)
             val p1 = new ParsePosition(end)
-            var tree = getFactor(s, p0, p1)
+            var tree = parseFactor(s, p0, p1)
             while ( p0.getIndex != p1.getIndex ) {
-              val factor = getFactor(s, p0, p1)
-              tree = new SyntaxTreeBinary(2, tree, factor )
+              val factor = parseFactor(s, p0, p1)
+              tree = new Binary(PRODUCTTOKEN, tree, factor )
             }
             tree
           }
@@ -89,14 +89,14 @@ object SyntaxTree {
   }
 
   @throws[ParseException]
-  private def getFactor(s: String, start: ParsePosition, end: ParsePosition): SyntaxTree = {
+  private def parseFactor(s: String, start: ParsePosition, end: ParsePosition): Syntax = {
 
-    var tree: SyntaxTree = null
+    var tree: Syntax = null
     var i = 0
 
     //parse (
     if (s.charAt(start.getIndex) == '(') {
-      val j = SyntaxTree.first(')', s, start.getIndex + 1, end.getIndex)
+      val j = first(')', s, start.getIndex + 1, end.getIndex)
       if (j == -1) throw new ParseException("unmatched bracket", start.getIndex)
       tree = parse(s, start.getIndex + 1, j)
       start.setIndex(j + 1)
@@ -104,23 +104,23 @@ object SyntaxTree {
 
     //parse function
     else {
-      i = SyntaxTree.recogniseFunction(s, start, end)
+      i = recogniseFunction(s, start, end)
       if (i != -1) {
-        tree = new SyntaxTreeUnary(i, parse(s, start.getIndex, end.getIndex))
+        tree = new Unary(i, parse(s, start.getIndex, end.getIndex))
         start.setIndex(end.getIndex)
       }
 
       //parse digits
-      else if ( SyntaxTree.digits contains (s.charAt(start.getIndex)) )
+      else if ( digits contains (s.charAt(start.getIndex)) )
         tree = readDigits(s, start, end)
 
       //parse constants
-      else if ( SyntaxTree.constants contains (s.charAt(start.getIndex) ))
+      else if ( constants contains (s.charAt(start.getIndex) ))
         tree = readConstant(s, start, end)
 
       //parse variable
-      else if ( SyntaxTree.variables  contains (s.charAt(start.getIndex) ))
-        tree = SyntaxTree.readVariable(s, start, end)
+      else if ( variables  contains (s.charAt(start.getIndex) ))
+        tree = readVariable(s, start, end)
     }
 
     //What's this?
@@ -128,13 +128,13 @@ object SyntaxTree {
 
     //parse trailing !
     while ( start.getIndex < end.getIndex && s.charAt(start.getIndex) == '!' ) {
-      tree = new SyntaxTreeUnary(20, tree )
+      tree = new Unary( FACTOKEN, tree )
       start.setIndex(start.getIndex + 1)
     }
 
     //parse ^
     if (start.getIndex < end.getIndex && s.charAt(start.getIndex) == '^') {
-      tree = new SyntaxTreeBinary(4, tree, parse(s, start.getIndex + 1, end.getIndex))
+      tree = new Binary( POWERTOKEN, tree, parse(s, start.getIndex + 1, end.getIndex))
       start.setIndex(end.getIndex)
     }
 
@@ -145,126 +145,108 @@ object SyntaxTree {
     var k = i
     var l = 0
     while ( k < j && (l != 0 || s.charAt(k) != c) ) {
-      if (s.charAt(k) == '(') {
-        l += 1; l - 1
-      }
-      else if (s.charAt(k) == ')') {
-        l -= 1; l + 1
-      }
-      {
-        k += 1; k - 1
-      }
+      if (s.charAt(k) == '(')
+        l += 1
+      else if (s.charAt(k) == ')')
+        l -= 1
+      k += 1
     }
-    if (k < j) k
-    else -1
+    if (k < j) k else -1
   }
 
-  private def last(c: Char, s: String, i: Int, j: Int) = {
+  private def last(c: Char, s: String, i: Int, j: Int): Int = {
     var k = j - 1
     var l = 0
-    while ( {
-      i <= k && (l != 0 || s.charAt(k) != c)
-    }) {
-      if (s.charAt(k) == '(') {
-        l += 1; l - 1
-      }
-      else if (s.charAt(k) == ')') {
-        l -= 1; l + 1
-      }
-      {
-        k -= 1; k + 1
-      }
+    while ( i <= k && (l != 0 || s.charAt(k) != c) ) {
+      if (s.charAt(k) == '(')
+        l += 1
+      else if (s.charAt(k) == ')')
+        l -= 1
+      k -= 1
     }
-    if (i <= k) k
-    else -1
+    if (i <= k) k else -1
   }
 
-  private def readVariable(s: String, start: ParsePosition, end: ParsePosition) = {
+  private def readVariable(s: String, start: ParsePosition, end: ParsePosition): Variable = {
     start.setIndex(start.getIndex + 1)
-    new SyntaxTreeVariable
+    new Variable
   }
 
   private def recogniseFunction(s: String, p0: ParsePosition, p1: ParsePosition): Int = {
     val i = p0.getIndex
     if (s.startsWith("acos", i)) {
       p0.setIndex(i + 4)
-      22
+      ACOSTOKEN
     }
-
     else if (s.startsWith("arg", i)) {
       p0.setIndex(i + 3)
-      8
+      ARGTOKEN
     }
-
     else if (s.startsWith("asin", i)) {
       p0.setIndex(i + 4)
-      21
+      ASINTOKEN
     }
-
     else if (s.startsWith("atan", i)) {
       p0.setIndex(i + 4)
-      23
+      ATANTOKEN
     }
-
     else if (s.startsWith("conj", i)) {
       p0.setIndex(i + 4)
-      5
+      CONJTOKEN
     }
-
     else if (s.startsWith("cosh", i)) {
       p0.setIndex(i + 4)
-      6
+      COSHTOKEN
     }
-
     else if (s.startsWith("cos", i)) {
       p0.setIndex(i + 3)
-      9
+      COSTOKEN
     }
     else if (s.startsWith("D", i)) {
       p0.setIndex(i + 1)
-      18
+      DTOKEN
     }
     else if (s.startsWith("exp", i)) {
       p0.setIndex(i + 3)
-      10
+      EXPTOKEN
     }
     else if (s.startsWith("Im", i)) {
       p0.setIndex(i + 2)
-      15
+      IMTOKEN
     }
     else if (s.startsWith("ln", i)) {
       p0.setIndex(i + 2)
-      16
+      LNTOKEN
     }
     else if (s.startsWith("mod", i)) {
       p0.setIndex(i + 3)
-      11
+      MODTOKEN
     }
-    else if (s.startsWith("opp", p0.getIndex)) {
+    else if (s.startsWith("opp", i)) {
       p0.setIndex(i + 3)
-      12
+      OPPTOKEN
     }
-    else if (s.startsWith("Re", p0.getIndex)) {
+    else if (s.startsWith("Re", i )) {
       p0.setIndex(i + 2)
-      17
+      RETOKEN
     }
-    else if (s.startsWith("sinh", p0.getIndex)) {
+    else if (s.startsWith("sinh", i )) {
       p0.setIndex(i + 4)
-      19
+      SINHTOKEN
     }
-    else if (s.startsWith("sin", p0.getIndex)) {
+    else if (s.startsWith("sin", i )) {
       p0.setIndex(i + 3)
-      13
+      SINTOKEN
     }
-    else if (s.startsWith("tanh", p0.getIndex)) {
+    else if (s.startsWith("tanh", i )) {
       p0.setIndex(i + 4)
-      7
+      TANHTOKEN
     }
-    else if (s.startsWith("tan", p0.getIndex)) {
+    else if (s.startsWith("tan", i )) {
       p0.setIndex(i + 3)
-      14
+      TANTOKEN
     }
-    else -1
+    else NOTOKEN
   }
 
   /** removes all white space from the string */
@@ -305,39 +287,39 @@ object SyntaxTree {
       case _ => "a token"
     }
 
-  private final val constants = "iep\u03C0\u221E"
+  private final val constants = "iepπ∞"
   private final val variables = "zx"
   private final val digits = "0123456789"
   private final val functionInitials = "acDeIlmoRst"
 
-  protected val NOTOKEN: Int = -1
-  protected val SUMTOKEN = 0
-  protected val DIFFERENCETOKEN = 1
-  protected val PRODUCTTOKEN = 2
-  protected val QUOTIENTTOKEN = 3
-  protected val POWERTOKEN = 4
-  protected val CONJTOKEN = 5
-  protected val COSHTOKEN = 6
-  protected val TANHTOKEN = 7
-  protected val ARGTOKEN = 8
-  protected val COSTOKEN = 9
-  protected val EXPTOKEN = 10
-  protected val MODTOKEN = 11
-  protected val OPPTOKEN = 12
-  protected val SINTOKEN = 13
-  protected val TANTOKEN = 14
-  protected val IMTOKEN = 15
-  protected val LNTOKEN = 16
-  protected val RETOKEN = 17
-  protected val DTOKEN = 18
-  protected val SINHTOKEN = 19
-  protected val FACTOKEN = 20
-  protected val ASINTOKEN = 21
-  protected val ACOSTOKEN = 22
-  protected val ATANTOKEN = 23
+  val NOTOKEN: Int = -1
+  val SUMTOKEN = 0
+  val DIFFERENCETOKEN = 1
+  val PRODUCTTOKEN = 2
+  val QUOTIENTTOKEN = 3
+  val POWERTOKEN = 4
+  val CONJTOKEN = 5
+  val COSHTOKEN = 6
+  val TANHTOKEN = 7
+  val ARGTOKEN = 8
+  val COSTOKEN = 9
+  val EXPTOKEN = 10
+  val MODTOKEN = 11
+  val OPPTOKEN = 12
+  val SINTOKEN = 13
+  val TANTOKEN = 14
+  val IMTOKEN = 15
+  val LNTOKEN = 16
+  val RETOKEN = 17
+  val DTOKEN = 18
+  val SINHTOKEN = 19
+  val FACTOKEN = 20
+  val ASINTOKEN = 21
+  val ACOSTOKEN = 22
+  val ATANTOKEN = 23
 
   @throws[ParseException]
-  private def readConstant(s: String, start: ParsePosition, end: ParsePosition): SyntaxTreeConstant = {
+  private def readConstant(s: String, start: ParsePosition, end: ParsePosition): Constant = {
     var c: Complex = null
     var i = start.getIndex
 
@@ -364,14 +346,14 @@ object SyntaxTree {
     else throw new ParseException("readConstant " + s, i)
 
     start.setIndex(i)
-    new SyntaxTreeConstant(c)
+    new Constant(c)
   }
 
   @throws[ParseException]
-  private def readDigits(s: String, start: ParsePosition, end: ParsePosition): SyntaxTreeConstant = {
+  private def readDigits(s: String, start: ParsePosition, end: ParsePosition): Constant = {
 
     var i = start.getIndex
-    while ( i < end.getIndex && SyntaxTree.digits.contains(s.charAt(i) ) ) {
+    while ( i < end.getIndex && digits.contains(s.charAt(i) ) ) {
       i += 1; i - 1
     }
 
@@ -383,7 +365,7 @@ object SyntaxTree {
     else if (s.charAt(i) == '.') {
       var j = 0
       j = i + 1
-      while ( j < end.getIndex && SyntaxTree.digits.contains(s.charAt(j) ) ) {
+      while ( j < end.getIndex && digits.contains(s.charAt(j) ) ) {
         j += 1; j - 1
       }
 
@@ -391,37 +373,34 @@ object SyntaxTree {
         i = j
         c = (s.substring(start.getIndex, i)).toDouble
       }
-      else throw new ParseException("SyntaxTree.readDigits: decimal point followed by non-digit", i)
+      else throw new ParseException("readDigits: decimal point followed by non-digit", i)
     }
     else c = (s.substring(start.getIndex, i)).toDouble
 
     start.setIndex(i)
-    new SyntaxTreeConstant(c)
+    new Constant(c)
   }
 
   @throws[ParseException]
-  private def bracketBin(s: String, i: Int, j: Int, k: Int, l: Int): SyntaxTreeBinary = {
+  private def binary(s: String, i: Int, j: Int, k: Int, l: Int): Binary = {
     val a = parse(s, i, j)
     val b = parse(s, j + 1, k)
-    new SyntaxTreeBinary(l, a, b)
+    new Binary(l, a, b)
   }
 
   @throws[ParseException]
-  private def bracketPlusMinus(s: String, i: Int, j: Int, k: Int, l: Int): SyntaxTree = if (j == i) {
+  private def plusMinus(s: String, i: Int, j: Int, k: Int, l: Int): Syntax = if (j == i) {
     val a = parse(s, i + 1, k)
-    new SyntaxTreeUnary(l, a)
+    new Unary(l, a)
   }
-  else bracketBin(s, i, j, k, l)
+  else binary(s, i, j, k, l)
 
 }
 
-abstract class SyntaxTree() {
+abstract class Syntax() {
 
-  def unparse: String
+  override def toString: String
 
-  override def toString: String = unparse
-
-  //XXX rename "apply" to make it disappear
-  def evaluate(z: Complex): Complex
+  def apply(z: Complex): Complex
 
 }

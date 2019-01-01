@@ -39,7 +39,7 @@ import java.lang.Math.{atan2, max, min}
 
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.{Matrix44, Square, Vector2, Vector3}
-import cat.inspiracio.parsing.{SyntaxTree, SyntaxTreeConstant}
+import cat.inspiracio.parsing.{Syntax, Constant}
 import javax.swing._
 
 // Referenced classes of package bunkenba.calculator:
@@ -58,7 +58,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
   /** the square for which to show |f(z)| */
   private var square = calculator.getSquare
 
-  private var f: SyntaxTree = null
+  private var f: Syntax = null
 
   /** The absolute values: |f(z)|
     * 21 * 21 Doubles.
@@ -89,7 +89,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     setLocationByPlatform(true)
   }
 
-  private[calculator] def functionChange(syntaxtree: SyntaxTree) = {
+  private[calculator] def functionChange(syntaxtree: Syntax) = {
     f = syntaxtree
     setNeighbourhood()
     canvas.repaint()
@@ -98,7 +98,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
   /** Assigns to M values |f(z)|. */
   private[calculator] def setNeighbourhood(): Unit = {
     if (f == null)
-      f = new SyntaxTreeConstant(0)
+      f = new Constant(0)
 
     val step: Double = square.side / 2.0 / 10.0
     val center: Complex = square.center
@@ -107,9 +107,8 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     for( x <- -10 to +10 ; y <- -10 to +10 ){
       val z = Cartesian(step * x, step * y)
       M(10 + x)(10 + y) = try {
-        val fz = f.evaluate( center + z )
-        if(!finite(fz)) Double.PositiveInfinity
-        else abs(fz)
+        val fz = f( center + z )
+        if(!finite(fz)) Double.PositiveInfinity else abs(fz)
       } catch {
         case _ : Exception => -0.2
       }

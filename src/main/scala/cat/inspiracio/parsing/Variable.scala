@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with Complex Calculator. If not, see <http://www.gnu.org/licenses/>.
- * *//*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
+ * *//*	Copyright 2011 Alexander Bunkenburg alex@cat.inspiracio.com
  *
  * This file is part of Complex Calculator.
  *
@@ -33,14 +33,15 @@
  * */
 package cat.inspiracio.parsing
 
-import cat.inspiracio.complex._
-
 // Referenced classes of package bunkenba.parsing:
 //            SyntaxTree
 
-class SyntaxTreeConstant(val constant: Complex) extends SyntaxTree {
+import cat.inspiracio.complex._
 
-  override def unparse: String = constant.toString
+class Variable() extends Syntax {
 
-  override def evaluate(z: Complex): Complex = constant
+  override def toString: String = "z"
+
+  override def apply(z: Complex): Complex = z
+
 }

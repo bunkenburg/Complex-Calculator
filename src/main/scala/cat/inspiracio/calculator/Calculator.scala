@@ -34,12 +34,14 @@
 package cat.inspiracio.calculator
 
 import java.awt.{GridBagConstraints, GridBagLayout}
-import java.awt.event.{ActionEvent, ActionListener, WindowAdapter, WindowEvent}
+import java.awt.event.{ActionListener, WindowAdapter, WindowEvent}
 import java.text.ParseException
 
 import cat.inspiracio.calculator.Mode._
 import cat.inspiracio.complex._
-import cat.inspiracio.parsing.SyntaxTree
+import cat.inspiracio.parsing.Syntax
+import cat.inspiracio.parsing.Syntax._
+
 import javax.swing._
 
 /** The Calculator application.
@@ -55,7 +57,6 @@ object Calculator {
 
 }
 
-//XXX Could be a singleton?
 final class Calculator() extends JFrame("Complex Calculator") {
 
   /** The mode that the program is in: Calculation, z->fz mapping, z->|fz| mapping, or Re(fz). */
@@ -72,7 +73,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
   private var fzW: FzWorld = null
   private var modfzW: ThreeDWorld = null
   private var refxW: RefxWorld = null
-  private var f: SyntaxTree = null
+  private var f: Syntax = null
   private var inAnApplet = true
 
   init()
@@ -234,8 +235,8 @@ final class Calculator() extends JFrame("Complex Calculator") {
     val s = display.getText
     display.append(" = ")
     try {
-      val tree = SyntaxTree.parse(s)
-      val c = tree.evaluate(null)
+      val f = Syntax.parse(s)
+      val c = f(null)
       display.append(c.toString)
       cW.add(c)
     } catch {
@@ -260,9 +261,9 @@ final class Calculator() extends JFrame("Complex Calculator") {
 
   /** Callback: f(z)=... has changed. */
   private[calculator] def functionChange() = try {
-    val s = SyntaxTree.stripBlanks(display.getText)
+    val s = Syntax.stripBlanks(display.getText)
     if (s.startsWith("f(" + variable + ")=")) {
-      f = SyntaxTree.parse(s.substring(5))
+      f = Syntax.parse(s.substring(5))
       mode match {
         case MODFZ => modfzW.functionChange(f)
         case REFX => refxW.functionChange(f)

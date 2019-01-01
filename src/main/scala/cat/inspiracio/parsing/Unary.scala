@@ -37,48 +37,49 @@ package cat.inspiracio.parsing
 //            SyntaxTree
 
 import cat.inspiracio.complex._
+import Syntax._
 
-class SyntaxTreeUnary(var token: Int, var argument: SyntaxTree) extends SyntaxTree {
+class Unary(token: Int, argument: Syntax) extends Syntax {
 
-  override def unparse: String =
-    if (token == 20) "(" + argument.unparse + ")!"
-    else SyntaxTree.token2String(token) + "(" + argument.unparse + ")"
+  override def toString: String =
+    if (token == FACTOKEN) "(" + argument + ")!"
+    else token2String(token) + "(" + argument + ")"
 
-  override def evaluate(z: Complex): Complex = {
-    val a: Complex = argument.evaluate(z)
+  override def apply(z: Complex): Complex = {
+    val a: Complex = argument(z)
 
     token match {
 
-      case -1 => throw new RuntimeException("SyntaxTreeUnary.evaluate(NOTOKEN)")
+      case NOTOKEN => throw new RuntimeException("SyntaxTreeUnary.evaluate(NOTOKEN)")
 
-      case 21 => throw new RuntimeException("SyntaxTreeUnary.evaluate(acos,asin,atan)")
-      case 22 => throw new RuntimeException("SyntaxTreeUnary.evaluate(acos,asin,atan)")
-      case 23 => throw new RuntimeException("SyntaxTreeUnary.evaluate(acos,asin,atan)")
+      case ACOSTOKEN => throw new RuntimeException("SyntaxTreeUnary.evaluate(acos,asin,atan)")
+      case ASINTOKEN => throw new RuntimeException("SyntaxTreeUnary.evaluate(acos,asin,atan)")
+      case ATANTOKEN => throw new RuntimeException("SyntaxTreeUnary.evaluate(acos,asin,atan)")
 
-      case 20 => fac(a)
+      case FACTOKEN => fac(a)
       case 0 => a
       case 1 => -a
 
-      case 2 => throw new RuntimeException("SyntaxTreeUnary.evaluate with binary token " + SyntaxTree.token2String(token))
-      case 3 => throw new RuntimeException("SyntaxTreeUnary.evaluate with binary token " + SyntaxTree.token2String(token))
-      case 4 => throw new RuntimeException("SyntaxTreeUnary.evaluate with binary token " + SyntaxTree.token2String(token))
+      case 2 => throw new RuntimeException("SyntaxTreeUnary.evaluate with binary token " + Syntax.token2String(token))
+      case 3 => throw new RuntimeException("SyntaxTreeUnary.evaluate with binary token " + Syntax.token2String(token))
+      case 4 => throw new RuntimeException("SyntaxTreeUnary.evaluate with binary token " + Syntax.token2String(token))
 
-      case 5 => conj(a)
-      case 19 => sinh(a)
-      case 6 => cosh(a)
-      case 7 => tanh(a)
-      case 8 => { val Polar(_, angle) = a; angle }
-      case 9 => cos(a)
-      case 10 => exp(a)
-      case 11 => abs(a)
-      case 12 => opp(a)
-      case 13 => sin(a)
-      case 14 => tan(a)
-      case 15 => Im(a)
-      case 16 => ln(a)
-      case 17 => Re(a)
+      case CONJTOKEN => conj(a)
+      case SINHTOKEN => sinh(a)
+      case COSHTOKEN => cosh(a)
+      case TANHTOKEN => tanh(a)
+      case ARGTOKEN => { val Polar(_, angle) = a; angle }
+      case COSTOKEN => cos(a)
+      case EXPTOKEN => exp(a)
+      case MODTOKEN => abs(a)
+      case OPPTOKEN => opp(a)
+      case SINTOKEN => sin(a)
+      case TANTOKEN => tan(a)
+      case IMTOKEN => Im(a)
+      case LNTOKEN => ln(a)
+      case RETOKEN => Re(a)
 
-      case 18 => throw new RuntimeException("SyntaxTreeUnary.evaluate with unexpected token " + SyntaxTree.token2String(token))
+      case _ => throw new RuntimeException("SyntaxTreeUnary.evaluate with unexpected token " + Syntax.token2String(token))
     }
   }
 
