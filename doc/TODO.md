@@ -2,8 +2,6 @@
 
 * repair JAR
 * convert from Maven to SBT
-* convert cat.inspiracio.parsing.*
-* remove cat.inspiracio.say.*
 * Better initial window positions
     x About
     - mode Calculate
