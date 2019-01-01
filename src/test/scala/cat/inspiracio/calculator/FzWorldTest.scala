@@ -28,14 +28,17 @@ class FzWorldTest extends FunSuite {
 
     val calculator = new Calculator
     val zW = new ZWorld(calculator)
-    val fzw = new FzWorld(calculator)
-    fzw.setzWorld(zW)
+    val fzW = new FzWorld(calculator)
+    fzW.setzWorld(zW)
     val tree = new Variable
-    fzw.functionChange(tree)
+    fzW.functionChange(tree)
     val z = 3+i
     val p = Square(z, z)
-    fzw.add(p)
+    fzW.add(p)
 
+    calculator.quit()
+    fzW.dispose()
+    zW.dispose()
   }
 
 }
