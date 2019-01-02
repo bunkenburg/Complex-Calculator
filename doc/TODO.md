@@ -1,7 +1,6 @@
 # TODO
 
-* repair JAR
-* convert from Maven to SBT
+* put on web page with installation instructions
 * Better initial window positions
     x About
     - mode Calculate
