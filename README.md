@@ -13,3 +13,6 @@ The first java version is from 6. 1. 1999. I made it in Java 1.1 which introduce
 I lost the source code of that program, so the present version is based on decompiled byte code.
 
 ## Scala 2.12.7 as application
+
+The first scala version is from 6. 1. 2019. I migrated the java version class by class.
+In particular, complex numbers (in package cat.inspiracio.complex) turned out well.

@@ -4,6 +4,7 @@ ThisBuild / organization := "cat.inspiracio"
 
 lazy val calculator = (project in file("."))
   .enablePlugins(JavaAppPackaging)
+  .enablePlugins(UniversalPlugin)
   .settings(
     name := "Complex Calculator",
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % Test,
