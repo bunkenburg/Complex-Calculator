@@ -89,8 +89,9 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     setLocationByPlatform(true)
   }
 
-  private[calculator] def functionChange(syntaxtree: Syntax) = {
-    f = syntaxtree
+  /** Event listener: the function has changed. */
+  private[calculator] def functionChanged(t: Syntax) = {
+    f = t
     setNeighbourhood()
     canvas.repaint()
   }

@@ -36,11 +36,12 @@ package cat.inspiracio.calculator
 import java.awt.{GridBagConstraints, GridBagLayout}
 import java.awt.event.{ActionListener, WindowAdapter, WindowEvent}
 import java.text.ParseException
+import java.lang.Math.min
 
 import cat.inspiracio.calculator.Mode._
 import cat.inspiracio.complex._
 import cat.inspiracio.parsing.Syntax
-import cat.inspiracio.parsing.Syntax._
+import cat.inspiracio.parsing.Syntax.parse
 
 import javax.swing._
 
@@ -117,7 +118,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
         display.paste(command)
         display.requestFocus()
         if (mode != CALC)
-          functionChange()
+          functionChanged()
     }
 
     /** Makes a button and adds it. */
@@ -148,11 +149,11 @@ final class Calculator() extends JFrame("Complex Calculator") {
         display.delete()
         display.requestFocus()
         if (mode != CALC)
-          functionChange()
+          functionChanged()
     })
 
     bx("C", 4, 3, 1, _ => {
-        display.clearAll()
+        display.clear()
         if (mode != CALC)
           display.prepend("f(" + variable + ") = ")
         display.requestFocus()
@@ -196,7 +197,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
         display.paste(variable)
         display.requestFocus()
         if (mode != CALC)
-          functionChange()
+          functionChanged()
     })
 
     equalsButton = bx("=", 4, 11, 2, _ => {
@@ -232,10 +233,10 @@ final class Calculator() extends JFrame("Complex Calculator") {
   /** Gets the expression from the display, parses it, evaluates it,
     * and append the result to the display. */
   private[calculator] def doEquals() = {
-    val s = display.getText
+    val text = display.getText
     display.append(" = ")
     try {
-      val f = Syntax.parse(s)
+      val f = parse(text)
       val c = f(null)
       display.append(c.toString)
       cW.add(c)
@@ -246,28 +247,26 @@ final class Calculator() extends JFrame("Complex Calculator") {
   }
 
   private[calculator] def eraseOldResult() = {
-    var s = display.getText
-    val i = s.lastIndexOf('=')
-    if (i != -1) {
-      var j = display.getCaretPosition
-      s = s.substring(0, i)
-      val k = s.length
-      display.setText(s)
-      j = if (j >= k) k
-      else j
-      display.setCaretPosition(j)
+    var text = display.getText
+    val equals = text.lastIndexOf('=')
+    if (equals != -1) {
+      var caret = display.getCaretPosition
+      text = text.substring(0, equals)
+      display.setText(text)
+      caret = min(caret, text.length)
+      display.setCaretPosition(caret)
     }
   }
 
-  /** Callback: f(z)=... has changed. */
-  private[calculator] def functionChange() = try {
-    val s = Syntax.stripBlanks(display.getText)
-    if (s.startsWith("f(" + variable + ")=")) {
-      f = Syntax.parse(s.substring(5))
+  /** Event listener: f(z)=... has changed. */
+  private[calculator] def functionChanged() = try {
+    val text = Syntax.stripBlanks(display.getText)
+    if (text.startsWith("f(" + variable + ")=")) {
+      f = parse(text.substring(5))
       mode match {
-        case MODFZ => modfzW.functionChange(f)
-        case REFX => refxW.functionChange(f)
-        case FZ => fzW.functionChange(f)
+        case MODFZ => modfzW.functionChanged(f)
+        case REFX => refxW.functionChanged(f)
+        case FZ => fzW.functionChanged(f)
         case _ =>
       }
     }
@@ -293,7 +292,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
 
       case CALC =>
         Complex.setArgPrincipal()
-        display.clearAll()
+        display.clear()
         equalsButton.setEnabled(true)
         zButton.setEnabled(false)
         complexWorld()
@@ -307,7 +306,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
         variable = 'z'
         if (mode eq REFX) display.replace('x', 'z')
         else if (mode eq CALC) {
-          display.clearAll()
+          display.clear()
           display.prepend("f(z) = ")
         }
         equalsButton.setEnabled(false)
@@ -327,7 +326,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
         variable = 'z'
         if (mode eq REFX) display.replace('x', 'z')
         else if (mode eq CALC) {
-          display.clearAll()
+          display.clear()
           display.prepend("f(z) = ")
         }
         equalsButton.setEnabled(false)
@@ -345,7 +344,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
         Complex.setArgContinuous()
         variable = 'x'
         if (mode eq CALC) {
-          display.clearAll()
+          display.clear()
           display.prepend("f(x) = ")
         }
         else display.replace('z', 'x')
@@ -360,7 +359,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
     }
 
     mode = m
-    functionChange()
+    functionChanged()
   }
 
   private def complexWorld() = if (cW == null) cW = new ComplexWorld(this)
@@ -399,7 +398,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
   }
 
   private[calculator] def delete() = display.delete()
-  private[calculator] def clearAll() = display.clearAll()
+  private[calculator] def clear() = display.clear()
   private[calculator] def prepend(s: String) = display.prepend(s)
   private[calculator] def paste(c: Char) = display.paste(c)
 }

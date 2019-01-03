@@ -178,8 +178,9 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
     canvas.repaint()
   }
 
-  private[calculator] def functionChange(syntaxtree: Syntax) = {
-    f = syntaxtree
+  /** Event listener: function has changed. */
+  private[calculator] def functionChanged(t: Syntax) = {
+    f = t
     erase()
     add(zW.getPiclets)
   }

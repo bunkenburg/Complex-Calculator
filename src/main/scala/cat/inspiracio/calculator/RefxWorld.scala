@@ -162,8 +162,9 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
     setLocationByPlatform(true)
   }
 
-  private[calculator] def functionChange(syntaxtree: Syntax) = {
-    f = syntaxtree
+  /** Event listener: the function has changed. */
+  private[calculator] def functionChanged(t: Syntax) = {
+    f = t
     canvas.repaint()
   }
 

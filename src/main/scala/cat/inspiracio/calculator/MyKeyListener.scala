@@ -37,78 +37,47 @@ import java.awt.event.{KeyAdapter, KeyEvent}
 
 import cat.inspiracio.calculator.Mode.CALC
 
-/** Maybe this can be a singleton object? */
 class MyKeyListener private[calculator](var calculator: Calculator) extends KeyAdapter {
 
+  /** LF = Intro = ENTER (at least on linux) */
+  private val LF = 10
+
+  /** All the characters that make sense in the display. */
   private val ALLOWED_CHARS = " !sinhcoshtanhconjoppReImlnexp^modargiepi()789*/456+-123=0.z"
+  private def forbidden(c: Char): Boolean = !ALLOWED_CHARS.contains(c)
 
-  /** User pressed a key, including shift key. */
-  override def keyPressed(keyevent: KeyEvent): Unit = {
+  /** Only the ENTER key is special: In CALC mode, it is like '='. */
+  override def keyPressed(e: KeyEvent): Unit = {
 
-    val m = calculator.mode
-    val i = keyevent.getKeyCode
-
-    //backspace delete
-    if (i == 8 || i == 127) {
-      calculator.delete()
-      keyevent.consume()
-    }
-
-    //line feed
-    else if (i == 10) {
-      if ( m == CALC ) {
+    if ( e.getKeyCode == LF ) {
+      if ( calculator.mode == CALC ) {
         calculator.eraseOldResult()
         calculator.doEquals()
       }
-      keyevent.consume()
+      e.consume() //Don't want a line-break in display
     }
 
-    //form feed
-    else if (i == 12) {
-      calculator.clearAll()
-      if ( m != CALC ) {
-        val s = "f(" + calculator.variable + ") = "
-        calculator.prepend(s)
-      }
-      keyevent.consume()
-    }
-
-    // % '
-    else if (i != 37 && i != 39) {
-      keyevent.consume()
-    }
   }
 
-  /** User typed a character. */
-  override def keyTyped(keyevent: KeyEvent): Unit = {
+  /** Ignores forbidden characters,
+    * erases old result,
+    * inserts character, treating '=' special,
+    * tells calculator of function change. */
+  override def keyTyped(e: KeyEvent): Unit = {
+    val c = e.getKeyChar
 
-    val c = keyevent.getKeyChar
-
-    val forbidden = ALLOWED_CHARS.indexOf(c) == -1
-    if ( forbidden ) {
-      keyevent.consume()
-    }
-    else {
-
+    if ( !forbidden(c) ) {
       val m = calculator.mode
 
-      if ( m == CALC )
-        calculator.eraseOldResult()
+      if ( m == CALC ) calculator.eraseOldResult()
 
-      if (c == '=') {
-        if ( m == CALC )
-          calculator.doEquals()
-        else
-          calculator.paste(c)
-      }
-      else {
-        calculator.paste(c)
-      }
+      if (c == '=' && m == CALC ) calculator.doEquals()
+      else calculator.paste(c)
 
-      if ( m != CALC)
-        calculator.functionChange()
+      if ( m != CALC ) calculator.functionChanged()
     }
-    keyevent.consume()
+
+    e.consume() //Already handled the character, either inserted or ignored it.
   }
 
 }

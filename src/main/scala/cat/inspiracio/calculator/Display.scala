@@ -42,7 +42,8 @@ import javax.swing._
   *
   * This could really be a lot better. */
 class Display private[calculator](val fontSize: Int) extends JTextArea("", 3, 1) {
-  private[calculator] def clearAll() = setText("")
+
+  private[calculator] def clear() = setText("")
 
   /** delete selected or backspace */
   private[calculator] def delete() = {
