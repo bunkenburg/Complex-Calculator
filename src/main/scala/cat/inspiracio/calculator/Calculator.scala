@@ -53,7 +53,6 @@ object Calculator {
   /** Run the Calculator as stand-alone application. */
     def main(args: Array[String]): Unit = {
       val calculator = new Calculator
-      //calculator.inAnApplet = false
     }
 
 }
@@ -111,15 +110,8 @@ final class Calculator() extends JFrame("Complex Calculator") {
     layout.setConstraints(display, constraints)
     add(display)
 
-    val listener: ActionListener = e => {
-        if (mode == CALC)
-          eraseOldResult()
-        val command = e.getActionCommand
-        display.paste(command)
-        display.requestFocus()
-        if (mode != CALC)
-          functionChanged()
-    }
+    //listener for a 'normal' button
+    val listener: ActionListener = e => paste(e.getActionCommand)
 
     /** Makes a button and adds it. */
     def bx(label: String, gridx: Int, gridy: Int, gridheight: Int, listener: ActionListener): JButton = {
@@ -142,23 +134,8 @@ final class Calculator() extends JFrame("Complex Calculator") {
     }
 
     bx("!", 0, 3, 1, listener)
-
-    bx("del", 3, 3, 1, _ => {
-        if (mode == CALC)
-          eraseOldResult()
-        display.delete()
-        display.requestFocus()
-        if (mode != CALC)
-          functionChanged()
-    })
-
-    bx("C", 4, 3, 1, _ => {
-        display.clear()
-        if (mode != CALC)
-          display.prepend("f(" + variable + ") = ")
-        display.requestFocus()
-    })
-
+    bx("del", 3, 3, 1, _ => delete() )
+    bx("C", 4, 3, 1, _ => clear() )
     bx("sinh", 0, 4, 1, listener)
     bx("cosh", 1, 4, 1, listener)
     bx("tanh", 2, 4, 1, listener)
@@ -192,19 +169,8 @@ final class Calculator() extends JFrame("Complex Calculator") {
     bx("1", 0, 11, 1, listener)
     bx("2", 1, 11, 1, listener)
     bx("3", 2, 11, 1, listener)
-
-    zButton = bx("z", 3, 11, 1, _ => {
-        display.paste(variable)
-        display.requestFocus()
-        if (mode != CALC)
-          functionChanged()
-    })
-
-    equalsButton = bx("=", 4, 11, 2, _ => {
-        doEquals()
-        display.requestFocus()
-    })
-
+    zButton = bx("z", 3, 11, 1, e => paste(e.getActionCommand) )
+    equalsButton = bx("=", 4, 11, 2, e => paste(e.getActionCommand) )
     bx("0", 0, 12, 1, listener)
     bx(".", 1, 12, 1, listener)
     bx("∞", 2, 12, 1, listener)
@@ -304,8 +270,9 @@ final class Calculator() extends JFrame("Complex Calculator") {
       case FZ =>
         Complex.setArgContinuous()
         variable = 'z'
-        if (mode eq REFX) display.replace('x', 'z')
-        else if (mode eq CALC) {
+        if (mode == REFX)
+          display.replace('x', 'z')
+        else if (mode == CALC) {
           display.clear()
           display.prepend("f(z) = ")
         }
@@ -324,8 +291,8 @@ final class Calculator() extends JFrame("Complex Calculator") {
       case MODFZ =>
         Complex.setArgContinuous()
         variable = 'z'
-        if (mode eq REFX) display.replace('x', 'z')
-        else if (mode eq CALC) {
+        if (mode == REFX) display.replace('x', 'z')
+        else if (mode == CALC) {
           display.clear()
           display.prepend("f(z) = ")
         }
@@ -343,7 +310,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
       case REFX =>
         Complex.setArgContinuous()
         variable = 'x'
-        if (mode eq CALC) {
+        if (mode == CALC) {
           display.clear()
           display.prepend("f(x) = ")
         }
@@ -397,8 +364,46 @@ final class Calculator() extends JFrame("Complex Calculator") {
     refxW = null
   }
 
-  private[calculator] def delete() = display.delete()
-  private[calculator] def clear() = display.clear()
+  /** event listener for DELETE button */
+  private def delete(): Unit = {
+    if (mode == CALC)
+      eraseOldResult()
+    display.delete()
+    display.requestFocus()
+    if (mode != CALC)
+      functionChanged()
+  }
+
+  /** Event listener for CLEAR button. */
+  private def clear(): Unit = {
+    display.clear()
+    if (mode != CALC)
+      display.prepend("f(" + variable + ") = ")
+    display.requestFocus()
+  }
+
   private[calculator] def prepend(s: String) = display.prepend(s)
-  private[calculator] def paste(c: Char) = display.paste(c)
+
+  /** Inserts a character to the calculator.
+    * Called from MyKeyListener. */
+  private[calculator] def paste(c: Char): Unit = paste(c.toString)
+
+  /** Inserts a string to the calculator.
+    * Called from button listeners. */
+  private[calculator] def paste(s: String): Unit = {
+
+    if ( mode == CALC )
+      eraseOldResult()
+
+    if (s == "=" && mode == CALC )
+      doEquals()
+    else
+      display.paste(s)
+
+    display.requestFocus()  //Because the focus may stay on the button
+
+    if ( mode != CALC )
+      functionChanged()
+  }
+
 }

@@ -8,4 +8,5 @@ lazy val calculator = (project in file("."))
   .settings(
     name := "Complex Calculator",
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % Test,
+    javacOptions ++= Seq("-source", "1.8")
   )

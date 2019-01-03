@@ -66,16 +66,8 @@ class MyKeyListener private[calculator](var calculator: Calculator) extends KeyA
   override def keyTyped(e: KeyEvent): Unit = {
     val c = e.getKeyChar
 
-    if ( !forbidden(c) ) {
-      val m = calculator.mode
-
-      if ( m == CALC ) calculator.eraseOldResult()
-
-      if (c == '=' && m == CALC ) calculator.doEquals()
-      else calculator.paste(c)
-
-      if ( m != CALC ) calculator.functionChanged()
-    }
+    if ( !forbidden(c) )
+      calculator.paste(c)
 
     e.consume() //Already handled the character, either inserted or ignored it.
   }
