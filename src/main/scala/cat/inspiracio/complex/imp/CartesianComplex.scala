@@ -213,11 +213,11 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
     * */
   override def equals(other: Any): Boolean = other match {
       case null => false
-      case b: Byte => this == byte2Complex(b)
-      case n: Int => this == int2Complex(n)
-      case l: Long => this == long2Complex(l)
-      case f: Float => this == float2Complex(f)
-      case d: Double => this == double2Complex(d)
+      case b: Byte => re==b && im==0  
+      case n: Int =>  re==n && im==0
+      case l: Long => re==l && im==0
+      case f: Float => re==f && im==0
+      case d: Double => re==d && im==0
       case c: CartesianComplex => this.re==c.re && this.im==c.im
       case ∞ => false
       case _ => false

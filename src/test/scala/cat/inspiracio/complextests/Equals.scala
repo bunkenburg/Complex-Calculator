@@ -22,6 +22,8 @@ import cat.inspiracio.complex._
 
 class Equals extends FunSuite {
 
+  // === ------------------------------------------
+
   test("0 === 0") {
     val c: Complex = 0
     val e: Complex = 0
@@ -180,11 +182,28 @@ class Equals extends FunSuite {
     assert( c === e )
   }
 
+  // equals() ---------------------------------------------
+
   test("π+i === bla ") {
     val c: Complex = π+i
     val b = c.equals("bla")
     assert( !b )
   }
+
+  // == ---------------------------------------------------
+
+  test("i == 3"){
+    val b = i == 0
+    assert( !b )
+  }
+
+  test("(3:Complex) == 3"){
+    val a: Complex = 3
+    val b = a == 3
+    assert( b )
+  }
+
+  // hashCode ---------------------------------------------
 
   test("(π+i).hashCode") {
     val c: Complex = π+i
