@@ -33,7 +33,7 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt.{GridBagConstraints, GridBagLayout}
+import java.awt._
 import java.awt.event.{ActionListener, WindowAdapter, WindowEvent}
 import java.text.ParseException
 import java.lang.Math.min
@@ -42,7 +42,6 @@ import cat.inspiracio.calculator.Mode._
 import cat.inspiracio.complex._
 import cat.inspiracio.parsing.Syntax
 import cat.inspiracio.parsing.Syntax.parse
-
 import javax.swing._
 
 /** The Calculator application.
@@ -188,7 +187,36 @@ final class Calculator() extends JFrame("Complex Calculator") {
   }
 
   /** Find a good place on the screen for the new Calculator frame. */
-  private def locate() = setLocationByPlatform(true)
+  private def locate() = {
+
+    //setLocationByPlatform(true) //Makes any difference?
+    //setLocationRelativeTo(null) //centers on screen
+    //setLocation(x, y)
+    //setLocation(p)
+
+    val tk = getToolkit
+    val insets: Insets = tk.getScreenInsets(gc) // 0 0 0 0
+    val resolution:Int = tk.getScreenResolution //dots per inch 96
+    val size: Dimension = tk.getScreenSize  //3600 x 1080
+
+    //How many screens are there?
+    val ge: GraphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment
+    val gs: Array[GraphicsDevice] = ge.getScreenDevices
+    for( g <- gs ){
+      println("screen: " + g)
+    }
+
+    //Which is principal screen?
+    val gc: GraphicsConfiguration = getGraphicsConfiguration
+    val gd: GraphicsDevice = gc.getDevice
+    println("main screen: " + gd)
+
+    //In what screen area can I put the frame?
+
+    //Puts on a certain screen:
+    //Window(owner, GraphicsConfiguration)
+
+  }
 
   /** Adds a complex number to the display. */
   final private[calculator] def add(c: Complex) = {
