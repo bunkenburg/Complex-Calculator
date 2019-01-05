@@ -116,8 +116,8 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     })
 
     pack()
-    setLocation()
-    setVisible(true)
+    //locate()  //subclass does this
+    //setVisible(true)  //subclass does this
 
   }//init
 
@@ -157,7 +157,7 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     canvas.repaint()
   }
 
-  def setLocation(): Unit = {
+  def locate(): Unit = {
     setLocationRelativeTo(this.calculator)
     setLocationByPlatform(true)
   }

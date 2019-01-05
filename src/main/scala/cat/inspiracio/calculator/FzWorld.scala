@@ -33,11 +33,12 @@
  * */
 package cat.inspiracio.calculator
 
+import java.awt.{Dimension, GraphicsConfiguration, Point}
 import java.awt.event._
 
 import cat.inspiracio.calculator.Interaction.MOVE
 import cat.inspiracio.complex.Complex
-import cat.inspiracio.geometry.{Freeline,Piclet}
+import cat.inspiracio.geometry.{Freeline, Piclet}
 import cat.inspiracio.parsing.Syntax
 
 final class FzWorld private[calculator](override val calculator: Calculator) extends World(calculator) {
@@ -100,11 +101,29 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
     sphere.addMouseListener(mouse)
     sphere.addMouseMotionListener(motion)
     pack()
-    setLocationRelativeTo(calculator)
+    locate()
     setVisible(true)
   }
 
-  override def setLocation() = setLocationRelativeTo(this.calculator)
+  /** to the right of z-world */
+  override def locate() = {
+    //screen
+    val screenConfiguration: GraphicsConfiguration = getGraphicsConfiguration
+    val screenBounds = screenConfiguration.getBounds  // 0 0 1920 1080
+
+    //calculator
+    val calculatorDimension: Dimension = calculator.getSize // 319 x 328
+    val calculatorPosition: Point = calculator.getLocationOnScreen  // 77 38
+
+    //z world
+    if(zW==null)
+      zW=calculator.zW
+    val zWorldDimension: Dimension = zW.getSize //550 372
+    val zWorldPosition: Point = zW.getLocationOnScreen  //77 414
+
+    import cat.inspiracio.geometry.Point2._
+    setLocation( zWorldPosition + (zWorldDimension.width + 10, 0) )
+  }
 
   override private[calculator] def add(c: Complex) = if (f != null) {
     try {

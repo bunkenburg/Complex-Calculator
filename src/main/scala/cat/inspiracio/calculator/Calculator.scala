@@ -68,7 +68,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
   var variable = 'z'
 
   private var cW: ComplexWorld = null
-  private var zW: ZWorld = null
+  private[calculator] var zW: ZWorld = null
   private var fzW: FzWorld = null
   private var modfzW: ThreeDWorld = null
   private var refxW: RefxWorld = null
@@ -179,10 +179,10 @@ final class Calculator() extends JFrame("Complex Calculator") {
     addWindowListener(new WindowAdapter() {
       override def windowClosing(windowevent: WindowEvent): Unit = quit()
     })
-    setMode(CALC)
     pack()
     locate()
     setVisible(true)
+    setMode(CALC)
     display.requestFocus()
   }
 
@@ -227,8 +227,9 @@ final class Calculator() extends JFrame("Complex Calculator") {
     //Window(owner, GraphicsConfiguration)
 
     // effective topleft on ubuntu standard: x=67 y=28
+    import cat.inspiracio.geometry.Point2._
     val effectiveTopLeft = (67,28)
-    setLocation(effectiveTopLeft._1 + 10, effectiveTopLeft._2 + 10)
+    setLocation(effectiveTopLeft + (10,10) )
 
     /*
     //val ge = GraphicsEnvironment.getLocalGraphicsEnvironment

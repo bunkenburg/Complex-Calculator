@@ -84,9 +84,23 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
 
   //Methods -----------------------------------------
 
+  /** to the right of z-world */
   private def locate() = {
-    setLocationRelativeTo(calculator)
-    setLocationByPlatform(true)
+    //screen
+    val screenConfiguration: GraphicsConfiguration = getGraphicsConfiguration
+    val screenBounds = screenConfiguration.getBounds  // 0 0 1920 1080
+
+    //calculator
+    val calculatorDimension: Dimension = calculator.getSize // 319 x 328
+    val calculatorPosition: Point = calculator.getLocationOnScreen  // 77 38
+
+    //z world
+    val zW = calculator.zW
+    val zWorldDimension: Dimension = zW.getSize //550 372
+    val zWorldPosition: Point = zW.getLocationOnScreen  //77 414
+
+    import cat.inspiracio.geometry.Point2._
+    setLocation( zWorldPosition + (zWorldDimension.width + 10, 0) )
   }
 
   /** Event listener: the function has changed. */
