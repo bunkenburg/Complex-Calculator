@@ -36,12 +36,12 @@ package cat.inspiracio.calculator
 import java.awt._
 import java.awt.event._
 import java.util.prefs.Preferences
+import javax.swing._
 
 import cat.inspiracio.calculator.Direction._
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.Point2
 import cat.inspiracio.parsing.Syntax
-import javax.swing._
 
 // Referenced classes of package bunkenba.calculator:
 //            Calculator, DoubleBuffer, Drawing
@@ -114,6 +114,10 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
     val x = p.getInt("x", calculatorPosition.x + calculatorDimension.width + 10 )
     val y = p.getInt("y", calculatorPosition.y )
     setLocation( x, y )
+
+    val width = p.getInt("width", 560)
+    val height = p.getInt("height", 365)
+    setSize(width,height)
   }
 
   //XXX unit tests
@@ -437,6 +441,10 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
     val Point2(x,y) = getLocationOnScreen
     p.putInt("x", x )
     p.putInt("y", y )
+
+    val size = getSize
+    p.putInt("width", size.width)
+    p.putInt("height", size.height)
 
     super.dispose()
   }
