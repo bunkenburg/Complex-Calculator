@@ -195,27 +195,66 @@ final class Calculator() extends JFrame("Complex Calculator") {
     //setLocation(p)
 
     val tk = getToolkit
-    val insets: Insets = tk.getScreenInsets(gc) // 0 0 0 0
+    //val insets: Insets = tk.getScreenInsets(gc) // 0 0 0 0
     val resolution:Int = tk.getScreenResolution //dots per inch 96
     val size: Dimension = tk.getScreenSize  //3600 x 1080
 
     //How many screens are there?
-    val ge: GraphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment
-    val gs: Array[GraphicsDevice] = ge.getScreenDevices
-    for( g <- gs ){
-      println("screen: " + g)
-    }
+    //val ge: GraphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment
+    //val gs: Array[GraphicsDevice] = ge.getScreenDevices
+    //for( g <- gs )println("screen: " + g)
 
     //Which is principal screen?
-    val gc: GraphicsConfiguration = getGraphicsConfiguration
-    val gd: GraphicsDevice = gc.getDevice
-    println("main screen: " + gd)
+
+    // Returns the bounds of the GraphicsConfiguration in the device coordinates.
+    // In a multi-screen environment with a virtual device, the bounds can have
+    // negative X or Y origins.
+    val screenConfiguration: GraphicsConfiguration = getGraphicsConfiguration
+    val screenBounds = screenConfiguration.getBounds  // 0 0 1920 1080
+    val screenWidth = screenBounds.width
+    val screenHeight = screenBounds.height
 
     //In what screen area can I put the frame?
+    val environment = GraphicsEnvironment.getLocalGraphicsEnvironment
+    val device: GraphicsDevice = environment.getDefaultScreenDevice
+    val rectangle = environment.getMaximumWindowBounds()  // 0 0 1929 1080
+    val insets: Insets = getToolkit.getScreenInsets(screenConfiguration)  // 0 0 0 0
+
+    // calculator dimension:
+    val calculatorDimension = getSize // 319 328
 
     //Puts on a certain screen:
     //Window(owner, GraphicsConfiguration)
 
+    // effective topleft on ubuntu standard: x=67 y=28
+    val effectiveTopLeft = (67,28)
+    setLocation(effectiveTopLeft._1 + 10, effectiveTopLeft._2 + 10)
+
+    /*
+    //val ge = GraphicsEnvironment.getLocalGraphicsEnvironment
+    val environment: GraphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment
+    val devices: Array[GraphicsDevice] = environment.getScreenDevices
+
+    for ( device: GraphicsDevice <- devices ) {
+
+      val defaultConfiguration = device.getDefaultConfiguration
+
+      val configurations: Array[GraphicsConfiguration] = device.getConfigurations //264
+      println(configurations.length)
+
+      val f = new JFrame(defaultConfiguration)
+      val c = new Canvas()
+      c.setSize(100, 100)
+      val bounds = defaultConfiguration.getBounds
+      val xoffs = bounds.x
+      val yoffs = bounds.y
+
+      f.getContentPane.add(c)
+      f.pack()
+      f.setLocation( 100 + xoffs, 100 + yoffs)
+      f.setVisible(true)
+    }
+    */
   }
 
   /** Adds a complex number to the display. */
