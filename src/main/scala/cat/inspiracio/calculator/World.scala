@@ -35,10 +35,11 @@ package cat.inspiracio.calculator
 
 import java.awt._
 import java.awt.event._
-import java.lang.Math.{max,min}
+import java.lang.Math.{max, min}
+import java.util.prefs.Preferences
 
 import cat.inspiracio.complex._
-import cat.inspiracio.geometry.Piclet
+import cat.inspiracio.geometry.{Piclet, Point2}
 import javax.swing._
 
 /** A frame that shows complex number on the complex plane or the Riemann sphere. */
@@ -196,6 +197,17 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     super.setFont(font)
     plane.setFont(font)
     sphere.setFont(font)
+  }
+
+  protected def preferences = Preferences.userNodeForPackage(getClass).node(getClass.getSimpleName)
+
+  override def dispose(): Unit = {
+    val p = preferences
+    val Point2(x,y) = getLocationOnScreen
+    p.putInt("x", x )
+    p.putInt("y", y )
+
+    super.dispose()
   }
 
 }

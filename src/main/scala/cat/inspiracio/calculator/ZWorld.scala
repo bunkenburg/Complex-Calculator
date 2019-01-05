@@ -344,16 +344,13 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
   /** below the calculator */
   override def locate() = {
-    //screen
-    val screenConfiguration: GraphicsConfiguration = getGraphicsConfiguration
-    val screenBounds = screenConfiguration.getBounds  // 0 0 1920 1080
-
-    //calculator
     val calculatorDimension: Dimension = calculator.getSize // 319 x 328
     val calculatorPosition: Point = calculator.getLocationOnScreen  // 77 38
 
-    import cat.inspiracio.geometry.Point2._
-    setLocation( calculatorPosition + (0, calculatorPosition.y + calculatorDimension.height + 10) )
+    val p = preferences
+    val x = p.getInt("x", calculatorPosition.x )
+    val y = p.getInt("y", calculatorPosition.y + calculatorDimension.height + 10 )
+    setLocation( x, y )
   }
 
       override private[calculator] def add(c: Complex) = {
