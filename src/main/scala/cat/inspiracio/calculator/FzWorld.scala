@@ -107,13 +107,6 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
 
   /** to the right of z-world */
   override def locate() = {
-    //screen
-    val screenConfiguration: GraphicsConfiguration = getGraphicsConfiguration
-    val screenBounds = screenConfiguration.getBounds  // 0 0 1920 1080
-
-    //calculator
-    val calculatorDimension: Dimension = calculator.getSize // 319 x 328
-    val calculatorPosition: Point = calculator.getLocationOnScreen  // 77 38
 
     //z world
     if(zW==null)
@@ -121,8 +114,10 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
     val zWorldDimension: Dimension = zW.getSize //550 372
     val zWorldPosition: Point = zW.getLocationOnScreen  //77 414
 
-    import cat.inspiracio.geometry.Point2._
-    setLocation( zWorldPosition + (zWorldDimension.width + 10, 0) )
+    val p = preferences
+    val x = p.getInt("x", zWorldPosition.x + zWorldDimension.width + 10 )
+    val y = p.getInt("y", zWorldPosition.y )
+    setLocation( x, y )
   }
 
   override private[calculator] def add(c: Complex) = if (f != null) {
