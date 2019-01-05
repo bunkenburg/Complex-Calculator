@@ -106,7 +106,7 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
   }
 
   /** to the right of z-world */
-  override def locate() = {
+  private def locate() = {
 
     //z world
     if(zW==null)

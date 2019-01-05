@@ -35,12 +35,12 @@ package cat.inspiracio.calculator
 
 import java.awt.{Dimension, GraphicsConfiguration, Point}
 import java.awt.event._
+import javax.swing._
 
 import cat.inspiracio.calculator.Interaction._
 import cat.inspiracio.calculator.Mode.{FZ, MODFZ}
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry._
-import javax.swing._
 
 final class ZWorld private[calculator](override val calculator: Calculator) extends World(calculator) {
 
@@ -89,7 +89,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
     })
     buttonPanel.add(interactionChoice)
 
-    val mouseadapter: MouseAdapter = new MouseAdapter() {
+    val mouse: MouseAdapter = new MouseAdapter() {
 
       override def mousePressed(mouseevent: MouseEvent): Unit = interaction match {
 
@@ -246,7 +246,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
     }//mouseadapter
 
-    val mousemotionadapter: MouseMotionAdapter = new MouseMotionAdapter() {
+    val motion: MouseMotionAdapter = new MouseMotionAdapter() {
 
       override def mouseDragged(mouseevent: MouseEvent): Unit = interaction match {
 
@@ -332,10 +332,10 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
     }//MouseMotionAdapter
 
-    plane.addMouseListener(mouseadapter)
-    plane.addMouseMotionListener(mousemotionadapter)
-    sphere.addMouseListener(mouseadapter)
-    sphere.addMouseMotionListener(mousemotionadapter)
+    plane.addMouseListener(mouse)
+    plane.addMouseMotionListener(motion)
+    sphere.addMouseListener(mouse)
+    sphere.addMouseMotionListener(motion)
     pack()
     locate()
     setVisible(true)
@@ -343,7 +343,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
   }//init
 
   /** below the calculator */
-  override def locate() = {
+  private def locate() = {
     val calculatorDimension: Dimension = calculator.getSize // 319 x 328
     val calculatorPosition: Point = calculator.getLocationOnScreen  // 77 38
 

@@ -37,10 +37,10 @@ import java.awt._
 import java.awt.event._
 import java.lang.Math.{max, min}
 import java.util.prefs.Preferences
+import javax.swing._
 
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.{Piclet, Point2}
-import javax.swing._
 
 /** A frame that shows complex number on the complex plane or the Riemann sphere. */
 abstract class World protected(val calculator: Calculator) extends JFrame {
@@ -72,12 +72,7 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
   init()
 
   private def init() = {
-
-    //logic ---
-
     resetExtremes()
-
-    //gui ---
 
     zInButton.addActionListener(_ => zoomIn())
     zOutButton.addActionListener(_ => zoomOut())
@@ -117,9 +112,6 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     })
 
     pack()
-    //locate()  //subclass does this
-    //setVisible(true)  //subclass does this
-
   }//init
 
 
@@ -156,11 +148,6 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
   private def reset() = {
     canvas.reset()
     canvas.repaint()
-  }
-
-  def locate(): Unit = {
-    setLocationRelativeTo(this.calculator)
-    setLocationByPlatform(true)
   }
 
   private[calculator] def add(c: Complex)
@@ -206,6 +193,10 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     val Point2(x,y) = getLocationOnScreen
     p.putInt("x", x )
     p.putInt("y", y )
+
+    val size = getSize
+    p.putInt("width", size.width)
+    p.putInt("height", size.height)
 
     super.dispose()
   }

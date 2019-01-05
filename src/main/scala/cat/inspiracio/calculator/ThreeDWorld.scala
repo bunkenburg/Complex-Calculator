@@ -37,11 +37,11 @@ import java.awt._
 import java.awt.event._
 import java.lang.Math.{atan2, max, min}
 import java.util.prefs.Preferences
+import javax.swing._
 
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry._
 import cat.inspiracio.parsing.{Constant, Syntax}
-import javax.swing._
 
 // Referenced classes of package bunkenba.calculator:
 //            Calculator, DoubleBuffer, Drawing, Matrix44,
@@ -87,7 +87,6 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
 
   /** to the right of z-world */
   private def locate() = {
-
     //z world
     val zW = calculator.zW
     val zWorldDimension: Dimension = zW.getSize //550 372

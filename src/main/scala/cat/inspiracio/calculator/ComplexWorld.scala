@@ -33,14 +33,10 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt.{Dimension, GraphicsConfiguration, Point}
 import java.awt.event.{ItemEvent, MouseAdapter, MouseEvent, MouseMotionAdapter}
-import java.util.prefs.Preferences
-
+import javax.swing._
 import cat.inspiracio.calculator.Interaction._
 import cat.inspiracio.complex._
-import cat.inspiracio.geometry.Point2
-import javax.swing._
 
 /** The complex world displays results of calculations
   * and allows graphical input of numbers.
@@ -135,7 +131,7 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
   private var numbers: List[Complex] = Nil
 
   /** to the right of the calculator */
-  override def locate() = {
+  private def locate() = {
     val calculatorPosition = calculator.getLocationOnScreen
     val calculatorDimension = calculator.getSize
 
@@ -143,6 +139,11 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
     val x = p.getInt("x", calculatorPosition.x + calculatorDimension.width + 10 )
     val y = p.getInt("y", calculatorPosition.y )
     setLocation( x, y )
+
+    //val size = getSize  //width=560 height=365
+    val width = p.getInt("width", 560)
+    val height = p.getInt("height", 365)
+    setSize(width,height)
   }
 
   private def clear() = {
