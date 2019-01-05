@@ -118,6 +118,10 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
     val x = p.getInt("x", zWorldPosition.x + zWorldDimension.width + 10 )
     val y = p.getInt("y", zWorldPosition.y )
     setLocation( x, y )
+
+    val width = p.getInt("width", 560)
+    val height = p.getInt("height", 365)
+    setSize(width,height)
   }
 
   override private[calculator] def add(c: Complex) = if (f != null) {
