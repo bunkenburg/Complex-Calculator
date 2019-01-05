@@ -8,6 +8,8 @@ object Point2 {
   implicit def pair2Point2(p: (Int,Int) ) = new Point2(p._1, p._2)
   implicit def point2Point2(p: Point) = new Point2(p.x, p.y)
 
+  def unapply(p: Point): Option[(Int, Int)] = Some(p.x, p.y)
+
 }
 class Point2(x: Int, y: Int) extends Point(x,y) {
 

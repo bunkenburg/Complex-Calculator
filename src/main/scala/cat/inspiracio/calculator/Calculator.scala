@@ -37,9 +37,11 @@ import java.awt._
 import java.awt.event.{ActionListener, WindowAdapter, WindowEvent}
 import java.text.ParseException
 import java.lang.Math.min
+import java.util.prefs.Preferences
 
 import cat.inspiracio.calculator.Mode._
 import cat.inspiracio.complex._
+import cat.inspiracio.geometry.Point2
 import cat.inspiracio.parsing.Syntax
 import cat.inspiracio.parsing.Syntax.parse
 import javax.swing._
@@ -186,76 +188,17 @@ final class Calculator() extends JFrame("Complex Calculator") {
     display.requestFocus()
   }
 
-  /** Find a good place on the screen for the new Calculator frame. */
+  private def preferences = Preferences.userNodeForPackage(getClass).node(getClass.getSimpleName)
+
+  /** Locates the Calculator where it was last time the program was run.
+    * By default near effective topleft. */
   private def locate() = {
 
-    //setLocationByPlatform(true) //Makes any difference?
-    //setLocationRelativeTo(null) //centers on screen
-    //setLocation(x, y)
-    //setLocation(p)
-
-    val tk = getToolkit
-    //val insets: Insets = tk.getScreenInsets(gc) // 0 0 0 0
-    val resolution:Int = tk.getScreenResolution //dots per inch 96
-    val size: Dimension = tk.getScreenSize  //3600 x 1080
-
-    //How many screens are there?
-    //val ge: GraphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment
-    //val gs: Array[GraphicsDevice] = ge.getScreenDevices
-    //for( g <- gs )println("screen: " + g)
-
-    //Which is principal screen?
-
-    // Returns the bounds of the GraphicsConfiguration in the device coordinates.
-    // In a multi-screen environment with a virtual device, the bounds can have
-    // negative X or Y origins.
-    val screenConfiguration: GraphicsConfiguration = getGraphicsConfiguration
-    val screenBounds = screenConfiguration.getBounds  // 0 0 1920 1080
-    val screenWidth = screenBounds.width
-    val screenHeight = screenBounds.height
-
-    //In what screen area can I put the frame?
-    val environment = GraphicsEnvironment.getLocalGraphicsEnvironment
-    val device: GraphicsDevice = environment.getDefaultScreenDevice
-    val rectangle = environment.getMaximumWindowBounds()  // 0 0 1929 1080
-    val insets: Insets = getToolkit.getScreenInsets(screenConfiguration)  // 0 0 0 0
-
-    // calculator dimension:
-    val calculatorDimension = getSize // 319 328
-
-    //Puts on a certain screen:
-    //Window(owner, GraphicsConfiguration)
-
     // effective topleft on ubuntu standard: x=67 y=28
-    import cat.inspiracio.geometry.Point2._
-    val effectiveTopLeft = (67,28)
-    setLocation(effectiveTopLeft + (10,10) )
-
-    /*
-    //val ge = GraphicsEnvironment.getLocalGraphicsEnvironment
-    val environment: GraphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment
-    val devices: Array[GraphicsDevice] = environment.getScreenDevices
-
-    for ( device: GraphicsDevice <- devices ) {
-
-      val defaultConfiguration = device.getDefaultConfiguration
-
-      val configurations: Array[GraphicsConfiguration] = device.getConfigurations //264
-      println(configurations.length)
-
-      val f = new JFrame(defaultConfiguration)
-      val c = new Canvas()
-      c.setSize(100, 100)
-      val bounds = defaultConfiguration.getBounds
-      val xoffs = bounds.x
-      val yoffs = bounds.y
-
-      f.getContentPane.add(c)
-      f.pack()
-      f.setLocation( 100 + xoffs, 100 + yoffs)
-      f.setVisible(true)
-    }
-    */
+    val p = preferences
+    val x: Int = p.getInt("x", 67 + 10 )
+    val y: Int = p.getInt("y", 28 + 10 )
+    setLocation( x , y )
   }
 
   /** Adds a complex number to the display. */
@@ -311,6 +254,13 @@ final class Calculator() extends JFrame("Complex Calculator") {
   private[calculator] def getSquare = zW.getSquare
 
   def quit(): Unit = if (inAnApplet) {
+
+    //save location
+    val p = preferences
+    val Point2(x,y) = getLocationOnScreen
+    p.putInt("x", x)
+    p.putInt("y", y)
+
     dispose()
     if (cW != null) cW.dispose()
     if (zW != null) zW.dispose()
