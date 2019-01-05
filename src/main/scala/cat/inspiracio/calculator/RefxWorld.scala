@@ -106,23 +106,14 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
 
   /** to the right of the calculator */
   private def locate() = {
-
-    //Platform decides where the window should be
-    //setLocationByPlatform(true);
-
-    //on center of relative
-    //setLocationRelativeTo(calculator)
-
-    //screen
-    val screenConfiguration: GraphicsConfiguration = getGraphicsConfiguration
-    val screenBounds = screenConfiguration.getBounds  // 0 0 1920 1080
-
     //calculator
     val calculatorDimension: Dimension = calculator.getSize // 319 x 328
     val calculatorPosition: Point = calculator.getLocationOnScreen  // 77 38
 
-    import cat.inspiracio.geometry.Point2._
-    setLocation( calculatorPosition + (calculatorDimension.width + 10, 0) )
+    val p = preferences
+    val x = p.getInt("x", calculatorPosition.x + calculatorDimension.width + 10 )
+    val y = p.getInt("y", calculatorPosition.y )
+    setLocation( x, y )
   }
 
   //XXX unit tests
