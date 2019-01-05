@@ -36,10 +36,11 @@ package cat.inspiracio.calculator
 import java.awt._
 import java.awt.event._
 import java.lang.Math.{atan2, max, min}
+import java.util.prefs.Preferences
 
 import cat.inspiracio.complex._
-import cat.inspiracio.geometry.{Matrix44, Square, Vector2, Vector3}
-import cat.inspiracio.parsing.{Syntax, Constant}
+import cat.inspiracio.geometry._
+import cat.inspiracio.parsing.{Constant, Syntax}
 import javax.swing._
 
 // Referenced classes of package bunkenba.calculator:
@@ -86,21 +87,16 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
 
   /** to the right of z-world */
   private def locate() = {
-    //screen
-    val screenConfiguration: GraphicsConfiguration = getGraphicsConfiguration
-    val screenBounds = screenConfiguration.getBounds  // 0 0 1920 1080
-
-    //calculator
-    val calculatorDimension: Dimension = calculator.getSize // 319 x 328
-    val calculatorPosition: Point = calculator.getLocationOnScreen  // 77 38
 
     //z world
     val zW = calculator.zW
     val zWorldDimension: Dimension = zW.getSize //550 372
     val zWorldPosition: Point = zW.getLocationOnScreen  //77 414
 
-    import cat.inspiracio.geometry.Point2._
-    setLocation( zWorldPosition + (zWorldDimension.width + 10, 0) )
+    val p = preferences
+    val x = p.getInt("x", zWorldPosition.x + zWorldDimension.width + 10 )
+    val y = p.getInt("y", zWorldPosition.y )
+    setLocation( x, y )
   }
 
   /** Event listener: the function has changed. */
@@ -563,4 +559,14 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
 
   }//inner class ThreeDCanvas
 
+  protected def preferences = Preferences.userNodeForPackage(getClass).node(getClass.getSimpleName)
+
+  override def dispose(): Unit = {
+    val p = preferences
+    val Point2(x,y) = getLocationOnScreen
+    p.putInt("x", x )
+    p.putInt("y", y )
+
+    super.dispose()
+  }
 }

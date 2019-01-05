@@ -35,9 +35,11 @@ package cat.inspiracio.calculator
 
 import java.awt._
 import java.awt.event._
+import java.util.prefs.Preferences
 
 import cat.inspiracio.calculator.Direction._
 import cat.inspiracio.complex._
+import cat.inspiracio.geometry.Point2
 import cat.inspiracio.parsing.Syntax
 import javax.swing._
 
@@ -436,4 +438,16 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
   // helpers -----------------------------------
 
   private def toString(d: Double): String = double2Complex(d).toString
+
+  protected def preferences = Preferences.userNodeForPackage(getClass).node(getClass.getSimpleName)
+
+  override def dispose(): Unit = {
+    val p = preferences
+    val Point2(x,y) = getLocationOnScreen
+    p.putInt("x", x )
+    p.putInt("y", y )
+
+    super.dispose()
+  }
+
 }
