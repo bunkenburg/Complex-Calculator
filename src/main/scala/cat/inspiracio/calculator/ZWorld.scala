@@ -351,6 +351,10 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
     val x = p.getInt("x", calculatorPosition.x )
     val y = p.getInt("y", calculatorPosition.y + calculatorDimension.height + 10 )
     setLocation( x, y )
+
+    val width = p.getInt("width", 560)
+    val height = p.getInt("height", 365)
+    setSize(width,height)
   }
 
       override private[calculator] def add(c: Complex) = {
