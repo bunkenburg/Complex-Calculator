@@ -96,6 +96,10 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     val x = p.getInt("x", zWorldPosition.x + zWorldDimension.width + 10 )
     val y = p.getInt("y", zWorldPosition.y )
     setLocation( x, y )
+
+    val width = p.getInt("width", 560)
+    val height = p.getInt("height", 365)
+    setSize(width,height)
   }
 
   /** Event listener: the function has changed. */
@@ -565,6 +569,10 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     val Point2(x,y) = getLocationOnScreen
     p.putInt("x", x )
     p.putInt("y", y )
+
+    val size = getSize
+    p.putInt("width", size.width)
+    p.putInt("height", size.height)
 
     super.dispose()
   }
