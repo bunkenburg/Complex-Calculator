@@ -71,7 +71,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
 
   private var cW: ComplexWorld = null
   private[calculator] var zW: ZWorld = null
-  private var fzW: FzWorld = null
+  private[calculator] var fzW: FzWorld = null
   private var modfzW: ThreeDWorld = null
   private var refxW: RefxWorld = null
   private var f: Syntax = null

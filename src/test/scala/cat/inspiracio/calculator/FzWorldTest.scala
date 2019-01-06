@@ -28,7 +28,9 @@ class FzWorldTest extends FunSuite {
 
     val calculator = new Calculator
     val zW = new ZWorld(calculator)
+    calculator.zW = zW
     val fzW = new FzWorld(calculator)
+    calculator.fzW = fzW
     fzW.setzWorld(zW)
     val tree = new Variable
     fzW.functionChanged(tree)
@@ -37,8 +39,6 @@ class FzWorldTest extends FunSuite {
     fzW.add(p)
 
     calculator.quit()
-    fzW.dispose()
-    zW.dispose()
   }
 
 }

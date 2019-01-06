@@ -66,7 +66,7 @@ object Syntax {
       else {
         k = last('*', s, start, end)
         if ( -1 < k )
-          binary(s, start, k, end, 2)
+          binary(s, start, k, end, PRODUCTTOKEN)
 
         else {
           k = last('/', s, start, end)
@@ -141,27 +141,29 @@ object Syntax {
     tree
   }
 
+  /** Index of the first instance of c i s(i..j). */
   private def first(c: Char, s: String, i: Int, j: Int): Int = {
     var k = i
-    var l = 0
-    while ( k < j && (l != 0 || s.charAt(k) != c) ) {
+    var parenthesis = 0
+    while ( k < j && (parenthesis != 0 || s.charAt(k) != c) ) {
       if (s.charAt(k) == '(')
-        l += 1
+        parenthesis += 1
       else if (s.charAt(k) == ')')
-        l -= 1
+        parenthesis -= 1
       k += 1
     }
     if (k < j) k else -1
   }
 
+  /** Index of the last instance of c i s(i..j). */
   private def last(c: Char, s: String, i: Int, j: Int): Int = {
     var k = j - 1
-    var l = 0
-    while ( i <= k && (l != 0 || s.charAt(k) != c) ) {
+    var parenthesis = 0
+    while ( i <= k && (parenthesis != 0 || s.charAt(k) != c) ) {
       if (s.charAt(k) == '(')
-        l += 1
+        parenthesis += 1
       else if (s.charAt(k) == ')')
-        l -= 1
+        parenthesis -= 1
       k -= 1
     }
     if (i <= k) k else -1
@@ -327,23 +329,20 @@ object Syntax {
       c = Cartesian(0, 1)
       i += 1
     }
-
     else if (s.startsWith("e", i)) {
       c = e
       i += 1
     }
-
     else if (s.startsWith("π", i)) {
       c = π
       i += 1
     }
-
     else if (s.startsWith("∞", i)) {
       c = ∞
       i += 1
     }
-
-    else throw new ParseException("readConstant " + s, i)
+    else
+      throw new ParseException("readConstant " + s, i)
 
     start.setIndex(i)
     new Constant(c)
@@ -353,9 +352,8 @@ object Syntax {
   private def readDigits(s: String, start: ParsePosition, end: ParsePosition): Constant = {
 
     var i = start.getIndex
-    while ( i < end.getIndex && digits.contains(s.charAt(i) ) ) {
-      i += 1; i - 1
-    }
+    while ( i < end.getIndex && digits.contains(s.charAt(i) ) )
+      i += 1
 
     var c: Complex = null
 
@@ -363,37 +361,34 @@ object Syntax {
       c = ( s.substring(start.getIndex, i) ).toDouble
 
     else if (s.charAt(i) == '.') {
-      var j = 0
-      j = i + 1
-      while ( j < end.getIndex && digits.contains(s.charAt(j) ) ) {
-        j += 1; j - 1
-      }
+      var j = i + 1
+      while ( j < end.getIndex && digits.contains(s.charAt(j) ) )
+        j += 1
 
       if (i + 1 <= j - 1) {
         i = j
         c = (s.substring(start.getIndex, i)).toDouble
       }
-      else throw new ParseException("readDigits: decimal point followed by non-digit", i)
+      else
+        throw new ParseException("readDigits: decimal point followed by non-digit", i)
     }
-    else c = (s.substring(start.getIndex, i)).toDouble
+    else
+      c = (s.substring(start.getIndex, i)).toDouble
 
     start.setIndex(i)
     new Constant(c)
   }
 
   @throws[ParseException]
-  private def binary(s: String, i: Int, j: Int, k: Int, l: Int): Binary = {
+  private def binary(s: String, i: Int, j: Int, k: Int, token: Int): Binary = {
     val a = parse(s, i, j)
     val b = parse(s, j + 1, k)
-    new Binary(l, a, b)
+    new Binary(token, a, b)
   }
 
   @throws[ParseException]
-  private def plusMinus(s: String, i: Int, j: Int, k: Int, l: Int): Syntax = if (j == i) {
-    val a = parse(s, i + 1, k)
-    new Unary(l, a)
-  }
-  else binary(s, i, j, k, l)
+  private def plusMinus(s: String, i: Int, j: Int, k: Int, token: Int): Syntax =
+    if (j == i) new Unary(token, parse(s, i + 1, k)) else binary(s, i, j, k, token)
 
 }
 
