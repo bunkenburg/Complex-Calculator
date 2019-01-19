@@ -70,8 +70,10 @@ abstract class WorldRepresentation protected(var w: World) extends JComponent {
 
   private[calculator] def shift(x: Int, y: Int)
 
-  private[calculator] def zoomIn()
-  private[calculator] def zoomOut()
+  //There is zoom for plane but not for sphere.
+  //zoom causes repaint.
+  private[calculator] def zoomIn(): Unit = {}
+  private[calculator] def zoomOut(): Unit = {}
 
   // helpers -----------------------------------
 

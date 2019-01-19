@@ -565,15 +565,16 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
   protected def preferences = Preferences.userNodeForPackage(getClass).node(getClass.getSimpleName)
 
   override def dispose(): Unit = {
-    val p = preferences
-    val Point2(x,y) = getLocationOnScreen
-    p.putInt("x", x )
-    p.putInt("y", y )
+    if(isVisible){
+      val p = preferences
+      val Point2(x,y) = getLocationOnScreen
+      p.putInt("x", x )
+      p.putInt("y", y )
 
-    val size = getSize
-    p.putInt("width", size.width)
-    p.putInt("height", size.height)
-
+      val size = getSize
+      p.putInt("width", size.width)
+      p.putInt("height", size.height)
+    }
     super.dispose()
   }
 }

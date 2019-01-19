@@ -255,11 +255,12 @@ final class Calculator() extends JFrame("Complex Calculator") {
 
   def quit(): Unit = if (inAnApplet) {
 
-    //save location
-    val p = preferences
-    val Point2(x,y) = getLocationOnScreen
-    p.putInt("x", x)
-    p.putInt("y", y)
+    if(isVisible){
+      val p = preferences
+      val Point2(x,y) = getLocationOnScreen
+      p.putInt("x", x)
+      p.putInt("y", y)
+    }
 
     dispose()
     if (cW != null) cW.dispose()

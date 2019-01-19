@@ -93,8 +93,7 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     }
   }
 
-  override private[calculator] def draw(drawing: Drawing, eclist: List[Complex]) = {
-    var list = eclist
+  override private[calculator] def draw(drawing: Drawing, list: List[Complex]) = {
     val point = new Point
     if ( list != null && !list.isEmpty ) {
 
@@ -269,6 +268,4 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     R1 = R1.postRot('y', d1)
   }
 
-  override private[calculator] def zoomIn() = {}
-  override private[calculator] def zoomOut() = {}
 }

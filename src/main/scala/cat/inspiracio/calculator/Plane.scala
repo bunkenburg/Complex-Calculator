@@ -278,6 +278,12 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     CenterImaginary -= pix2Math(y)
   }
 
-  override private[calculator] def zoomIn() = ScaleFactor *= 2
-  override private[calculator] def zoomOut() = ScaleFactor /= 2
+  override private[calculator] def zoomIn() = {
+    ScaleFactor *= 2
+    repaint()
+  }
+  override private[calculator] def zoomOut() = {
+    ScaleFactor /= 2
+    repaint()
+  }
 }

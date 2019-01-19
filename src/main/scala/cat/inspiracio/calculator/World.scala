@@ -74,8 +74,8 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
   private def init() = {
     resetExtremes()
 
-    zInButton.addActionListener(_ => zoomIn())
-    zOutButton.addActionListener(_ => zoomOut())
+    zInButton.addActionListener(_ => canvas.zoomIn())
+    zOutButton.addActionListener(_ => canvas.zoomOut())
 
     val choice = new JComboBox[String]
     choice.addItem("Plane")
@@ -114,16 +114,6 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     pack()
   }//init
 
-
-  private def zoomIn() = {
-    canvas.zoomIn()
-    canvas.repaint()
-  }
-
-  private def zoomOut() = {
-    canvas.zoomOut()
-    canvas.repaint()
-  }
 
   private def useSphere() = {
     remove(sphere)
@@ -189,15 +179,16 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
   protected def preferences = Preferences.userNodeForPackage(getClass).node(getClass.getSimpleName)
 
   override def dispose(): Unit = {
-    val p = preferences
-    val Point2(x,y) = getLocationOnScreen
-    p.putInt("x", x )
-    p.putInt("y", y )
+    if(isVisible) {
+      val p = preferences
+      val Point2(x, y) = getLocationOnScreen
+      p.putInt("x", x)
+      p.putInt("y", y)
 
-    val size = getSize
-    p.putInt("width", size.width)
-    p.putInt("height", size.height)
-
+      val size = getSize
+      p.putInt("width", size.width)
+      p.putInt("height", size.height)
+    }
     super.dispose()
   }
 
