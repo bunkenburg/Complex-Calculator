@@ -7,7 +7,8 @@
 * Nice About-menu
 * make a real executable application
 * Give World windows a toolbar instead of buttons and menus to read
-* tests for GUI?
+* separate GUI from logic
+* make a version inside a web page: GUI is html, logic with scala.js
 
 # DONE
 

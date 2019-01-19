@@ -28,14 +28,14 @@ object RiemannSphere {
   /** From sphere to plane: x/(1−z) + i * y/(1−z).
     * @param p = (x,y,z) In 3d space on the unit sphere
     * @return Complex number represented by this point. */
-  def sphere2plane(p: Point): Complex =
-    p match { case (x,y,z) => sphere2plane(x,y,z) }
+  val sphere2plane: Point => Complex = {
+    case (x,y,z) => sphere2plane(x,y,z)
+  }
 
   /** From plane to sphere (x,y,z) = ( 2X/(1+X²+Y²) , 2Y/(1+X²+Y²) , (X²+Y²−1)/(1+X²+Y²) )
     * @param c Complex number
     * @return 3d point on unit sphere */
-  def plane2sphere(c: Complex): Point =
-    c match {
+  val plane2sphere: Complex => Point = {
       case ∞ => (0,0,1)
       case Cartesian(re, im) => {
         val re2 = sqr(re) //maybe Double.Infinity
@@ -52,6 +52,8 @@ object RiemannSphere {
       }
     }
 
-  def distance(a: Point, b: Point): Double = sqrt(sqr(a._1-b._1) + sqr(a._2-b._2) + sqr(a._3-b._3))
+  val distance: (Point,Point) => Double = {
+    case ((ax,ay,az),(bx,by,bz)) => sqrt(sqr(ax-bx) + sqr(ay-by) + sqr(az-bz))
+  }
 
 }

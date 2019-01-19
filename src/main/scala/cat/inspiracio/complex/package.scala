@@ -42,18 +42,18 @@ package object complex {
 
   /** The modulus or absolute value of the number.
     * Only for finite numbers. */
-  def abs(c: Complex): Double = c match {
+  val abs: Complex => Double = {
     case Real(r) => abs(r)
     case cc: CartesianComplex => cc.modulus
     case ∞ => throw new ArithmeticException("|∞|")
   }
 
-  def Re(c: Complex): Double = c match {
+  val Re: Complex => Double = {
     case Cartesian(re, _) => re
     case ∞ => throw new ArithmeticException("Re(∞)")
   }
 
-  def Im(c: Complex): Double = c match {
+  val Im: Complex => Double = {
     case Cartesian(_, im) => im
     case ∞ => throw new ArithmeticException("Im(∞)")
   }
@@ -71,10 +71,10 @@ package object complex {
     else if(a == 2*π) 0
     else Math.sin(a)
 
-  def sin(z: Complex): Complex = z match {
+  val sin: Complex => Complex = {
     case ∞ => throw new ArithmeticException("sin ∞")
     case Real(r) => sin(r)
-    case _ => {
+    case z => {
       val zi = z * i
       (exp(zi) - exp(-zi)) / (i * 2)
     }
@@ -91,10 +91,10 @@ package object complex {
     else if(a == 2*π) 1
     else Math.cos(a)
 
-  def cos(z: Complex): Complex = z match {
+  val cos: Complex => Complex = {
     case ∞ => throw new ArithmeticException("cos ∞")
     case Real(r) => cos(r)
-    case _ => {
+    case z => {
       val zi = z * i
       (exp(zi) + exp(-zi)) / 2
     }
@@ -108,9 +108,9 @@ package object complex {
     else if(a == 2*π) 0
     else Math.tan(a)
 
-  def tan(z: Complex): Complex = z match {
+  val tan: Complex => Complex = {
     case Real(r) => tan(r)
-    case _ => sin(z) / cos (z)
+    case z => sin(z) / cos (z)
   }
 
   def cot(a: Double): Complex = 1 / tan(a)
@@ -119,41 +119,41 @@ package object complex {
   // hyperbolic functions -------------------
 
   /** sinh x = -i sin(ix) */
-  def sinh(z: Complex): Complex = z match {
+  val sinh: Complex => Complex = {
     case ∞ => throw new ArithmeticException("sinh ∞")
     case Real(r) => ( exp(r) - exp(-r) ) / 2
-    case _ => ( exp(z) - exp(-z) ) / 2
+    case z => ( exp(z) - exp(-z) ) / 2
   }
 
   /** cosh x = cos(ix) */
-  def cosh(z: Complex): Complex = z match {
+  val cosh: Complex => Complex = {
     case ∞ => throw new ArithmeticException("cosh ∞")
     case Real(r) => ( exp(r) + exp(-r) ) / 2
-    case _ => ( exp(z) + exp(-z) ) / 2
+    case z => ( exp(z) + exp(-z) ) / 2
   }
 
   /** tanh x = -i tan(ix) */
-  def tanh(z: Complex): Complex = z match {
+  val tanh: Complex => Complex = {
     case Real(r) => sinh(r) / cosh(r)
-    case _ => sinh(z) / cosh(z)
+    case z => sinh(z) / cosh(z)
   }
 
   def exp(d: Double): Double = Math.exp(d)
 
-  def exp(z: Complex): Complex = z match {
+  val exp: Complex => Complex = {
     case ∞ => ∞
     case Real(r) => exp(r)
     case Cartesian(re,im) => Polar(exp(re), im)
   }
 
-  def ln(z: Complex) = z match {
+  val ln: Complex => Complex = {
     case ∞ => ∞
     case Real(0) => throw new ArithmeticException("ln 0")
     case Polar(m,a) => Cartesian(Math.log(m), a)
   }
 
   /** Complex conjugate: negates the imaginary part */
-  def conj(z: Complex) = z match {
+  val conj: Complex => Complex = {
     case ∞ => ∞
     case Cartesian(re,im) => Cartesian(re, -im)
   }
@@ -161,7 +161,7 @@ package object complex {
   /** Opposite point on Riemann sphere.
     * def opp(z) = -1 / conj(z)
     * */
-  def opp(z: Complex): Complex = z match {
+  val opp: Complex => Complex = {
     case ∞ => 0
     case Real(0) => ∞
     case Polar(m,a) => Polar(1 / m, a + π)
@@ -174,10 +174,10 @@ package object complex {
     else n * f(n-1)
 
   /** Factorial function, for natural numbers only */
-  def fac(z: Complex): Complex = z match {
+  val fac: Complex => Complex = {
     case ∞ => ∞
     case Natural(n) if n <= 20 => f(n)
-    case _ => throw new ArithmeticException(z +  "!")
+    case z => throw new ArithmeticException(z +  "!")
   }
 
   // conversions ---------------------------------
@@ -202,11 +202,9 @@ package object complex {
   object Natural {
 
     /** val Natural(n) = z */
-    def unapply(c: Complex): Option[Long] = {
-      c match {
-        case Integer(n) if 0<=n => Some(n)
-        case _ => None
-      }
+    def unapply(c: Complex): Option[Long] = c match {
+      case Integer(n) if 0<=n => Some(n)
+      case _ => None
     }
 
   }
@@ -214,11 +212,9 @@ package object complex {
   object Integer {
 
     /** val Integer(n) = z */
-    def unapply(c: Complex): Option[Long] = {
-      c match {
-        case Real(re) if re.isWhole() => Some(re.toLong)
-        case _ => None
-      }
+    def unapply(c: Complex): Option[Long] = c match {
+      case Real(re) if re.isWhole() => Some(re.toLong)
+      case _ => None
     }
 
   }
@@ -229,11 +225,9 @@ package object complex {
     def apply(re: Double): Complex = Cartesian(re, 0)
 
     /** val Real(re) = z */
-    def unapply(c: Complex): Option[Double] = {
-      c match {
-        case Cartesian(re, im) if im==0 => Some(re)
-        case _ => None
-      }
+    def unapply(c: Complex): Option[Double] = c match {
+      case Cartesian(re, im) if im==0 => Some(re)
+      case _ => None
     }
 
   }
@@ -244,11 +238,9 @@ package object complex {
     def apply(im: Double): Complex = Cartesian(0, im)
 
     /** val Imaginary(im) = z */
-    def unapply(c: Complex): Option[Double] = {
-      c match {
-        case Cartesian(re, im) if re==0 => Some(im)
-        case _ => None
-      }
+    def unapply(c: Complex): Option[Double] = c match {
+      case Cartesian(re, im) if re==0 => Some(im)
+      case _ => None
     }
 
   }
@@ -265,15 +257,14 @@ package object complex {
 
     /** val Polar(m, a) = z
       * Matches all finite numbers. */
-    def unapply(c: Complex): Option[(Double,Double)] =
-      c match {
-        case ∞ => None
-        case cc: CartesianComplex => {
-          val m = cc.modulus
-          val a = cc.argument
-          Some( (m, a) )
-        }
+    def unapply(c: Complex): Option[(Double,Double)] = c match {
+      case ∞ => None
+      case cc: CartesianComplex => {
+        val m = cc.modulus
+        val a = cc.argument
+        Some( (m, a) )
       }
+    }
 
   }
 

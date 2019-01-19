@@ -22,7 +22,7 @@ import cat.inspiracio.complex._
 
 class Patterns extends FunSuite {
 
-  def parse(z: Complex): String = z match {
+  val parse: Complex => String = {
 
     case Natural(20) => "Natural(20)"
     case Natural(n) => "Natural(n)"
