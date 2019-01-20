@@ -33,10 +33,13 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt.event.{ItemEvent, MouseAdapter, MouseEvent, MouseMotionAdapter}
+import java.awt.Point
+import java.awt.event._
+
 import javax.swing._
 import cat.inspiracio.calculator.Interaction._
 import cat.inspiracio.complex._
+import javax.swing.event.{MouseInputAdapter, MouseInputListener}
 
 /** The complex world displays results of calculations
   * and allows graphical input of numbers.
@@ -67,62 +70,46 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
     })
     buttonPanel.add(interactionChoice)
 
-    val mouse: MouseAdapter = new MouseAdapter() {
+    val mouse: MouseInputListener = new MouseInputAdapter() {
 
-      override def mousePressed(mouseevent: MouseEvent): Unit = interaction match {
+      /** the previous mouse position during dragging */
+      var previous: cat.inspiracio.geometry.Point2 = null
 
-        case MOVE =>
-          prevx = mouseevent.getX
-          prevy = mouseevent.getY
-          mouseevent.consume()
-
+      override def mousePressed(e: MouseEvent): Unit = interaction match {
+        case MOVE => previous = e.getPoint
         case DRAW =>
-          val p = mouseevent.getPoint
+          val p = e.getPoint
           val z = canvas.point2Complex(p)
           if (z != null) {
             calculator.add(z)
             add(z)
           }
-
         case _ =>
       }
 
-      override def mouseReleased(mouseevent: MouseEvent): Unit = interaction match {
-
+      override def mouseReleased(e: MouseEvent): Unit = interaction match {
         case MOVE =>
-          val x = mouseevent.getX
-          val y = mouseevent.getY
-          canvas.shift(prevx - x, prevy - y)
-          canvas.paint(canvas.getGraphics)
-          prevx = x
-          prevy = y
-          mouseevent.consume()
-
+          val p = e.getPoint
+          canvas.shift(previous - p)
+          canvas.paint()
+          previous = p
         case _ =>
       }
-    }
-
-    val motion: MouseMotionAdapter = new MouseMotionAdapter() {
 
       override def mouseDragged(e: MouseEvent): Unit = interaction match {
-
         case MOVE =>
-          val x = e.getX
-          val y = e.getY
-          canvas.shift(prevx - x, prevy - y)
-          canvas.paint(canvas.getGraphics)
-          prevx = x
-          prevy = y
-          e.consume()
-
+          val p = e.getPoint
+          canvas.shift(previous - p)
+          canvas.paint()
+          previous = p
         case _ =>
       }
     }
 
     plane.addMouseListener(mouse)
-    plane.addMouseMotionListener(motion)
+    plane.addMouseMotionListener(mouse)
     sphere.addMouseListener(mouse)
-    sphere.addMouseMotionListener(motion)
+    sphere.addMouseMotionListener(mouse)
     pack()
     locate()
     setVisible(true)
