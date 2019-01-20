@@ -86,8 +86,7 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
       val x = (d6 * xyscale + width.toDouble * 0.5).toInt
       val y = (-d7 * xyscale + height.toDouble * 0.5).toInt
       drawing.cross( x, y, MARKLENGTH )
-      drawing.move(2, -2)
-      drawing.drawString(z.toString)
+      drawing.drawString(z.toString, x+2, y+2 )
     }
   }
 

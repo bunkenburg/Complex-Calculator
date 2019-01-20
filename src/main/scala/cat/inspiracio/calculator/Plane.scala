@@ -106,8 +106,7 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
       val x = ((Re(z) - LeftReal) * ScaleFactor).asInstanceOf[Int]
       val y = -((Im(z) - TopImaginary) * ScaleFactor).asInstanceOf[Int]
       drawing.cross(x, y, MARKLENGTH)
-      drawing.move(2, 2)
-      drawing.drawString(z.toString)
+      drawing.drawString(z.toString, x+2, y+2 )
   }
 
   override private[calculator] def draw(drawing: Drawing, eclist: List[Complex]) =
@@ -186,25 +185,26 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
 
     val d = raiseSmooth(pix2Math(AXISMARKING))
     val l = math2Pix(d)
-    var d1 = 0.0D
-    var d2 = 0.0D
+    var d1 = 0.0
+    var d2 = 0.0
     var d3 = LeftReal + pix2Math(AXISSPACE)
     val d4 = RightReal - pix2Math(AXISSPACE)
     var d5 = BottomImaginary + pix2Math(AXISSPACE)
     val d6 = TopImaginary - pix2Math(AXISSPACE)
 
-    if (d3 <= 0.0D && d4 >= 0.0D) d1 = 0.0D
-    else if (d3 > 0.0D) d1 = d3
-    else if (d4 < 0.0D) d1 = d4
-    if (d5 <= 0.0D && d6 >= 0.0D) d2 = 0.0D
-    else if (d5 > 0.0D) d2 = d5
-    else if (d6 < 0.0D) d2 = d6
+    if (d3 <= 0.0 && d4 >= 0.0) d1 = 0.0
+    else if (d3 > 0.0) d1 = d3
+    else if (d4 < 0.0) d1 = d4
+    if (d5 <= 0.0 && d6 >= 0.0) d2 = 0.0
+    else if (d5 > 0.0) d2 = d5
+    else if (d6 < 0.0) d2 = d6
 
     cartesian2Point(d1, d2, point2)
     cartesian2Point(d3, d2, point)
     cartesian2Point(d4, d2, point1)
 
     drawing.drawLine(point, point1, Color.lightGray)
+    drawing.moveTo(point1)
     var polygon = drawing.mkTriangle(point1, EAST, TRIANGLESIZE)
     g.drawPolygon(polygon)
 
@@ -227,6 +227,7 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     cartesian2Point(d1, d5, point)
     cartesian2Point(d1, d6, point1)
     drawing.drawLine(point, point1, Color.lightGray)
+    drawing.moveTo(point1)
     polygon = drawing.mkTriangle(point1, NORTH, TRIANGLESIZE)
     g.drawPolygon(polygon)
 

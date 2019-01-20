@@ -64,7 +64,8 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
 
   /** The absolute values: |f(z)|
     * 21 * 21 Doubles.
-    * In both axes, ten to either side from the center. */
+    * In both axes, ten to either side from the center.
+    * The range from 0 to 1. */
   private[calculator] val M = new Array[Array[Double]](21)
 
   init()
@@ -165,6 +166,20 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
 
   //Inner class ThreeDCanvas ------------------------------------------------------------
 
+  /** We are in a 3d space where x and z are flat, and y points up.
+    *
+    * A cube with height 0 <= y <= 1 and sides -0.5 <= x <= 0.5
+    * and -0.5 <= z <= 0.5.
+    *
+    * The real axis is x.
+    * The imaginary axis is z.
+    *
+    * The starting position is real axis comes slightly to the front,
+    * but imaginary axis points backwards. That means:
+    *
+    *   xforward && !zforward.
+    *
+    * */
   private class ThreeDCanvas private[calculator]() extends JComponent {
 
     //State ----------------------------------------------------------
@@ -176,11 +191,14 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
 
     private[calculator] var nxpix = 0
     private[calculator] var nypix = 0
-    private[calculator] var xyscale = .0
+    private[calculator] var xyscale = 0.0
 
     private var Q: Matrix44 = initQ
 
+    /** Does the real axis point forward? At the start, yes. */
     private[calculator] var xforward = false
+
+    /** Does the imaginary axis point forward? At the start, no. */
     private[calculator] var zforward = false
 
     init()
@@ -202,7 +220,6 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
         private def drag(e: MouseEvent) = {
           val p = e.getPoint
           shift(previous - p)
-          repaint()
           previous = p
         }
       }
@@ -214,95 +231,154 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
 
     //Methods -------------------------------------------------------
 
-    /** Depends on xforward, zforward. */
+    /** Draws the two axes behind the surface.
+      * Depends on xforward, zforward. */
     private[calculator] def drawBackAxes(drawing: Drawing) = {
 
-      var s = square.botLeft.toString
-      moveTo3(drawing, -0.5D, 0.0D, -0.5D)
-      if (xforward && zforward) drawing.move(2, -2)
-      else if (xforward && !zforward) drawing.move(-drawing.graphics.getFontMetrics.stringWidth(s) - 2, FONT_HEIGHT)
-      else if (!xforward && zforward) drawing.move(2, FONT_HEIGHT)
-      else if (!xforward && !zforward) drawing.move(2, FONT_HEIGHT)
-      drawing.drawString(s)
-      moveTo3(drawing, 0.5D, 0.0D, -0.5D)
+      //draws botleft number
+      {
+        val s = square.botLeft.toString
+        moveTo3(drawing, -0.5, 0.0, -0.5)
 
-      s = square.botRight.toString
-      if (xforward && zforward) drawing.move(-drawing.graphics.getFontMetrics.stringWidth(s) - 2, FONT_HEIGHT)
-      else if (xforward && !zforward) drawing.move(2, FONT_HEIGHT)
-      else if (!xforward && zforward) drawing.move(2, -2)
-      else if (!xforward && !zforward) drawing.move(2, FONT_HEIGHT)
-      drawing.drawString(square.botRight.toString)
-      moveTo3(drawing, -0.5D, 0.0D, 0.5D)
+        if (xforward && zforward)
+          drawing.move(2, -2)
+        else if (xforward && !zforward){
+          val width = drawing.graphics.getFontMetrics.stringWidth(s)
+          drawing.move(-width - 2, FONT_HEIGHT)
+        }
+        else if (!xforward && zforward)
+          drawing.move(2, FONT_HEIGHT)
+        else if (!xforward && !zforward)
+          drawing.move(2, FONT_HEIGHT)
 
-      s = square.topLeft.toString
-      if (xforward && zforward) drawing.move(2, FONT_HEIGHT)
-      else if (xforward && !zforward) drawing.move(2, -2)
-      else if (!xforward && zforward) drawing.move(2, FONT_HEIGHT)
-      else if (!xforward && !zforward) drawing.move(-drawing.graphics.getFontMetrics.stringWidth(s) - 2, FONT_HEIGHT)
-      drawing.drawString(s)
-      moveTo3(drawing, 0.5D, 0.0D, 0.5D)
+        drawing.drawString(s)
+        moveTo3(drawing, 0.5, 0.0, -0.5)
+      }
 
-      s = square.topRight.toString
-      if (xforward && zforward) drawing.move(2, FONT_HEIGHT)
-      else if (xforward && !zforward) drawing.move(2, FONT_HEIGHT)
-      else if (!xforward && zforward) drawing.move(-drawing.graphics.getFontMetrics.stringWidth(s) - 2, FONT_HEIGHT)
-      else if (!xforward && !zforward) drawing.move(2, -2)
-      drawing.drawString(s)
+      //draws botright number
+      {
+        val s = square.botRight.toString
+        if (xforward && zforward) {
+          val width = drawing.graphics.getFontMetrics.stringWidth(s)
+          drawing.move(-width - 2, FONT_HEIGHT)
+        }
+        else if (xforward && !zforward)
+          drawing.move(2, FONT_HEIGHT)
+        else if (!xforward && zforward)
+          drawing.move(2, -2)
+        else if (!xforward && !zforward)
+          drawing.move(2, FONT_HEIGHT)
+        drawing.drawString(square.botRight.toString)
+        moveTo3(drawing, -0.5, 0.0, 0.5)
+      }
 
-      if (xforward) drawLine3(drawing, -0.5D, 0.0D, -0.5D, -0.5D, 0.0D, 0.5D)
-      else drawLine3(drawing, 0.5D, 0.0D, -0.5D, 0.5D, 0.0D, 0.5D)
+      //draws topleft number
+      {
+        val s = square.topLeft.toString
+        if (xforward && zforward)
+          drawing.move(2, FONT_HEIGHT)
+        else if (xforward && !zforward)
+          drawing.move(2, -2)
+        else if (!xforward && zforward)
+          drawing.move(2, FONT_HEIGHT)
+        else if (!xforward && !zforward) {
+          val width = drawing.graphics.getFontMetrics.stringWidth(s)
+          drawing.move(-width - 2, FONT_HEIGHT)
+        }
+        drawing.drawString(s)
+        moveTo3(drawing, 0.5, 0.0, 0.5)
+      }
 
-      if (zforward) drawLine3(drawing, -0.5D, 0.0D, -0.5D, 0.5D, 0.0D, -0.5D)
-      else drawLine3(drawing, -0.5D, 0.0D, 0.5D, 0.5D, 0.0D, 0.5D)
+      //draws topright number
+      {
+        val s = square.topRight.toString
+        if (xforward && zforward)
+          drawing.move(2, FONT_HEIGHT)
+        else if (xforward && !zforward)
+          drawing.move(2, FONT_HEIGHT)
+        else if (!xforward && zforward) {
+          val width = drawing.graphics.getFontMetrics.stringWidth(s)
+          drawing.move(-width - 2, FONT_HEIGHT)
+        }
+        else if (!xforward && !zforward)
+          drawing.move(2, -2)
+        drawing.drawString(s)
+      }
 
-      if (!xforward || !zforward) drawLine3(drawing, 0.5D, 0.0D, 0.5D, 0.5D, 1.0D, 0.5D)
-      if (!xforward || zforward) drawLine3(drawing, 0.5D, 0.0D, -0.5D, 0.5D, 1.0D, -0.5D)
-      if (xforward || !zforward) drawLine3(drawing, -0.5D, 0.0D, 0.5D, -0.5D, 1.0D, 0.5D)
-      if (xforward || zforward) drawLine3(drawing, -0.5D, 0.0D, -0.5D, -0.5D, 1.0D, -0.5D)
-
-      if (xforward) drawLine3(drawing, -0.5D, 1.0D, -0.5D, -0.5D, 1.0D, 0.5D)
-      else drawLine3(drawing, 0.5D, 1.0D, -0.5D, 0.5D, 1.0D, 0.5D)
+      if (xforward)
+        drawLine3(drawing, -0.5, 0.0, -0.5, -0.5, 0.0, 0.5)
+      else
+        drawLine3(drawing, 0.5, 0.0, -0.5, 0.5, 0.0, 0.5)
 
       if (zforward)
-        drawLine3(drawing, -0.5D, 1.0D, -0.5D, 0.5D, 1.0D, -0.5D)
+        drawLine3(drawing, -0.5, 0.0, -0.5, 0.5, 0.0, -0.5)
       else
-        drawLine3(drawing, -0.5D, 1.0D, 0.5D, 0.5D, 1.0D, 0.5D)
+        drawLine3(drawing, -0.5, 0.0, 0.5, 0.5, 0.0, 0.5)
+
+      if (!xforward || !zforward)
+        drawLine3(drawing, 0.5, 0.0, 0.5, 0.5, 1.0, 0.5)
+      if (!xforward || zforward)
+        drawLine3(drawing, 0.5, 0.0, -0.5, 0.5, 1.0, -0.5)
+      if (xforward || !zforward)
+        drawLine3(drawing, -0.5, 0.0, 0.5, -0.5, 1.0, 0.5)
+      if (xforward || zforward)
+        drawLine3(drawing, -0.5, 0.0, -0.5, -0.5, 1.0, -0.5)
+
+      if (xforward)
+        drawLine3(drawing, -0.5, 1.0, -0.5, -0.5, 1.0, 0.5)
+      else
+        drawLine3(drawing, 0.5, 1.0, -0.5, 0.5, 1.0, 0.5)
+
+      if (zforward)
+        drawLine3(drawing, -0.5, 1.0, -0.5, 0.5, 1.0, -0.5)
+      else
+        drawLine3(drawing, -0.5, 1.0, 0.5, 0.5, 1.0, 0.5)
     }
 
-    /** Reads xforward, zforward. */
+    /** Draws the two axes in front of the surface.
+      * Reads xforward, zforward. */
     private[calculator] def drawFrontAxes(drawing: Drawing) = {
       if (xforward)
-        drawLine3(drawing, 0.5D, 0.0D, -0.5D, 0.5D, 0.0D, 0.5D)
+        drawLine3(drawing, 0.5, 0.0, -0.5, 0.5, 0.0, 0.5)
       else
-        drawLine3(drawing, -0.5D, 0.0D, -0.5D, -0.5D, 0.0D, 0.5D)
-      if (zforward)
-        drawLine3(drawing, -0.5D, 0.0D, 0.5D, 0.5D, 0.0D, 0.5D)
-      else
-        drawLine3(drawing, -0.5D, 0.0D, -0.5D, 0.5D, 0.0D, -0.5D)
-      if (xforward && zforward)
-        drawLine3(drawing, 0.5D, 0.0D, 0.5D, 0.5D, 1.0D, 0.5D)
-      else if (xforward && !zforward)
-        drawLine3(drawing, 0.5D, 0.0D, -0.5D, 0.5D, 1.0D, -0.5D)
-      else if (!xforward && zforward)
-        drawLine3(drawing, -0.5D, 0.0D, 0.5D, -0.5D, 1.0D, 0.5D)
-      else if (!xforward && !zforward)
-        drawLine3(drawing, -0.5D, 0.0D, -0.5D, -0.5D, 1.0D, -0.5D)
-      if (xforward)
-        drawLine3(drawing, 0.5D, 1.0D, -0.5D, 0.5D, 1.0D, 0.5D)
-      else
-        drawLine3(drawing, -0.5D, 1.0D, -0.5D, -0.5D, 1.0D, 0.5D)
+        drawLine3(drawing, -0.5, 0.0, -0.5, -0.5, 0.0, 0.5)
 
       if (zforward)
-        drawLine3(drawing, -0.5D, 1.0D, 0.5D, 0.5D, 1.0D, 0.5D)
+        drawLine3(drawing, -0.5, 0.0, 0.5, 0.5, 0.0, 0.5)
       else
-        drawLine3(drawing, -0.5D, 1.0D, -0.5D, 0.5D, 1.0D, -0.5D)
+        drawLine3(drawing, -0.5, 0.0, -0.5, 0.5, 0.0, -0.5)
+
+      if (xforward && zforward)
+        drawLine3(drawing, 0.5, 0.0, 0.5, 0.5, 1.0, 0.5)
+      else if (xforward && !zforward)
+        drawLine3(drawing, 0.5, 0.0, -0.5, 0.5, 1.0, -0.5)
+      else if (!xforward && zforward)
+        drawLine3(drawing, -0.5, 0.0, 0.5, -0.5, 1.0, 0.5)
+      else if (!xforward && !zforward)
+        drawLine3(drawing, -0.5, 0.0, -0.5, -0.5, 1.0, -0.5)
+
+      if (xforward)
+        drawLine3(drawing, 0.5, 1.0, -0.5, 0.5, 1.0, 0.5)
+      else
+        drawLine3(drawing, -0.5, 1.0, -0.5, -0.5, 1.0, 0.5)
+
+      if (zforward)
+        drawLine3(drawing, -0.5, 1.0, 0.5, 0.5, 1.0, 0.5)
+      else
+        drawLine3(drawing, -0.5, 1.0, -0.5, 0.5, 1.0, -0.5)
     }
 
-    private[calculator] def drawImaginaryAxis(drawing: Drawing) = drawLine3(drawing, 0.0D, 0.0D, -0.5D, 0.0D, 0.0D, 0.5D)
+    /** z is the imaginary axis */
+    private[calculator] def drawImaginaryAxis(drawing: Drawing) =
+      drawLine3(drawing, 0.0, 0.0, -0.5, 0.0, 0.0, 0.5)
 
-    private[calculator] def drawModAxis(drawing: Drawing) = drawLine3(drawing, 0.0D, 0.0D, 0.0D, 0.0D, 1.0D, 0.0D)
+    /** y is the axis for |f(z)| */
+    private[calculator] def drawModAxis(drawing: Drawing) =
+      drawLine3(drawing, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
 
-    private[calculator] def drawRealAxis(drawing: Drawing) = drawLine3(drawing, -0.5D, 0.0D, 0.0D, 0.5D, 0.0D, 0.0D)
+    /** x is the real axis */
+    private[calculator] def drawRealAxis(drawing: Drawing) =
+      drawLine3(drawing, -0.5, 0.0, 0.0, 0.5, 0.0, 0.0)
 
     private[calculator] def drawLine3(drawing: Drawing, x1: Double, y1: Double, z1: Double, x2: Double, y2: Double, z2: Double) = {
       moveTo3(drawing, x1, y1, z1)
@@ -312,6 +388,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     private[calculator] def cx(x: Int) = if (xforward) x else -x
     private[calculator] def cz(z: Int) = if (zforward) z else -z
 
+    /** Draws the whole diagram. */
     private[calculator] def drawIt(drawing: Drawing) = {
 
       //On the screen, the two edges of one line of patches
@@ -326,8 +403,10 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
         zforward = z1.y <= zero.y
       }
 
+      //first the axes at the back, because everything else with overwrite them
       drawBackAxes(drawing)
 
+      //second draw the patches, with axis in between them
       var d2 = -0.5
       var d3 = 0.5
       if (!xforward) {
@@ -361,7 +440,8 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
 
       //loop over patch lines
       for ( i1 <- -9 to +10 ) {
-        if (i1 == 1) drawRealAxis(drawing)
+        if (i1 == 1)
+          drawRealAxis(drawing)
         var d1 = d2
         d7 += d10
 
@@ -394,15 +474,19 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
           line0(i) = line1(i)
       }
 
+      //third the front axes above everything else
       drawFrontAxes(drawing)
     }
 
+    /** Maps a 3d position into 2d space.
+      * (Is the 2d space the screen pixel space?) */
     private def f3d2d(v: Vector3): Vector2 =
       Vector2(
         Q(0,0) * v.x + Q(0,1) * v.y + Q(0,2) * v.z,
         Q(1,0) * v.x + Q(1,1) * v.y + Q(1,2) * v.z
       )
 
+    /** Maps a 3d position to a screen pixel. */
     private def f3dPix(x: Double, y: Double, z: Double): Point =
       new Point(
         fx(Q(0,0) * x + Q(0,1) * y + Q(0,2) * z),
@@ -411,8 +495,10 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
 
     private[calculator] def angle(x: Double, y: Double): Double = atan2(y, x)
 
+    /** Maps a 2d x-coordinate to horizontal screen pixel. */
     private[calculator] def fx(x: Double): Int = (x * xyscale + nxpix * 0.5).toInt
 
+    /** Maps a 2d y-coordinate to vertical screen pixel. */
     private[calculator] def fy(y: Double): Int = (-y * xyscale + nypix * 0.8).toInt
 
     override def getPreferredSize: Dimension = getMinimumSize
@@ -430,9 +516,11 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       Matrix44.translation(eye).preRot('z', d).preRot('y', d1).preRot('z', -d2).postRot('y', π/2)
     }
 
-    private[calculator] def lineTo3(drawing: Drawing, x: Double, y: Double, z: Double) = drawing.lineTo(f3dPix(x, y, z ))
+    private[calculator] def lineTo3(drawing: Drawing, x: Double, y: Double, z: Double) =
+      drawing.lineTo(f3dPix(x, y, z ))
 
-    private[calculator] def moveTo3(drawing: Drawing, x: Double, y: Double, z: Double) = drawing.moveTo(f3dPix(x, y, z ))
+    private[calculator] def moveTo3(drawing: Drawing, x: Double, y: Double, z: Double) =
+      drawing.moveTo(f3dPix(x, y, z ))
 
     /** Paint with double-buffering.
       *
@@ -441,10 +529,10 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       * the component for redrawing. */
     override def paint(g: Graphics): Unit = {
       val size: Dimension = getSize
-      val drawing = new Drawing(g)
       nxpix = size.width
       nypix = size.height
       xyscale = min(nxpix, nypix) * XYFACTOR
+      val drawing = new Drawing(g)
       drawIt(drawing)
     }
 
@@ -507,6 +595,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
 
     }
 
+    /** draws a quadrilateral */
     private[calculator] def quadrilateral(drawing: Drawing, a: Vector2, b: Vector2, c: Vector2, d: Vector2) = {
       val quad = new Polygon
       quad.addPoint(fx(a.x), fy(a.y))
@@ -528,8 +617,10 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       val size: Dimension = getSize
       val d = p.x * 2 * π / size.height
       Q = Q.postRot('y', -d)
+      repaint()
     }
 
+    /** draws a triangle */
     private[calculator] def triangle(drawing: Drawing, a: Vector2, b: Vector2, c: Vector2) = {
       val triangle = new Polygon
       triangle.addPoint(fx(a.x), fy(a.y))

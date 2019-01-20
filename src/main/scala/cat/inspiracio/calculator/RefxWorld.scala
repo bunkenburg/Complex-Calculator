@@ -327,6 +327,7 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
       xy2Point(d4, d2, point1)
 
       drawing.drawLine(point, point1, Color.lightGray)
+      drawing.moveTo(point1)
       var polygon = drawing.mkTriangle(point1, EAST, TRIANGLESIZE)
       g.drawPolygon(polygon)
       polygon = drawing.mkTriangle(point, WEST, TRIANGLESIZE)
@@ -346,6 +347,7 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
       xy2Point(d1, d5, point)
       xy2Point(d1, d6, point1)
       drawing.drawLine(point, point1, Color.lightGray)
+      drawing.moveTo(point1)
       upTriangle = drawing.mkTriangle(point1, NORTH, TRIANGLESIZE)
       g.drawPolygon(upTriangle)
       downTriangle = drawing.mkTriangle(point, SOUTH, TRIANGLESIZE)

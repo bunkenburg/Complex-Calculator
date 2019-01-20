@@ -41,43 +41,45 @@ import java.awt._
   * These are like extra methods on Graphics. */
 final class Drawing private[calculator](var g: Graphics) {
 
-  //XXX remove this?
-  private var pen: Point = new Point
+  //XXX try to get rid of this; it's state
+  private val pen: Point = new Point
 
+  //XXX try to hang all these methods on Graphics
   private[calculator] def graphics = g
 
   /** cross at (x,y) */
   private[calculator] def cross(x: Int, y: Int, width: Int) = {
-    //XXX Don't use pen!
-    pen.x = x
-    pen.y = y
-    g.drawLine(pen.x - width, pen.y - width, pen.x + width, pen.y + width)
-    g.drawLine(pen.x + width, pen.y - width, pen.x - width, pen.y + width)
+    g.drawLine(x - width, y - width, x + width, y + width)
+    g.drawLine(x + width, y - width, x - width, y + width)
   }
 
   /** circle at (x,y) radius */
   private[calculator] def drawCircle(x: Int, y: Int, radius: Double) = {
     val topleftx = (x.toDouble - radius).toInt
     val toplefty = (y.toDouble - radius).toInt
-    val width = (2D * radius).toInt
-    val height = (2D * radius).toInt
+    val width = (2 * radius).toInt
+    val height = (2 * radius).toInt
     g.drawOval(topleftx, toplefty, width, height)
   }
 
   /** line from a to b in colour */
   private[calculator] def drawLine(a: Point, b: Point, c: Color) = {
-    //XXX Don't use pen!
     val color1 = g.getColor
     g.setColor(c)
     g.drawLine(a.x, a.y, b.x, b.y)
     g.setColor(color1)
-    pen.x = b.x
-    pen.y = b.y
   }
 
   /** draw string at pen position */
-  //XXX Don't use pen!
-  private[calculator] def drawString(s: String) = g.drawString(s, pen.x, pen.y)
+  private[calculator] def drawString(s: String) = {
+    //XXX Don't use pen!
+    g.drawString(s, pen.x, pen.y)
+  }
+
+  /** draw string at position */
+  private[calculator] def drawString(s: String, x: Int, y: Int) = {
+    g.drawString(s, x, y)
+  }
 
   private[calculator] def fillPolygon(polygon: Polygon, c: Color) = {
     val color1 = g.getColor
@@ -88,12 +90,14 @@ final class Drawing private[calculator](var g: Graphics) {
 
   /** line (x,y) at pen */
   private[calculator] def line(x: Int, y: Int) = {
+    //XXX uses pen
     g.drawLine(pen.x, pen.y, pen.x + x, pen.y + y)
     pen.translate(x, y)
   }
 
-  /** line to (x,y) */
+  /** line from pen to (x,y) */
   private[calculator] def lineTo(x: Int, y: Int) = {
+    //XXX uses pen, sets pen
     g.drawLine(pen.x, pen.y, x, y)
     pen.x = x
     pen.y = y
@@ -107,12 +111,14 @@ final class Drawing private[calculator](var g: Graphics) {
 
   /** move pen to (x,y) */
   private[calculator] def moveTo(x: Int, y: Int) = {
+    //XXX sets pen
     pen.x = x
     pen.y = y
   }
 
   /** move pen to (x,y) */
   private[calculator] def moveTo(p : Point) = {
+    //XXX sets pen
     pen.x = p.x
     pen.y = p.y
   }
