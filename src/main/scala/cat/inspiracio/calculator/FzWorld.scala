@@ -38,8 +38,9 @@ import java.awt.event._
 
 import cat.inspiracio.calculator.Interaction.MOVE
 import cat.inspiracio.complex.Complex
-import cat.inspiracio.geometry.{Freeline, Piclet}
+import cat.inspiracio.geometry.{Freeline, Piclet, Point2}
 import cat.inspiracio.parsing.Syntax
+import javax.swing.event.{MouseInputAdapter, MouseInputListener}
 
 final class FzWorld private[calculator](override val calculator: Calculator) extends World(calculator) {
 
@@ -49,8 +50,7 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
 
   //State --------------------------------------------------------------------
 
-  /** During dragging, the sampled points of the free line.
-    * Otherwise null. */
+  /** During dragging, the sampled points of the free line. Otherwise null. */
   private var zs: List[Complex] = null
 
   private var piclets: List[Piclet] = Nil
@@ -63,43 +63,27 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
     setTitle("f(z) World")
     interaction = MOVE
 
-    val mouse: MouseAdapter = new MouseAdapter() {
+    val mouse: MouseInputListener = new MouseInputAdapter() {
 
-      override def mousePressed(mouseevent: MouseEvent): Unit = {
-        prevx = mouseevent.getX
-        prevy = mouseevent.getY
-        mouseevent.consume()
-      }
+      /** the previous mouse position during dragging */
+      var previous: Point2 = null
 
-      override def mouseReleased(mouseevent: MouseEvent): Unit = {
-        val x = mouseevent.getX
-        val y = mouseevent.getY
-        canvas.shift(prevx - x, prevy - y)
-        canvas.paint(canvas.getGraphics)
-        prevx = x
-        prevy = y
-        mouseevent.consume()
-      }
+      override def mousePressed(e: MouseEvent): Unit = previous=e.getPoint
+      override def mouseReleased(e: MouseEvent): Unit = drag(e)
+      override def mouseDragged(e: MouseEvent): Unit = drag(e)
 
-    }
-
-    val motion: MouseMotionAdapter = new MouseMotionAdapter() {
-
-      override def mouseDragged(mouseevent: MouseEvent): Unit = {
-        val x = mouseevent.getX
-        val y = mouseevent.getY
-        canvas.shift(prevx - x, prevy - y)
-        canvas.paint(canvas.getGraphics)
-        prevx = x
-        prevy = y
-        mouseevent.consume()
+      private def drag(e: MouseEvent) = {
+        val p = e.getPoint
+        canvas.shift(previous - p)
+        canvas.paint()
+        previous = p
       }
 
     }
     plane.addMouseListener(mouse)
-    plane.addMouseMotionListener(motion)
+    plane.addMouseMotionListener(mouse)
     sphere.addMouseListener(mouse)
-    sphere.addMouseMotionListener(motion)
+    sphere.addMouseMotionListener(mouse)
     pack()
     locate()
     setVisible(true)

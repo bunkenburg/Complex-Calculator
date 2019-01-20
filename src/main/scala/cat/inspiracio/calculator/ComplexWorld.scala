@@ -39,6 +39,7 @@ import java.awt.event._
 import javax.swing._
 import cat.inspiracio.calculator.Interaction._
 import cat.inspiracio.complex._
+import cat.inspiracio.geometry.Point2
 import javax.swing.event.{MouseInputAdapter, MouseInputListener}
 
 /** The complex world displays results of calculations
@@ -73,7 +74,7 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
     val mouse: MouseInputListener = new MouseInputAdapter() {
 
       /** the previous mouse position during dragging */
-      var previous: cat.inspiracio.geometry.Point2 = null
+      var previous: Point2 = null
 
       override def mousePressed(e: MouseEvent): Unit = interaction match {
         case MOVE => previous = e.getPoint
@@ -88,22 +89,22 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
       }
 
       override def mouseReleased(e: MouseEvent): Unit = interaction match {
-        case MOVE =>
-          val p = e.getPoint
-          canvas.shift(previous - p)
-          canvas.paint()
-          previous = p
+        case MOVE => drag(e)
         case _ =>
       }
 
       override def mouseDragged(e: MouseEvent): Unit = interaction match {
-        case MOVE =>
-          val p = e.getPoint
-          canvas.shift(previous - p)
-          canvas.paint()
-          previous = p
+        case MOVE => drag(e)
         case _ =>
       }
+
+      private def drag(e: MouseEvent) = {
+        val p = e.getPoint
+        canvas.shift(previous - p)
+        canvas.paint()
+        previous = p
+      }
+
     }
 
     plane.addMouseListener(mouse)

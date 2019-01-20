@@ -53,6 +53,7 @@ abstract class WorldRepresentation protected(var w: World) extends JComponent {
 
   //Methods ------------------------------------------------------
 
+  /** just so that I can call it without argument */
   def paint(): Unit = paint(getGraphics)
 
   private[calculator] def draw(drawing: Drawing, z: Complex)
