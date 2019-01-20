@@ -37,11 +37,12 @@ import java.awt._
 import java.awt.event._
 import java.lang.Math.{atan2, max, min}
 import java.util.prefs.Preferences
-import javax.swing._
 
+import javax.swing._
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry._
 import cat.inspiracio.parsing.{Constant, Syntax}
+import javax.swing.event.MouseInputAdapter
 
 // Referenced classes of package bunkenba.calculator:
 //            Calculator, DoubleBuffer, Drawing, Matrix44,
@@ -173,10 +174,6 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
 
     private var FONT_HEIGHT = 12
 
-    /** previous mouse position */
-    private var prevx = 0
-    private var prevy = 0
-
     private[calculator] val eye = Vector3(3, 0.5, 1)
     private[calculator] val direct = Vector3(2.5, 0.5, 0.5)
 
@@ -194,45 +191,27 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     //Constructor ---------------------------------------------------
 
     private def init()= {
-
       setBackground(Color.white)
 
-      addMouseListener(new MouseAdapter() {
+      val mouse = new MouseInputAdapter {
 
-        override def mousePressed(mouseevent: MouseEvent): Unit = {
-          prevx = mouseevent.getX
-          prevy = mouseevent.getY
-          mouseevent.consume()
-        }
+        //during dragging, the previous mouse position
+        var previous: Point2 = null
 
-        override def mouseReleased(mouseevent: MouseEvent): Unit = {
-          val x = mouseevent.getX
-          val y = mouseevent.getY
-          shift(prevx - x, prevy - y)
+        override def mousePressed(e: MouseEvent): Unit = previous = e.getPoint
+        override def mouseReleased(e: MouseEvent): Unit = drag(e)
+        override def mouseDragged(e: MouseEvent): Unit = drag(e)
+
+        private def drag(e: MouseEvent) = {
+          val p = e.getPoint
+          shift(previous - p)
           paint(getGraphics)
-          prevx = x
-          prevy = y
-          mouseevent.consume()
+          previous = p
         }
-
-      })
-
-      addMouseMotionListener(new MouseMotionAdapter() {
-
-        override def mouseDragged(mouseevent: MouseEvent): Unit = {
-          val x = mouseevent.getX
-          val y = mouseevent.getY
-          shift(prevx - x, prevy - y)
-          paint(getGraphics)
-          prevx = x
-          prevy = y
-          mouseevent.consume()
-        }
-
-      })
-
+      }
+      addMouseListener(mouse)
+      addMouseMotionListener(mouse)
     }
-
 
     //Methods -------------------------------------------------------
 
@@ -542,10 +521,11 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       FONT_HEIGHT = getFontMetrics(font).getAscent
     }
 
-    /** curiously, does not depend on y */
-    private[calculator] def shift(x: Int, y: Int) = {
+    /** For now, we can only rotate horizontally.
+      * Could consider other rotations and a reset button. */
+    private[calculator] def shift(p: Point) = {
       val size: Dimension = getSize
-      val d = x * 2 * π / size.height
+      val d = p.x * 2 * π / size.height
       Q = Q.postRot('y', -d)
     }
 
