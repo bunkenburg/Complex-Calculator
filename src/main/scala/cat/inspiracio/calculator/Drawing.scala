@@ -71,15 +71,18 @@ final class Drawing private[calculator](var g: Graphics) {
   }
 
   /** draw string at pen position */
-  private[calculator] def drawString(s: String) = {
+  private[calculator] def drawString(s: String): Unit = {
     //XXX Don't use pen!
     g.drawString(s, pen.x, pen.y)
   }
 
   /** draw string at position */
-  private[calculator] def drawString(s: String, x: Int, y: Int) = {
+  private[calculator] def drawString(s: String, x: Int, y: Int): Unit =
     g.drawString(s, x, y)
-  }
+
+  /** draw string at position */
+  private[calculator] def drawString(s: String, p: Point): Unit =
+    g.drawString(s, p.x, p.y)
 
   private[calculator] def fillPolygon(polygon: Polygon, c: Color) = {
     val color1 = g.getColor
