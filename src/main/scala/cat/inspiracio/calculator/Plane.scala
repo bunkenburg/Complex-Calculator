@@ -167,8 +167,9 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     Cartesian(re, im)
   }
 
-  override def paint(g1: Graphics): Unit = {
-    val g = doubleBuffer.offScreen(g1)
+  /** Called by swing to paint. */
+  override def paint(g: Graphics): Unit = {
+    val doubleBufferSet = this.isDoubleBuffered
 
     val point = new Point
     val point1 = new Point
@@ -249,13 +250,12 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
       k -= l
     }
     w.drawStuff(drawing)
-
-    doubleBuffer.onScreen
   }
 
   override private[calculator] def reset() = {
-    CenterReal = 0.0D
-    CenterImaginary = 0.0D
+    CenterReal = 0.0
+    CenterImaginary = 0.0
+    repaint()
   }
 
   private def pix2Math(i: Int): Double = i.toDouble / ScaleFactor
@@ -273,9 +273,10 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     MARKLENGTH = FONTHEIGHT / 5
   }
 
-  override private[calculator] def shift(x: Int, y: Int) = {
-    CenterReal += pix2Math(x)
-    CenterImaginary -= pix2Math(y)
+  override private[calculator] def shift(p: Point) = {
+    CenterReal += pix2Math(p.x)
+    CenterImaginary -= pix2Math(p.y)
+    repaint()
   }
 
   override private[calculator] def zoomIn() = {

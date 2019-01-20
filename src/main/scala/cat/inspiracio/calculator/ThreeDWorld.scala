@@ -79,6 +79,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     addWindowListener(new WindowAdapter() {
       override def windowClosing(windowevent: WindowEvent): Unit = calculator.quit()
     })
+
     pack()
     locate()
     setVisible(true)
@@ -154,7 +155,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
   private[calculator] def change(sq: Square) = {
     square = sq
     setNeighbourhood()
-    canvas.paint(canvas.getGraphics)
+    canvas.repaint()
   }
 
   override def setFont(font: Font): Unit = {
@@ -162,15 +163,11 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     canvas.setFont(font)
   }
 
-  override def update(g: Graphics): Unit = paint(g)
-
   //Inner class ThreeDCanvas ------------------------------------------------------------
 
   private class ThreeDCanvas private[calculator]() extends JComponent {
 
     //State ----------------------------------------------------------
-
-    final private val doubleBuffer = new DoubleBuffer(this)
 
     private var FONT_HEIGHT = 12
 
@@ -205,12 +202,14 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
         private def drag(e: MouseEvent) = {
           val p = e.getPoint
           shift(previous - p)
-          paint(getGraphics)
+          repaint()
           previous = p
         }
       }
       addMouseListener(mouse)
       addMouseMotionListener(mouse)
+
+      setDoubleBuffered(true)
     }
 
     //Methods -------------------------------------------------------
@@ -435,16 +434,18 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
 
     private[calculator] def moveTo3(drawing: Drawing, x: Double, y: Double, z: Double) = drawing.moveTo(f3dPix(x, y, z ))
 
-    /** Paint with double-buffering */
-    override def paint(g0: Graphics): Unit = {
+    /** Paint with double-buffering.
+      *
+      * Invoked by Swing to draw components. Applications should not invoke
+      * paint directly, but should instead use the repaint method to schedule
+      * the component for redrawing. */
+    override def paint(g: Graphics): Unit = {
       val size: Dimension = getSize
-      val g = doubleBuffer.offScreen(g0)
       val drawing = new Drawing(g)
       nxpix = size.width
       nypix = size.height
       xyscale = min(nxpix, nypix) * XYFACTOR
       drawIt(drawing)
-      doubleBuffer.onScreen()
     }
 
     /** Draws a patch for vectors a, b, c, d.
@@ -537,8 +538,6 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       drawing.fillPolygon(triangle, Color.lightGray)
       drawing.graphics.drawPolygon(triangle)
     }
-
-    override def update(g: Graphics): Unit = paint(g)
 
   }//inner class ThreeDCanvas
 

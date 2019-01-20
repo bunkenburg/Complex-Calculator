@@ -57,8 +57,8 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
   private var TRIANGLESIZE = 5
   private var MARKLENGTH = 2
 
-  protected var buttonPanel: JPanel = null
-  private var canvas: RefxCanvas = null
+  protected val buttonPanel = new JPanel
+  private val canvas = new RefxCanvas
 
   private var Max: Double = .0
   private var Min: Double = .0
@@ -68,9 +68,6 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
   init()
 
   private def init()= {
-
-    canvas = new RefxCanvas
-
     setTitle("Re(f(x)) World")
 
     resetExtremes()
@@ -82,7 +79,6 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
     val button2 = new JButton("Reset")
     button2.addActionListener( _ => reset() )
 
-    buttonPanel = new JPanel
     buttonPanel.setBackground(Color.lightGray)
     buttonPanel.setLayout(new FlowLayout(0))
     buttonPanel.add(button)
@@ -182,8 +178,6 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
     Max = Double.NegativeInfinity
   }
 
-  override def update(g: Graphics): Unit = paint(g)
-
   protected def updateExtremes(d: Double): Unit = {
     Max = Math.max(Max, d)
     Min = Math.min(Min, d)
@@ -199,9 +193,6 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
   private class RefxCanvas private[calculator]() extends JComponent {
 
     //State ----------------------------------------------------
-
-    //XXX maybe swing can do double-buffering now
-    private var doubleBuffer: DoubleBuffer = null
 
     private var ScaleFactor: Double = 40
 
@@ -221,8 +212,6 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
     private def init()= {
       setBackground(Color.white)
 
-      doubleBuffer = new DoubleBuffer(this)
-
       val mouse = new MouseInputAdapter{
 
         //previous mouse position during dragging
@@ -235,7 +224,7 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
         private def drag(e: MouseEvent) = {
           val p = e.getPoint
           shift(previous - p)
-          paint(getGraphics)
+          repaint()
           previous = p
         }
 
@@ -243,6 +232,8 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
 
       addMouseListener(mouse)
       addMouseMotionListener(mouse)
+
+      setDoubleBuffered(true)
     }
 
     //Methods ------------------------------------------------------
@@ -296,8 +287,12 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
     override def getPreferredSize: Dimension = getMinimumSize
     override def getMinimumSize: Dimension = MIN_SIZE
 
-    override def paint(g0: Graphics): Unit = {
-      val g = doubleBuffer.offScreen(g0)
+    /** Paint with double-buffering.
+      *
+      * Invoked by Swing to draw components. Applications should not invoke
+      * paint directly, but should instead use the repaint method to schedule
+      * the component for redrawing. */
+    override def paint(g: Graphics): Unit = {
       val drawing = new Drawing(g)
 
       val dimension: Dimension = getSize()
@@ -374,7 +369,6 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
       if (f != null) drawIt(drawing)
       if (Top <= Max) g.fillPolygon(upTriangle)
       if (Min <= Bottom) g.fillPolygon(downTriangle)
-      doubleBuffer.onScreen()
     }
 
     private def Pix2Math(i: Int): Double = i.toDouble / ScaleFactor

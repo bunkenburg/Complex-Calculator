@@ -48,10 +48,8 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
 
   private var MARKLENGTH = 2
 
-  private var R: Matrix44 = null
-  private var R1: Matrix44 = null
-
-  reset()
+  private var R = Matrix44.unit
+  private var R1 = Matrix44.unit
 
   private var xyscale: Double = 0
   final private val marks = Array[Complex](0, ∞, 1, -1, i, -i )
@@ -215,18 +213,17 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     }
   }
 
+  /** Called by swing */
   override def paint(g: Graphics): Unit = {
-    val off = doubleBuffer.offScreen(g)
     val size: Dimension = getSize
     xyscale = Math.min(size.width, size.height).toDouble * 0.80000000000000004D
-    val drawing = new Drawing(off)
+    val drawing = new Drawing(g)
     drawing.drawCircle(size.width / 2, size.height / 2, 0.5 * xyscale)
 
     for( m <- marks )
       draw(drawing, m)
 
     w.drawStuff(drawing)
-    doubleBuffer.onScreen
   }
 
   /** Can return null. */
@@ -248,6 +245,7 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
   override private[calculator] def reset() = {
     R = Matrix44.unit
     R1 = Matrix44.unit
+    repaint()
   }
 
   override def setFont(font: Font): Unit = {
@@ -256,16 +254,17 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     MARKLENGTH = i / 5
   }
 
-  override private[calculator] def shift(x: Int, y: Int) = {
+  override private[calculator] def shift(p: Point) = {
     val size: Dimension = getSize()
     val width = size.width
     val height = size.height
-    val d = y * 2 * π / width
-    val d1 = x * 2 * π / height
+    val d = p.y * 2 * π / width
+    val d1 = p.x * 2 * π / height
     R = R.preRot('x', -d)
     R = R.preRot('y', -d1)
     R1 = R1.postRot('x', d)
     R1 = R1.postRot('y', d1)
+    repaint()
   }
 
 }

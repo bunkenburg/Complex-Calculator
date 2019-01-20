@@ -107,7 +107,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           if (z != null) {
             Complex.resetArg()
             add(z)
-            canvas.paint()
+            canvas.repaint()
           }
         }
 
@@ -117,7 +117,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
             start = z
             end = z
             addCurrent(Rectangle(start, end))
-            canvas.paint()
+            canvas.repaint()
           }
         }
 
@@ -127,7 +127,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
             start = z
             end = z
             addCurrent(Line(start, end))
-            canvas.paint()
+            canvas.repaint()
           }
         }
 
@@ -137,7 +137,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
             start = z
             end = z
             addCurrent(Circle(start, end))
-            canvas.paint()
+            canvas.repaint()
           }
         }
 
@@ -147,7 +147,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
             start = z
             end = z
             addCurrent(Rectangle(start, end))
-            canvas.paint()
+            canvas.repaint()
           }
         }
 
@@ -161,7 +161,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
               addCurrent(square)
             else if (mode == MODFZ)
               modfzW.change(square)
-            canvas.paint()
+            canvas.repaint()
           }
         }
 
@@ -170,7 +170,6 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
       private def drag(e: MouseEvent) = {
         val p = e.getPoint
         canvas.shift(previous - p)
-        repaint()
         previous = p
       }
 
@@ -185,7 +184,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
               add(z)
             piclets = Freeline(zs) :: piclets
             zs = null   //mouse released => finish free line
-            canvas.paint(canvas.getGraphics)
+            canvas.repaint()
             fzW.stopDynamicMap()
           }
         }
@@ -196,7 +195,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
             if (z != null)
               end = z
             add(Line(start, end))
-            canvas.paint(canvas.getGraphics)
+            canvas.repaint()
           }
           eraseCurrent()
 
@@ -206,7 +205,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
             if (z != null)
               end = z
             add(Circle(start, end))
-            canvas.paint(canvas.getGraphics)
+            canvas.repaint()
           }
           eraseCurrent()
         }
@@ -217,7 +216,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
             if (z != null)
               end = z
             add(Rectangle(start, end))
-            canvas.paint(canvas.getGraphics)
+            canvas.repaint()
           }
           eraseCurrent()
 
@@ -232,7 +231,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
             else if (mode == MODFZ)
               modfzW.change(square)
             updateExtremes(square)
-            canvas.paint(canvas.getGraphics)
+            canvas.repaint()
           }
           eraseCurrent()
 
@@ -242,7 +241,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
             if (z != null)
               end = z
             addGrid(Rectangle(start, end))
-            canvas.paint(canvas.getGraphics)
+            canvas.repaint()
           }
           eraseCurrent()
 
@@ -267,7 +266,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
             Complex.resetArg()
             add(z)
           }
-          canvas.paint()
+          canvas.repaint()
         }
 
         case CIRCLE => {
@@ -275,7 +274,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           if (z != null) {
             end = z
             addCurrent(Circle(start, end))
-            canvas.paint()
+            canvas.repaint()
           }
         }
 
@@ -284,7 +283,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           if (z != null) {
             end = z
             addCurrent(Rectangle(start, end))
-            canvas.paint()
+            canvas.repaint()
           }
         }
 
@@ -293,7 +292,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           if (z != null) {
             end = z
             addCurrent(Line(start, end))
-            canvas.paint()
+            canvas.repaint()
           }
         }
 
@@ -302,7 +301,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           if (z != null) {
             end = z
             addCurrent(Rectangle(start, end))
-            canvas.paint()
+            canvas.repaint()
           }
         }
 
@@ -315,7 +314,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
               addCurrent(square)
             else if (mode == MODFZ)
               modfzW.change(square)
-            canvas.paint()
+            canvas.repaint()
           }
         }
 
@@ -349,26 +348,26 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
     setSize(width,height)
   }
 
-      override private[calculator] def add(c: Complex) = {
-        updateExtremes(c)
-        if( zs == null )
-          zs = Nil
-        zs = c :: zs
-        fzW.add(c)
-      }
+  override private[calculator] def add(c: Complex) = {
+    updateExtremes(c)
+    if( zs == null )
+      zs = Nil
+    zs = c :: zs
+    fzW.add(c)
+  }
 
-      private[calculator] def add(p: Piclet) = {
+  private[calculator] def add(p: Piclet) = {
         updateExtremes(p)
         piclets = p :: piclets
         fzW.add(p)
-      }
+  }
 
-      private[calculator] def addCurrent(piclet: Piclet) = {
+  private[calculator] def addCurrent(piclet: Piclet) = {
         currentPiclet = piclet
         fzW.addCurrent(piclet)
-      }
+  }
 
-      private[calculator] def addGrid(r: Rectangle) = {
+  private[calculator] def addGrid(r: Rectangle) = {
         val N = 10
 
         val hStep = r.width / N
@@ -380,9 +379,9 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           val im = r.bottom + i*vStep
           add(Line(Cartesian(r.left, im), Cartesian(r.right, im)))
         }
-      }
+  }
 
-      override private[calculator] def drawStuff(drawing: Drawing) = {
+  override private[calculator] def drawStuff(drawing: Drawing) = {
         if (zs != null)
           canvas.draw(drawing, zs)
 
@@ -395,9 +394,9 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
         if (mode == MODFZ)
           canvas.draw(drawing, square)
-      }
+  }
 
-      override private[calculator] def erase(): Unit = {
+  override private[calculator] def erase(): Unit = {
         eraseCurrent()
 
         piclets = Nil
@@ -411,19 +410,19 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
         if (fzW != null)
           fzW.erase()
         canvas.repaint()
-      }
+  }
 
-      private[calculator] def eraseCurrent() = {
+  private[calculator] def eraseCurrent() = {
         zs = null
         currentPiclet = null
-      }
+  }
 
-      private[calculator] def getPiclets = piclets
-      private[calculator] def getSquare = square
-      private[calculator] def setfzWorld(w: FzWorld) = fzW = w
-      private[calculator] def setmodfzWorld(w: ThreeDWorld) = modfzW = w
+  private[calculator] def getPiclets = piclets
+  private[calculator] def getSquare = square
+  private[calculator] def setfzWorld(w: FzWorld) = fzW = w
+  private[calculator] def setmodfzWorld(w: ThreeDWorld) = modfzW = w
 
-      private[calculator] def setMode(m: Mode) = {
+  private[calculator] def setMode(m: Mode) = {
         mode = m
         mode match {
 
@@ -451,6 +450,6 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
         }
         erase()
         canvas.repaint()
-      }
+  }
 
 }

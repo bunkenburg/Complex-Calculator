@@ -38,7 +38,21 @@ import java.awt._
 import javax.swing._
 
 /** For one component, keeps two graphics objects
-  * for off-screen drawing. */
+  * for off-screen drawing.
+  *
+  * Usage:
+  *
+  *   JComponent c = ...
+  *   DoubleBuffer buffer = new DoubleBuffer(c)
+  *
+  *   val off = buffer.offScreen(g)
+  *   ... heavy drawing on off ...
+  *
+  *   //everything visible in one go
+  *   buffer.onScreen()
+  *
+  * @param component For this component
+  * */
 final class DoubleBuffer private[calculator](val component: JComponent) {
 
   private var offDimension: Dimension = null
@@ -46,20 +60,26 @@ final class DoubleBuffer private[calculator](val component: JComponent) {
   private var offGraphics: Graphics = null
   private var onGraphics: Graphics = null
 
+  /** For the given on-screen graphics, make off-screen graphics. */
   private[calculator] def offScreen(g: Graphics): Graphics = {
     onGraphics = g
     val dimension: Dimension = component.getSize
-    if (offGraphics == null || dimension.width != offDimension.width || dimension.height != offDimension.height) {
+
+    //makes offGraphics
+    if (offGraphics==null || dimension.width!=offDimension.width || dimension.height!=offDimension.height) {
       offDimension = dimension
+      //Creates an off-screen drawable image to be used for double buffering.
       offImage = component.createImage(dimension.width, dimension.height)
       offGraphics = offImage.getGraphics
     }
+
+    //background of offGraphics
     offGraphics.setColor(component.getBackground)
     offGraphics.fillRect(0, 0, dimension.width, dimension.height)
     offGraphics.setColor(Color.black)
+
     offGraphics
   }
 
-  private[calculator] def onScreen(): Unit =
-    onGraphics.drawImage(offImage, 0, 0, component)
+  private[calculator] def onScreen(): Unit = onGraphics.drawImage(offImage, 0, 0, component)
 }

@@ -89,7 +89,7 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     })
 
     val button = new JButton("Reset")
-    button.addActionListener(_ => reset())
+    button.addActionListener(_ => canvas.reset() )
 
     buttonPanel = new JPanel
     buttonPanel.setBackground(Color.lightGray)
@@ -128,11 +128,6 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     zInButton.setEnabled(false)
     zOutButton.setEnabled(false)
     validate()
-    canvas.repaint()
-  }
-
-  private def reset() = {
-    canvas.reset()
     canvas.repaint()
   }
 

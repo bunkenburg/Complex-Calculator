@@ -43,18 +43,10 @@ import javax.swing._
 //            DoubleBuffer, World, Drawing
 
 abstract class WorldRepresentation protected(var w: World) extends JComponent {
-
   setBackground(Color.white)
-
-  //State ---------------------------------------------------------
-
-  //XXX maybe swing can do double-buffering now?
-  protected var doubleBuffer: DoubleBuffer = new DoubleBuffer(this)
+  setDoubleBuffered(true)
 
   //Methods ------------------------------------------------------
-
-  /** just so that I can call it without argument */
-  def paint(): Unit = paint(getGraphics)
 
   private[calculator] def draw(drawing: Drawing, z: Complex)
   private[calculator] def draw(drawing: Drawing, zs: List[Complex] )
@@ -72,8 +64,8 @@ abstract class WorldRepresentation protected(var w: World) extends JComponent {
 
   private[calculator] def reset()
 
-  private[calculator] def shift(x: Int, y: Int)
-  private[calculator] def shift(p: Point): Unit = shift(p.x, p.y)
+  /** shift calls repaint */
+  private[calculator] def shift(p: Point)
 
   //There is zoom for plane but not for sphere.
   //zoom causes repaint.

@@ -76,7 +76,6 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
       private def drag(e: MouseEvent) = {
         val p = e.getPoint
         canvas.shift(previous - p)
-        canvas.paint()
         previous = p
       }
 
@@ -121,7 +120,7 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
     } catch {
       case _ex: Exception =>
     }
-    canvas.paint()
+    canvas.repaint()
   }
 
   private[calculator] def add(piclet: Piclet) = if (f != null) {
@@ -164,7 +163,7 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
         }
 
       }
-    canvas.paint(canvas.getGraphics)
+    canvas.repaint()
   }
 
   override final private[calculator] def drawStuff(drawing: Drawing) = {

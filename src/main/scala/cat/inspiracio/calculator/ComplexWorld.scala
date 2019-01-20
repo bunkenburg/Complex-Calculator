@@ -33,7 +33,6 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt.Point
 import java.awt.event._
 
 import javax.swing._
@@ -79,7 +78,6 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
         case MOVE =>
           val p = e.getPoint
           canvas.shift(previous - p)
-          canvas.paint()
           previous = p
         case _ =>
       }
