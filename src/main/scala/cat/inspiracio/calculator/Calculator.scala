@@ -75,7 +75,6 @@ final class Calculator() extends JFrame("Complex Calculator") {
   private var modfzW: ThreeDWorld = null
   private var refxW: RefxWorld = null
   private var f: Syntax = null
-  private var inAnApplet = true
 
   init()
 
@@ -115,7 +114,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
     val listener: ActionListener = e => paste(e.getActionCommand)
 
     /** Makes a button and adds it. */
-    def bx(label: String, gridx: Int, gridy: Int, gridheight: Int, listener: ActionListener): JButton = {
+    def bx(label: String, x: Int, y: Int, height: Int, listener: ActionListener): JButton = {
       val button = new JButton(label)
       button.addActionListener(listener)
 
@@ -125,9 +124,9 @@ final class Calculator() extends JFrame("Complex Calculator") {
       constraints.weightx = 1
       constraints.weighty = 1
       constraints.fill = 1
-      constraints.gridx = gridx
-      constraints.gridy = gridy
-      constraints.gridheight = gridheight
+      constraints.gridx = x
+      constraints.gridy = y
+      constraints.gridheight = height
 
       layout.setConstraints(button, constraints)
       add(button)
@@ -193,7 +192,6 @@ final class Calculator() extends JFrame("Complex Calculator") {
   /** Locates the Calculator where it was last time the program was run.
     * By default near effective topleft. */
   private def locate() = {
-
     // effective topleft on ubuntu standard: x=67 y=28
     val p = preferences
     val x: Int = p.getInt("x", 67 + 10 )
@@ -253,15 +251,13 @@ final class Calculator() extends JFrame("Complex Calculator") {
 
   private[calculator] def getSquare = zW.getSquare
 
-  def quit(): Unit = if (inAnApplet) {
-
+  def quit(): Unit = {
     if(isVisible){
       val p = preferences
       val Point2(x,y) = getLocationOnScreen
       p.putInt("x", x)
       p.putInt("y", y)
     }
-
     dispose()
     if (cW != null) cW.dispose()
     if (zW != null) zW.dispose()
@@ -269,12 +265,11 @@ final class Calculator() extends JFrame("Complex Calculator") {
     if (modfzW != null) modfzW.dispose()
     if (refxW != null) refxW.dispose()
   }
-  else System.exit(0)
+
 
   /** Sets the mode, opening and closing windows. */
   private[calculator] def setMode(m: Mode) = {
     m match {
-
       case CALC =>
         Complex.setArgPrincipal()
         display.clear()

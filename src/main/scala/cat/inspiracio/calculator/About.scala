@@ -38,9 +38,7 @@ import java.awt.event._
 import javax.swing._
 import javax.swing.text.{SimpleAttributeSet, StyleConstants}
 
-/** Modal dialog from "About"
-  *
-  * */
+/** Modal dialog from "About" */
 class About(val frame: JFrame) extends JDialog(frame, "About ...", true) {
 
   fill()
@@ -76,12 +74,6 @@ class About(val frame: JFrame) extends JDialog(frame, "About ...", true) {
     doc.setParagraphAttributes(0, doc.getLength, center, false)
 
     textpane
-  }
-
-  private val action = new AbstractAction() {
-    override def actionPerformed(e: ActionEvent): Unit = {
-      dispose()
-    }
   }
 
   private def ready(): Unit ={
