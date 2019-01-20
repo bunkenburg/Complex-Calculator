@@ -59,10 +59,6 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
   final protected val sphere = new Sphere(this)
   protected var canvas: WorldRepresentation = plane
 
-  /** the previous mouse position */
-  protected var prevx = 0
-  protected var prevy = 0
-
   /** maximal displayed stuff */
   private[calculator] var MaxImaginary = 0.0
   private[calculator] var MinImaginary = 0.0

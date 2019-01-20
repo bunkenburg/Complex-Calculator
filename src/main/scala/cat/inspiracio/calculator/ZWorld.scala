@@ -35,13 +35,15 @@ package cat.inspiracio.calculator
 
 import java.awt.{Dimension, GraphicsConfiguration, Point}
 import java.awt.event._
-import javax.swing._
 
+import javax.swing._
 import cat.inspiracio.calculator.Interaction._
 import cat.inspiracio.calculator.Mode.{FZ, MODFZ}
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry._
+import javax.swing.event.{MouseInputAdapter, MouseInputListener}
 
+/** The z-World is where the user gives input for function f. */
 final class ZWorld private[calculator](override val calculator: Calculator) extends World(calculator) {
 
   //State ------------------------------------------------
@@ -57,9 +59,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
   /** During dragging of a free line, the points, otherwise null. */
   private var zs: List[Complex] = null
 
-  private var start: Complex = null
-  private var end: Complex = null
-
+  /** During dragging, the provisional piclet. */
   private var currentPiclet: Piclet = null
 
   private var piclets: List[Piclet] = Nil
@@ -89,66 +89,70 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
     })
     buttonPanel.add(interactionChoice)
 
-    val mouse: MouseAdapter = new MouseAdapter() {
+    val mouse = new MouseInputAdapter() {
 
-      override def mousePressed(mouseevent: MouseEvent): Unit = interaction match {
+      // during dragging, previous mouse position
+      var previous: Point2 = null
 
-        case MOVE =>
-          prevx = mouseevent.getX
-          prevy = mouseevent.getY
-          mouseevent.consume()
+      //during dragging, starting and ending complex number
+      var start: Complex = null
+      var end: Complex = null
+
+      override def mousePressed(e: MouseEvent): Unit = interaction match {
+
+        case MOVE => previous = e.getPoint
 
         case DRAW => {
-          val z = canvas.point2Complex(mouseevent.getPoint)
+          val z = canvas.point2Complex(e.getPoint)
           if (z != null) {
             Complex.resetArg()
             add(z)
-            canvas.paint(canvas.getGraphics)
+            canvas.paint()
           }
         }
 
         case GRID => {
-          val z = canvas.point2Complex(mouseevent.getPoint)
+          val z = canvas.point2Complex(e.getPoint)
           if (z != null) {
             start = z
             end = z
             addCurrent(Rectangle(start, end))
-            canvas.paint(canvas.getGraphics)
+            canvas.paint()
           }
         }
 
         case LINE => {
-          val z = canvas.point2Complex(mouseevent.getPoint)
+          val z = canvas.point2Complex(e.getPoint)
           if (z != null) {
             start = z
             end = z
             addCurrent(Line(start, end))
-            canvas.paint(canvas.getGraphics)
+            canvas.paint()
           }
         }
 
         case CIRCLE => {
-          val z = canvas.point2Complex(mouseevent.getPoint)
+          val z = canvas.point2Complex(e.getPoint)
           if (z != null) {
             start = z
             end = z
             addCurrent(Circle(start, end))
-            canvas.paint(canvas.getGraphics)
+            canvas.paint()
           }
         }
 
         case RECTANGLE => {
-          val z = canvas.point2Complex(mouseevent.getPoint)
+          val z = canvas.point2Complex(e.getPoint)
           if (z != null) {
             start = z
             end = z
             addCurrent(Rectangle(start, end))
-            canvas.paint(canvas.getGraphics)
+            canvas.paint()
           }
         }
 
         case SQUARE => {
-          val z = canvas.point2Complex(mouseevent.getPoint)
+          val z = canvas.point2Complex(e.getPoint)
           if (z != null) {
             start = z
             end = z
@@ -157,26 +161,26 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
               addCurrent(square)
             else if (mode == MODFZ)
               modfzW.change(square)
-            canvas.paint(canvas.getGraphics)
+            canvas.paint()
           }
         }
 
       }//match
 
-      override def mouseReleased(mouseevent: MouseEvent): Unit = interaction match {
+      private def drag(e: MouseEvent) = {
+        val p = e.getPoint
+        canvas.shift(previous - p)
+        repaint()
+        previous = p
+      }
 
-        case MOVE =>
-          val x = mouseevent.getX
-          val y = mouseevent.getY
-          canvas.shift(prevx - x, prevy - y)
-          repaint()
-          prevx = x
-          prevy = y
-          mouseevent.consume()
+      override def mouseReleased(e: MouseEvent): Unit = interaction match {
+
+        case MOVE => drag(e)
 
         case DRAW => {
           if (zs != null) {
-            val z = canvas.point2Complex(mouseevent.getPoint)
+            val z = canvas.point2Complex(e.getPoint)
             if (z != null)
               add(z)
             piclets = Freeline(zs) :: piclets
@@ -188,7 +192,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
         case LINE =>
           if (start != null) {
-            val z = canvas.point2Complex(mouseevent.getPoint)
+            val z = canvas.point2Complex(e.getPoint)
             if (z != null)
               end = z
             add(Line(start, end))
@@ -198,7 +202,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
         case CIRCLE => {
           if (start != null) {
-            val z = canvas.point2Complex(mouseevent.getPoint)
+            val z = canvas.point2Complex(e.getPoint)
             if (z != null)
               end = z
             add(Circle(start, end))
@@ -209,7 +213,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
         case RECTANGLE =>
           if (start != null) {
-            val z = canvas.point2Complex(mouseevent.getPoint)
+            val z = canvas.point2Complex(e.getPoint)
             if (z != null)
               end = z
             add(Rectangle(start, end))
@@ -219,7 +223,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
         case SQUARE =>
           if (start != null) {
-            val z = canvas.point2Complex(mouseevent.getPoint)
+            val z = canvas.point2Complex(e.getPoint)
             if (z != null)
               end = z
             square = Square(start, end)
@@ -234,7 +238,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
         case GRID =>
           if (start != null) {
-            val z = canvas.point2Complex(mouseevent.getPoint)
+            val z = canvas.point2Complex(e.getPoint)
             if (z != null)
               end = z
             addGrid(Rectangle(start, end))
@@ -244,24 +248,12 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
       }//match
 
-    }//mouseadapter
+      override def mouseDragged(e: MouseEvent): Unit = interaction match {
 
-    val motion: MouseMotionAdapter = new MouseMotionAdapter() {
-
-      override def mouseDragged(mouseevent: MouseEvent): Unit = interaction match {
-
-        case MOVE => {
-          val x = mouseevent.getX
-          val y = mouseevent.getY
-          canvas.shift(prevx - x, prevy - y)
-          canvas.paint(canvas.getGraphics)
-          prevx = x
-          prevy = y
-          mouseevent.consume()
-        }
+        case MOVE => drag(e)
 
         case DRAW => {
-          val z = canvas.point2Complex(mouseevent.getPoint)
+          val z = canvas.point2Complex(e.getPoint)
           if (zs != null) {
             if (z != null)
               add(z)
@@ -270,53 +262,52 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
               zs = null
               fzW.stopDynamicMap()
             }
-            canvas.paint(canvas.getGraphics)
           }
           else if (z != null) {
             Complex.resetArg()
             add(z)
-            canvas.paint(canvas.getGraphics)
           }
+          canvas.paint()
         }
 
         case CIRCLE => {
-          val z = canvas.point2Complex(mouseevent.getPoint)
+          val z = canvas.point2Complex(e.getPoint)
           if (z != null) {
             end = z
             addCurrent(Circle(start, end))
-            canvas.paint(canvas.getGraphics)
+            canvas.paint()
           }
         }
 
         case GRID => {
-          val z = canvas.point2Complex(mouseevent.getPoint)
+          val z = canvas.point2Complex(e.getPoint)
           if (z != null) {
             end = z
             addCurrent(Rectangle(start, end))
-            canvas.paint(canvas.getGraphics)
+            canvas.paint()
           }
         }
 
         case LINE => {
-          val z = canvas.point2Complex(mouseevent.getPoint)
+          val z = canvas.point2Complex(e.getPoint)
           if (z != null) {
             end = z
             addCurrent(Line(start, end))
-            canvas.paint(canvas.getGraphics)
+            canvas.paint()
           }
         }
 
         case RECTANGLE => {
-          val z = canvas.point2Complex(mouseevent.getPoint)
+          val z = canvas.point2Complex(e.getPoint)
           if (z != null) {
             end = z
             addCurrent(Rectangle(start, end))
-            canvas.paint(canvas.getGraphics)
+            canvas.paint()
           }
         }
 
         case SQUARE => {
-          val z = canvas.point2Complex(mouseevent.getPoint)
+          val z = canvas.point2Complex(e.getPoint)
           if (z != null) {
             end = z
             square = Square(start, end)
@@ -324,18 +315,19 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
               addCurrent(square)
             else if (mode == MODFZ)
               modfzW.change(square)
-            canvas.paint(canvas.getGraphics)
+            canvas.paint()
           }
         }
 
       }//match
 
-    }//MouseMotionAdapter
+    }//MouseInputAdapter
 
     plane.addMouseListener(mouse)
-    plane.addMouseMotionListener(motion)
+    plane.addMouseMotionListener(mouse)
     sphere.addMouseListener(mouse)
-    sphere.addMouseMotionListener(motion)
+    sphere.addMouseMotionListener(mouse)
+
     pack()
     locate()
     setVisible(true)
@@ -424,8 +416,6 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
       private[calculator] def eraseCurrent() = {
         zs = null
         currentPiclet = null
-        start = null
-        end = null
       }
 
       private[calculator] def getPiclets = piclets
