@@ -266,81 +266,88 @@ final class Calculator() extends JFrame("Complex Calculator") {
     if (refxW != null) refxW.dispose()
   }
 
-
   /** Sets the mode, opening and closing windows. */
   private[calculator] def setMode(m: Mode) = {
     m match {
-      case CALC =>
-        Complex.setArgPrincipal()
-        display.clear()
-        equalsButton.setEnabled(true)
-        zButton.setEnabled(false)
-        complexWorld()
-        disposeZWorld()
-        disposeFZWorld()
-        disposeModFZWorld()
-        disposeReFXWorld()
-
-      case FZ =>
-        Complex.setArgContinuous()
-        variable = 'z'
-        if (mode == REFX)
-          display.replace('x', 'z')
-        else if (mode == CALC) {
-          display.clear()
-          display.prepend("f(z) = ")
-        }
-        equalsButton.setEnabled(false)
-        zButton.setEnabled(true)
-        zButton.setText("z")
-        disposeComplexWorld()
-        zWorld()
-        zW.setMode(FZ)
-        fzWorld()
-        fzW.setzWorld(zW)
-        zW.setfzWorld(fzW)
-        disposeModFZWorld()
-        disposeReFXWorld()
-
-      case MODFZ =>
-        Complex.setArgContinuous()
-        variable = 'z'
-        if (mode == REFX) display.replace('x', 'z')
-        else if (mode == CALC) {
-          display.clear()
-          display.prepend("f(z) = ")
-        }
-        equalsButton.setEnabled(false)
-        zButton.setEnabled(true)
-        zButton.setText("z")
-        disposeComplexWorld()
-        zWorld()
-        zW.setMode(MODFZ)
-        disposeFZWorld()
-        modFZWorld()
-        zW.setmodfzWorld(modfzW)
-        disposeReFXWorld()
-
-      case REFX =>
-        Complex.setArgContinuous()
-        variable = 'x'
-        if (mode == CALC) {
-          display.clear()
-          display.prepend("f(x) = ")
-        }
-        else display.replace('z', 'x')
-        equalsButton.setEnabled(false)
-        zButton.setEnabled(true)
-        zButton.setText("x")
-        disposeComplexWorld()
-        disposeZWorld()
-        disposeFZWorld()
-        disposeModFZWorld()
-        refxWorld()
+      case CALC => calc()
+      case FZ => fz()
+      case MODFZ => modfz()
+      case REFX => refx()
     }
-
     mode = m
     functionChanged()
+  }
+
+  private def calc() = {
+    Complex.setArgPrincipal()
+    display.clear()
+    equalsButton.setEnabled(true)
+    zButton.setEnabled(false)
+    complexWorld()
+    disposeZWorld()
+    disposeFZWorld()
+    disposeModFZWorld()
+    disposeReFXWorld()
+  }
+
+  private def fz() = {
+    Complex.setArgContinuous()
+    variable = 'z'
+    if (mode == REFX)
+      display.replace('x', 'z')
+    else if (mode == CALC) {
+      display.clear()
+      display.prepend("f(z) = ")
+    }
+    equalsButton.setEnabled(false)
+    zButton.setEnabled(true)
+    zButton.setText("z")
+    disposeComplexWorld()
+    zWorld()
+    zW.setMode(FZ)
+    fzWorld()
+    fzW.setzWorld(zW)
+    zW.setfzWorld(fzW)
+    disposeModFZWorld()
+    disposeReFXWorld()
+  }
+
+  private def modfz() = {
+    Complex.setArgContinuous()
+    variable = 'z'
+    if (mode == REFX) display.replace('x', 'z')
+    else if (mode == CALC) {
+      display.clear()
+      display.prepend("f(z) = ")
+    }
+    equalsButton.setEnabled(false)
+    zButton.setEnabled(true)
+    zButton.setText("z")
+    disposeComplexWorld()
+    zWorld()
+    zW.setMode(MODFZ)
+    disposeFZWorld()
+    modFZWorld()
+    zW.setmodfzWorld(modfzW)
+    disposeReFXWorld()
+  }
+
+  private def refx() = {
+    Complex.setArgContinuous()
+    variable = 'x'
+    if (mode == CALC) {
+      display.clear()
+      display.prepend("f(x) = ")
+    }
+    else display.replace('z', 'x')
+    equalsButton.setEnabled(false)
+    zButton.setEnabled(true)
+    zButton.setText("x")
+    disposeComplexWorld()
+    disposeZWorld()
+    disposeFZWorld()
+    disposeModFZWorld()
+    refxWorld()
   }
 
   private def complexWorld() = if (cW == null) cW = new ComplexWorld(this)
