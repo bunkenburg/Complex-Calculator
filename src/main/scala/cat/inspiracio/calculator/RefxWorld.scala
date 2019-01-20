@@ -36,12 +36,13 @@ package cat.inspiracio.calculator
 import java.awt._
 import java.awt.event._
 import java.util.prefs.Preferences
-import javax.swing._
 
+import javax.swing._
 import cat.inspiracio.calculator.Direction._
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.Point2
 import cat.inspiracio.parsing.Syntax
+import javax.swing.event.MouseInputAdapter
 
 // Referenced classes of package bunkenba.calculator:
 //            Calculator, DoubleBuffer, Drawing
@@ -58,9 +59,6 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
 
   protected var buttonPanel: JPanel = null
   private var canvas: RefxCanvas = null
-
-  protected var prevx: Int = 0
-  protected var prevy: Int = 0
 
   private var Max: Double = .0
   private var Min: Double = .0
@@ -173,11 +171,6 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
     canvas.repaint()
   }
 
-  def setLocation() = {
-    setLocationRelativeTo(calculator)
-    setLocationByPlatform(true)
-  }
-
   /** Event listener: the function has changed. */
   private[calculator] def functionChanged(t: Syntax) = {
     f = t
@@ -207,6 +200,7 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
 
     //State ----------------------------------------------------
 
+    //XXX maybe swing can do double-buffering now
     private var doubleBuffer: DoubleBuffer = null
 
     private var ScaleFactor: Double = 40
@@ -229,40 +223,26 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
 
       doubleBuffer = new DoubleBuffer(this)
 
-      addMouseListener(new MouseAdapter() {
+      val mouse = new MouseInputAdapter{
 
-        override def mousePressed(mouseevent: MouseEvent): Unit = {
-          prevx = mouseevent.getX
-          prevy = mouseevent.getY
-          mouseevent.consume()
-        }
+        //previous mouse position during dragging
+        var previous: Point2 = null
 
-        override def mouseReleased(mouseevent: MouseEvent): Unit = {
-          val x = mouseevent.getX
-          val y = mouseevent.getY
-          shift(prevx - x, prevy - y)
+        override def mousePressed(e: MouseEvent): Unit = previous = e.getPoint
+        override def mouseReleased(e: MouseEvent): Unit = drag(e)
+        override def mouseDragged(e: MouseEvent): Unit = drag(e)
+
+        private def drag(e: MouseEvent) = {
+          val p = e.getPoint
+          shift(previous - p)
           paint(getGraphics)
-          prevx = x
-          prevy = y
-          mouseevent.consume()
+          previous = p
         }
 
-      })
+      }
 
-      addMouseMotionListener(new MouseMotionAdapter() {
-
-        override def mouseDragged(mouseevent: MouseEvent): Unit = {
-          val x = mouseevent.getX
-          val y = mouseevent.getY
-          shift(prevx - x, prevy - y)
-          paint(getGraphics)
-          prevx = x
-          prevy = y
-          mouseevent.consume()
-        }
-
-      })
-
+      addMouseListener(mouse)
+      addMouseMotionListener(mouse)
     }
 
     //Methods ------------------------------------------------------
@@ -404,8 +384,8 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
     private def pix2x(i: Int): Double = i.toDouble / ScaleFactor + Left
 
     def reset() = {
-      CenterX = 0.0D
-      CenterY = 0.0D
+      CenterX = 0.0
+      CenterY = 0.0
     }
 
     override def setFont(font: Font): Unit = {
@@ -417,13 +397,13 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
       MARKLENGTH = FONTHEIGHT / 5
     }
 
-    private[calculator] def shift(x: Int, y: Int) = {
-      CenterY -= Pix2Math(y)
-      CenterX += Pix2Math(x)
+    private[calculator] def shift(p: Point) = {
+      CenterY -= Pix2Math(p.y)
+      CenterX += Pix2Math(p.x)
     }
 
-    def zoomIn() = ScaleFactor *= 2D
-    def zoomOut() = ScaleFactor /= 2D
+    def zoomIn() = ScaleFactor *= 2.0
+    def zoomOut() = ScaleFactor /= 2.0
 
     // helpers -----------------------------------
 

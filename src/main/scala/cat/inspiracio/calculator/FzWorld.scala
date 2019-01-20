@@ -51,6 +51,7 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
   //State --------------------------------------------------------------------
 
   /** During dragging, the sampled points of the free line. Otherwise null. */
+  //XXX improve. Make it more local.
   private var zs: List[Complex] = null
 
   private var piclets: List[Piclet] = Nil
@@ -120,7 +121,7 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
     } catch {
       case _ex: Exception =>
     }
-    canvas.paint(canvas.getGraphics)
+    canvas.paint()
   }
 
   private[calculator] def add(piclet: Piclet) = if (f != null) {

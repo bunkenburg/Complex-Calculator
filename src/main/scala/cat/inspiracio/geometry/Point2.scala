@@ -14,7 +14,6 @@ object Point2 {
 class Point2(x: Int, y: Int) extends Point(x,y) {
 
   def + (a: Int, b: Int) = new Point2(x + a, y + b)
-
   def - (p: Point) = new Point2(x - p.x, y - p.y)
 
 }
