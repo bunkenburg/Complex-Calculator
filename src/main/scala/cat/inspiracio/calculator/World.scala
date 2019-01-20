@@ -140,6 +140,7 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
 
   private[calculator] def drawStuff(drawing: Drawing)
 
+  /** erase everything that is show on the world and repaint */
   private[calculator] def erase()
 
   protected def resetExtremes(): Unit = {

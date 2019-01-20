@@ -49,13 +49,55 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
 
   init()
 
+  /** The numbers marked on this world. Never null. */
+  private var numbers: List[Complex] = Nil
+
   private def init() {
     setTitle("Complex World")
+    gui()
 
-    //GUI ---
+    val mouse: MouseInputListener = new MouseInputAdapter() {
 
+      /** the previous mouse position during dragging */
+      var previous: Point2 = null
+
+      override def mousePressed(e: MouseEvent): Unit = interaction match {
+        case MOVE => previous = e.getPoint
+        case DRAW =>
+          val z = canvas.point2Complex(e.getPoint)
+          if (z != null) {
+            calculator.add(z)
+            add(z)
+          }
+        case _ =>
+      }
+
+      override def mouseReleased(e: MouseEvent): Unit = drag(e)
+      override def mouseDragged(e: MouseEvent): Unit = drag(e)
+
+      private def drag(e: MouseEvent) = interaction match {
+        case MOVE =>
+          val p = e.getPoint
+          canvas.shift(previous - p)
+          canvas.paint()
+          previous = p
+        case _ =>
+      }
+
+    }
+
+    plane.addMouseListener(mouse)
+    plane.addMouseMotionListener(mouse)
+    sphere.addMouseListener(mouse)
+    sphere.addMouseMotionListener(mouse)
+    pack()
+    locate()
+    setVisible(true)
+  }
+
+  private def gui() = {
     val button = new JButton("Clear")
-    button.addActionListener( _ => clear() )
+    button.addActionListener( _ => erase() )
     buttonPanel.add(button)
     val interactionChoice = new JComboBox[String]
     interactionChoice.addItem("Draw")
@@ -70,53 +112,7 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
       }
     })
     buttonPanel.add(interactionChoice)
-
-    val mouse: MouseInputListener = new MouseInputAdapter() {
-
-      /** the previous mouse position during dragging */
-      var previous: Point2 = null
-
-      override def mousePressed(e: MouseEvent): Unit = interaction match {
-        case MOVE => previous = e.getPoint
-        case DRAW =>
-          val p = e.getPoint
-          val z = canvas.point2Complex(p)
-          if (z != null) {
-            calculator.add(z)
-            add(z)
-          }
-        case _ =>
-      }
-
-      override def mouseReleased(e: MouseEvent): Unit = interaction match {
-        case MOVE => drag(e)
-        case _ =>
-      }
-
-      override def mouseDragged(e: MouseEvent): Unit = interaction match {
-        case MOVE => drag(e)
-        case _ =>
-      }
-
-      private def drag(e: MouseEvent) = {
-        val p = e.getPoint
-        canvas.shift(previous - p)
-        canvas.paint()
-        previous = p
-      }
-
-    }
-
-    plane.addMouseListener(mouse)
-    plane.addMouseMotionListener(mouse)
-    sphere.addMouseListener(mouse)
-    sphere.addMouseMotionListener(mouse)
-    pack()
-    locate()
-    setVisible(true)
   }
-
-  private var numbers: List[Complex] = Nil
 
   /** to the right of the calculator */
   private def locate() = {
@@ -134,11 +130,6 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
     setSize(width,height)
   }
 
-  private def clear() = {
-    erase()
-    canvas.repaint()
-  }
-
   override private[calculator] def add(c: Complex) = {
     numbers = c :: numbers
     updateExtremes(c)
@@ -146,10 +137,11 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
   }
 
   override private[calculator] def drawStuff(drawing: Drawing) =
-    if(numbers!=null) numbers.foreach{ canvas.draw(drawing, _) }
+    numbers.foreach{ canvas.draw(drawing, _) }
 
   override private[calculator] def erase() = {
     numbers = Nil
     resetExtremes()
+    canvas.repaint()
   }
 }
