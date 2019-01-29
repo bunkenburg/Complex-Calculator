@@ -33,6 +33,7 @@
  * */
 package cat.inspiracio.calculator
 
+import java.awt.Graphics
 import java.awt.event._
 
 import javax.swing._
@@ -134,8 +135,8 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
     canvas.repaint()
   }
 
-  override private[calculator] def drawStuff(drawing: Drawing) =
-    numbers.foreach{ canvas.draw(drawing, _) }
+  override private[calculator] def drawStuff(g: Graphics) =
+    numbers.foreach{ canvas.draw(g, _) }
 
   override private[calculator] def erase() = {
     numbers = Nil

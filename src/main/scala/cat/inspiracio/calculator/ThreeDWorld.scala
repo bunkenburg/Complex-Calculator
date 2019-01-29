@@ -44,6 +44,8 @@ import cat.inspiracio.geometry._
 import cat.inspiracio.parsing.{Constant, Syntax}
 import javax.swing.event.MouseInputAdapter
 
+import Helpers.MoreGraphics
+
 // Referenced classes of package bunkenba.calculator:
 //            Calculator, DoubleBuffer, Drawing, Matrix44,
 //            Vector2, Vector3
@@ -233,60 +235,60 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
 
     /** Draws the lines behind the surface.
       * Depends on xforward, zforward. */
-    private[calculator] def drawBackAxes(drawing: Drawing) = {
-      drawBottomLeftNumber(drawing)
-      drawBottomRightNumber(drawing)
-      drawTopleftNumber(drawing)
-      drawTopRightNumber(drawing)
+    private[calculator] def drawBackAxes(g: Graphics) = {
+      drawBottomLeftNumber(g)
+      drawBottomRightNumber(g)
+      drawTopleftNumber(g)
+      drawTopRightNumber(g)
 
       //two base lines ---
       if (xforward)
         //left base line, which is a bit more behind
-        drawLine3(drawing)( -0.5, 0.0, -0.5)( -0.5, 0.0, 0.5)
+        drawLine3(g)( -0.5, 0.0, -0.5)( -0.5, 0.0, 0.5)
       else
         //right base line, which is a bit more in front
-        drawLine3(drawing)(  0.5, 0.0, -0.5)(  0.5, 0.0, 0.5)
+        drawLine3(g)(  0.5, 0.0, -0.5)(  0.5, 0.0, 0.5)
 
       if (zforward) //imaginary axis points forward (not at the start)
         //front base line, which is behind
-        drawLine3(drawing)( -0.5, 0.0, -0.5)( 0.5, 0.0, -0.5)
+        drawLine3(g)( -0.5, 0.0, -0.5)( 0.5, 0.0, -0.5)
       else
         //back base line
-        drawLine3(drawing)( -0.5, 0.0,  0.5)( 0.5, 0.0,  0.5)
+        drawLine3(g)( -0.5, 0.0,  0.5)( 0.5, 0.0,  0.5)
 
       //two poles ---
       if (!xforward || !zforward)
         //top right pole, on (x=0.5, z=0.5)
-        drawLine3(drawing)( 0.5, 0.0, 0.5)( 0.5, 1.0, 0.5)
+        drawLine3(g)( 0.5, 0.0, 0.5)( 0.5, 1.0, 0.5)
 
       if (!xforward || zforward)
         //bottom right pole, on (x=0.5, z=-0.5)
-        drawLine3(drawing)( 0.5, 0.0, -0.5)( 0.5, 1.0, -0.5)
+        drawLine3(g)( 0.5, 0.0, -0.5)( 0.5, 1.0, -0.5)
 
       if (xforward || !zforward)
         //top left pole, on (x=-0.5, z=0.5)
-        drawLine3(drawing)( -0.5, 0.0, 0.5)( -0.5, 1.0, 0.5)
+        drawLine3(g)( -0.5, 0.0, 0.5)( -0.5, 1.0, 0.5)
       if (xforward || zforward)
         //bottom left pole on (x=-0.5, z=-0.5)
-        drawLine3(drawing)( -0.5, 0.0, -0.5)( -0.5, 1.0, -0.5)
+        drawLine3(g)( -0.5, 0.0, -0.5)( -0.5, 1.0, -0.5)
 
       // two lid lines --
       if (xforward)
         //left lid line
-        drawLine3(drawing)( -0.5, 1.0, -0.5)( -0.5, 1.0, 0.5)
+        drawLine3(g)( -0.5, 1.0, -0.5)( -0.5, 1.0, 0.5)
       else
         //right lid line
-        drawLine3(drawing)( 0.5, 1.0, -0.5)(  0.5, 1.0, 0.5)
+        drawLine3(g)( 0.5, 1.0, -0.5)(  0.5, 1.0, 0.5)
 
       if (zforward)
         //front lid line
-        drawLine3(drawing)( -0.5, 1.0, -0.5)( 0.5, 1.0, -0.5)
+        drawLine3(g)( -0.5, 1.0, -0.5)( 0.5, 1.0, -0.5)
       else
         //back lid line
-        drawLine3(drawing)( -0.5, 1.0,  0.5)( 0.5, 1.0,  0.5)
+        drawLine3(g)( -0.5, 1.0,  0.5)( 0.5, 1.0,  0.5)
     }
 
-    private def drawBottomLeftNumber(drawing: Drawing) = {
+    private def drawBottomLeftNumber(g: Graphics) = {
       val botleft: Point2 = f3dPix(-0.5, 0.0, -0.5)
       val s = square.botLeft.toString
 
@@ -294,7 +296,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
         if (xforward && zforward)
           botleft + (2, -2)
         else if (xforward && !zforward){
-          val width = drawing.graphics.getFontMetrics.stringWidth(s)
+          val width = g.getFontMetrics.stringWidth(s)
           botleft + (-width - 2, FONT_HEIGHT)
         }
         else if (!xforward && zforward)
@@ -302,16 +304,16 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
         else //if (!xforward && !zforward)
           botleft + (2, FONT_HEIGHT)
 
-      drawing.drawString(s, adjusted)
+      g.drawString(s, adjusted)
     }
 
-    private def drawBottomRightNumber(drawing: Drawing) = {
+    private def drawBottomRightNumber(g: Graphics) = {
       val botright: Point2 = f3dPix(0.5, 0.0, -0.5)
       val s = square.botRight.toString
 
       val adjusted: Point =
         if (xforward && zforward) {
-          val width = drawing.graphics.getFontMetrics.stringWidth(s)
+          val width = g.getFontMetrics.stringWidth(s)
           botright + (-width - 2, FONT_HEIGHT)
         }
         else if (xforward && !zforward)
@@ -321,10 +323,10 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
         else //if (!xforward && !zforward)
           botright + (2, FONT_HEIGHT)
 
-      drawing.drawString(s, adjusted)
+      g.drawString(s, adjusted)
     }
 
-    private def drawTopleftNumber(drawing: Drawing)= {
+    private def drawTopleftNumber(g: Graphics)= {
       val topleft: Point2 = f3dPix(-0.5, 0.0, 0.5)
       val s = square.topLeft.toString
 
@@ -336,14 +338,14 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
         else if (!xforward && zforward)
           topleft + (2, FONT_HEIGHT)
         else /* if (!xforward && !zforward) */ {
-          val width = drawing.graphics.getFontMetrics.stringWidth(s)
+          val width = g.getFontMetrics.stringWidth(s)
           topleft + (-width - 2, FONT_HEIGHT)
         }
 
-      drawing.drawString(s, adjusted)
+      g.drawString(s, adjusted)
     }
 
-    private def drawTopRightNumber(drawing: Drawing) = {
+    private def drawTopRightNumber(g: Graphics) = {
       val topright: Point2 = f3dPix(0.5, 0.0, 0.5)
       val s = square.topRight.toString
 
@@ -353,80 +355,80 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
         else if (xforward && !zforward)
           topright + (2, FONT_HEIGHT)
         else if (!xforward && zforward) {
-          val width = drawing.graphics.getFontMetrics.stringWidth(s)
+          val width = g.getFontMetrics.stringWidth(s)
           topright + (-width - 2, FONT_HEIGHT)
         }
         else //if (!xforward && !zforward)
           topright + (2, -2)
 
-      drawing.drawString(s, adjusted)
+      g.drawString(s, adjusted)
     }
 
     /** Draws the lines in front of the surface.
       * Reads xforward, zforward. */
-    private[calculator] def drawFrontAxes(drawing: Drawing) = {
+    private[calculator] def drawFrontAxes(g: Graphics) = {
 
       if (xforward)
         //right base line
-        drawLine3(drawing)( 0.5, 0.0, -0.5)( 0.5, 0.0, 0.5)
+        drawLine3(g)( 0.5, 0.0, -0.5)( 0.5, 0.0, 0.5)
       else
         //left base line
-        drawLine3(drawing)( -0.5, 0.0, -0.5)( -0.5, 0.0, 0.5)
+        drawLine3(g)( -0.5, 0.0, -0.5)( -0.5, 0.0, 0.5)
 
       if (zforward)
         //back base line
-        drawLine3(drawing)( -0.5, 0.0, 0.5)( 0.5, 0.0, 0.5)
+        drawLine3(g)( -0.5, 0.0, 0.5)( 0.5, 0.0, 0.5)
       else
         //front base line
-        drawLine3(drawing)( -0.5, 0.0, -0.5)( 0.5, 0.0, -0.5)
+        drawLine3(g)( -0.5, 0.0, -0.5)( 0.5, 0.0, -0.5)
 
       if (xforward && zforward)
         //top right pole on (x=0.5, z=0.5)
-        drawLine3(drawing)( 0.5, 0.0, 0.5)( 0.5, 1.0, 0.5)
+        drawLine3(g)( 0.5, 0.0, 0.5)( 0.5, 1.0, 0.5)
       else if (xforward && !zforward)
         //bottom right pole on (x=0.5, z=-0.5)
-        drawLine3(drawing)( 0.5, 0.0, -0.5)( 0.5, 1.0, -0.5)
+        drawLine3(g)( 0.5, 0.0, -0.5)( 0.5, 1.0, -0.5)
       else if (!xforward && zforward)
         //topleft pole on (x=-0.5, z=0.5)
-        drawLine3(drawing)( -0.5, 0.0, 0.5)( -0.5, 1.0, 0.5)
+        drawLine3(g)( -0.5, 0.0, 0.5)( -0.5, 1.0, 0.5)
       else if (!xforward && !zforward)
         //bottom left pole on (x=-0.5, y=-0.5)
-        drawLine3(drawing)( -0.5, 0.0, -0.5)( -0.5, 1.0, -0.5)
+        drawLine3(g)( -0.5, 0.0, -0.5)( -0.5, 1.0, -0.5)
 
       if (xforward)
-        drawLine3(drawing)( 0.5, 1.0, -0.5)( 0.5, 1.0, 0.5)
+        drawLine3(g)( 0.5, 1.0, -0.5)( 0.5, 1.0, 0.5)
       else
-        drawLine3(drawing)( -0.5, 1.0, -0.5)( -0.5, 1.0, 0.5)
+        drawLine3(g)( -0.5, 1.0, -0.5)( -0.5, 1.0, 0.5)
 
       if (zforward)
-        drawLine3(drawing)( -0.5, 1.0, 0.5)( 0.5, 1.0, 0.5)
+        drawLine3(g)( -0.5, 1.0, 0.5)( 0.5, 1.0, 0.5)
       else
-        drawLine3(drawing)( -0.5, 1.0, -0.5)( 0.5, 1.0, -0.5)
+        drawLine3(g)( -0.5, 1.0, -0.5)( 0.5, 1.0, -0.5)
     }
 
     /** z is the imaginary axis */
-    private[calculator] def drawImaginaryAxis(drawing: Drawing) =
-      drawLine3(drawing)( 0.0, 0.0, -0.5)( 0.0, 0.0, 0.5)
+    private[calculator] def drawImaginaryAxis(g: Graphics) =
+      drawLine3(g)( 0.0, 0.0, -0.5)( 0.0, 0.0, 0.5)
 
     /** y is the axis for |f(z)| */
-    private[calculator] def drawModAxis(drawing: Drawing) =
-      drawLine3(drawing)( 0.0, 0.0, 0.0)( 0.0, 1.0, 0.0)
+    private[calculator] def drawModAxis(g: Graphics) =
+      drawLine3(g)( 0.0, 0.0, 0.0)( 0.0, 1.0, 0.0)
 
     /** x is the real axis */
-    private[calculator] def drawRealAxis(drawing: Drawing) =
-      drawLine3(drawing)( -0.5, 0.0, 0.0)( 0.5, 0.0, 0.0)
+    private[calculator] def drawRealAxis(g: Graphics) =
+      drawLine3(g)( -0.5, 0.0, 0.0)( 0.5, 0.0, 0.0)
 
-    private[calculator] def drawLine3(drawing: Drawing)(x1: Double, y1: Double, z1: Double)( x2: Double, y2: Double, z2: Double) = {
+    private[calculator] def drawLine3(g: Graphics)(x1: Double, y1: Double, z1: Double)(x2: Double, y2: Double, z2: Double) = {
       val a = f3dPix(x1, y1, z1)
       val b = f3dPix(x2, y2, z2)
-      drawing.drawLine(a, b)
+      g.drawLine(a, b)
     }
 
     private[calculator] def cx(x: Int) = if (xforward) x else -x
     private[calculator] def cz(z: Int) = if (zforward) z else -z
 
     /** Draws the whole diagram. */
-    private[calculator] def drawIt(drawing: Drawing) = {
+    private[calculator] def drawIt(g: Graphics) = {
 
       //On the screen, the two edges of one line of patches
       var line0 = new Array[Vector2](21)
@@ -441,7 +443,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       }
 
       //first the axes at the back, because everything else with overwrite them
-      drawBackAxes(drawing)
+      drawBackAxes(g)
 
       //second draw the patches, with axis in between them
       val (xmin,xmax) = if(xforward) (-0.5, 0.5) else (0.5, -0.5)
@@ -468,7 +470,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       //loop over patch lines
       for ( i <- -9 to +10 ) {
         if (i == 1)
-          drawRealAxis(drawing)
+          drawRealAxis(g)
         var x = xmin
         z += zdelta
 
@@ -487,14 +489,14 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
         //draw one line of patches
         for ( k <- -10 to +9 ) {
           if (k == 0 && i == 0) {
-            drawModAxis(drawing)
-            drawImaginaryAxis(drawing)
+            drawModAxis(g)
+            drawImaginaryAxis(g)
           }
           val a = line0(10 + k)
           val b = line0(10 + k + 1)
           val c = line1(10 + k)
           val d = line1(10 + k + 1)
-          patch(drawing, a, b, c, d)
+          patch(g, a, b, c, d)
         }
 
         for( i <- 0 to 20 )
@@ -502,7 +504,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       }
 
       //third the front axes above everything else
-      drawFrontAxes(drawing)
+      drawFrontAxes(g)
     }
 
     /** Maps a 3d position into 2d space.
@@ -553,13 +555,12 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       nxpix = size.width
       nypix = size.height
       xyscale = min(nxpix, nypix) * XYFACTOR
-      val drawing = new Drawing(g)
-      drawIt(drawing)
+      drawIt(g)
     }
 
     /** Draws a patch for vectors a, b, c, d.
       * May be a quadrilateral or a triangle. */
-    private[calculator] def patch(drawing: Drawing, a: Vector2, b: Vector2, c: Vector2, d: Vector2): Unit = {
+    private[calculator] def patch(g: Graphics, a: Vector2, b: Vector2, c: Vector2, d: Vector2): Unit = {
 
       val something = (b.x - a.x) * (d.y - c.y) - (b.y - a.y) * (d.x - c.x)
       if ( 0.0001 < abs(something) ) {
@@ -570,8 +571,8 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
             (1 - d1) * a.x + d1 * b.x,
             (1 - d1) * a.y + d1 * b.y
           )
-          triangle(drawing, a, c, v5)
-          triangle(drawing, b, d, v5)
+          triangle(g, a, c, v5)
+          triangle(g, b, d, v5)
         }
 
         else {
@@ -583,14 +584,14 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
                 (1 - d2) * a.x + d2 * c.x,
                 (1.0D - d2) * a.y + d2 * c.y
               )
-              triangle(drawing, a, b, v5)
-              triangle(drawing, c, d, v5)
+              triangle(g, a, b, v5)
+              triangle(g, c, d, v5)
             }
             else
-              quadrilateral(drawing, a, b, d, c)
+              quadrilateral(g, a, b, d, c)
           }
           else
-            quadrilateral(drawing, a, b, d, c)
+            quadrilateral(g, a, b, d, c)
         }
       }
 
@@ -603,27 +604,27 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
               (1 - d3) * a.x + d3 * c.x,
               (1 - d3) * a.y + d3 * c.y
             )
-            triangle(drawing, a, b, v5)
-            triangle(drawing, c, d, v5)
+            triangle(g, a, b, v5)
+            triangle(g, c, d, v5)
           }
           else
-            quadrilateral(drawing, a, b, d, c)
+            quadrilateral(g, a, b, d, c)
         }
         else
-          quadrilateral(drawing, a, b, d, c)
+          quadrilateral(g, a, b, d, c)
       }
 
     }
 
     /** draws a quadrilateral */
-    private[calculator] def quadrilateral(drawing: Drawing, a: Vector2, b: Vector2, c: Vector2, d: Vector2) = {
+    private[calculator] def quadrilateral(g: Graphics, a: Vector2, b: Vector2, c: Vector2, d: Vector2) = {
       val quad = new Polygon
       quad.addPoint(fx(a.x), fy(a.y))
       quad.addPoint(fx(b.x), fy(b.y))
       quad.addPoint(fx(c.x), fy(c.y))
       quad.addPoint(fx(d.x), fy(d.y))
-      drawing.fillPolygon(quad, Color.lightGray)
-      drawing.graphics.drawPolygon(quad)
+      g.fillPolygon(quad, Color.lightGray)
+      g.drawPolygon(quad)
     }
 
     override def setFont(font: Font): Unit = {
@@ -641,13 +642,13 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     }
 
     /** draws a triangle */
-    private[calculator] def triangle(drawing: Drawing, a: Vector2, b: Vector2, c: Vector2) = {
+    private[calculator] def triangle(g: Graphics, a: Vector2, b: Vector2, c: Vector2) = {
       val triangle = new Polygon
       triangle.addPoint(fx(a.x), fy(a.y))
       triangle.addPoint(fx(b.x), fy(b.y))
       triangle.addPoint(fx(c.x), fy(c.y))
-      drawing.fillPolygon(triangle, Color.lightGray)
-      drawing.graphics.drawPolygon(triangle)
+      g.fillPolygon(triangle, Color.lightGray)
+      g.drawPolygon(triangle)
     }
 
   }//inner class ThreeDCanvas

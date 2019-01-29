@@ -44,6 +44,8 @@ import cat.inspiracio.geometry.Point2
 import cat.inspiracio.parsing.Syntax
 import javax.swing.event.MouseInputAdapter
 
+import Helpers.MoreGraphics
+
 // Referenced classes of package bunkenba.calculator:
 //            Calculator, DoubleBuffer, Drawing
 
@@ -244,7 +246,7 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
       point.y = -((y - Top) * ScaleFactor).toInt
     }
 
-    private def drawIt(drawing: Drawing) = {
+    private def drawIt(g: Graphics) = {
       resetExtremes()
 
       var visible = false
@@ -274,7 +276,7 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
           if (visible) {
             //draw from p to (i, j)
             val b = Point2(i, j)
-            drawing.drawLine( a, b )
+            g.drawLine( a, b )
             a = b
             //drawing.lineTo(i, j)
           }
@@ -289,11 +291,6 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
         }
         i = i+1
       }
-
-      val is: Seq[Int] = 0 until width
-      val xs: Seq[Double] = is map pix2x
-      val fxs: Seq[Complex] = xs map (f(_))
-      val refxs: Seq[Double] = fxs map Re
     }
 
     override def getPreferredSize: Dimension = getMinimumSize
@@ -305,8 +302,6 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
       * paint directly, but should instead use the repaint method to schedule
       * the component for redrawing. */
     override def paint(g: Graphics): Unit = {
-      val drawing = new Drawing(g)
-
       val dimension: Dimension = getSize()
 
       Top = CenterY + Pix2Math(dimension.height / 2)
@@ -338,10 +333,10 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
       xy2Point(d3, d2, point)
       xy2Point(d4, d2, point1)
 
-      drawing.drawLine(point, point1, Color.lightGray)
-      var polygon = drawing.mkTriangle(point1, EAST, TRIANGLESIZE)
+      g.drawLine(point, point1, Color.lightGray)
+      var polygon = g.mkTriangle(point1, EAST, TRIANGLESIZE)
       g.drawPolygon(polygon)
-      polygon = drawing.mkTriangle(point, WEST, TRIANGLESIZE)
+      polygon = g.mkTriangle(point, WEST, TRIANGLESIZE)
       g.drawPolygon(polygon)
       val j = point2.y
       var d7 = Math.ceil(d3 / d)
@@ -350,7 +345,7 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
       while ( d3 < d4 ) {
         val a = Point2(i, j)
         val b = a + (0, MARKLENGTH)
-        drawing.drawLine(a, b)
+        g.drawLine(a, b)
         val s: String = toString(d3)
         g.drawString(s, i + MARKLENGTH, j + FONTHEIGHT)
         i += l
@@ -358,10 +353,10 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
       }
       xy2Point(d1, d5, point)
       xy2Point(d1, d6, point1)
-      drawing.drawLine(point, point1, Color.lightGray)
-      upTriangle = drawing.mkTriangle(point1, NORTH, TRIANGLESIZE)
+      g.drawLine(point, point1, Color.lightGray)
+      upTriangle = g.mkTriangle(point1, NORTH, TRIANGLESIZE)
       g.drawPolygon(upTriangle)
-      downTriangle = drawing.mkTriangle(point, SOUTH, TRIANGLESIZE)
+      downTriangle = g.mkTriangle(point, SOUTH, TRIANGLESIZE)
       g.drawPolygon(downTriangle)
       i = point2.x
       d7 = Math.ceil(d5 / d)
@@ -374,13 +369,13 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
           val s = toString(d5)
           val a = Point2(i, k)
           val b = a + (-MARKLENGTH, 0)
-          drawing.drawLine(a, b)
+          g.drawLine(a, b)
           g.drawString(s, i - MARKLENGTH - g.getFontMetrics.stringWidth(s), k + FONTHEIGHT)
         }
         d5 += d
         k -= l
       }
-      if (f != null) drawIt(drawing)
+      if (f != null) drawIt(g)
       if (Top <= Max) g.fillPolygon(upTriangle)
       if (Min <= Bottom) g.fillPolygon(downTriangle)
     }

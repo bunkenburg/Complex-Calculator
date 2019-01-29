@@ -33,7 +33,7 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt.{Dimension, GraphicsConfiguration, Point}
+import java.awt.{Dimension, Graphics, GraphicsConfiguration, Point}
 import java.awt.event._
 
 import javax.swing._
@@ -42,6 +42,7 @@ import cat.inspiracio.calculator.Mode.{FZ, MODFZ}
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry._
 import javax.swing.event.{MouseInputAdapter, MouseInputListener}
+import Helpers.MoreGraphics
 
 /** The z-World is where the user gives input for function f. */
 final class ZWorld private[calculator](override val calculator: Calculator) extends World(calculator) {
@@ -381,19 +382,19 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
         }
   }
 
-  override private[calculator] def drawStuff(drawing: Drawing) = {
+  override private[calculator] def drawStuff(g: Graphics) = {
         if (zs != null)
-          canvas.draw(drawing, zs)
+          canvas.draw(g, zs)
 
         if (currentPiclet != null)
-          canvas.draw(drawing, currentPiclet)
+          canvas.draw(g, currentPiclet)
 
         piclets.foreach{
-          canvas.draw(drawing, _)
+          canvas.draw(g, _)
         }
 
         if (mode == MODFZ)
-          canvas.draw(drawing, square)
+          canvas.draw(g, square)
   }
 
   override private[calculator] def erase(): Unit = {

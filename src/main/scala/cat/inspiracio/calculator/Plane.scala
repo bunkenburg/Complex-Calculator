@@ -38,6 +38,7 @@ import java.awt.{Color, Dimension, Font, Graphics, Point}
 import cat.inspiracio.complex._
 import cat.inspiracio.calculator.Direction._
 import cat.inspiracio.geometry._
+import Helpers.MoreGraphics
 
 final class Plane private[calculator](val world: World) extends WorldRepresentation(world) {
 
@@ -101,19 +102,19 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     point.y = -((im - TopImaginary) * ScaleFactor).toInt
   }
 
-  override private[calculator] def draw(drawing: Drawing, z: Complex) =
+  override private[calculator] def draw(g: Graphics, z: Complex) =
     if (finite(z)) {
       val x = ((Re(z) - LeftReal) * ScaleFactor).asInstanceOf[Int]
       val y = -((Im(z) - TopImaginary) * ScaleFactor).asInstanceOf[Int]
-      drawing.drawCross(x, y, MARKLENGTH)
-      drawing.drawString(z.toString, x+2, y+2 )
+      g.drawCross(x, y, MARKLENGTH)
+      g.drawString(z.toString, x+2, y+2 )
   }
 
   /** XXX get rid of null-check */
-  override private[calculator] def draw(drawing: Drawing, eclist: List[Complex]) =
+  override private[calculator] def draw(g: Graphics, eclist: List[Complex]) =
     if (eclist != null) {
       val ps = pairs( eclist map complex2Point )
-      ps.foreach{ case (a,b) => drawing.drawLine(a, b) }
+      ps.foreach{ case (a,b) => g.drawLine(a, b) }
     }
 
   def pairs[A](cs : List[A]): List[(A,A)] = cs match {
@@ -123,13 +124,11 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
   }
 
   //XXX remove isInstanceOf
-  override private[calculator] def draw(drawing: Drawing, piclet: Piclet) =
+  override private[calculator] def draw(g: Graphics, piclet: Piclet) =
 
     if (piclet.isInstanceOf[Line]) {
-      //moveTo(drawing, piclet.asInstanceOf[Line].a)
-      //lineTo(drawing, piclet.asInstanceOf[Line].b)
       val line = piclet.asInstanceOf[Line]
-      drawing.drawLine(
+      g.drawLine(
         complex2Point(line.a),
         complex2Point(line.b)
       )
@@ -140,22 +139,22 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
       val x = ((Re(circle.c) - LeftReal) * ScaleFactor).asInstanceOf[Int]
       val y = -((Im(circle.c) - TopImaginary) * ScaleFactor).asInstanceOf[Int]
       val radius = math2Pix(circle.r)
-      drawing.drawCircle( x, y, radius )
+      g.drawCircle( x, y, radius )
     }
 
     else if (piclet.isInstanceOf[Rectangle]) {
       val rectangle = piclet.asInstanceOf[Rectangle]
       import rectangle._
-      line(drawing, botLeft, botRight)
-      line(drawing, botRight, topRight)
-      line(drawing, topRight, topLeft)
-      line(drawing, topLeft, botLeft)
+      line(g, botLeft, botRight)
+      line(g, botRight, topRight)
+      line(g, topRight, topLeft)
+      line(g, topLeft, botLeft)
     }
 
     else
-      draw(drawing, piclet.getSamples)
+      draw(g, piclet.getSamples)
 
-  private def line(drawing: Drawing, a: Complex, b: Complex) = drawing.drawLine(complex2Point(a), complex2Point(b))
+  private def line(g: Graphics, a: Complex, b: Complex) = g.drawLine(complex2Point(a), complex2Point(b))
 
   private def complex2Point(c: Complex) = Point2(
     ((Re(c) - LeftReal) * ScaleFactor).asInstanceOf[Int],
@@ -173,7 +172,6 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
 
     val point = new Point
     val point1 = new Point
-    val drawing = new Drawing(g)
     val point2 = new Point
 
     val size: Dimension = getSize()
@@ -204,12 +202,12 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     cartesian2Point(d3, d2, point)
     cartesian2Point(d4, d2, point1)
 
-    drawing.drawLine(point, point1, Color.lightGray)
-    var polygon = drawing.mkTriangle(point1, EAST, TRIANGLESIZE)
+    g.drawLine(point, point1, Color.lightGray)
+    var polygon = g.mkTriangle(point1, EAST, TRIANGLESIZE)
     g.drawPolygon(polygon)
 
     if (RightReal <= w.MaxReal) g.fillPolygon(polygon)
-    polygon = drawing.mkTriangle(point, WEST, TRIANGLESIZE)
+    polygon = g.mkTriangle(point, WEST, TRIANGLESIZE)
     g.drawPolygon(polygon)
 
     if (w.MinReal <= LeftReal) g.fillPolygon(polygon)
@@ -220,19 +218,19 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     while ( d3 < d4 ) {
       val a: Point2 = Point2(i, j)
       val b: Point2 = a + (0, MARKLENGTH)
-      drawing.drawLine(a, b)
+      g.drawLine(a, b)
       g.drawString(toString(d3), i + MARKLENGTH, j + FONTHEIGHT)
       i += l
       d3 += d
     }
     cartesian2Point(d1, d5, point)
     cartesian2Point(d1, d6, point1)
-    drawing.drawLine(point, point1, Color.lightGray)
-    polygon = drawing.mkTriangle(point1, NORTH, TRIANGLESIZE)
+    g.drawLine(point, point1, Color.lightGray)
+    polygon = g.mkTriangle(point1, NORTH, TRIANGLESIZE)
     g.drawPolygon(polygon)
 
     if (TopImaginary <= w.MaxImaginary) g.fillPolygon(polygon)
-    polygon = drawing.mkTriangle(point, SOUTH, TRIANGLESIZE)
+    polygon = g.mkTriangle(point, SOUTH, TRIANGLESIZE)
     g.drawPolygon(polygon)
 
     if (w.MinImaginary <= BottomImaginary) g.fillPolygon(polygon)
@@ -245,13 +243,13 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
         val s = toString(d5) + "i"
         val a = Point2(i, k)
         val b = a + (-MARKLENGTH, 0)
-        drawing.drawLine(a, b)
+        g.drawLine(a, b)
         g.drawString(s, i - MARKLENGTH - g.getFontMetrics.stringWidth(s), k + FONTHEIGHT)
       }
       d5 += d
       k -= l
     }
-    w.drawStuff(drawing)
+    w.drawStuff(g)
   }
 
   override private[calculator] def reset() = {

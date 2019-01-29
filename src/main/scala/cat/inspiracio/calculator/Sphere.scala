@@ -37,6 +37,7 @@ import java.awt.{Dimension, Font, Graphics, Point}
 
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.{Matrix44, Point2, Vector3}
+import Helpers.MoreGraphics
 
 // Referenced classes of package bunkenba.calculator:
 //            WorldRepresentation, DoubleBuffer, Drawing, Matrix44,
@@ -56,18 +57,18 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
 
   //Methods ------------------------------------------------------
 
-  override private[calculator] def draw(drawing: Drawing, z: Complex) = {
+  override private[calculator] def draw(g: Graphics, c: Complex) = {
     var d = .0
     var d1 = .0
     var d2 = .0
 
-    if (finite(z)) {
-      val a = abs(z)
+    if (finite(c)) {
+      val a = abs(c)
       val d3 = sqr(a)
       val d5 = 1.0D + d3
-      d = Re(z) / d5
+      d = Re(c) / d5
       d1 = d3 / d5 - 0.5D
-      d2 = Im(z) / d5
+      d2 = Im(c) / d5
     }
     else {
       d = 0.0D
@@ -85,12 +86,12 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
       val height = size.height
       val x = (d6 * xyscale + width.toDouble * 0.5).toInt
       val y = (-d7 * xyscale + height.toDouble * 0.5).toInt
-      drawing.drawCross( x, y, MARKLENGTH )
-      drawing.drawString(z.toString, x+2, y+2 )
+      g.drawCross( x, y, MARKLENGTH )
+      g.drawString(c.toString, x+2, y+2 )
     }
   }
 
-  override private[calculator] def draw(drawing: Drawing, list: List[Complex]) = {
+  override private[calculator] def draw(g: Graphics, list: List[Complex]) = {
     val point = new Point
     var pen: Point2 = null
     if ( list != null && !list.isEmpty ) {
@@ -101,13 +102,8 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
 
       list.foreach{ z =>
         if (isFrontC( z, point )) {
-          if (visible) {
-            //drawing.lineTo(point.x, point.y)
-            drawing.drawLine(pen, point);
-          }
-          else{
-            //drawing.moveTo(point.x, point.y)
-          }
+          if (visible)
+            g.drawLine(pen, point);
           pen = Point2(point.x, point.y)
           visible = true
         }
@@ -161,13 +157,12 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
   override def paint(g: Graphics): Unit = {
     val size: Dimension = getSize
     xyscale = Math.min(size.width, size.height).toDouble * 0.80000000000000004D
-    val drawing = new Drawing(g)
-    drawing.drawCircle(size.width / 2, size.height / 2, 0.5 * xyscale)
+    g.drawCircle(size.width / 2, size.height / 2, 0.5 * xyscale)
 
     for( m <- marks )
-      draw(drawing, m)
+      draw(g, m)
 
-    w.drawStuff(drawing)
+    w.drawStuff(g)
   }
 
   /** Can return null. */

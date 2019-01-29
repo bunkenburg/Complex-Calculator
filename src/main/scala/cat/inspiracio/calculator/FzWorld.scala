@@ -33,7 +33,7 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt.{Dimension, GraphicsConfiguration, Point}
+import java.awt.{Dimension, Graphics, GraphicsConfiguration, Point}
 import java.awt.event._
 
 import cat.inspiracio.calculator.Interaction.MOVE
@@ -166,11 +166,11 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
     canvas.repaint()
   }
 
-  override final private[calculator] def drawStuff(drawing: Drawing) = {
+  override final private[calculator] def drawStuff(g: Graphics) = {
     if (zs != null)
-      canvas.draw(drawing, zs)
+      canvas.draw(g, zs)
 
-    piclets.foreach{ canvas.draw(drawing, _) }
+    piclets.foreach{ canvas.draw(g, _) }
   }
 
   override private[calculator] def erase() = {

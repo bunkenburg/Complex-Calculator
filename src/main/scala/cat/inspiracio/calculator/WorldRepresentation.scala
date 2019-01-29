@@ -33,7 +33,7 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt.{Color,Dimension,Point}
+import java.awt.{Color, Dimension, Graphics, Point}
 
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.Piclet
@@ -48,17 +48,14 @@ abstract class WorldRepresentation protected(var w: World) extends JComponent {
 
   //Methods ------------------------------------------------------
 
-  private[calculator] def draw(drawing: Drawing, z: Complex)
-  private[calculator] def draw(drawing: Drawing, zs: List[Complex] )
-  private[calculator] def draw(drawing: Drawing, p: Piclet): Unit = draw(drawing, p.getSamples)
+  private[calculator] def draw(g: Graphics, z: Complex)
+  private[calculator] def draw(g: Graphics, zs: List[Complex] )
+  private[calculator] def draw(g: Graphics, p: Piclet): Unit = draw(g, p.getSamples)
 
   override def getPreferredSize: Dimension = getMinimumSize
 
   /** Initial size wide enough so that the interaction menu is visible. */
   override def getMinimumSize: Dimension = new Dimension(550, 300)
-
-  //private[calculator] def moveTo(drawing: Drawing, z: Complex)
-  //private[calculator] def lineTo(drawing: Drawing, z: Complex)
 
   private[calculator] def point2Complex(p: Point): Complex
 
