@@ -247,41 +247,53 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
     private def drawIt(drawing: Drawing) = {
       resetExtremes()
 
-      var flag = false
+      var visible = false
       var i = 0
       val dimension = getSize()
       val height = dimension.height
       val width = dimension.width
+      var a: Point = null //the last point that was drawn
 
       while ( i < width ) {
         try {
-          val z: Complex = pix2x(i)
-          val fz = f(z)
-          var d = 0.0
-          if (finite(fz))
-            d = Re(fz)
+          val x: Complex = pix2x(i)
+          val fx = f(x)
+          var refx = 0.0
+          if (finite(fx))
+            refx = Re(fx)
           else
             throw new Exception
-          updateExtremes(d)
+          updateExtremes(refx)
           var j = 0
-          if (d < Bottom)
+          if (refx < Bottom)
             j = height
-          else if (Top < d)
+          else if (Top < refx)
             j = -1
           else
-            j = ((Top - d) * ScaleFactor).toInt
-          if (flag)
-            drawing.lineTo(i, j)
+            j = ((Top - refx) * ScaleFactor).toInt
+          if (visible) {
+            //draw from p to (i, j)
+            val b = Point2(i, j)
+            drawing.drawLine( a, b )
+            a = b
+            //drawing.lineTo(i, j)
+          }
           else {
-            drawing.moveTo(i, j)
-            flag = true
+            //drawing.moveTo(i, j)
+            a = Point2(i, j)
+            visible = true
           }
         } catch {
           case _ex: Exception =>
-            flag = false
+            visible = false
         }
         i = i+1
       }
+
+      val is: Seq[Int] = 0 until width
+      val xs: Seq[Double] = is map pix2x
+      val fxs: Seq[Complex] = xs map (f(_))
+      val refxs: Seq[Double] = fxs map Re
     }
 
     override def getPreferredSize: Dimension = getMinimumSize
@@ -327,7 +339,6 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
       xy2Point(d4, d2, point1)
 
       drawing.drawLine(point, point1, Color.lightGray)
-      drawing.moveTo(point1)
       var polygon = drawing.mkTriangle(point1, EAST, TRIANGLESIZE)
       g.drawPolygon(polygon)
       polygon = drawing.mkTriangle(point, WEST, TRIANGLESIZE)
@@ -337,8 +348,9 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
       d3 = d7 * d
       var i = x2Pix(d3)
       while ( d3 < d4 ) {
-        drawing.moveTo(i, j)
-        drawing.line(0, MARKLENGTH)
+        val a = Point2(i, j)
+        val b = a + (0, MARKLENGTH)
+        drawing.drawLine(a, b)
         val s: String = toString(d3)
         g.drawString(s, i + MARKLENGTH, j + FONTHEIGHT)
         i += l
@@ -347,7 +359,6 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
       xy2Point(d1, d5, point)
       xy2Point(d1, d6, point1)
       drawing.drawLine(point, point1, Color.lightGray)
-      drawing.moveTo(point1)
       upTriangle = drawing.mkTriangle(point1, NORTH, TRIANGLESIZE)
       g.drawPolygon(upTriangle)
       downTriangle = drawing.mkTriangle(point, SOUTH, TRIANGLESIZE)
@@ -361,8 +372,9 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
       }) {
         if (d5 != 0.0D || d1 != 0.0D) {
           val s = toString(d5)
-          drawing.moveTo(i, k)
-          drawing.line(-MARKLENGTH, 0)
+          val a = Point2(i, k)
+          val b = a + (-MARKLENGTH, 0)
+          drawing.drawLine(a, b)
           g.drawString(s, i - MARKLENGTH - g.getFontMetrics.stringWidth(s), k + FONTHEIGHT)
         }
         d5 += d

@@ -39,16 +39,13 @@ import java.awt._
   * Keeps a pen position.
   *
   * These are like extra methods on Graphics. */
-final class Drawing private[calculator](var g: Graphics) {
-
-  //XXX try to get rid of this; it's state
-  private val pen: Point = new Point
+final class Drawing private[calculator](g: Graphics) {
 
   //XXX try to hang all these methods on Graphics
   private[calculator] def graphics = g
 
   /** cross at (x,y) */
-  private[calculator] def cross(x: Int, y: Int, width: Int) = {
+  private[calculator] def drawCross(x: Int, y: Int, width: Int) = {
     g.drawLine(x - width, y - width, x + width, y + width)
     g.drawLine(x + width, y - width, x - width, y + width)
   }
@@ -64,17 +61,14 @@ final class Drawing private[calculator](var g: Graphics) {
 
   /** line from a to b in colour */
   private[calculator] def drawLine(a: Point, b: Point, c: Color) = {
-    val color1 = g.getColor
+    val old = g.getColor
     g.setColor(c)
     g.drawLine(a.x, a.y, b.x, b.y)
-    g.setColor(color1)
+    g.setColor(old)
   }
 
-  /** draw string at pen position */
-  private[calculator] def drawString(s: String): Unit = {
-    //XXX Don't use pen!
-    g.drawString(s, pen.x, pen.y)
-  }
+  /** line from a to b in colour */
+  private[calculator] def drawLine(a: Point, b: Point): Unit = drawLine(a, b, Color.BLACK)
 
   /** draw string at position */
   private[calculator] def drawString(s: String, x: Int, y: Int): Unit =
@@ -85,45 +79,10 @@ final class Drawing private[calculator](var g: Graphics) {
     g.drawString(s, p.x, p.y)
 
   private[calculator] def fillPolygon(polygon: Polygon, c: Color) = {
-    val color1 = g.getColor
+    val old = g.getColor
     g.setColor(c)
     g.fillPolygon(polygon)
-    g.setColor(color1)
-  }
-
-  /** line (x,y) at pen */
-  private[calculator] def line(x: Int, y: Int) = {
-    //XXX uses pen
-    g.drawLine(pen.x, pen.y, pen.x + x, pen.y + y)
-    pen.translate(x, y)
-  }
-
-  /** line from pen to (x,y) */
-  private[calculator] def lineTo(x: Int, y: Int) = {
-    //XXX uses pen, sets pen
-    g.drawLine(pen.x, pen.y, x, y)
-    pen.x = x
-    pen.y = y
-  }
-
-  /** line to (x,y) */
-  private[calculator] def lineTo(p: Point): Unit = lineTo(p.x, p.y)
-
-  /** move pen by (x,y) */
-  private[calculator] def move(x: Int, y: Int) = pen.translate(x, y)
-
-  /** move pen to (x,y) */
-  private[calculator] def moveTo(x: Int, y: Int) = {
-    //XXX sets pen
-    pen.x = x
-    pen.y = y
-  }
-
-  /** move pen to (x,y) */
-  private[calculator] def moveTo(p : Point) = {
-    //XXX sets pen
-    pen.x = p.x
-    pen.y = p.y
+    g.setColor(old)
   }
 
   /** Makes a triangle.

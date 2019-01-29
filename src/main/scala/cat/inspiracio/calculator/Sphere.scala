@@ -36,7 +36,7 @@ package cat.inspiracio.calculator
 import java.awt.{Dimension, Font, Graphics, Point}
 
 import cat.inspiracio.complex._
-import cat.inspiracio.geometry.{Matrix44, Vector3}
+import cat.inspiracio.geometry.{Matrix44, Point2, Vector3}
 
 // Referenced classes of package bunkenba.calculator:
 //            WorldRepresentation, DoubleBuffer, Drawing, Matrix44,
@@ -85,28 +85,34 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
       val height = size.height
       val x = (d6 * xyscale + width.toDouble * 0.5).toInt
       val y = (-d7 * xyscale + height.toDouble * 0.5).toInt
-      drawing.cross( x, y, MARKLENGTH )
+      drawing.drawCross( x, y, MARKLENGTH )
       drawing.drawString(z.toString, x+2, y+2 )
     }
   }
 
   override private[calculator] def draw(drawing: Drawing, list: List[Complex]) = {
     val point = new Point
+    var pen: Point2 = null
     if ( list != null && !list.isEmpty ) {
 
-      var flag = isFrontC( list.head, point)
-      drawing.moveTo(point.x, point.y)
+      var visible = isFrontC( list.head, point)
+      //drawing.moveTo(point.x, point.y)
+      pen = Point2(point.x, point.y)
 
       list.foreach{ z =>
         if (isFrontC( z, point )) {
-          if (flag)
-            drawing.lineTo(point.x, point.y)
-          else
-            drawing.moveTo(point.x, point.y)
-          flag = true
+          if (visible) {
+            //drawing.lineTo(point.x, point.y)
+            drawing.drawLine(pen, point);
+          }
+          else{
+            //drawing.moveTo(point.x, point.y)
+          }
+          pen = Point2(point.x, point.y)
+          visible = true
         }
         else
-          flag = false
+          visible = false
       }
 
     }
@@ -121,27 +127,14 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
       Cartesian(v.x / (0.5 - v.y), v.z / (0.5 - v.y))
   }
 
-  /** Also sets point (very bad style) */
-  private def isFrontC(z: Complex, point: Point): Boolean = {
-    var d = .0
-    var d1 = .0
-    var d2 = .0
-    if (finite(z)) {
-      val d3 = sqr(abs(z))
-      val d5 = 1.0D + d3
-      d = Re(z) / d5
-      d1 = d3 / d5 - 0.5D
-      d2 = Im(z) / d5
-    }
-    else {
-      d = 0.0D
-      d1 = 0.5D
-      d2 = 0.0D
-    }
-    val d4 = R(2,0) * d + R(2,1) * d1 + R(2,2) * d2 + R(2,3)
+  /** XXX Also sets point (very bad style) */
+  private def isFrontC(c: Complex, point: Point): Boolean = {
+    val (x, y, z) = fC3d(c)
+
+    val d4 = R(2,0) * x + R(2,1) * y + R(2,2) * z + R(2,3)
     if (d4 <= 0.0D) {
-      val d6 = R(0,0) * d + R(0,1) * d1 + R(0,2) * d2 + R(0,3)
-      val d7 = R(1,0) * d + R(1,1) * d1 + R(1,2) * d2 + R(1,3)
+      val d6 = R(0,0) * x + R(0,1) * y + R(0,2) * z + R(0,3)
+      val d7 = R(1,0) * x + R(1,1) * y + R(1,2) * z + R(1,3)
       val size: Dimension = getSize()
       val width = size.width
       val height = size.height
@@ -152,65 +145,17 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     else false
   }
 
-  override private[calculator] def lineTo(drawing: Drawing, z: Complex) = {
-    var d = .0
-    var d1 = .0
-    var d2 = .0
-    if (finite(z)) {
-      val d3 = sqr(abs(z))
-      val d5 = 1.0D + d3
-      d = Re(z) / d5
-      d1 = d3 / d5 - 0.5D
-      d2 = Im(z) / d5
-    }
-    else {
-      d = 0.0
-      d1 = 0.5
-      d2 = 0.0
-    }
-    val d4 = R(2,0) * d + R(2,1) * d1 + R(2,2) * d2 + R(2,3)
-    if (d4 <= 0.0D) {
-      val d6 = R(0,0) * d + R(0,1) * d1 + R(0,2) * d2 + R(0,3)
-      val d7 = R(1,0) * d + R(1,1) * d1 + R(1,2) * d2 + R(1,3)
-      val size: Dimension = getSize
-      val width = size.width
-      val height = size.height
-      drawing.lineTo(
-        (d6 * xyscale + width.toDouble * 0.5).toInt,
-        (-d7 * xyscale + height.toDouble * 0.5).toInt
+  private def fC3d(c: Complex): (Double, Double, Double) =
+    if (finite(c)) {
+      val d3 = sqr(abs(c))
+      val d5 = 1.0 + d3
+      (
+        Re(c) / d5,
+        d3 / d5 - 0.5,
+        Im(c) / d5
       )
     }
-  }
-
-  override private[calculator] def moveTo(drawing: Drawing, z: Complex) = {
-    var d = .0
-    var d1 = .0
-    var d2 = .0
-    if (finite(z)) {
-      val d3 = sqr(abs(z))
-      val d5 = 1.0D + d3
-      d = Re(z) / d5
-      d1 = d3 / d5 - 0.5D
-      d2 = Im(z) / d5
-    }
-    else {
-      d = 0.0D
-      d1 = 0.5D
-      d2 = 0.0D
-    }
-    val d4 = R(2,0) * d + R(2,1) * d1 + R(2,2) * d2 + R(2,3)
-    if (d4 <= 0.0D) {
-      val d6 = R(0,0) * d + R(0,1) * d1 + R(0,2) * d2 + R(0,3)
-      val d7 = R(1,0) * d + R(1,1) * d1 + R(1,2) * d2 + R(1,3)
-      val size: Dimension = getSize
-      val width = size.width
-      val height = size.height
-      drawing.moveTo(
-        (d6 * xyscale + width.toDouble * 0.5).toInt,
-        (-d7 * xyscale + height.toDouble * 0.5).toInt
-      )
-    }
-  }
+    else (0.0, 0.5, 0.0)
 
   /** Called by swing */
   override def paint(g: Graphics): Unit = {

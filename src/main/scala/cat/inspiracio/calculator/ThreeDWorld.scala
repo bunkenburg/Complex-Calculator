@@ -234,83 +234,10 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
     /** Draws the lines behind the surface.
       * Depends on xforward, zforward. */
     private[calculator] def drawBackAxes(drawing: Drawing) = {
-
-      //draws bottom left number
-      {
-        val corner: Point2 = f3dPix(-0.5, 0.0, -0.5)
-        val s = square.botLeft.toString
-
-        val adjusted: Point =
-          if (xforward && zforward)
-            corner + (2, -2)
-          else if (xforward && !zforward){
-            val width = drawing.graphics.getFontMetrics.stringWidth(s)
-            corner + (-width - 2, FONT_HEIGHT)
-          }
-          else if (!xforward && zforward)
-            corner + (2, FONT_HEIGHT)
-          else //if (!xforward && !zforward)
-            corner + (2, FONT_HEIGHT)
-
-        drawing.drawString(s, adjusted)
-      }
-
-      //draws bottom right number
-      {
-        moveTo3(drawing, 0.5, 0.0, -0.5)
-        val s = square.botRight.toString
-
-        if (xforward && zforward) {
-          val width = drawing.graphics.getFontMetrics.stringWidth(s)
-          drawing.move(-width - 2, FONT_HEIGHT)
-        }
-        else if (xforward && !zforward)
-          drawing.move(2, FONT_HEIGHT)
-        else if (!xforward && zforward)
-          drawing.move(2, -2)
-        else if (!xforward && !zforward)
-          drawing.move(2, FONT_HEIGHT)
-
-        drawing.drawString(s)
-      }
-
-      //draws topleft number
-      {
-        moveTo3(drawing, -0.5, 0.0, 0.5)
-        val s = square.topLeft.toString
-
-        if (xforward && zforward)
-          drawing.move(2, FONT_HEIGHT)
-        else if (xforward && !zforward)
-          drawing.move(2, -2)
-        else if (!xforward && zforward)
-          drawing.move(2, FONT_HEIGHT)
-        else if (!xforward && !zforward) {
-          val width = drawing.graphics.getFontMetrics.stringWidth(s)
-          drawing.move(-width - 2, FONT_HEIGHT)
-        }
-
-        drawing.drawString(s)
-      }
-
-      //draws topright number
-      {
-        moveTo3(drawing, 0.5, 0.0, 0.5)
-        val s = square.topRight.toString
-
-        if (xforward && zforward)
-          drawing.move(2, FONT_HEIGHT)
-        else if (xforward && !zforward)
-          drawing.move(2, FONT_HEIGHT)
-        else if (!xforward && zforward) {
-          val width = drawing.graphics.getFontMetrics.stringWidth(s)
-          drawing.move(-width - 2, FONT_HEIGHT)
-        }
-        else if (!xforward && !zforward)
-          drawing.move(2, -2)
-
-        drawing.drawString(s)
-      }
+      drawBottomLeftNumber(drawing)
+      drawBottomRightNumber(drawing)
+      drawTopleftNumber(drawing)
+      drawTopRightNumber(drawing)
 
       //two base lines ---
       if (xforward)
@@ -357,6 +284,82 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       else
         //back lid line
         drawLine3(drawing)( -0.5, 1.0,  0.5)( 0.5, 1.0,  0.5)
+    }
+
+    private def drawBottomLeftNumber(drawing: Drawing) = {
+      val botleft: Point2 = f3dPix(-0.5, 0.0, -0.5)
+      val s = square.botLeft.toString
+
+      val adjusted: Point =
+        if (xforward && zforward)
+          botleft + (2, -2)
+        else if (xforward && !zforward){
+          val width = drawing.graphics.getFontMetrics.stringWidth(s)
+          botleft + (-width - 2, FONT_HEIGHT)
+        }
+        else if (!xforward && zforward)
+          botleft + (2, FONT_HEIGHT)
+        else //if (!xforward && !zforward)
+          botleft + (2, FONT_HEIGHT)
+
+      drawing.drawString(s, adjusted)
+    }
+
+    private def drawBottomRightNumber(drawing: Drawing) = {
+      val botright: Point2 = f3dPix(0.5, 0.0, -0.5)
+      val s = square.botRight.toString
+
+      val adjusted: Point =
+        if (xforward && zforward) {
+          val width = drawing.graphics.getFontMetrics.stringWidth(s)
+          botright + (-width - 2, FONT_HEIGHT)
+        }
+        else if (xforward && !zforward)
+          botright + (2, FONT_HEIGHT)
+        else if (!xforward && zforward)
+          botright + (2, -2)
+        else //if (!xforward && !zforward)
+          botright + (2, FONT_HEIGHT)
+
+      drawing.drawString(s, adjusted)
+    }
+
+    private def drawTopleftNumber(drawing: Drawing)= {
+      val topleft: Point2 = f3dPix(-0.5, 0.0, 0.5)
+      val s = square.topLeft.toString
+
+      val adjusted: Point =
+        if (xforward && zforward)
+          topleft + (2, FONT_HEIGHT)
+        else if (xforward && !zforward)
+          topleft + (2, -2)
+        else if (!xforward && zforward)
+          topleft + (2, FONT_HEIGHT)
+        else /* if (!xforward && !zforward) */ {
+          val width = drawing.graphics.getFontMetrics.stringWidth(s)
+          topleft + (-width - 2, FONT_HEIGHT)
+        }
+
+      drawing.drawString(s, adjusted)
+    }
+
+    private def drawTopRightNumber(drawing: Drawing) = {
+      val topright: Point2 = f3dPix(0.5, 0.0, 0.5)
+      val s = square.topRight.toString
+
+      val adjusted: Point =
+        if (xforward && zforward)
+          topright + (2, FONT_HEIGHT)
+        else if (xforward && !zforward)
+          topright + (2, FONT_HEIGHT)
+        else if (!xforward && zforward) {
+          val width = drawing.graphics.getFontMetrics.stringWidth(s)
+          topright + (-width - 2, FONT_HEIGHT)
+        }
+        else //if (!xforward && !zforward)
+          topright + (2, -2)
+
+      drawing.drawString(s, adjusted)
     }
 
     /** Draws the lines in front of the surface.
@@ -414,8 +417,9 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       drawLine3(drawing)( -0.5, 0.0, 0.0)( 0.5, 0.0, 0.0)
 
     private[calculator] def drawLine3(drawing: Drawing)(x1: Double, y1: Double, z1: Double)( x2: Double, y2: Double, z2: Double) = {
-      moveTo3(drawing, x1, y1, z1)
-      lineTo3(drawing, x2, y2, z2)
+      val a = f3dPix(x1, y1, z1)
+      val b = f3dPix(x2, y2, z2)
+      drawing.drawLine(a, b)
     }
 
     private[calculator] def cx(x: Int) = if (xforward) x else -x
@@ -538,12 +542,6 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
 
       Matrix44.translation(eye).preRot('z', d).preRot('y', d1).preRot('z', -d2).postRot('y', π/2)
     }
-
-    private[calculator] def lineTo3(drawing: Drawing, x: Double, y: Double, z: Double) =
-      drawing.lineTo(f3dPix(x, y, z ))
-
-    private[calculator] def moveTo3(drawing: Drawing, x: Double, y: Double, z: Double) =
-      drawing.moveTo(f3dPix(x, y, z ))
 
     /** Paint with double-buffering.
       *
