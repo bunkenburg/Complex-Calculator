@@ -1,5 +1,7 @@
 # TODO
 
+* don't use null as no-value
+* var only for variable instance variables
 * put on web page with installation instructions
 * better number formating: take into account precision
 * better expressions: don't always with parenthesis

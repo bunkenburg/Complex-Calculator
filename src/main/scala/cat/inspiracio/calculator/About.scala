@@ -33,8 +33,6 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt.event._
-
 import javax.swing._
 import javax.swing.text.{SimpleAttributeSet, StyleConstants}
 

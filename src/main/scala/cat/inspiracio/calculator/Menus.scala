@@ -57,7 +57,6 @@ final class Menus private[calculator](var calculator: Calculator) extends JMenuB
     precision()
   }
 
-
   private def file(): Unit = {
     val menu = new JMenu("File")
     menu.setMnemonic(KeyEvent.VK_F)
@@ -101,6 +100,18 @@ final class Menus private[calculator](var calculator: Calculator) extends JMenuB
     miReFx.addActionListener( _ => calculator.setMode(REFX) )
 
     add(menu)
+  }
+
+  private[calculator] def select(m: Mode)= {
+    val index = m match {
+      case CALC => 0
+      case FZ => 1
+      case MODFZ => 2
+      case REFX => 3
+    }
+    val menu = getMenu(1)
+    val item = menu.getItem(index)
+    item.setSelected(true)
   }
 
   private def precision(): Unit = {

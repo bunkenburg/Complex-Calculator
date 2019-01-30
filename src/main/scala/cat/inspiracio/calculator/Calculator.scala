@@ -46,28 +46,22 @@ import cat.inspiracio.parsing.Syntax
 import cat.inspiracio.parsing.Syntax.parse
 import javax.swing._
 
-/** The Calculator application.
-  * This is a frame, the main window.
-  * This class has the main method. */
-object Calculator {
-
-  /** Run the Calculator as stand-alone application. */
-    def main(args: Array[String]): Unit = {
-      val calculator = new Calculator
-    }
-
+/** The Calculator application. This is a frame, the main window.
+  * Run the Calculator as stand-alone application. */
+object Calculator extends App {
+  new Calculator
 }
 
 final class Calculator() extends JFrame("Complex Calculator") {
 
   /** The mode that the program is in: Calculation, z->fz mapping, z->|fz| mapping, or Re(fz). */
-  var mode = CALC
+  private[calculator] var mode = CALC
 
   private val display: Display = new Display(12)
   private var equalsButton: JButton = null
   private var zButton: JButton = null
 
-  var variable = 'z'
+  private var variable = 'z'
 
   private var cW: ComplexWorld = null
   private[calculator] var zW: ZWorld = null
@@ -111,7 +105,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
     add(display)
 
     //listener for a 'normal' button
-    val listener: ActionListener = e => paste(e.getActionCommand)
+    val paster: ActionListener = e => paste(e.getActionCommand)
 
     /** Makes a button and adds it. */
     def bx(label: String, x: Int, y: Int, height: Int, listener: ActionListener): JButton = {
@@ -133,47 +127,47 @@ final class Calculator() extends JFrame("Complex Calculator") {
       button
     }
 
-    bx("!", 0, 3, 1, listener)
+    bx("!", 0, 3, 1, paster)
     bx("del", 3, 3, 1, _ => delete() )
     bx("C", 4, 3, 1, _ => clear() )
-    bx("sinh", 0, 4, 1, listener)
-    bx("cosh", 1, 4, 1, listener)
-    bx("tanh", 2, 4, 1, listener)
-    bx("conj", 3, 4, 1, listener)
-    bx("opp", 4, 4, 1, listener)
-    bx("sin", 0, 5, 1, listener)
-    bx("cos", 1, 5, 1, listener)
-    bx("tan", 2, 5, 1, listener)
-    bx("Re", 3, 5, 1, listener)
-    bx("Im", 4, 5, 1, listener)
-    bx("ln", 0, 7, 1, listener)
-    bx("exp", 1, 7, 1, listener)
-    bx("^", 2, 7, 1, listener)
-    bx("mod", 3, 7, 1, listener)
-    bx("arg", 4, 7, 1, listener)
-    bx("i", 0, 8, 1, listener)
-    bx("e", 1, 8, 1, listener)
-    bx("π", 2, 8, 1, listener)
-    bx("(", 3, 8, 1, listener)
-    bx(")", 4, 8, 1, listener)
-    bx("7", 0, 9, 1, listener)
-    bx("8", 1, 9, 1, listener)
-    bx("9", 2, 9, 1, listener)
-    bx("*", 3, 9, 1, listener)
-    bx("/", 4, 9, 1, listener)
-    bx("4", 0, 10, 1, listener)
-    bx("5", 1, 10, 1, listener)
-    bx("6", 2, 10, 1, listener)
-    bx("+", 3, 10, 1, listener)
-    bx("-", 4, 10, 1, listener)
-    bx("1", 0, 11, 1, listener)
-    bx("2", 1, 11, 1, listener)
-    bx("3", 2, 11, 1, listener)
-    zButton = bx("z", 3, 11, 1, e => paste(e.getActionCommand) )
-    equalsButton = bx("=", 4, 11, 2, e => paste(e.getActionCommand) )
-    bx("0", 0, 12, 1, listener)
-    bx(".", 1, 12, 1, listener)
-    bx("∞", 2, 12, 1, listener)
+    bx("sinh", 0, 4, 1, paster)
+    bx("cosh", 1, 4, 1, paster)
+    bx("tanh", 2, 4, 1, paster)
+    bx("conj", 3, 4, 1, paster)
+    bx("opp", 4, 4, 1, paster)
+    bx("sin", 0, 5, 1, paster)
+    bx("cos", 1, 5, 1, paster)
+    bx("tan", 2, 5, 1, paster)
+    bx("Re", 3, 5, 1, paster)
+    bx("Im", 4, 5, 1, paster)
+    bx("ln", 0, 7, 1, paster)
+    bx("exp", 1, 7, 1, paster)
+    bx("^", 2, 7, 1, paster)
+    bx("mod", 3, 7, 1, paster)
+    bx("arg", 4, 7, 1, paster)
+    bx("i", 0, 8, 1, paster)
+    bx("e", 1, 8, 1, paster)
+    bx("π", 2, 8, 1, paster)
+    bx("(", 3, 8, 1, paster)
+    bx(")", 4, 8, 1, paster)
+    bx("7", 0, 9, 1, paster)
+    bx("8", 1, 9, 1, paster)
+    bx("9", 2, 9, 1, paster)
+    bx("*", 3, 9, 1, paster)
+    bx("/", 4, 9, 1, paster)
+    bx("4", 0, 10, 1, paster)
+    bx("5", 1, 10, 1, paster)
+    bx("6", 2, 10, 1, paster)
+    bx("+", 3, 10, 1, paster)
+    bx("-", 4, 10, 1, paster)
+    bx("1", 0, 11, 1, paster)
+    bx("2", 1, 11, 1, paster)
+    bx("3", 2, 11, 1, paster)
+    zButton = bx("z", 3, 11, 1, paster)
+    equalsButton = bx("=", 4, 11, 2, paster)
+    bx("0", 0, 12, 1, paster)
+    bx(".", 1, 12, 1, paster)
+    bx("∞", 2, 12, 1, paster)
   }
 
   private def becomeVisible() = {
@@ -183,7 +177,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
     pack()
     locate()
     setVisible(true)
-    setMode(CALC)
+    setMode(mode)
     display.requestFocus()
   }
 
@@ -192,11 +186,18 @@ final class Calculator() extends JFrame("Complex Calculator") {
   /** Locates the Calculator where it was last time the program was run.
     * By default near effective topleft. */
   private def locate() = {
+
     // effective topleft on ubuntu standard: x=67 y=28
     val p = preferences
     val x: Int = p.getInt("x", 67 + 10 )
     val y: Int = p.getInt("y", 28 + 10 )
     setLocation( x , y )
+
+    val text = p.get("text", "")
+    paste(text)
+
+    val m = p.get("mode", "CALC")
+    mode = Mode.valueOf(m)
   }
 
   /** Adds a complex number to the display. */
@@ -222,14 +223,14 @@ final class Calculator() extends JFrame("Complex Calculator") {
   }
 
   private[calculator] def eraseOldResult() = {
-    var text = display.getText
+    val text = display.getText
     val equals = text.lastIndexOf('=')
     if (equals != -1) {
-      var caret = display.getCaretPosition
-      text = text.substring(0, equals)
-      display.setText(text)
-      caret = min(caret, text.length)
-      display.setCaretPosition(caret)
+      val caret = display.getCaretPosition
+      val newText = text.substring(0, equals)
+      display.setText(newText)
+      val newCaret = min(caret, newText.length)
+      display.setCaretPosition(newCaret)
     }
   }
 
@@ -251,12 +252,18 @@ final class Calculator() extends JFrame("Complex Calculator") {
 
   private[calculator] def getSquare = zW.getSquare
 
-  def quit(): Unit = {
+  private[calculator] def quit(): Unit = {
     if(isVisible){
       val p = preferences
       val Point2(x,y) = getLocationOnScreen
       p.putInt("x", x)
       p.putInt("y", y)
+
+      val text = display.getText
+      p.put("text", text)
+
+      val m = mode.toString
+      p.put("mode", m)
     }
     dispose()
     if (cW != null) cW.dispose()
@@ -276,6 +283,8 @@ final class Calculator() extends JFrame("Complex Calculator") {
     }
     mode = m
     functionChanged()
+
+    getJMenuBar.asInstanceOf[Menus].select(mode)
   }
 
   private def calc() = {
