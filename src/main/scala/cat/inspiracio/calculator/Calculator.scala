@@ -68,7 +68,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
   private[calculator] var fzW: FzWorld = null
   private var modfzW: ThreeDWorld = null
   private var refxW: RefxWorld = null
-  private var f: Syntax = null
+  private[calculator] var f: Syntax = null
 
   init()
 
@@ -207,7 +207,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
   }
 
   /** Gets the expression from the display, parses it, evaluates it,
-    * and append the result to the display. */
+    * and appends the result to the display. */
   private[calculator] def doEquals() = {
     val text = display.getText
     display.append(" = ")
@@ -242,7 +242,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
       mode match {
         case MODFZ => modfzW.functionChanged(f)
         case REFX => refxW.functionChanged(f)
-        case FZ => fzW.functionChanged(f)
+        case FZ => fzW.functionChanged()
         case _ =>
       }
     }
@@ -259,11 +259,8 @@ final class Calculator() extends JFrame("Complex Calculator") {
       p.putInt("x", x)
       p.putInt("y", y)
 
-      val text = display.getText
-      p.put("text", text)
-
-      val m = mode.toString
-      p.put("mode", m)
+      p.put("text", display.getText)
+      p.put("mode", mode.toString)
     }
     dispose()
     if (cW != null) cW.dispose()

@@ -123,7 +123,6 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
     val y = p.getInt("y", calculatorPosition.y )
     setLocation( x, y )
 
-    //val size = getSize  //width=560 height=365
     val width = p.getInt("width", 560)
     val height = p.getInt("height", 365)
     setSize(width,height)

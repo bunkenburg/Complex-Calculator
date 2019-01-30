@@ -45,7 +45,7 @@ class Display private[calculator](val fontSize: Int) extends JTextArea("", 3, 1)
 
   private[calculator] def clear() = setText("")
 
-  /** delete selected or backspace */
+  /** deletes selected text or backspaces */
   private[calculator] def delete() = {
     val start = getSelectionStart
     val end = getSelectionEnd

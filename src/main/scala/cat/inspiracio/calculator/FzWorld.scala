@@ -39,7 +39,6 @@ import java.awt.event._
 import cat.inspiracio.calculator.Interaction.MOVE
 import cat.inspiracio.complex.Complex
 import cat.inspiracio.geometry.{Freeline, Piclet, Point2}
-import cat.inspiracio.parsing.Syntax
 import javax.swing.event.{MouseInputAdapter, MouseInputListener}
 
 final class FzWorld private[calculator](override val calculator: Calculator) extends World(calculator) {
@@ -50,13 +49,15 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
 
   //State --------------------------------------------------------------------
 
-  /** During dragging, the sampled points of the free line. Otherwise null. */
-  //XXX improve. Make it more local.
+  /** In z->f(z) mode, while the user drags on the z world, this is the free line
+    * of resulting f(z). Otherwise null.
+    * Can this be improved somehow? Make it more local? */
   private var zs: List[Complex] = null
 
+  /** The piclets that are displayed on the f(z) world. Usually curves. */
   private var piclets: List[Piclet] = Nil
 
-  private var f: Syntax = null
+  // initialisation -----------------------------------------------------------
 
   init()
 
@@ -107,6 +108,10 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
     val height = p.getInt("height", 365)
     setSize(width,height)
   }
+
+  // methods --------------------------------------------------------
+
+  private def f = calculator.f
 
   override private[calculator] def add(c: Complex) = if (f != null) {
     try {
@@ -181,8 +186,7 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
   }
 
   /** Event listener: function has changed. */
-  private[calculator] def functionChanged(t: Syntax) = {
-    f = t
+  private[calculator] def functionChanged() = {
     erase()
     add(zW.getPiclets)
   }
