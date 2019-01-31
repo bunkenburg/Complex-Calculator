@@ -38,11 +38,11 @@ import cat.inspiracio.complex.Complex
 // Referenced classes of package bunkenba.numbers:
 //            Piclet, ECList
 
-object Freeline {
-  def apply(list: List[Complex]): Freeline = new Freeline(list)
+object Curve {
+  def apply(list: List[Complex]): Curve = new Curve(list)
 }
 
-class Freeline(val list: List[Complex]) extends Piclet {
+class Curve(val list: List[Complex]) extends Piclet {
 
   samples = list
 

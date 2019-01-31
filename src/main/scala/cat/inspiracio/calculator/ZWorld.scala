@@ -52,12 +52,17 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
   private var interactionChoice: JComboBox[String] = new JComboBox[String]
   private var eraseButton: JButton = new JButton("Clear")
 
+  //XXX access these from calculator
   private var mode: Mode = null
-
   private var fzW: FzWorld = null
   private var modfzW: ThreeDWorld = null
 
+  // XXX consolidate these into
+  // piclets: the finished piclets
+  // current: the piclet that is just now being drawn dynamically.
+
   /** During dragging of a free line, the points, otherwise null. */
+  //XXX consolidate to current
   private var zs: List[Complex] = null
 
   /** During dragging, the provisional piclet. */
@@ -65,6 +70,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
   private var piclets: List[Piclet] = Nil
 
+  //XXX consolidate to current
   private var square = Square(0, 1+i)
 
   init()
@@ -99,11 +105,35 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
       var start: Complex = null
       var end: Complex = null
 
+      /** starts dynamic mapping of a piclet */
+      def startCurrent(p: Point) = {
+        val z = canvas.point2Complex(p)
+        if (z != null) {
+          start = z
+          end = z
+          val current = interaction match {
+            case GRID => Rectangle(start, end)
+            case LINE => Line(start, end)
+            case CIRCLE => Circle(start, end)
+            case RECTANGLE => Rectangle(start, end)
+            case SQUARE => Square(start, end)
+          }
+          if (mode == FZ)
+            addCurrent(current)
+          //XXX better?
+          else if (mode == MODFZ && interaction==SQUARE)
+            modfzW.change(current.asInstanceOf[Square])
+          addCurrent(current)
+          canvas.repaint()
+        }
+      }
+
       override def mousePressed(e: MouseEvent): Unit = interaction match {
 
         case MOVE => previous = e.getPoint
 
         case DRAW => {
+          //XXX move this into startCurrent
           val z = canvas.point2Complex(e.getPoint)
           if (z != null) {
             Complex.resetArg()
@@ -112,10 +142,57 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           }
         }
 
-        case GRID => {
+        case GRID => startCurrent(e.getPoint)
+        case LINE => startCurrent(e.getPoint)
+        case CIRCLE => startCurrent(e.getPoint)
+        case RECTANGLE => startCurrent(e.getPoint)
+        case SQUARE => startCurrent(e.getPoint)
+
+      }//match
+
+      private def drag(e: MouseEvent) = {
+        val p = e.getPoint
+        canvas.shift(previous - p)
+        previous = p
+      }
+
+      override def mouseDragged(e: MouseEvent): Unit = interaction match {
+
+        case MOVE => drag(e)
+
+        case DRAW => {
+          //XXX consolidate these into continueCurrent
+          val z = canvas.point2Complex(e.getPoint)
+          if (zs != null) {
+            if (z != null)
+              add(z)
+            else {
+              piclets = Curve(zs) :: piclets
+              zs = null
+              fzW.stopDynamicMap()
+            }
+          }
+          else if (z != null) {
+            Complex.resetArg()
+            add(z)
+          }
+          canvas.repaint()
+        }
+
+        case CIRCLE => {
+          //XXX consolidate these into continueCurrent
           val z = canvas.point2Complex(e.getPoint)
           if (z != null) {
-            start = z
+            end = z
+            addCurrent(Circle(start, end))
+            canvas.repaint()
+          }
+        }
+
+        case GRID => {
+          //XXX consolidate these into continueCurrent
+          val z = canvas.point2Complex(e.getPoint)
+          if (z != null) {
             end = z
             addCurrent(Rectangle(start, end))
             canvas.repaint()
@@ -123,29 +200,19 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
         }
 
         case LINE => {
+          //XXX consolidate these into continueCurrent
           val z = canvas.point2Complex(e.getPoint)
           if (z != null) {
-            start = z
             end = z
             addCurrent(Line(start, end))
             canvas.repaint()
           }
         }
 
-        case CIRCLE => {
-          val z = canvas.point2Complex(e.getPoint)
-          if (z != null) {
-            start = z
-            end = z
-            addCurrent(Circle(start, end))
-            canvas.repaint()
-          }
-        }
-
         case RECTANGLE => {
+          //XXX consolidate these into continueCurrent
           val z = canvas.point2Complex(e.getPoint)
           if (z != null) {
-            start = z
             end = z
             addCurrent(Rectangle(start, end))
             canvas.repaint()
@@ -153,9 +220,9 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
         }
 
         case SQUARE => {
+          //XXX consolidate these into continueCurrent
           val z = canvas.point2Complex(e.getPoint)
           if (z != null) {
-            start = z
             end = z
             square = Square(start, end)
             if (mode == FZ)
@@ -168,22 +235,17 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
       }//match
 
-      private def drag(e: MouseEvent) = {
-        val p = e.getPoint
-        canvas.shift(previous - p)
-        previous = p
-      }
-
       override def mouseReleased(e: MouseEvent): Unit = interaction match {
 
         case MOVE => drag(e)
 
         case DRAW => {
+          //XXX consolidate these into finishCurrent
           if (zs != null) {
             val z = canvas.point2Complex(e.getPoint)
             if (z != null)
               add(z)
-            piclets = Freeline(zs) :: piclets
+            piclets = Curve(zs) :: piclets
             zs = null   //mouse released => finish free line
             canvas.repaint()
             fzW.stopDynamicMap()
@@ -191,6 +253,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
         }
 
         case LINE =>
+          //XXX consolidate these into finishCurrent
           if (start != null) {
             val z = canvas.point2Complex(e.getPoint)
             if (z != null)
@@ -201,6 +264,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           eraseCurrent()
 
         case CIRCLE => {
+          //XXX consolidate these into finishCurrent
           if (start != null) {
             val z = canvas.point2Complex(e.getPoint)
             if (z != null)
@@ -212,6 +276,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
         }
 
         case RECTANGLE =>
+          //XXX consolidate these into finishCurrent
           if (start != null) {
             val z = canvas.point2Complex(e.getPoint)
             if (z != null)
@@ -222,6 +287,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           eraseCurrent()
 
         case SQUARE =>
+          //XXX consolidate these into finishCurrent
           if (start != null) {
             val z = canvas.point2Complex(e.getPoint)
             if (z != null)
@@ -237,6 +303,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           eraseCurrent()
 
         case GRID =>
+          //XXX consolidate these into finishCurrent
           if (start != null) {
             val z = canvas.point2Complex(e.getPoint)
             if (z != null)
@@ -245,79 +312,6 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
             canvas.repaint()
           }
           eraseCurrent()
-
-      }//match
-
-      override def mouseDragged(e: MouseEvent): Unit = interaction match {
-
-        case MOVE => drag(e)
-
-        case DRAW => {
-          val z = canvas.point2Complex(e.getPoint)
-          if (zs != null) {
-            if (z != null)
-              add(z)
-            else {
-              piclets = Freeline(zs) :: piclets
-              zs = null
-              fzW.stopDynamicMap()
-            }
-          }
-          else if (z != null) {
-            Complex.resetArg()
-            add(z)
-          }
-          canvas.repaint()
-        }
-
-        case CIRCLE => {
-          val z = canvas.point2Complex(e.getPoint)
-          if (z != null) {
-            end = z
-            addCurrent(Circle(start, end))
-            canvas.repaint()
-          }
-        }
-
-        case GRID => {
-          val z = canvas.point2Complex(e.getPoint)
-          if (z != null) {
-            end = z
-            addCurrent(Rectangle(start, end))
-            canvas.repaint()
-          }
-        }
-
-        case LINE => {
-          val z = canvas.point2Complex(e.getPoint)
-          if (z != null) {
-            end = z
-            addCurrent(Line(start, end))
-            canvas.repaint()
-          }
-        }
-
-        case RECTANGLE => {
-          val z = canvas.point2Complex(e.getPoint)
-          if (z != null) {
-            end = z
-            addCurrent(Rectangle(start, end))
-            canvas.repaint()
-          }
-        }
-
-        case SQUARE => {
-          val z = canvas.point2Complex(e.getPoint)
-          if (z != null) {
-            end = z
-            square = Square(start, end)
-            if (mode == FZ)
-              addCurrent(square)
-            else if (mode == MODFZ)
-              modfzW.change(square)
-            canvas.repaint()
-          }
-        }
 
       }//match
 
@@ -349,6 +343,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
     setSize(width,height)
   }
 
+  /** during dynamic map, adds one more number */
   override private[calculator] def add(c: Complex) = {
     updateExtremes(c)
     if( zs == null )
@@ -358,64 +353,65 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
   }
 
   private[calculator] def add(p: Piclet) = {
-        updateExtremes(p)
-        piclets = p :: piclets
-        fzW.add(p)
+    updateExtremes(p)
+    piclets = p :: piclets
+    fzW.add(p)
   }
 
+  /** during dragging, the current piclet */
   private[calculator] def addCurrent(piclet: Piclet) = {
-        currentPiclet = piclet
-        fzW.addCurrent(piclet)
+    currentPiclet = piclet
+    fzW.addCurrent(piclet)
   }
 
   private[calculator] def addGrid(r: Rectangle) = {
-        val N = 10
+    val N = 10
 
-        val hStep = r.width / N
-        val vStep = r.height / N
+    val hStep = r.width / N
+    val vStep = r.height / N
 
-        for ( i <- 0 to N ) {
-          val re = r.left + i*hStep
-          add(Line(Cartesian(re, r.top), Cartesian(re, r.bottom)))
-          val im = r.bottom + i*vStep
-          add(Line(Cartesian(r.left, im), Cartesian(r.right, im)))
-        }
+    for ( i <- 0 to N ) {
+      val re = r.left + i*hStep
+      add(Line(Cartesian(re, r.top), Cartesian(re, r.bottom)))
+      val im = r.bottom + i*vStep
+      add(Line(Cartesian(r.left, im), Cartesian(r.right, im)))
+    }
   }
 
-  override private[calculator] def drawStuff(g: Graphics) = {
-        if (zs != null)
-          canvas.draw(g, zs)
+  override private[calculator] def draw(g: Graphics) = {
+    if (zs != null)
+      canvas.draw(g, zs)
 
-        if (currentPiclet != null)
-          canvas.draw(g, currentPiclet)
+    if (currentPiclet != null)
+      canvas.draw(g, currentPiclet)
 
-        piclets.foreach{
-          canvas.draw(g, _)
-        }
+    piclets.foreach{
+      canvas.draw(g, _)
+    }
 
-        if (mode == MODFZ)
-          canvas.draw(g, square)
+    if (mode == MODFZ)
+      canvas.draw(g, square)
   }
 
   override private[calculator] def erase(): Unit = {
-        eraseCurrent()
+    eraseCurrent()
 
-        piclets = Nil
+    piclets = Nil
 
-        resetExtremes()
-        if (mode == MODFZ) {
-          updateExtremes(square)
-          return
-        }
+    resetExtremes()
+    if (mode == MODFZ) {
+      updateExtremes(square)
+      return
+    }
 
-        if (fzW != null)
-          fzW.erase()
-        canvas.repaint()
+    if (fzW != null)
+      fzW.erase()
+    canvas.repaint()
   }
 
   private[calculator] def eraseCurrent() = {
-        zs = null
-        currentPiclet = null
+    zs = null
+    currentPiclet = null
   }
 
   private[calculator] def getPiclets = piclets
@@ -424,33 +420,33 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
   private[calculator] def setmodfzWorld(w: ThreeDWorld) = modfzW = w
 
   private[calculator] def setMode(m: Mode) = {
-        mode = m
-        mode match {
+    mode = m
+    mode match {
 
-          case FZ =>
-            eraseButton.setEnabled(true)
-            interactionChoice.addItem("Draw")
-            interactionChoice.addItem("Circle")
-            interactionChoice.addItem("Line")
-            interactionChoice.addItem("Grid")
-            interactionChoice.addItem("Rectangle")
-            interactionChoice.setSelectedItem("Draw")
-            interaction = DRAW
+      case FZ =>
+        eraseButton.setEnabled(true)
+        interactionChoice.addItem("Draw")
+        interactionChoice.addItem("Circle")
+        interactionChoice.addItem("Line")
+        interactionChoice.addItem("Grid")
+        interactionChoice.addItem("Rectangle")
+        interactionChoice.setSelectedItem("Draw")
+        interaction = DRAW
 
-          case MODFZ =>
-            eraseButton.setEnabled(false)
-            interactionChoice.removeItem("Draw")
-            interactionChoice.removeItem("Circle")
-            interactionChoice.removeItem("Line")
-            interactionChoice.removeItem("Grid")
-            interactionChoice.removeItem("Rectangle")
-            interactionChoice.setSelectedItem("Square")
-            interaction = SQUARE
+      case MODFZ =>
+        eraseButton.setEnabled(false)
+        interactionChoice.removeItem("Draw")
+        interactionChoice.removeItem("Circle")
+        interactionChoice.removeItem("Line")
+        interactionChoice.removeItem("Grid")
+        interactionChoice.removeItem("Rectangle")
+        interactionChoice.setSelectedItem("Square")
+        interaction = SQUARE
 
-          case _ =>
-        }
-        erase()
-        canvas.repaint()
+      case _ =>
+    }
+    erase()
+    canvas.repaint()
   }
 
 }

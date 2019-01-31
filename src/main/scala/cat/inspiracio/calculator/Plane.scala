@@ -249,7 +249,7 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
       d5 += d
       k -= l
     }
-    w.drawStuff(g)
+    w.draw(g)
   }
 
   override private[calculator] def reset() = {

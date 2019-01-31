@@ -162,7 +162,7 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     for( m <- marks )
       draw(g, m)
 
-    w.drawStuff(g)
+    w.draw(g)
   }
 
   /** Can return null. */

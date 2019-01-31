@@ -133,7 +133,7 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
 
   private[calculator] def add(c: Complex)
 
-  private[calculator] def drawStuff(g: Graphics)
+  private[calculator] def draw(g: Graphics)
 
   /** erase everything that is show on the world and repaint */
   private[calculator] def erase()

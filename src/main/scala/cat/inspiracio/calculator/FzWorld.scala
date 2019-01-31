@@ -38,20 +38,22 @@ import java.awt.event._
 
 import cat.inspiracio.calculator.Interaction.MOVE
 import cat.inspiracio.complex.Complex
-import cat.inspiracio.geometry.{Freeline, Piclet, Point2}
+import cat.inspiracio.geometry.{Curve, Piclet, Point2}
 import javax.swing.event.{MouseInputAdapter, MouseInputListener}
 
 final class FzWorld private[calculator](override val calculator: Calculator) extends World(calculator) {
-
-  // connections -----------------------------
-
-  private var zW: ZWorld = null
+  import calculator.{f, zW}
 
   //State --------------------------------------------------------------------
 
-  /** In z->f(z) mode, while the user drags on the z world, this is the free line
+  //XXX Consolidate into
+  // piclets: the finished piclets
+  // current: the piclet that is just now being drawn dynamically.
+
+  /** In z->f(z) mode, while the user drags on the z world, this is the curve
     * of resulting f(z). Otherwise null.
-    * Can this be improved somehow? Make it more local? */
+    * (That procedure is called "dynamic map".)
+    * Can zs be improved somehow? Make it more local? */
   private var zs: List[Complex] = null
 
   /** The piclets that are displayed on the f(z) world. Usually curves. */
@@ -92,10 +94,6 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
 
   /** to the right of z-world */
   private def locate() = {
-
-    //z world
-    if(zW==null)
-      zW=calculator.zW
     val zWorldDimension: Dimension = zW.getSize //550 372
     val zWorldPosition: Point = zW.getLocationOnScreen  //77 414
 
@@ -111,16 +109,12 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
 
   // methods --------------------------------------------------------
 
-  private def f = calculator.f
-
+  /** During dynamic map, adds another number. */
   override private[calculator] def add(c: Complex) = if (f != null) {
     try {
       val z = f(c)
-
-      if(zs == null)
-        zs = Nil
+      if(zs == null) zs = Nil
       zs = z :: zs
-
       updateExtremes(z)
     } catch {
       case _ex: Exception =>
@@ -128,12 +122,11 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
     canvas.repaint()
   }
 
+  /** Adds a piclet to be mapped. */
   private[calculator] def add(piclet: Piclet) = if (f != null) {
     Complex.resetArg()
-    var samples = piclet.getSamples
-
-    zs = Nil
-
+    val samples = piclet.getSamples //sure these are continuous?
+    var zs: List[Complex] = Nil
     samples.foreach{ z =>
         try {
           val fz = f(z)
@@ -143,21 +136,19 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
           case _ex: Exception =>
         }
     }
-
-    stopDynamicMap()
+    piclets = Curve(zs) :: piclets
     canvas.repaint()
   }
 
   private[calculator] def add( list: List[Piclet]): Unit = list foreach add
 
+  /** during dragging in z world, the current piclet */
   private[calculator] def addCurrent(piclet: Piclet) =
     if (f != null) {
       Complex.resetArg()
       zs = Nil
-      var samples = piclet.getSamples
-
+      val samples = piclet.getSamples
       if ( samples != null ) {
-
         samples.foreach{ z =>
           try {
             val fz = f(z)
@@ -166,21 +157,18 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
             case _ex: Exception =>
           }
         }
-
       }
     canvas.repaint()
   }
 
-  override final private[calculator] def drawStuff(g: Graphics) = {
-    if (zs != null)
-      canvas.draw(g, zs)
-
+  override final private[calculator] def draw(g: Graphics) = {
+    if (zs != null) canvas.draw(g, zs)
     piclets.foreach{ canvas.draw(g, _) }
   }
 
   override private[calculator] def erase() = {
-    zs = null //forget current free line
-    piclets = Nil //Forget all piclets
+    zs = null //forget current curve
+    piclets = Nil //forget all piclets
     resetExtremes()
     canvas.repaint()
   }
@@ -194,7 +182,7 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
   private[calculator] def setzWorld(zworld: ZWorld) = zW = zworld
 
   private[calculator] def stopDynamicMap() = {
-    piclets = Freeline(zs) :: piclets
+    piclets = Curve(zs) :: piclets
     zs = null
   }
 }

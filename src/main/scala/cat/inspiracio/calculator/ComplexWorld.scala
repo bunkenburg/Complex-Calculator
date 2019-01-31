@@ -134,7 +134,7 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
     canvas.repaint()
   }
 
-  override private[calculator] def drawStuff(g: Graphics) =
+  override private[calculator] def draw(g: Graphics) =
     numbers.foreach{ canvas.draw(g, _) }
 
   override private[calculator] def erase() = {
