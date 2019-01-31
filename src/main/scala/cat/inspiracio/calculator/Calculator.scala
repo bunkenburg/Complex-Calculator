@@ -66,7 +66,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
   private var cW: ComplexWorld = null
   private[calculator] var zW: ZWorld = null
   private[calculator] var fzW: FzWorld = null
-  private var modfzW: ThreeDWorld = null
+  private[calculator] var modfzW: ThreeDWorld = null
   private var refxW: RefxWorld = null
   private[calculator] var f: Syntax = null
 
@@ -313,7 +313,6 @@ final class Calculator() extends JFrame("Complex Calculator") {
     zW.setMode(FZ)
     fzWorld()
     fzW.setzWorld(zW)
-    zW.setfzWorld(fzW)
     disposeModFZWorld()
     disposeReFXWorld()
   }
@@ -334,7 +333,6 @@ final class Calculator() extends JFrame("Complex Calculator") {
     zW.setMode(MODFZ)
     disposeFZWorld()
     modFZWorld()
-    zW.setmodfzWorld(modfzW)
     disposeReFXWorld()
   }
 

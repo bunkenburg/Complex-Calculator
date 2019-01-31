@@ -110,16 +110,18 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
   // methods --------------------------------------------------------
 
   /** During dynamic map, adds another number. */
-  override private[calculator] def add(c: Complex) = if (f != null) {
+  private[calculator] def addNumberToCurve(c: Complex) = if (f != null) {
     try {
       val z = f(c)
       if(zs == null) zs = Nil
       zs = z :: zs
       updateExtremes(z)
-    } catch {
+      canvas.repaint()
+    }
+    //Maybe f(c) failed.
+    catch {
       case _ex: Exception =>
     }
-    canvas.repaint()
   }
 
   /** Adds a piclet to be mapped. */

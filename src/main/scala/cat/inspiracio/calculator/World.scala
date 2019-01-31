@@ -131,7 +131,7 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     canvas.repaint()
   }
 
-  private[calculator] def add(c: Complex)
+  private[calculator] def add(c: Complex) = {}
 
   private[calculator] def draw(g: Graphics)
 
