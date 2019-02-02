@@ -90,7 +90,7 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
     sphere.addMouseListener(mouse)
     sphere.addMouseMotionListener(mouse)
     pack()
-    locate()
+    applyPreferences()
     setVisible(true)
   }
 
@@ -113,12 +113,12 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
     buttonPanel.add(interactionChoice)
   }
 
-  /** to the right of the calculator */
-  private def locate() = {
+  private def applyPreferences() = {
+    val p = preferences
+
+    // to the right of the calculator
     val calculatorPosition = calculator.getLocationOnScreen
     val calculatorDimension = calculator.getSize
-
-    val p = preferences
     val x = p.getInt("x", calculatorPosition.x + calculatorDimension.width + 10 )
     val y = p.getInt("y", calculatorPosition.y )
     setLocation( x, y )
@@ -132,6 +132,8 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
       case "plane" => usePlane()
       case "sphere" => useSphere()
     }
+
+    //could save zoom and shift and numbers too
   }
 
   override private[calculator] def add(c: Complex) = {

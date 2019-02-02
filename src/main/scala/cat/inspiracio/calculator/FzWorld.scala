@@ -46,10 +46,6 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
 
   //State --------------------------------------------------------------------
 
-  //XXX Consolidate into
-  // piclets: the finished piclets
-  // current: the piclet that is just now being drawn dynamically.
-
   /** In z->f(z) mode, while the user drags on the z world, this is the curve
     * of resulting f(z). Otherwise null.
     * (That procedure is called "dynamic map".)
@@ -88,16 +84,16 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
     sphere.addMouseListener(mouse)
     sphere.addMouseMotionListener(mouse)
     pack()
-    locate()
+    applyPreferences()
     setVisible(true)
   }
 
-  /** to the right of z-world */
-  private def locate() = {
+  private def applyPreferences() = {
+    val p = preferences
+
+    // to the right of z-world
     val zWorldDimension: Dimension = zW.getSize //550 372
     val zWorldPosition: Point = zW.getLocationOnScreen  //77 414
-
-    val p = preferences
     val x = p.getInt("x", zWorldPosition.x + zWorldDimension.width + 10 )
     val y = p.getInt("y", zWorldPosition.y )
     setLocation( x, y )
@@ -111,6 +107,8 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
       case "plane" => usePlane()
       case "sphere" => useSphere()
     }
+
+    //XXX could also use zoom and shift
   }
 
   // methods --------------------------------------------------------
@@ -151,11 +149,15 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
   private[calculator] def add( list: List[Piclet]): Unit = list foreach add
 
   /** during dragging in z world, the current piclet */
-  private[calculator] def addCurrent(piclet: Piclet) =
+  private[calculator] def addCurrent(p: Piclet) =
     if (f != null) {
+
+      //XXX maybe better:
+      //this.current = f(p)
+
       Complex.resetArg()
       zs = Nil
-      val samples = piclet.getSamples
+      val samples = p.getSamples
       if ( samples != null ) {
         samples.foreach{ z =>
           try {
@@ -186,8 +188,6 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
     erase()
     add(zW.getPiclets)
   }
-
-  private[calculator] def setzWorld(zworld: ZWorld) = zW = zworld
 
   private[calculator] def stopDynamicMap() = {
     piclets = Curve(zs) :: piclets

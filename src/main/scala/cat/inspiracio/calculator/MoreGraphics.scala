@@ -39,9 +39,9 @@ import java.awt._
   * Keeps a pen position.
   *
   * These are like extra methods on Graphics. */
-object Helpers {
+object MoreGraphics {
 
-  implicit class MoreGraphics private[calculator](g: Graphics) {
+  implicit class GraphicsExtended private[calculator](g: Graphics) {
 
     /** cross at (x,y) */
     private[calculator] def drawCross(x: Int, y: Int, width: Int) = {
@@ -70,8 +70,7 @@ object Helpers {
     private[calculator] def drawLine(a: Point, b: Point): Unit = drawLine(a, b, Color.BLACK)
 
     /** draw string at position */
-    private[calculator] def drawString(s: String, p: Point): Unit =
-      g.drawString(s, p.x, p.y)
+    private[calculator] def drawString(s: String, p: Point): Unit = g.drawString(s, p.x, p.y)
 
     private[calculator] def fillPolygon(polygon: Polygon, c: Color) = {
       val old = g.getColor
@@ -81,7 +80,7 @@ object Helpers {
     }
 
     /** Makes a triangle.
-      *
+      * (Maybe there's better place for this?)
       * @param p         Triangle tip is here.
       * @param direction Points this direction.
       * @param size      Size of the triangle. */
@@ -102,4 +101,4 @@ object Helpers {
 
   }
 
-}//Helpers
+}

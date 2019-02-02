@@ -301,7 +301,6 @@ final class Calculator() extends JFrame("Complex Calculator") {
     zWorld()
     zW.setMode(FZ)
     fzWorld()
-    fzW.setzWorld(zW)
     disposeModFZWorld()
     disposeReFXWorld()
   }

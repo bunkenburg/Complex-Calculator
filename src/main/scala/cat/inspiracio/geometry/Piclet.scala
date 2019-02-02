@@ -52,5 +52,4 @@ abstract class Piclet() {
   def bottom: Double
   def left: Double
   def right: Double
-
 }

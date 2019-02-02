@@ -12,6 +12,8 @@
 * Give World windows a toolbar instead of buttons and menus to read
 * separate GUI from logic
 * make a version inside a web page: GUI is html, logic with scala.js
+* make an Android app from it
+* multi-project for application, app, web
 
 # DONE
 

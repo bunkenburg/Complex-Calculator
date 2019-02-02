@@ -37,7 +37,7 @@ import java.awt.{Dimension, Font, Graphics, Point}
 
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.{Matrix44, Point2, Vector3}
-import Helpers.MoreGraphics
+import MoreGraphics.GraphicsExtended
 
 // Referenced classes of package bunkenba.calculator:
 //            WorldRepresentation, DoubleBuffer, Drawing, Matrix44,

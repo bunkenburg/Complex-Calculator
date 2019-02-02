@@ -39,7 +39,7 @@ import cat.inspiracio.calculator.Mode.CALC
 
 class MyKeyListener private[calculator](var calculator: Calculator) extends KeyAdapter {
 
-  /** LF = Intro = ENTER (at least on linux) */
+  /** LF = Intro = ENTER (on linux) */
   private val LF = 10
 
   /** All the characters that make sense in the display. */
@@ -47,8 +47,7 @@ class MyKeyListener private[calculator](var calculator: Calculator) extends KeyA
   private def forbidden(c: Char): Boolean = !ALLOWED_CHARS.contains(c)
 
   /** Only the ENTER key is special: In CALC mode, it is like '='. */
-  override def keyPressed(e: KeyEvent): Unit = {
-
+  override def keyPressed(e: KeyEvent): Unit =
     if ( e.getKeyCode == LF ) {
       if ( calculator.mode == CALC ) {
         calculator.display.eraseOldResult()
@@ -56,8 +55,6 @@ class MyKeyListener private[calculator](var calculator: Calculator) extends KeyA
       }
       e.consume() //Don't want a line-break in display
     }
-
-  }
 
   /** Ignores forbidden characters,
     * erases old result,

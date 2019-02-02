@@ -38,21 +38,32 @@ import java.awt.{Color, Dimension, Font, Graphics, Point}
 import cat.inspiracio.complex._
 import cat.inspiracio.calculator.Direction._
 import cat.inspiracio.geometry._
-import Helpers.MoreGraphics
+import MoreGraphics.GraphicsExtended
 
 final class Plane private[calculator](val world: World) extends WorldRepresentation(world) {
 
-  private var AXISSPACE = 30
-  private var AXISMARKING = 40
-  private var FONTHEIGHT = 10
-  private var TRIANGLESIZE = 5
-  private var MARKLENGTH = 2
+  /** pixel-distance between tips of axes and window edge */
+  private var axisPadding = 30
+
+  /** pixel-distance between marks on the axes */
+  private var markDistance = 40
+
+  private var fontAscent = 10
+
+  /** pixel-size of the arrow triangles at the tips of axes */
+  private var triangleSize = 5
+
+  /** pixel-length of the marks on the axes */
+  private var markLength = 2
 
   // state ----------------------------------------------------------------
 
-  private var ScaleFactor = 40.0
-  private var CenterReal = 0.0
-  private var CenterImaginary = 0.0
+  /** real * factor = pixels */
+  private var factor = 40.0
+
+  /** complex number at the centre of the plane */
+  private var centre: Complex = 0
+
   private var TopImaginary = 0.0
   private var LeftReal = 0.0
   private var BottomImaginary = 0.0
@@ -98,15 +109,15 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
 
   //XXX return Point
   private def cartesian2Point(re: Double, im: Double, point: Point) = {
-    point.x = ((re - LeftReal) * ScaleFactor).toInt
-    point.y = -((im - TopImaginary) * ScaleFactor).toInt
+    point.x = ((re - LeftReal) * factor).toInt
+    point.y = -((im - TopImaginary) * factor).toInt
   }
 
   override private[calculator] def draw(g: Graphics, z: Complex) =
     if (finite(z)) {
-      val x = ((Re(z) - LeftReal) * ScaleFactor).asInstanceOf[Int]
-      val y = -((Im(z) - TopImaginary) * ScaleFactor).asInstanceOf[Int]
-      g.drawCross(x, y, MARKLENGTH)
+      val x = ((Re(z) - LeftReal) * factor).asInstanceOf[Int]
+      val y = -((Im(z) - TopImaginary) * factor).asInstanceOf[Int]
+      g.drawCross(x, y, markLength)
       g.drawString(z.toString, x+2, y+2 )
   }
 
@@ -136,8 +147,8 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
 
     else if (piclet.isInstanceOf[Circle]) {
       val circle = piclet.asInstanceOf[Circle]
-      val x = ((Re(circle.c) - LeftReal) * ScaleFactor).asInstanceOf[Int]
-      val y = -((Im(circle.c) - TopImaginary) * ScaleFactor).asInstanceOf[Int]
+      val x = ((Re(circle.c) - LeftReal) * factor).asInstanceOf[Int]
+      val y = -((Im(circle.c) - TopImaginary) * factor).asInstanceOf[Int]
       val radius = math2Pix(circle.r)
       g.drawCircle( x, y, radius )
     }
@@ -157,13 +168,13 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
   private def line(g: Graphics, a: Complex, b: Complex) = g.drawLine(complex2Point(a), complex2Point(b))
 
   private def complex2Point(c: Complex) = Point2(
-    ((Re(c) - LeftReal) * ScaleFactor).asInstanceOf[Int],
-    -((Im(c) - TopImaginary) * ScaleFactor).asInstanceOf[Int]
+    ((Re(c) - LeftReal) * factor).asInstanceOf[Int],
+    -((Im(c) - TopImaginary) * factor).asInstanceOf[Int]
   )
 
   override private[calculator] def point2Complex(point: Point): Complex = {
-    val re = LeftReal + point.x.toDouble / ScaleFactor
-    val im = TopImaginary - point.y.toDouble / ScaleFactor
+    val re = LeftReal + point.x.toDouble / factor
+    val im = TopImaginary - point.y.toDouble / factor
     Cartesian(re, im)
   }
 
@@ -177,19 +188,19 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     val size: Dimension = getSize()
     val width = size.width
     val height = size.height
-    TopImaginary = CenterImaginary + pix2Math( height / 2)
-    BottomImaginary = CenterImaginary - pix2Math( height / 2)
-    LeftReal = CenterReal - pix2Math( width / 2)
-    RightReal = CenterReal + pix2Math( width / 2)
+    TopImaginary = Im(centre) + pix2Math( height / 2)
+    BottomImaginary = Im(centre) - pix2Math( height / 2)
+    LeftReal = Re(centre) - pix2Math( width / 2)
+    RightReal = Re(centre) + pix2Math( width / 2)
 
-    val d = raiseSmooth(pix2Math(AXISMARKING))
+    val d = raiseSmooth(pix2Math(markDistance))
     val l = math2Pix(d)
     var d1 = 0.0
     var d2 = 0.0
-    var d3 = LeftReal + pix2Math(AXISSPACE)
-    val d4 = RightReal - pix2Math(AXISSPACE)
-    var d5 = BottomImaginary + pix2Math(AXISSPACE)
-    val d6 = TopImaginary - pix2Math(AXISSPACE)
+    var d3 = LeftReal + pix2Math(axisPadding)
+    val d4 = RightReal - pix2Math(axisPadding)
+    var d5 = BottomImaginary + pix2Math(axisPadding)
+    val d6 = TopImaginary - pix2Math(axisPadding)
 
     if (d3 <= 0.0 && d4 >= 0.0) d1 = 0.0
     else if (d3 > 0.0) d1 = d3
@@ -203,11 +214,11 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     cartesian2Point(d4, d2, point1)
 
     g.drawLine(point, point1, Color.lightGray)
-    var polygon = g.mkTriangle(point1, EAST, TRIANGLESIZE)
+    var polygon = g.mkTriangle(point1, EAST, triangleSize)
     g.drawPolygon(polygon)
 
     if (RightReal <= w.MaxReal) g.fillPolygon(polygon)
-    polygon = g.mkTriangle(point, WEST, TRIANGLESIZE)
+    polygon = g.mkTriangle(point, WEST, triangleSize)
     g.drawPolygon(polygon)
 
     if (w.MinReal <= LeftReal) g.fillPolygon(polygon)
@@ -217,20 +228,20 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     var i = real2Pix(d3)
     while ( d3 < d4 ) {
       val a: Point2 = Point2(i, j)
-      val b: Point2 = a + (0, MARKLENGTH)
+      val b: Point2 = a + (0, markLength)
       g.drawLine(a, b)
-      g.drawString(toString(d3), i + MARKLENGTH, j + FONTHEIGHT)
+      g.drawString(toString(d3), i + markLength, j + fontAscent)
       i += l
       d3 += d
     }
     cartesian2Point(d1, d5, point)
     cartesian2Point(d1, d6, point1)
     g.drawLine(point, point1, Color.lightGray)
-    polygon = g.mkTriangle(point1, NORTH, TRIANGLESIZE)
+    polygon = g.mkTriangle(point1, NORTH, triangleSize)
     g.drawPolygon(polygon)
 
     if (TopImaginary <= w.MaxImaginary) g.fillPolygon(polygon)
-    polygon = g.mkTriangle(point, SOUTH, TRIANGLESIZE)
+    polygon = g.mkTriangle(point, SOUTH, triangleSize)
     g.drawPolygon(polygon)
 
     if (w.MinImaginary <= BottomImaginary) g.fillPolygon(polygon)
@@ -242,9 +253,9 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
       if (d5 != 0.0D || d1 != 0.0D) {
         val s = toString(d5) + "i"
         val a = Point2(i, k)
-        val b = a + (-MARKLENGTH, 0)
+        val b = a + (-markLength, 0)
         g.drawLine(a, b)
-        g.drawString(s, i - MARKLENGTH - g.getFontMetrics.stringWidth(s), k + FONTHEIGHT)
+        g.drawString(s, i - markLength - g.getFontMetrics.stringWidth(s), k + fontAscent)
       }
       d5 += d
       k -= l
@@ -253,38 +264,39 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
   }
 
   override private[calculator] def reset() = {
-    CenterReal = 0.0
-    CenterImaginary = 0.0
+    //CenterImaginary = 0.0
+    centre = 0
     repaint()
   }
 
-  private def pix2Math(i: Int): Double = i.toDouble / ScaleFactor
-  private def math2Pix(d: Double): Int = (d * ScaleFactor).toInt
+  private def pix2Math(i: Int): Double = i.toDouble / factor
+  private def math2Pix(d: Double): Int = (d * factor).toInt
 
-  private def real2Pix(d: Double): Int = ((d - LeftReal) * ScaleFactor).toInt
-  private def imag2Pix(d: Double): Int = ((TopImaginary - d) * ScaleFactor).toInt
+  private def real2Pix(d: Double): Int = ((d - LeftReal) * factor).toInt
+  private def imag2Pix(d: Double): Int = ((TopImaginary - d) * factor).toInt
 
   override def setFont(font: Font): Unit = {
     super.setFont(font)
-    FONTHEIGHT = getFontMetrics(font).getAscent
-    AXISSPACE = 3 * FONTHEIGHT
-    AXISMARKING = 4 * FONTHEIGHT
-    TRIANGLESIZE = FONTHEIGHT / 2
-    MARKLENGTH = FONTHEIGHT / 5
+    fontAscent = getFontMetrics(font).getAscent
+    axisPadding = 3 * fontAscent
+    markDistance = 4 * fontAscent
+    triangleSize = fontAscent / 2
+    markLength = fontAscent / 5
   }
 
   override private[calculator] def shift(p: Point) = {
-    CenterReal += pix2Math(p.x)
-    CenterImaginary -= pix2Math(p.y)
+    //CenterReal += pix2Math(p.x)
+    //CenterImaginary -= pix2Math(p.y)
+    centre = centre +pix2Math(p.x) -pix2Math(p.y)*i
     repaint()
   }
 
   override private[calculator] def zoomIn() = {
-    ScaleFactor *= 2
+    factor *= 2
     repaint()
   }
   override private[calculator] def zoomOut() = {
-    ScaleFactor /= 2
+    factor /= 2
     repaint()
   }
 }

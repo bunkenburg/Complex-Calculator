@@ -40,10 +40,7 @@ import cat.inspiracio.calculator.Mode.{CALC, FZ, MODFZ, REFX}
 import cat.inspiracio.complex.Complex
 import javax.swing._
 
-/** A menu bar for the Calculator.
-  *
-  * Keyboard accelerators don't work.
-  * */
+/** A menu bar for the Calculator. */
 final class Menus private[calculator](var calculator: Calculator) extends JMenuBar {
 
   private val precisionListener = null

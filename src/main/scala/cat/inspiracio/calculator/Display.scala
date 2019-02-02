@@ -42,7 +42,8 @@ import javax.swing._
   * This class just adds some convenient methods
   * for copy/paste functionality to TextArea.
   *
-  * This could really be a lot better. */
+  * This could really be a lot better,
+  * taking into account the syntax tree rather than just displaying a String. */
 class Display private[calculator](val fontSize: Int) extends JTextArea("", 3, 1) {
 
   private[calculator] def clear() = setText("")

@@ -44,7 +44,7 @@ import cat.inspiracio.geometry._
 import cat.inspiracio.parsing.{Constant, Syntax}
 import javax.swing.event.MouseInputAdapter
 
-import Helpers.MoreGraphics
+import MoreGraphics.GraphicsExtended
 
 // Referenced classes of package bunkenba.calculator:
 //            Calculator, DoubleBuffer, Drawing, Matrix44,
