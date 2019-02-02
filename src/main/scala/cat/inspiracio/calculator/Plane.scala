@@ -67,8 +67,8 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
   /** complex number at the top left of the plane */
   private var topleft: Complex = 0
 
-  private var BottomImaginary = 0.0
-  private var RightReal = 0.0
+  /** complex number at the bottom right of the plane */
+  private var botright: Complex = 0
 
   //XXX unit tests
   //XXX unify with repeated method
@@ -123,9 +123,9 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
   }
 
   /** XXX get rid of null-check */
-  override private[calculator] def draw(g: Graphics, eclist: List[Complex]) =
-    if (eclist != null) {
-      val ps = pairs( eclist map complex2Point )
+  override private[calculator] def draw(g: Graphics, zs: List[Complex]) =
+    if (zs != null) {
+      val ps = pairs( zs map complex2Point )
       ps.foreach{ case (a,b) => g.drawLine(a, b) }
     }
 
@@ -190,20 +190,16 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     val width = size.width
     val height = size.height
 
-    //LeftReal = Re(centre) - pix2Math( width / 2)
-    //TopImaginary = Im(centre) + pix2Math( height / 2)
     topleft = centre - pix2Math( width / 2) + pix2Math( height / 2)*i
-
-    BottomImaginary = Im(centre) - pix2Math( height / 2)
-    RightReal = Re(centre) + pix2Math( width / 2)
+    botright = centre + pix2Math( width / 2) - pix2Math( height / 2)*i
 
     val d = raiseSmooth(pix2Math(markDistance))
     val l = math2Pix(d)
     var d1 = 0.0
     var d2 = 0.0
     var d3 = Re(topleft) + pix2Math(axisPadding)
-    val d4 = RightReal - pix2Math(axisPadding)
-    var d5 = BottomImaginary + pix2Math(axisPadding)
+    val d4 = Re(botright) - pix2Math(axisPadding)
+    var d5 = Im(botright) + pix2Math(axisPadding)
     val d6 = Im(topleft) - pix2Math(axisPadding)
 
     if (d3 <= 0.0 && d4 >= 0.0) d1 = 0.0
@@ -221,7 +217,7 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     var polygon = g.mkTriangle(point1, EAST, triangleSize)
     g.drawPolygon(polygon)
 
-    if (RightReal <= w.MaxReal) g.fillPolygon(polygon)
+    if (Re(botright) <= w.MaxReal) g.fillPolygon(polygon)
     polygon = g.mkTriangle(point, WEST, triangleSize)
     g.drawPolygon(polygon)
 
@@ -248,7 +244,7 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     polygon = g.mkTriangle(point, SOUTH, triangleSize)
     g.drawPolygon(polygon)
 
-    if (w.MinImaginary <= BottomImaginary) g.fillPolygon(polygon)
+    if (w.MinImaginary <= Im(botright)) g.fillPolygon(polygon)
     i0 = point2.x
     d7 = Math.ceil(d5 / d)
     d5 = d7 * d
