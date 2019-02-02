@@ -70,12 +70,6 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
   /** complex number at the bottom right of the plane */
   private var botright: Complex = 0
 
-  //XXX return Point
-  private def cartesian2Point(re: Double, im: Double, point: Point) = {
-    point.x = ((re - Re(topleft)) * factor).toInt
-    point.y = -((im - Im(topleft)) * factor).toInt
-  }
-
   override private[calculator] def draw(g: Graphics, z: Complex) =
     if (finite(z)) {
       val x = ((Re(z) - Re(topleft)) * factor).asInstanceOf[Int]
@@ -130,9 +124,16 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
 
   private def line(g: Graphics, a: Complex, b: Complex) = g.drawLine(complex2Point(a), complex2Point(b))
 
+  //XXX Merge with cartesian2Point(z: Complex): Point
   private def complex2Point(c: Complex) = Point2(
-    ((Re(c) - Re(topleft)) * factor).asInstanceOf[Int],
-    -((Im(c) - Im(topleft)) * factor).asInstanceOf[Int]
+    ((Re(c) - Re(topleft)) * factor).toInt,
+    -((Im(c) - Im(topleft)) * factor).toInt
+  )
+
+  //XXX Merge with complex2Point(z: Complex): Point
+  private def cartesian2Point(re: Double, im: Double): Point = Point2(
+    ((re - Re(topleft)) * factor).toInt,
+    -((im - Im(topleft)) * factor).toInt
   )
 
   override private[calculator] def point2Complex(point: Point): Complex = {
@@ -143,10 +144,6 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
 
   /** Called by swing to paint. */
   override def paint(g: Graphics): Unit = {
-
-    val point = new Point
-    val point1 = new Point
-    val point2 = new Point
 
     val size: Dimension = getSize()
     val width = size.width
@@ -171,9 +168,9 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     else if (d5 > 0.0) d2 = d5
     else if (d6 < 0.0) d2 = d6
 
-    cartesian2Point(d1, d2, point2)
-    cartesian2Point(d3, d2, point)
-    cartesian2Point(d4, d2, point1)
+    val point2 = cartesian2Point(d1, d2)
+    val point = cartesian2Point(d3, d2)
+    val point1 = cartesian2Point(d4, d2)
 
     g.drawLine(point, point1, Color.lightGray)
     var polygon = g.mkTriangle(point1, EAST, triangleSize)
@@ -196,14 +193,14 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
       i0 += l
       d3 += d
     }
-    cartesian2Point(d1, d5, point)
-    cartesian2Point(d1, d6, point1)
-    g.drawLine(point, point1, Color.lightGray)
-    polygon = g.mkTriangle(point1, NORTH, triangleSize)
+    val point3 = cartesian2Point(d1, d5)
+    val point4 = cartesian2Point(d1, d6)
+    g.drawLine(point3, point4, Color.lightGray)
+    polygon = g.mkTriangle(point4, NORTH, triangleSize)
     g.drawPolygon(polygon)
 
     if (Im(topleft) <= w.MaxImaginary) g.fillPolygon(polygon)
-    polygon = g.mkTriangle(point, SOUTH, triangleSize)
+    polygon = g.mkTriangle(point3, SOUTH, triangleSize)
     g.drawPolygon(polygon)
 
     if (w.MinImaginary <= Im(botright)) g.fillPolygon(polygon)
