@@ -33,6 +33,8 @@
  * */
 package cat.inspiracio.calculator
 
+import java.lang.Math.min
+
 import javax.swing._
 
 /** The text area of the complex calculator.
@@ -44,6 +46,18 @@ import javax.swing._
 class Display private[calculator](val fontSize: Int) extends JTextArea("", 3, 1) {
 
   private[calculator] def clear() = setText("")
+
+  private[calculator] def eraseOldResult() = {
+    val text = getText
+    val equals = text.lastIndexOf('=')
+    if (equals != -1) {
+      val caret = getCaretPosition
+      val newText = text.substring(0, equals)
+      setText(newText)
+      val newCaret = min(caret, newText.length)
+      setCaretPosition(newCaret)
+    }
+  }
 
   /** deletes selected text or backspaces */
   private[calculator] def delete() = {

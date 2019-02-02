@@ -57,7 +57,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
   /** The mode that the program is in: Calculation, z->fz mapping, z->|fz| mapping, or Re(fz). */
   private[calculator] var mode = CALC
 
-  private val display: Display = new Display(12)
+  private[calculator] val display: Display = new Display(12)
   private var equalsButton: JButton = null
   private var zButton: JButton = null
 
@@ -68,6 +68,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
   private[calculator] var fzW: FzWorld = null
   private[calculator] var modfzW: ThreeDWorld = null
   private var refxW: RefxWorld = null
+
   private[calculator] var f: Syntax = null
 
   init()
@@ -86,7 +87,6 @@ final class Calculator() extends JFrame("Complex Calculator") {
   }
 
   private def buildButtons() = {
-
     val layout = new GridBagLayout
     setLayout(layout)
 
@@ -202,6 +202,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
 
   /** Adds a complex number to the display. */
   final private[calculator] def add(c: Complex) = {
+    //Could improve: parenthesis only when necessary
     val s = "(" + c + ")"
     display.paste(s)
   }
@@ -219,18 +220,6 @@ final class Calculator() extends JFrame("Complex Calculator") {
     } catch {
       case e: Exception =>
         e.printStackTrace()
-    }
-  }
-
-  private[calculator] def eraseOldResult() = {
-    val text = display.getText
-    val equals = text.lastIndexOf('=')
-    if (equals != -1) {
-      val caret = display.getCaretPosition
-      val newText = text.substring(0, equals)
-      display.setText(newText)
-      val newCaret = min(caret, newText.length)
-      display.setCaretPosition(newCaret)
     }
   }
 
@@ -392,7 +381,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
   /** event listener for DELETE button */
   private def delete(): Unit = {
     if (mode == CALC)
-      eraseOldResult()
+      display.eraseOldResult()
     display.delete()
     display.requestFocus()
     if (mode != CALC)
@@ -407,8 +396,6 @@ final class Calculator() extends JFrame("Complex Calculator") {
     display.requestFocus()
   }
 
-  private[calculator] def prepend(s: String) = display.prepend(s)
-
   /** Inserts a character to the calculator.
     * Called from MyKeyListener. */
   private[calculator] def paste(c: Char): Unit = paste(c.toString)
@@ -418,7 +405,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
   private[calculator] def paste(s: String): Unit = {
 
     if ( mode == CALC )
-      eraseOldResult()
+      display.eraseOldResult()
 
     if (s == "=" && mode == CALC )
       doEquals()

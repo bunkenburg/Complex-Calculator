@@ -276,6 +276,12 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
     val width = p.getInt("width", 560)
     val height = p.getInt("height", 365)
     setSize(width,height)
+
+    val c = p.get("canvas", "plane")
+    c match {
+      case "plane" => usePlane()
+      case "sphere" => useSphere()
+    }
   }
 
   /** during dynamic map, adds one more number */

@@ -51,7 +51,7 @@ class MyKeyListener private[calculator](var calculator: Calculator) extends KeyA
 
     if ( e.getKeyCode == LF ) {
       if ( calculator.mode == CALC ) {
-        calculator.eraseOldResult()
+        calculator.display.eraseOldResult()
         calculator.doEquals()
       }
       e.consume() //Don't want a line-break in display

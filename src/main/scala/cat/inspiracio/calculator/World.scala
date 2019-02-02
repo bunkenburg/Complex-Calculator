@@ -51,6 +51,9 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
   private val zInButton = new JButton("Zoom In")
   private val zOutButton = new JButton("Zoom Out")
 
+  /** Menu for Plane or Sphere */
+  private val choice = new JComboBox[String]
+
   /** selected interaction */
   protected var interaction: Interaction = null
 
@@ -73,7 +76,6 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     zInButton.addActionListener(_ => canvas.zoomIn())
     zOutButton.addActionListener(_ => canvas.zoomOut())
 
-    val choice = new JComboBox[String]
     choice.addItem("Plane")
     choice.addItem("Sphere")
     choice.setSelectedItem("Plane")
@@ -82,8 +84,8 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
       if (state == ItemEvent.SELECTED) {
         val item = e.getItem.toString
         item match {
-          case "Plane" => useSphere()
-          case "Sphere" => usePlane()
+          case "Plane" => usePlane()
+          case "Sphere" => useSphere()
         }
       }
     })
@@ -108,20 +110,11 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     })
 
     pack()
-  }//init
-
-
-  private def useSphere() = {
-    remove(sphere)
-    add("Center", plane)
-    canvas = plane
-    zInButton.setEnabled(true)
-    zOutButton.setEnabled(true)
-    validate()
-    canvas.repaint()
   }
 
-  private def usePlane() = {
+
+  protected def useSphere() = if(canvas!=sphere) {
+    println("use sphere")
     remove(plane)
     add("Center", sphere)
     canvas = sphere
@@ -129,6 +122,20 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     zOutButton.setEnabled(false)
     validate()
     canvas.repaint()
+
+    choice.setSelectedItem("Sphere")
+  }
+
+  protected def usePlane() = if(canvas!=plane) {
+    remove(sphere)
+    add("Center", plane)
+    canvas = plane
+    zInButton.setEnabled(true)
+    zOutButton.setEnabled(true)
+    validate()
+    canvas.repaint()
+
+    choice.setSelectedItem("Plane")
   }
 
   private[calculator] def add(c: Complex) = {}
@@ -180,6 +187,12 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
       val size = getSize
       p.putInt("width", size.width)
       p.putInt("height", size.height)
+
+      val c = canvas match {
+        case `plane` => "plane"
+        case `sphere` => "sphere"
+      }
+      p.put("canvas", c)
     }
     super.dispose()
   }
