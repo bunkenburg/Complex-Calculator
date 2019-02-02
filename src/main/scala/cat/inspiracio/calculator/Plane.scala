@@ -70,44 +70,6 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
   /** complex number at the bottom right of the plane */
   private var botright: Complex = 0
 
-  //XXX unit tests
-  //XXX unify with repeated method
-  private def raiseSmooth(d1: Double): Double = {
-    var d = d1
-    var i = 0
-
-    while ( d < 1 ) {
-      d = d * 10
-      i = i-1
-    }
-
-    while ( 10 <= d ) {
-      d = d / 10
-      i = i+1
-    }
-
-    if ( 5 < d )
-      d = 10
-    else if ( 2.5 < d )
-      d = 5
-    else if ( 2 < d )
-      d = 2.5
-    else if ( 1.0 < d )
-      d = 2
-
-    while ( i < 0 ) {
-      d = d / 10
-      i = i+1
-    }
-
-    while ( 0 < i ) {
-      d = d * 10
-      i = i-1
-    }
-
-    d
-  }
-
   //XXX return Point
   private def cartesian2Point(re: Double, im: Double, point: Point) = {
     point.x = ((re - Re(topleft)) * factor).toInt
@@ -193,7 +155,7 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     topleft = centre - pix2Math( width / 2) + pix2Math( height / 2)*i
     botright = centre + pix2Math( width / 2) - pix2Math( height / 2)*i
 
-    val d = raiseSmooth(pix2Math(markDistance))
+    val d = DoubleHelper.raiseSmooth(pix2Math(markDistance))
     val l = math2Pix(d)
     var d1 = 0.0
     var d2 = 0.0

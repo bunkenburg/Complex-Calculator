@@ -40,10 +40,9 @@ import java.util.prefs.Preferences
 import javax.swing._
 import cat.inspiracio.calculator.Direction._
 import cat.inspiracio.complex._
-import cat.inspiracio.geometry.Point2
+import cat.inspiracio.geometry.{DoubleHelper, Point2}
 import cat.inspiracio.parsing.Syntax
 import javax.swing.event.MouseInputAdapter
-
 import MoreGraphics.GraphicsExtended
 
 // Referenced classes of package bunkenba.calculator:
@@ -114,44 +113,6 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
     val width = p.getInt("width", 560)
     val height = p.getInt("height", 365)
     setSize(width,height)
-  }
-
-  //XXX unit tests
-  //XXX unify with method in Plane
-  private def raiseSmooth(d1: Double): Double = {
-    var d = d1
-    var i = 0
-
-    while ( d < 1 ) {
-      d = d * 10
-      i = i-1
-    }
-
-    while ( 10 <= d ) {
-      d = d / 10
-      i = i+1
-    }
-
-    if ( 5 < d )
-      d = 10
-    else if ( 2.5 < d )
-      d = 5
-    else if ( 2 < d )
-      d = 2.5
-    else if ( 1.0 < d )
-      d = 2
-
-    while ( i < 0 ) {
-      d = d / 10
-      i = i+1
-    }
-
-    while ( 0 < i ) {
-      d = d * 10
-      i = i-1
-    }
-
-    d
   }
 
   private def reset() = {
@@ -313,7 +274,7 @@ final class RefxWorld private[calculator](var calculator: Calculator) extends JF
       val point1 = new Point
       val point2 = new Point
 
-      val d = raiseSmooth(Pix2Math(AXISMARKING))
+      val d = DoubleHelper.raiseSmooth(Pix2Math(AXISMARKING))
       val l = Math2Pix(d)
       var d1 = 0.0D
       var d2 = 0.0D
