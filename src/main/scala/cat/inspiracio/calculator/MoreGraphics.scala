@@ -49,6 +49,11 @@ object MoreGraphics {
       g.drawLine(x + width, y - width, x - width, y + width)
     }
 
+    /** cross at (x,y) */
+    private[calculator] def drawCross(p: Point, width: Int): Unit = {
+      drawCross(p.x, p.y, width)
+    }
+
     /** circle at (x,y) radius */
     private[calculator] def drawCircle(x: Int, y: Int, radius: Double) = {
       val topleftx = (x.toDouble - radius).toInt

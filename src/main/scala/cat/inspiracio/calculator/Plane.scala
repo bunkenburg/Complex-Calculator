@@ -73,10 +73,9 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
 
   override private[calculator] def draw(g: Graphics, z: Complex) =
     if (finite(z)) {
-      val x = ((Re(z) - Re(topleft)) * factor).asInstanceOf[Int]
-      val y = -((Im(z) - Im(topleft)) * factor).asInstanceOf[Int]
-      g.drawCross(x, y, markLength)
-      g.drawString(z.toString, x+2, y+2 )
+      val p = complex2Point(z)
+      g.drawCross(p, markLength)
+      g.drawString(z.toString, p.x+2, p.y+2 )
   }
 
   /** XXX get rid of null-check */
