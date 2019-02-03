@@ -38,6 +38,7 @@ import java.awt.{Color, Dimension, Font, Graphics, Point}
 import cat.inspiracio.complex._
 import cat.inspiracio.calculator.Direction._
 import cat.inspiracio.geometry._
+import Point2._
 import MoreGraphics.GraphicsExtended
 
 final class Plane private[calculator](val world: World) extends WorldRepresentation(world) {
@@ -124,17 +125,10 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
 
   private def line(g: Graphics, a: Complex, b: Complex) = g.drawLine(complex2Point(a), complex2Point(b))
 
-  //XXX Merge with cartesian2Point(z: Complex): Point
-  private def complex2Point(c: Complex) = Point2(
-    ((Re(c) - Re(topleft)) * factor).toInt,
-    -((Im(c) - Im(topleft)) * factor).toInt
-  )
-
-  //XXX Merge with complex2Point(z: Complex): Point
-  private def cartesian2Point(re: Double, im: Double): Point = Point2(
-    ((re - Re(topleft)) * factor).toInt,
-    -((im - Im(topleft)) * factor).toInt
-  )
+  private def complex2Point(c: Complex): Point = {
+    val Cartesian(x,y) = (c - topleft) * factor
+    Point2(x.toInt, -y.toInt)
+  }
 
   override private[calculator] def point2Complex(point: Point): Complex = {
     val re = Re(topleft) + point.x.toDouble / factor
@@ -142,83 +136,98 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     Cartesian(re, im)
   }
 
+  /** Draws an axis tip at where pointing in direction, and maybe filled. */
+  private def tip(g: Graphics, where: Point2, direction: Direction, fill: Boolean)= {
+    val triangle = g.mkTriangle(where, direction, triangleSize)
+    g.drawPolygon(triangle)
+    if (fill)
+      g.fillPolygon(triangle)
+  }
+
   /** Called by swing to paint. */
   override def paint(g: Graphics): Unit = {
-
     val size: Dimension = getSize()
     val width = size.width
     val height = size.height
+    val halfWidthMath = pix2Math( width / 2)
+    val halfHeightMath = i*pix2Math( height / 2);
 
-    topleft = centre - pix2Math( width / 2) + pix2Math( height / 2)*i
-    botright = centre + pix2Math( width / 2) - pix2Math( height / 2)*i
+    topleft = centre - halfWidthMath + halfHeightMath
+    botright = centre + halfWidthMath - halfHeightMath
 
-    val d = DoubleHelper.raiseSmooth(pix2Math(markDistance))
-    val l = math2Pix(d)
-    var d1 = 0.0
-    var d2 = 0.0
-    var d3 = Re(topleft) + pix2Math(axisPadding)
-    val d4 = Re(botright) - pix2Math(axisPadding)
-    var d5 = Im(botright) + pix2Math(axisPadding)
-    val d6 = Im(topleft) - pix2Math(axisPadding)
+    val markDistanceMath = DoubleHelper.raiseSmooth(pix2Math(markDistance))
+    val markDistancePix = math2Pix(markDistanceMath)
 
-    if (d3 <= 0.0 && d4 >= 0.0) d1 = 0.0
-    else if (d3 > 0.0) d1 = d3
-    else if (d4 < 0.0) d1 = d4
-    if (d5 <= 0.0 && d6 >= 0.0) d2 = 0.0
-    else if (d5 > 0.0) d2 = d5
-    else if (d6 < 0.0) d2 = d6
+    val axisPaddingMath = pix2Math(axisPadding)
 
-    val point2 = cartesian2Point(d1, d2)
-    val point = cartesian2Point(d3, d2)
-    val point1 = cartesian2Point(d4, d2)
+    val axisLeftMath = Re(topleft) + axisPaddingMath
+    val axisRightMath = Re(botright) - axisPaddingMath
 
-    g.drawLine(point, point1, Color.lightGray)
-    var polygon = g.mkTriangle(point1, EAST, triangleSize)
-    g.drawPolygon(polygon)
+    val axisBottomMath = Im(botright) + axisPaddingMath
+    val axisTopMath = Im(topleft) - axisPaddingMath
 
-    if (Re(botright) <= w.MaxReal) g.fillPolygon(polygon)
-    polygon = g.mkTriangle(point, WEST, triangleSize)
-    g.drawPolygon(polygon)
+    val crossReal =
+      if ( 0.0 < axisLeftMath ) axisLeftMath
+      else if ( axisRightMath < 0.0 ) axisRightMath
+      else /*  axisLeft <= 0.0 && 0.0 <= axisRight */ 0.0
 
-    if (w.MinReal <= Re(topleft)) g.fillPolygon(polygon)
-    val j = point2.y
-    var d7 = Math.ceil(d3 / d)
-    d3 = d7 * d
-    var i0 = real2Pix(d3)
-    while ( d3 < d4 ) {
-      val a: Point2 = Point2(i0, j)
-      val b: Point2 = a + (0, markLength)
-      g.drawLine(a, b)
-      g.drawString(toString(d3), i0 + markLength, j + fontAscent)
-      i0 += l
-      d3 += d
-    }
-    val point3 = cartesian2Point(d1, d5)
-    val point4 = cartesian2Point(d1, d6)
-    g.drawLine(point3, point4, Color.lightGray)
-    polygon = g.mkTriangle(point4, NORTH, triangleSize)
-    g.drawPolygon(polygon)
+    val crossImg =
+      if ( 0.0 < axisBottomMath ) axisBottomMath
+      else if (axisTopMath < 0.0) axisTopMath
+      else /* axisBottom <= 0.0 && 0.0 <= axisTop */ 0.0
 
-    if (Im(topleft) <= w.MaxImaginary) g.fillPolygon(polygon)
-    polygon = g.mkTriangle(point3, SOUTH, triangleSize)
-    g.drawPolygon(polygon)
+    /** Point where axes cross. Often 0. */
+    val cross = complex2Point( i*crossImg + crossReal )
 
-    if (w.MinImaginary <= Im(botright)) g.fillPolygon(polygon)
-    i0 = point2.x
-    d7 = Math.ceil(d5 / d)
-    d5 = d7 * d
-    var k = imag2Pix(d5)
-    while ( d5 < d6 ) {
-      if (d5 != 0.0D || d1 != 0.0D) {
-        val s = toString(d5) + "i"
-        val a = Point2(i0, k)
-        val b = a + (-markLength, 0)
+    /** rounds towards zero and towards a mark */
+    def round(d: Double) = Math.ceil(d / markDistanceMath) * markDistanceMath
+
+    def horizontal() = {
+      val left = complex2Point(i*crossImg + axisLeftMath )
+      val right = complex2Point(i*crossImg + axisRightMath )
+      g.drawLine(left, right, Color.lightGray)
+      tip(g, right, EAST, Re(botright) <= w.MaxReal)
+      tip(g, left, WEST, w.MinReal <= Re(topleft))
+
+      //marks on horizontal axis
+      var mark = round(axisLeftMath)
+      while (mark < axisRightMath) {
+        //draw mark at a
+        val a: Point = Point2(real2Pix(mark), cross.y)
+        val b: Point = a + (0, markLength)
         g.drawLine(a, b)
-        g.drawString(s, i0 - markLength - g.getFontMetrics.stringWidth(s), k + fontAscent)
+        g.drawString(toString(mark), a.x + markLength, cross.y + fontAscent)
+
+        mark += markDistanceMath
       }
-      d5 += d
-      k -= l
     }
+
+    def vertical() = {
+      val bottom = complex2Point( i*axisBottomMath + crossReal)
+      val top = complex2Point( i*axisTopMath + crossReal )
+      g.drawLine(bottom, top, Color.lightGray)
+
+      tip(g, top, NORTH, Im(topleft) <= w.MaxImaginary)
+      tip(g, bottom, SOUTH, w.MinImaginary <= Im(botright))
+
+      //marks on vertical axis
+      var mark = round(axisBottomMath)
+      while (mark < axisTopMath) {
+        //draw mark at a
+        if (mark != 0.0 || crossReal != 0.0) {
+          val a: Point = Point2(cross.x, imag2Pix(mark))
+          val b = a + (-markLength, 0)
+          g.drawLine(a, b)
+          val s = toString(mark) + "i"
+          g.drawString(s, cross.x - markLength - g.getFontMetrics.stringWidth(s), a.y + fontAscent)
+        }
+
+        mark += markDistanceMath
+      }
+    }
+
+    horizontal()
+    vertical()
     w.draw(g)
   }
 
