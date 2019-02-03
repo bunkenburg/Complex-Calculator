@@ -230,7 +230,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
       f = parse(text.substring(5))
       mode match {
         case MODFZ => modfzW.functionChanged(f)
-        case REFX => refxW.functionChanged(f)
+        case REFX => refxW.functionChanged()
         case FZ => fzW.functionChanged()
         case _ =>
       }

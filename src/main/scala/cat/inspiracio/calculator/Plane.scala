@@ -38,10 +38,10 @@ import java.awt.{Color, Dimension, Font, Graphics, Point}
 import cat.inspiracio.complex._
 import cat.inspiracio.calculator.Direction._
 import cat.inspiracio.geometry._
-import Point2._
-import MoreGraphics.GraphicsExtended
 
 final class Plane private[calculator](val world: World) extends WorldRepresentation(world) {
+  import Point2._
+  import MoreGraphics.GraphicsExtended
 
   /** pixel-distance between tips of axes and window edge */
   private var axisPadding = 30
