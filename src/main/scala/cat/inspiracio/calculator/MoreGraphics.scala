@@ -63,6 +63,9 @@ object MoreGraphics {
       g.drawOval(topleftx, toplefty, width, height)
     }
 
+    /** circle at centre with radius */
+    private[calculator] def drawCircle(centre: Point, radius: Double): Unit = drawCircle(centre.x, centre.y, radius)
+
     /** line from a to b in colour */
     private[calculator] def drawLine(a: Point, b: Point, c: Color) = {
       val old = g.getColor

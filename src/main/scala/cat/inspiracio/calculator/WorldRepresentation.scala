@@ -73,4 +73,10 @@ abstract class WorldRepresentation protected(var w: World) extends JComponent {
 
   protected def toString(d: Double): String = double2Complex(d).toString
 
+  protected[calculator] def pairs[A](cs : List[A]): List[(A,A)] = cs match {
+    case Nil => Nil
+    case a::Nil => Nil
+    case a::b::cs => (a,b) :: pairs(b::cs)
+  }
+
 }

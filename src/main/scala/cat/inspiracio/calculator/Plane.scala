@@ -76,51 +76,39 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
       val p = complex2Point(z)
       g.drawCross(p, markLength)
       g.drawString(z.toString, p.x+2, p.y+2 )
-  }
+    }
 
-  /** XXX get rid of null-check */
   override private[calculator] def draw(g: Graphics, zs: List[Complex]) =
-    if (zs != null) {
-      val ps = pairs( zs map complex2Point )
-      ps.foreach{ case (a,b) => g.drawLine(a, b) }
-    }
+    if (zs != null)
+      pairs( zs map complex2Point ).foreach{ case (a,b) => g.drawLine(a, b) }
 
-  def pairs[A](cs : List[A]): List[(A,A)] = cs match {
-    case Nil => Nil
-    case a::Nil => Nil
-    case a::b::cs => (a,b) :: pairs(b::cs)
-  }
-
-  //XXX remove isInstanceOf
   override private[calculator] def draw(g: Graphics, piclet: Piclet) =
+    piclet match {
 
-    if (piclet.isInstanceOf[Line]) {
-      val line = piclet.asInstanceOf[Line]
-      g.drawLine(
-        complex2Point(line.a),
-        complex2Point(line.b)
-      )
+      case line: Line =>
+        g.drawLine(
+          complex2Point(line.a),
+          complex2Point(line.b)
+        )
+
+      case circle: Circle =>
+        val centre = complex2Point(circle.c)
+        val radius = math2Pix(circle.r)
+        g.drawCircle( centre, radius )
+
+      case rectangle: Rectangle =>
+        import rectangle._
+        line(g, botLeft, botRight)
+        line(g, botRight, topRight)
+        line(g, topRight, topLeft)
+        line(g, topLeft, botLeft)
+
+      case c: Curve =>
+        draw(g, c.getSamples)
+
+      case _ => //Curve
+        draw(g, piclet.getSamples)
     }
-
-    else if (piclet.isInstanceOf[Circle]) {
-      val circle = piclet.asInstanceOf[Circle]
-      val x = ((Re(circle.c) - Re(topleft)) * factor).asInstanceOf[Int]
-      val y = -((Im(circle.c) - Im(topleft)) * factor).asInstanceOf[Int]
-      val radius = math2Pix(circle.r)
-      g.drawCircle( x, y, radius )
-    }
-
-    else if (piclet.isInstanceOf[Rectangle]) {
-      val rectangle = piclet.asInstanceOf[Rectangle]
-      import rectangle._
-      line(g, botLeft, botRight)
-      line(g, botRight, topRight)
-      line(g, topRight, topLeft)
-      line(g, topLeft, botLeft)
-    }
-
-    else
-      draw(g, piclet.getSamples)
 
   private def line(g: Graphics, a: Complex, b: Complex) = g.drawLine(complex2Point(a), complex2Point(b))
 
@@ -129,18 +117,14 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     Point2(x.toInt, -y.toInt)
   }
 
-  override private[calculator] def point2Complex(point: Point): Complex = {
-    val re = Re(topleft) + point.x.toDouble / factor
-    val im = Im(topleft) - point.y.toDouble / factor
-    Cartesian(re, im)
-  }
+  override private[calculator] def point2Complex(point: Point): Complex =
+    topleft + Cartesian( point.x, - point.y ) / factor
 
   /** Draws an axis tip at where pointing in direction, and maybe filled. */
   private def tip(g: Graphics, where: Point2, direction: Direction, fill: Boolean)= {
     val triangle = g.mkTriangle(where, direction, triangleSize)
+    g.fillPolygon(triangle, if(fill)Color.RED else Color.WHITE)
     g.drawPolygon(triangle)
-    if (fill)
-      g.fillPolygon(triangle)
   }
 
   /** Called by swing to paint. */
