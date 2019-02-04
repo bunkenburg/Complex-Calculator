@@ -37,74 +37,44 @@ import java.awt.{Dimension, Font, Graphics, Point}
 
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.{Matrix44, Point2, Vector3}
-import MoreGraphics.GraphicsExtended
 
 // Referenced classes of package bunkenba.calculator:
 //            WorldRepresentation, DoubleBuffer, Drawing, Matrix44,
 //            Vector3, World
 
 final class Sphere private[calculator](val world: World) extends WorldRepresentation(world) {
+  import MoreGraphics.GraphicsExtended
 
   //State -------------------------------------------------------
 
-  private var MARKLENGTH = 2
+  private var markLength = 2
 
   private var R = Matrix44.unit
   private var R1 = Matrix44.unit
 
   private var xyscale: Double = 0
-  final private val marks = Array[Complex](0, ∞, 1, -1, i, -i )
 
   //Methods ------------------------------------------------------
 
   override private[calculator] def draw(g: Graphics, c: Complex) = {
-    var d = .0
-    var d1 = .0
-    var d2 = .0
-
-    if (finite(c)) {
-      val a = abs(c)
-      val d3 = sqr(a)
-      val d5 = 1.0D + d3
-      d = Re(c) / d5
-      d1 = d3 / d5 - 0.5D
-      d2 = Im(c) / d5
-    }
-    else {
-      d = 0.0D
-      d1 = 0.5D
-      d2 = 0.0D
-    }
-
-    val d4 = R(2,0) * d + R(2,1) * d1 + R(2,2) * d2 + R(2,3)
-    if (d4 <= 0.0D) {
-      val d6 = R(0,0) * d + R(0,1) * d1 + R(0,2) * d2 + R(0,3)
-      val d7 = R(1,0) * d + R(1,1) * d1 + R(1,2) * d2 + R(1,3)
-
-      val size: Dimension = getSize
-      val width = size.width
-      val height = size.height
-      val x = (d6 * xyscale + width.toDouble * 0.5).toInt
-      val y = (-d7 * xyscale + height.toDouble * 0.5).toInt
-      g.drawCross( x, y, MARKLENGTH )
-      g.drawString(c.toString, x+2, y+2 )
+    val (front, point) = isFrontC(c)
+    if ( front ) {
+      g.drawCross( point, markLength )
+      g.drawString(c.toString, point.x+2, point.y+2 )
     }
   }
 
-  override private[calculator] def draw(g: Graphics, list: List[Complex]) = {
-    val point = new Point
-    var pen: Point2 = null
-    if ( list != null && !list.isEmpty ) {
+  override private[calculator] def draw(g: Graphics, zs: List[Complex]) = {
+    if ( zs != null ) {
+      var previous: Point = null
+      var visible = false
 
-      var visible = isFrontC( list.head, point)
-      //drawing.moveTo(point.x, point.y)
-      pen = Point2(point.x, point.y)
-
-      list.foreach{ z =>
-        if (isFrontC( z, point )) {
+      zs.foreach{ z =>
+        val (front, point) = isFrontC(z)
+        if (front) {
           if (visible)
-            g.drawLine(pen, point);
-          pen = Point2(point.x, point.y)
+            g.drawLine(previous, point);
+          previous = Point2(point)
           visible = true
         }
         else
@@ -114,17 +84,14 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     }
   }
 
-  private def f3dC(v: Vector3): Complex = {
-    if (v.y == 0.5 )
-      ∞
-    else if (v.y == -0.5 )
-      0
-    else
-      Cartesian(v.x / (0.5 - v.y), v.z / (0.5 - v.y))
-  }
+  /** Maps 3d space to Complex */
+  private def f3dC(v: Vector3): Complex =
+    if (v.y == 0.5 ) ∞
+    else if (v.y == -0.5 ) 0
+    else Cartesian(v.x / (0.5 - v.y), v.z / (0.5 - v.y))
 
-  /** XXX Also sets point (very bad style) */
-  private def isFrontC(c: Complex, point: Point): Boolean = {
+  /** Maps complex to 3d space and returns whether it is visible on the front. */
+  private def isFrontC(c: Complex): (Boolean, Point) = {
     val (x, y, z) = fC3d(c)
 
     val d4 = R(2,0) * x + R(2,1) * y + R(2,2) * z + R(2,3)
@@ -134,34 +101,30 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
       val size: Dimension = getSize()
       val width = size.width
       val height = size.height
-      point.x = (d6 * xyscale + width.toDouble * 0.5).toInt
-      point.y = (-d7 * xyscale + height.toDouble * 0.5).toInt
-      true
+      val point = Point2(
+        (d6 * xyscale + width.toDouble * 0.5).toInt,
+        (-d7 * xyscale + height.toDouble * 0.5).toInt
+      )
+      (true, point)
     }
-    else false
+    else (false, null)
   }
 
+  /** Maps Complex to 3d space */
   private def fC3d(c: Complex): (Double, Double, Double) =
     if (finite(c)) {
-      val d3 = sqr(abs(c))
-      val d5 = 1.0 + d3
-      (
-        Re(c) / d5,
-        d3 / d5 - 0.5,
-        Im(c) / d5
-      )
+      val a = sqr(abs(c))
+      val d5 = 1.0 + a
+      ( Re(c) / d5, a / d5 - 0.5, Im(c) / d5 )
     }
     else (0.0, 0.5, 0.0)
 
   /** Called by swing */
   override def paint(g: Graphics): Unit = {
     val size: Dimension = getSize
-    xyscale = Math.min(size.width, size.height).toDouble * 0.80000000000000004D
+    xyscale = Math.min(size.width, size.height) * 0.8   //0.80000000000000004D
     g.drawCircle(size.width / 2, size.height / 2, 0.5 * xyscale)
-
-    for( m <- marks )
-      draw(g, m)
-
+    List[Complex](0, ∞, 1, -1, i, -i ).foreach{ draw(g, _) }
     w.draw(g)
   }
 
@@ -170,11 +133,11 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     val size: Dimension = getSize
     val width = size.width
     val height = size.height
-    val d = (p.x - width * 0.5) / xyscale
-    val d1 = (height * 0.5 - p.y) / xyscale
-    val d2 = 0.25D - d * d - d1 * d1
-    if (d2 >= 0.0D) {
-      val vector3 = R1 * (d, d1, -sqrt(d2) )
+    val x = (p.x - width * 0.5) / xyscale
+    val y = (height * 0.5 - p.y) / xyscale
+    val z = 0.25 - x * x - y * y
+    if ( 0 <= z ) {
+      val vector3 = R1 * (x, y, -sqrt(z) )
       f3dC(vector3)
     }
     else
@@ -190,19 +153,19 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
   override def setFont(font: Font): Unit = {
     super.setFont(font)
     val i = getFontMetrics(font).getAscent
-    MARKLENGTH = i / 5
+    markLength = i / 5
   }
 
   override private[calculator] def shift(p: Point) = {
     val size: Dimension = getSize()
     val width = size.width
     val height = size.height
-    val d = p.y * 2 * π / width
-    val d1 = p.x * 2 * π / height
-    R = R.preRot('x', -d)
-    R = R.preRot('y', -d1)
-    R1 = R1.postRot('x', d)
-    R1 = R1.postRot('y', d1)
+    val x = p.y * 2 * π / width
+    val y = p.x * 2 * π / height
+    R = R.preRot('x', -x)
+    R = R.preRot('y', -y)
+    R1 = R1.postRot('x', x)
+    R1 = R1.postRot('y', y)
     repaint()
   }
 

@@ -9,6 +9,7 @@ object Point2 {
   implicit def point2Point2(p: Point) = new Point2(p.x, p.y)
 
   def apply(x: Int, y: Int): Point2 = new Point2(x, y)
+  def apply(p: Point): Point2 = new Point2(p.x, p.y)
   def unapply(p: Point): Option[(Int, Int)] = Some(p.x, p.y)
 }
 class Point2(x: Int, y: Int) extends Point(x,y) {

@@ -1,5 +1,6 @@
 # TODO
 
+* Sphere: improve moving: keep same number under mouse
 * var only for variable instance variables
 * put on web page with installation instructions
 * better number formating: take into account precision

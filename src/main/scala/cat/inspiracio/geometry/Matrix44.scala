@@ -130,7 +130,7 @@ final class Matrix44 {
   /** Puts a rotation on axis by angle before this matrix. */
   def preRot(axis: Char, angle: Double): Matrix44 = {
 
-    var b = axis match {
+    val b = axis match {
       case 'x' => 1
       case 'y' => 2
       case 'z' => 0
