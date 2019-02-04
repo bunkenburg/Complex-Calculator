@@ -57,8 +57,7 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
   //Methods ------------------------------------------------------
 
   override private[calculator] def draw(g: Graphics, c: Complex) = {
-    val (front, point) = isFrontC(c)
-    if ( front ) {
+    isFrontC(c).foreach{ point =>
       g.drawCross( point, markLength )
       g.drawString(c.toString, point.x+2, point.y+2 )
     }
@@ -66,21 +65,16 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
 
   override private[calculator] def draw(g: Graphics, zs: List[Complex]) = {
     if ( zs != null ) {
-      var previous: Point = null
-      var visible = false
 
-      zs.foreach{ z =>
-        val (front, point) = isFrontC(z)
-        if (front) {
-          if (visible)
-            g.drawLine(previous, point);
-          previous = Point2(point)
-          visible = true
-        }
-        else
-          visible = false
+      def draw: List[Option[Point]] => Unit = {
+        case Nil => ()
+        case Some(a) :: Nil => ()
+        case None :: xs => draw(xs)
+        case Some(a) :: None :: xs => draw(xs)
+        case Some(a) :: Some(b) :: xs => { g.drawLine(a, b); draw(Some(b)::xs) }
       }
 
+      draw(zs map isFrontC)
     }
   }
 
@@ -91,7 +85,7 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     else Cartesian(v.x / (0.5 - v.y), v.z / (0.5 - v.y))
 
   /** Maps complex to 3d space and returns whether it is visible on the front. */
-  private def isFrontC(c: Complex): (Boolean, Point) = {
+  private def isFrontC(c: Complex): Option[Point] = {
     val (x, y, z) = fC3d(c)
 
     val d4 = R(2,0) * x + R(2,1) * y + R(2,2) * z + R(2,3)
@@ -105,9 +99,9 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
         (d6 * xyscale + width.toDouble * 0.5).toInt,
         (-d7 * xyscale + height.toDouble * 0.5).toInt
       )
-      (true, point)
+      Some(point)
     }
-    else (false, null)
+    else None
   }
 
   /** Maps Complex to 3d space */
@@ -122,7 +116,7 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
   /** Called by swing */
   override def paint(g: Graphics): Unit = {
     val size: Dimension = getSize
-    xyscale = Math.min(size.width, size.height) * 0.8   //0.80000000000000004D
+    xyscale = Math.min(size.width, size.height) * 0.8
     g.drawCircle(size.width / 2, size.height / 2, 0.5 * xyscale)
     List[Complex](0, ∞, 1, -1, i, -i ).foreach{ draw(g, _) }
     w.draw(g)

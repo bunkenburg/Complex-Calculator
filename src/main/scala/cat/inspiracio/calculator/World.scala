@@ -112,9 +112,7 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     pack()
   }
 
-
   protected def useSphere() = if(canvas!=sphere) {
-    println("use sphere")
     remove(plane)
     add("Center", sphere)
     canvas = sphere
@@ -122,7 +120,6 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     zOutButton.setEnabled(false)
     validate()
     canvas.repaint()
-
     choice.setSelectedItem("Sphere")
   }
 
@@ -134,7 +131,6 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     zOutButton.setEnabled(true)
     validate()
     canvas.repaint()
-
     choice.setSelectedItem("Plane")
   }
 

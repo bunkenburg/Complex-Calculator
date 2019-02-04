@@ -106,7 +106,7 @@ class RefxCanvas private[calculator](calculator: Calculator) extends JComponent 
     val points: List[Option[Point]] = (0 until getSize().width).toList map x2op
 
     def draw: List[Option[Point]] => Unit = {
-      case List() => ()
+      case Nil => ()
       case Some(a) :: Nil => ()
       case None :: xs => draw(xs)
       case Some(a) :: None :: xs => draw( xs )
