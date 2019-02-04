@@ -62,7 +62,7 @@ abstract class WorldRepresentation protected(var w: World) extends JComponent {
   private[calculator] def reset()
 
   /** shift calls repaint */
-  private[calculator] def shift(p: Point)
+  private[calculator] def shift(from: Point, to: Point)
 
   //There is zoom for plane but not for sphere.
   //zoom causes repaint.

@@ -74,7 +74,7 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
 
       private def drag(e: MouseEvent) = {
         val p = e.getPoint
-        canvas.shift(previous - p)
+        canvas.shift(previous, p)
         previous = p
       }
 

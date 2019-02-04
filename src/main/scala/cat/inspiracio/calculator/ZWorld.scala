@@ -192,7 +192,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
       private def drag(e: MouseEvent) = {
         val p = e.getPoint
-        canvas.shift(previous - p)
+        canvas.shift(previous, p)
         previous = p
       }
 

@@ -34,7 +34,14 @@
 package cat.inspiracio.geometry
 
 /** With exact equality for doubles.
-  * Maybe this class can be disappear. Use (Double, Double, Double) instead. */
+  *
+  * What is the use of this class when compared to (Double, Double, Double)?
+  * The names of the fields:
+  *
+  *   val v: Vector3 = ...
+  *   v.x + v.y + v.y
+  *
+  * */
 case class Vector3(val x: Double, val y: Double, val z: Double) {
 
   override def equals(other: Any): Boolean = other match {

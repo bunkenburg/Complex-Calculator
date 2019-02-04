@@ -44,6 +44,7 @@ import cat.inspiracio.geometry.{Matrix44, Point2, Vector3}
 
 final class Sphere private[calculator](val world: World) extends WorldRepresentation(world) {
   import MoreGraphics.GraphicsExtended
+  import Point2._
 
   //State -------------------------------------------------------
 
@@ -157,13 +158,17 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     markLength = i / 5
   }
 
-  override private[calculator] def shift(p: Point) = {
+  override private[calculator] def shift(from: Point, to: Point) = {
+    val p: Point = from - to  //XXX wrong!
     val size: Dimension = getSize()
     val width = size.width
     val height = size.height
 
     val x = p.y * 2 * π / width
     val y = p.x * 2 * π / height
+
+    //val x = 0 // π/2: 0 comes upward
+    //val y = π/2 // π/2: 1 comes forward
 
     R = R.preRot('x', -x)
     R = R.preRot('y', -y)
@@ -172,8 +177,8 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     R1 = R1.postRot('y', y)
 
     //They are multiplicative inverses.
-    println(R * R1)
-    println(R1 * R)
+    //println(R * R1)
+    //println(R1 * R)
 
     repaint()
   }

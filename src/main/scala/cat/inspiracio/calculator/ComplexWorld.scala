@@ -77,7 +77,7 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
       private def drag(e: MouseEvent) = interaction match {
         case MOVE =>
           val p = e.getPoint
-          canvas.shift(previous - p)
+          canvas.shift(previous, p)
           previous = p
         case _ =>
       }
