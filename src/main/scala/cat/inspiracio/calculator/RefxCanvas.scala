@@ -1,6 +1,6 @@
 package cat.inspiracio.calculator
 
-import java.awt._
+import java.awt.{Color,Dimension,Font,Graphics,Point,Polygon}
 import java.awt.event.MouseEvent
 
 import cat.inspiracio.calculator.Direction.{EAST, NORTH, SOUTH, WEST}
@@ -81,42 +81,39 @@ class RefxCanvas private[calculator](calculator: Calculator) extends JComponent 
 
   private def drawIt(g: Graphics) = {
     resetExtremes()
-    val dimension = getSize()
-    val height = dimension.height
-    val width = dimension.width
 
-    var drawing = false
-    var previous: Point = null
-
-    for( x <- 0 until width ){
+    /** Maps an pixel-x to a point if the curve should be drawn,
+      * or None. */
+    def x2op(x: Int): Option[Point] = {
       try {
         val z: Complex = pix2x(x)
-        val fz = f(z)
-        val refz = if (finite(fz)) Re(fz) else throw new Exception
-
-        updateExtremes(refz)
-
-        val y =
-          if (refz < bottom) height
-          else if (top < refz) -1
-          else ((top - refz) * factor).toInt
-
-        //(x, y)
-        if (drawing) {
-          val next: Point = Point2(x, y)
-          g.drawLine( previous, next )
-          previous = next
+        val fz = f(z) //maybe Exception
+        if(finite(fz)){
+          val refz = Re(fz)
+          updateExtremes(refz)  //small side-effect
+          if(bottom <= refz && refz <= top){
+            val y = ((top - refz) * factor).toInt
+            Some(Point2(x,y))
+          }
+          else None //point is outside window
         }
-        else {
-          previous = Point2(x, y)
-          drawing = true
-        }
+        else None //infinite
       } catch {
-        case _ex: Exception =>
-          drawing = false
+        case _ : Exception => None  //f(z) threw exception
       }
     }
 
+    val points: List[Option[Point]] = (0 until getSize().width).toList map x2op
+
+    def draw: List[Option[Point]] => Unit = {
+      case List() => ()
+      case Some(a) :: Nil => ()
+      case None :: xs => draw(xs)
+      case Some(a) :: None :: xs => draw( xs )
+      case Some(a) :: Some(b) :: xs => { g.drawLine(a, b); draw( Some(b) :: xs ) }
+    }
+
+    draw(points)
   }
 
   override def getPreferredSize: Dimension = getMinimumSize
@@ -209,7 +206,7 @@ class RefxCanvas private[calculator](calculator: Calculator) extends JComponent 
       var mark = round(axisBottomMath)
       while ( mark < axisTopMath ) {
         //draw mark at a
-        if ( axisBottomMath != 0.0 || crossX != 0.0 ) {
+        if ( mark != 0.0 || crossX != 0.0 ) {
           val s = toString(mark)
           val a: Point = Point2(cross.x, y2Pix(mark))
           val b = a + (-markLength, 0)
