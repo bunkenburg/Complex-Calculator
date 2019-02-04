@@ -64,8 +64,7 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
       override def mousePressed(e: MouseEvent): Unit = interaction match {
         case MOVE => previous = e.getPoint
         case DRAW =>
-          val z = canvas.point2Complex(e.getPoint)
-          if (z != null) {
+          canvas.point2Complex(e.getPoint).foreach{ z =>
             calculator.add(z)
             add(z)
           }

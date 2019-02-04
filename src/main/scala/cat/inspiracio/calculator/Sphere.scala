@@ -125,8 +125,7 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     w.draw(g) //tell the world to draw its stuff (numbers, pictlets, ...)
   }
 
-  /** Can return null. */
-  override private[calculator] def point2Complex(p: Point): Complex = {
+  override private[calculator] def point2Complex(p: Point): Option[Complex] = {
     val size: Dimension = getSize
     val width = size.width
     val height = size.height
@@ -139,10 +138,11 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     if ( 0 <= z ) {
       // from 3d view space to 3d Riemann space
       val v = R1 * (x, y, -sqrt(z) )
-      f3dC(v)
+      val c = f3dC(v)
+      Some(c)
     }
     else
-      null
+      None
   }
 
   override private[calculator] def reset() = {

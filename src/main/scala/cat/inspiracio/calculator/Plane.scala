@@ -117,8 +117,8 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     Point2(x.toInt, -y.toInt)
   }
 
-  override private[calculator] def point2Complex(point: Point): Complex =
-    topleft + Cartesian( point.x, - point.y ) / factor
+  override private[calculator] def point2Complex(point: Point): Option[Complex] =
+    Some(topleft + Cartesian( point.x, - point.y ) / factor)
 
   /** Draws an axis tip at where pointing in direction, and maybe filled. */
   private def tip(g: Graphics, where: Point2, direction: Direction, fill: Boolean)= {

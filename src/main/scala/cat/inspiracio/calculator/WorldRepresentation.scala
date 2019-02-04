@@ -57,8 +57,7 @@ abstract class WorldRepresentation protected(var w: World) extends JComponent {
   /** Initial size wide enough so that the interaction menu is visible. */
   override def getMinimumSize: Dimension = new Dimension(550, 300)
 
-  /** XXX can return null */
-  private[calculator] def point2Complex(p: Point): Complex
+  private[calculator] def point2Complex(p: Point): Option[Complex]
 
   private[calculator] def reset()
 

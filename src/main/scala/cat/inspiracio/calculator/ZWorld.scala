@@ -101,8 +101,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
       /** start dynamic mapping of a piclet */
       private def startCurrent(p: Point) = {
-        val z = canvas.point2Complex(p)
-        if (z != null) {
+        canvas.point2Complex(p).foreach{ z =>
           start = z
           end = z
           val current = interaction match {
@@ -125,8 +124,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
       /** continue dynamic mapping of a piclet */
       private def continueCurrent(p: Point) = {
-        val z = canvas.point2Complex(p)
-        if (z != null) {
+        canvas.point2Complex(p).foreach{ z =>
           end = z
           val current = interaction match {
             case GRID => Rectangle(start, end)
@@ -149,8 +147,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
       /** finish dynamic mapping of a piclet */
       private def finishCurrent(p: Point) =
         if (start != null) {
-          val z = canvas.point2Complex(p)
-          if (z != null){
+          canvas.point2Complex(p).foreach{ z =>
             end = z
             val current = interaction match {
               case GRID => Rectangle(start, end)
@@ -179,8 +176,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
         case MOVE => previous = e.getPoint
 
         case DRAW => {
-          val z = canvas.point2Complex(e.getPoint)
-          if (z != null) {
+          canvas.point2Complex(e.getPoint).foreach{ z =>
             Complex.resetArg()
             addNumberToCurve(z)
             canvas.repaint()
@@ -204,17 +200,20 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
         case MOVE => drag(e)
 
         case DRAW => {
-          val z = canvas.point2Complex(e.getPoint)
+          val maybe = canvas.point2Complex(e.getPoint)
           if (zs != null) {
-            if (z != null)
-              addNumberToCurve(z)
-            else {
-              piclets = Curve(zs) :: piclets
-              zs = null
-              fzW.stopDynamicMap()
+            maybe match {
+              case Some(z) =>
+                addNumberToCurve(z)
+              case None => {
+                piclets = Curve(zs) :: piclets
+                zs = null
+                fzW.stopDynamicMap()
+              }
             }
           }
-          else if (z != null) {
+          else if (maybe.isDefined) {
+            val Some(z) = maybe
             Complex.resetArg()
             addNumberToCurve(z)
           }
@@ -233,9 +232,9 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
         case DRAW => {
           if (zs != null) {
-            val z = canvas.point2Complex(e.getPoint)
-            if (z != null)
+            canvas.point2Complex(e.getPoint).foreach { z =>
               addNumberToCurve(z)
+            }
             piclets = Curve(zs) :: piclets
             zs = null   //mouse released => finish free line
             canvas.repaint()
