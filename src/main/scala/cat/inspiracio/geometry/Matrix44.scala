@@ -75,10 +75,8 @@ object Matrix44 {
 
   val unit: Matrix44 = {
     val m = new Matrix44()
-
     for( x <- 0 to 3; y <- 0 to 3 )
       m.data(x)(y) = if(x==y) 1 else 0
-
     m
   }
 
@@ -126,6 +124,27 @@ final class Matrix44 {
       data(1)(0) * x + data(1)(1) * y + data(1)(2) * z + data(1)(3),
       data(2)(0) * x + data(2)(1) * y + data(2)(2) * z + data(2)(3)
     )
+
+  def * ( v: (Double, Double, Double) ): (Double, Double, Double) = {
+    val (x, y, z) = v
+    (
+      data(0)(0) * x + data(0)(1) * y + data(0)(2) * z + data(0)(3),
+      data(1)(0) * x + data(1)(1) * y + data(1)(2) * z + data(1)(3),
+      data(2)(0) * x + data(2)(1) * y + data(2)(2) * z + data(2)(3)
+    )
+  }
+
+  def * (b: Matrix44): Matrix44 = {
+    val a = this
+    val m = new Matrix44()
+    for(i <- 0 to 3; j <- 0 to 3){
+      var sum = 0.0
+      for(k <- 0 to 3)
+        sum += a(i, k)*b(k,j)
+      m.data(i)(j) = sum
+    }
+    m
+  }
 
   /** Puts a rotation on axis by angle before this matrix. */
   def preRot(axis: Char, angle: Double): Matrix44 = {

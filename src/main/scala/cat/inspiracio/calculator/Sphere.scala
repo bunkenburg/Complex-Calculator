@@ -52,7 +52,7 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
   private var R = Matrix44.unit
   private var R1 = Matrix44.unit
 
-  private var xyscale: Double = 0
+  private var factor: Double = 0
 
   //Methods ------------------------------------------------------
 
@@ -63,9 +63,8 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     }
   }
 
-  override private[calculator] def draw(g: Graphics, zs: List[Complex]) = {
+  override private[calculator] def draw(g: Graphics, zs: List[Complex]) =
     if ( zs != null ) {
-
       def draw: List[Option[Point]] => Unit = {
         case Nil => ()
         case Some(a) :: Nil => ()
@@ -73,10 +72,8 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
         case Some(a) :: None :: xs => draw(xs)
         case Some(a) :: Some(b) :: xs => { g.drawLine(a, b); draw(Some(b)::xs) }
       }
-
       draw(zs map isFrontC)
     }
-  }
 
   /** Maps 3d space to Complex */
   private def f3dC(v: Vector3): Complex =
@@ -86,40 +83,46 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
 
   /** Maps complex to 3d space and returns whether it is visible on the front. */
   private def isFrontC(c: Complex): Option[Point] = {
-    val (x, y, z) = fC3d(c)
+    val (x, y, z) = R * fC3d(c)
+    // front means z <= 0
+    if ( z <= 0 )
+      Some(f2dPoint(x, y))
+    else
+      None
+  }
 
-    val d4 = R(2,0) * x + R(2,1) * y + R(2,2) * z + R(2,3)
-    if (d4 <= 0.0D) {
-      val d6 = R(0,0) * x + R(0,1) * y + R(0,2) * z + R(0,3)
-      val d7 = R(1,0) * x + R(1,1) * y + R(1,2) * z + R(1,3)
-      val size: Dimension = getSize()
-      val width = size.width
-      val height = size.height
-      val point = Point2(
-        (d6 * xyscale + width.toDouble * 0.5).toInt,
-        (-d7 * xyscale + height.toDouble * 0.5).toInt
-      )
-      Some(point)
-    }
-    else None
+  /** Maps (x, y), the first two coordinates of 3d view space, to pixel Point. */
+  private def f2dPoint(x: Double, y: Double): Point = {
+    val size: Dimension = getSize()
+    val width = size.width
+    val height = size.height
+    Point2(
+      (x * factor + width * 0.5).toInt,
+      (-y * factor + height * 0.5).toInt
+    )
   }
 
   /** Maps Complex to 3d space */
   private def fC3d(c: Complex): (Double, Double, Double) =
     if (finite(c)) {
-      val a = sqr(abs(c))
-      val d5 = 1.0 + a
-      ( Re(c) / d5, a / d5 - 0.5, Im(c) / d5 )
+      val Cartesian(re, im) = c
+      val a = sqr(re) + sqr(im) //sqr(abs(c))
+      val d = 1 + a
+      (
+        re/d,
+        a/d - 0.5,
+        im/d
+      )
     }
-    else (0.0, 0.5, 0.0)
+    else (0, 0.5, 0)
 
   /** Called by swing */
   override def paint(g: Graphics): Unit = {
     val size: Dimension = getSize
-    xyscale = Math.min(size.width, size.height) * 0.8
-    g.drawCircle(size.width / 2, size.height / 2, 0.5 * xyscale)
+    factor = Math.min(size.width, size.height) * 0.8
+    g.drawCircle(size.width / 2, size.height / 2, 0.5 * factor)
     List[Complex](0, ∞, 1, -1, i, -i ).foreach{ draw(g, _) }
-    w.draw(g)
+    w.draw(g) //tell the world to draw its stuff (numbers, pictlets, ...)
   }
 
   /** Can return null. */
@@ -127,12 +130,16 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     val size: Dimension = getSize
     val width = size.width
     val height = size.height
-    val x = (p.x - width * 0.5) / xyscale
-    val y = (height * 0.5 - p.y) / xyscale
-    val z = 0.25 - x * x - y * y
+
+    //inverse to f2dPoint
+    val x = (p.x - width * 0.5) / factor
+    val y = (height * 0.5 - p.y) / factor
+    val z = 0.25 - sqr(x) - sqr(y)
+
     if ( 0 <= z ) {
-      val vector3 = R1 * (x, y, -sqrt(z) )
-      f3dC(vector3)
+      // from 3d view space to 3d Riemann space
+      val v = R1 * (x, y, -sqrt(z) )
+      f3dC(v)
     }
     else
       null
@@ -154,12 +161,20 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     val size: Dimension = getSize()
     val width = size.width
     val height = size.height
+
     val x = p.y * 2 * π / width
     val y = p.x * 2 * π / height
+
     R = R.preRot('x', -x)
     R = R.preRot('y', -y)
+
     R1 = R1.postRot('x', x)
     R1 = R1.postRot('y', y)
+
+    //They are multiplicative inverses.
+    println(R * R1)
+    println(R1 * R)
+
     repaint()
   }
 

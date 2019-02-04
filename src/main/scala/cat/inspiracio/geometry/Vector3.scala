@@ -33,7 +33,8 @@
  * */
 package cat.inspiracio.geometry
 
-/** With exact equality for doubles. */
+/** With exact equality for doubles.
+  * Maybe this class can be disappear. Use (Double, Double, Double) instead. */
 case class Vector3(val x: Double, val y: Double, val z: Double) {
 
   override def equals(other: Any): Boolean = other match {
