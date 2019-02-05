@@ -30,15 +30,15 @@ package object complex {
 
   // beautiful constants -----------------------------------
 
-  val e = Math.E
+  val e = math.E
   val i = Imaginary(1)
-  val π = Math.PI
+  val π = math.Pi
 
   // functions ---------------------------------
 
   def finite(c: Complex): Boolean = ∞ != c
 
-  def abs(d: Double): Double = Math.abs(d)
+  def abs(d: Double): Double = math.abs(d)
 
   /** The modulus or absolute value of the number.
     * Only for finite numbers. */
@@ -58,10 +58,10 @@ package object complex {
     case ∞ => throw new ArithmeticException("Im(∞)")
   }
 
-  def sqrt(d: Double): Double = Math.sqrt(d)
+  def sqrt(d: Double): Double = math.sqrt(d)
   def sqr(d: Double): Double = d*d
 
-  /** Improves Math.sin for important values */
+  /** Improves math.sin for important values */
   def sin(a: Double): Double =
     if(a == -π) 0
     else if(a == -π/2) -1
@@ -69,7 +69,7 @@ package object complex {
     else if(a == π/2) 1
     else if(a == π) 0
     else if(a == 2*π) 0
-    else Math.sin(a)
+    else math.sin(a)
 
   val sin: Complex => Complex = {
     case ∞ => throw new ArithmeticException("sin ∞")
@@ -80,7 +80,9 @@ package object complex {
     }
   }
 
-  /** Improves Math.cos for important values */
+  def asin(d: Double): Double = math.asin(d)
+
+  /** Improves math.cos for important values */
   def cos(a: Double): Double =
     if(a == -π) -1
     else if(a == -π/2) 0
@@ -89,7 +91,7 @@ package object complex {
     else if(a == π) -1
     else if(a == 3*π/2) 0
     else if(a == 2*π) 1
-    else Math.cos(a)
+    else math.cos(a)
 
   val cos: Complex => Complex = {
     case ∞ => throw new ArithmeticException("cos ∞")
@@ -100,21 +102,25 @@ package object complex {
     }
   }
 
-  /** Improves Math.tan for important values */
+  def acos(d: Double): Double = math.acos(d)
+
+  /** Improves math.tan for important values */
   def tan(a: Double): Complex =
     if( a==0 ) 0
     else if(a == π/4) 1
     else if(a == π/2) ∞
     else if(a == 2*π) 0
-    else Math.tan(a)
+    else math.tan(a)
 
   val tan: Complex => Complex = {
     case Real(r) => tan(r)
     case z => sin(z) / cos (z)
   }
 
+  def atan(d: Double): Double = math.atan(d)
+
   def cot(a: Double): Complex = 1 / tan(a)
-  def acot(m: Double): Double = Math.atan(1/m)
+  def acot(m: Double): Double = math.atan(1/m)
 
   // hyperbolic functions -------------------
 
@@ -138,7 +144,7 @@ package object complex {
     case z => sinh(z) / cosh(z)
   }
 
-  def exp(d: Double): Double = Math.exp(d)
+  def exp(d: Double): Double = math.exp(d)
 
   val exp: Complex => Complex = {
     case ∞ => ∞
@@ -149,7 +155,7 @@ package object complex {
   val ln: Complex => Complex = {
     case ∞ => ∞
     case Real(0) => throw new ArithmeticException("ln 0")
-    case Polar(m,a) => Cartesian(Math.log(m), a)
+    case Polar(m,a) => Cartesian(math.log(m), a)
   }
 
   /** Complex conjugate: negates the imaginary part */

@@ -33,7 +33,7 @@
  * */
 package cat.inspiracio.geometry
 
-import Math._
+import math.{cos,sin}
 
 /** Makes fresh matrices. */
 object Matrix44 {

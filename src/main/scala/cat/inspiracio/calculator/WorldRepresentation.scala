@@ -78,4 +78,8 @@ abstract class WorldRepresentation protected(var w: World) extends JComponent {
     case a::Nil => Nil
     case a::b::cs => (a,b) :: pairs(b::cs)
   }
+
+  protected def width() = getSize().width
+  protected def height() = getSize().height
+
 }

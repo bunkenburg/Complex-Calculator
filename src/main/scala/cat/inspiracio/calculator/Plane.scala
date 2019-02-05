@@ -129,9 +129,6 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
 
   /** Called by swing to paint. */
   override def paint(g: Graphics): Unit = {
-    val size: Dimension = getSize()
-    val width = size.width
-    val height = size.height
     val halfWidthMath = pix2Math( width / 2)
     val halfHeightMath = i*pix2Math( height / 2);
 
@@ -235,8 +232,8 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
   }
 
   override private[calculator] def shift(from: Point, to: Point) = {
-    val p: Point = from - to //XXX wrong!
-    centre = centre + pix2Math(p.x) - i*pix2Math(p.y)
+    val p: Point = to - from
+    centre = centre - pix2Math(p.x) + i*pix2Math(p.y)
     repaint()
   }
 

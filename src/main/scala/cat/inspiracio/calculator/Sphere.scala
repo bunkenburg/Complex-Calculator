@@ -94,9 +94,6 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
 
   /** Maps (x, y), the first two coordinates of 3d view space, to pixel Point. */
   private def f2dPoint(x: Double, y: Double): Point = {
-    val size: Dimension = getSize()
-    val width = size.width
-    val height = size.height
     Point2(
       (x * factor + width * 0.5).toInt,
       (-y * factor + height * 0.5).toInt
@@ -119,18 +116,13 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
 
   /** Called by swing */
   override def paint(g: Graphics): Unit = {
-    val size: Dimension = getSize
-    factor = Math.min(size.width, size.height) * 0.8
-    g.drawCircle(size.width / 2, size.height / 2, 0.5 * factor)
+    factor = Math.min(width, height) * 0.8
+    g.drawCircle(width / 2, height / 2, 0.5 * factor)
     List[Complex](0, ∞, 1, -1, i, -i ).foreach{ draw(g, _) }
     w.draw(g) //tell the world to draw its stuff (numbers, pictlets, ...)
   }
 
   override private[calculator] def point2Complex(p: Point): Option[Complex] = {
-    val size: Dimension = getSize
-    val width = size.width
-    val height = size.height
-
     //inverse to f2dPoint
     val x = (p.x - width * 0.5) / factor
     val y = (height * 0.5 - p.y) / factor
@@ -158,27 +150,62 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     markLength = i / 5
   }
 
-  override private[calculator] def shift(from: Point, to: Point) = {
-    val p: Point = from - to  //XXX wrong!
-    val size: Dimension = getSize()
-    val width = size.width
-    val height = size.height
+  /** Taks two complex numbers on the sphere and returns the
+    * x-angle and the y-angle between them.
+    * The x-angle is the angle around the x-axis.
+    * Angles in radians. */
+  def angles(a: Complex, b: Complex): (Double, Double) = {
+    val Polar(_, angle) = a
+    val Polar(size, _) = b
+    val c = Polar(size, angle)
+
+    val a3 = Vector3(fC3d(a))
+    val b3 = Vector3(fC3d(b))
+    val c3 = Vector3(fC3d(c))
+
+    // radians
+    val x = asin(2 * (a3-c3).abs ) //0.toRadians //π
+    val y = asin(2 * (b3-a3).abs ) //10.toRadians
+    (x, y)
+  }
+
+  override private[calculator] def shift(ap: Point, ab: Point) = {
+    point2Complex(ap).foreach{ a =>
+      point2Complex(ab).foreach{ b =>
+        val (x,y) = angles(a,b)
+        rotate(x,y)
+      }
+    }
+
+    /*
+    val p: Point = to  - from
 
     val x = p.y * 2 * π / width
     val y = p.x * 2 * π / height
 
-    //val x = 0 // π/2: 0 comes upward
-    //val y = π/2 // π/2: 1 comes forward
+    //val x = π/4 // π/2: infinity comes forward, turns clockwise, seen from right
+    //val y = 0 // π/2: -1 comes forward, turns clockwise, seen from above
 
-    R = R.preRot('x', -x)
-    R = R.preRot('y', -y)
+    R = R.preRot('x', x)
+    R = R.preRot('y', y)
 
-    R1 = R1.postRot('x', x)
-    R1 = R1.postRot('y', y)
+    R1 = R1.postRot('x', -x)
+    R1 = R1.postRot('y', -y)
 
     //They are multiplicative inverses.
     //println(R * R1)
     //println(R1 * R)
+
+    repaint()
+    */
+  }
+
+  private def rotate(x: Double, y: Double) = {
+    R = R.preRot('x', x)
+    R = R.preRot('y', y)
+
+    R1 = R1.postRot('x', -x)
+    R1 = R1.postRot('y', -y)
 
     repaint()
   }

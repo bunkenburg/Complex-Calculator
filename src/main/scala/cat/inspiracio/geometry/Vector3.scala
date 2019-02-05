@@ -33,6 +33,8 @@
  * */
 package cat.inspiracio.geometry
 
+import cat.inspiracio.complex.{sqr, sqrt}
+
 /** With exact equality for doubles.
   *
   * What is the use of this class when compared to (Double, Double, Double)?
@@ -42,7 +44,16 @@ package cat.inspiracio.geometry
   *   v.x + v.y + v.y
   *
   * */
+object Vector3{
+
+  def apply(v: (Double,Double,Double)): Vector3 = Vector3(v._1,v._2,v._3)
+
+}
 case class Vector3(val x: Double, val y: Double, val z: Double) {
+
+  def -(v: Vector3) = Vector3(x - v.x, y - v.y, z - v.z)
+
+  def abs: Double = sqrt(sqr(x) + sqr(x) + sqr(z))
 
   override def equals(other: Any): Boolean = other match {
       case Vector3(vx, vy, vz) => x == vx && y == vy && z == vz
