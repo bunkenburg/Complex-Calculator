@@ -181,10 +181,18 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     (x, y)
   }
 
-  def corner(a: Complex, b: Complex) = {}
+  override private[calculator] def shift(from: Point, to: Point) = {
+    //val (x,y) = traditional(from, to)
 
-  override private[calculator] def shift(ap: Point, bp: Point) = {
-    val (x,y) = traditional(ap, bp)
+    //Guessed solution is much better.
+    //XXX Still wrong:
+    //XXX Restrict to sphere surface only
+    //XXX x-rotation and y-rotation not commutative.
+    val dy = (to.y-from.y)/factor
+    val dx = (to.x-from.x)/factor
+    val x = math.tan(dy) * 2.5 //slow: 2, fast: π
+    val y = math.tan(dx) * 2.5
+
     rotate(x,y)
   }
 
