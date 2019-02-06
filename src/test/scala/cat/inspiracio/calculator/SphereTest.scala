@@ -5,15 +5,23 @@ import org.scalatest.FunSuite
 
 class SphereTest  extends FunSuite {
 
-  val world: World = null
-  val sphere = new Sphere(world)
+  def angles(a: Complex, b: Complex) = {
+    val world: World = null
+    val sphere = new Sphere(world)
+    //sphere.rotate(0, π/2)
+    sphere.angles(a, b)
+  }
 
   test("angles(-i, 0)") {
     val a = -i
     val b = 0
-    val (x,y) = sphere.angles(a,b)
+    val (x,y) = angles(a,b)
     assert( x === π/2   +- 0.000001 ) //ok
-    assert( y === 0   +- 0.000001 )   //ko
+    assert( y === 0   +- 0.000001 )   //ok
+  }
+
+  test("shift 0"){
+
   }
 
 }

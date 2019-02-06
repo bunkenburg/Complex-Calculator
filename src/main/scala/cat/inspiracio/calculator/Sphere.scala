@@ -84,10 +84,11 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
 
   /** Maps complex to 3d space and returns whether it is visible on the front. */
   private def isFrontC(c: Complex): Option[Point] = {
-    val (x, y, z) = R * fC3d(c)
+    val v = fC3d(c)         // 3d space
+    val (x, y, z) = R * v   // to 3d view space
     // front means z <= 0
     if ( z <= 0 )
-      Some(f2dPoint(x, y))
+      Some(f2dPoint(x, y))  // to pixel space
     else
       None
   }
@@ -150,42 +151,127 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     markLength = i / 5
   }
 
-  /** Taks two complex numbers on the sphere and returns the
+  /** Takes two complex numbers on the sphere and returns the
     * x-angle and the y-angle between them.
     * The x-angle is the angle around the x-axis.
     * Angles in radians. */
   def angles(a: Complex, b: Complex): (Double, Double) = {
-    val Polar(_, angle) = a
-    val Polar(size, _) = b
-    val c = Polar(size, angle)
-
+    //to 3d space
     val a3 = Vector3(fC3d(a))
     val b3 = Vector3(fC3d(b))
-    val c3 = Vector3(fC3d(c))
+
+    //to 3d view space
+    val av3 = R * a3
+    val bv3 = R * b3
+
+    //make cv3
+    //Let's pretend this 3d view space is 3d space
+    val apretend = f3dC(av3)
+    val bpretend = f3dC(bv3)
+    val Polar(_, alpha) = apretend
+    val Polar(size, _) = bpretend
+    val cpretend = Polar(size, alpha)
+    val cv3 = Vector3(fC3d(cpretend))
 
     // radians
-    val x = asin(2 * (a3-c3).abs ) //0.toRadians //π
-    val y = asin(2 * (b3-a3).abs ) //10.toRadians
+    //XXX Still not good. Does not distinguish orientation.
+    //XXX Also, the values are not right.
+    val x = asin(2 * (av3-cv3).abs ) //0.toRadians //π
+    val y = asin(2 * (bv3-cv3).abs ) //10.toRadians
     (x, y)
   }
 
-  override private[calculator] def shift(ap: Point, ab: Point) = {
-    point2Complex(ap).foreach{ a =>
-      point2Complex(ab).foreach{ b =>
-        val (x,y) = angles(a,b)
-        rotate(x,y)
+  def corner(a: Complex, b: Complex) = {}
+
+  override private[calculator] def shift(ap: Point, bp: Point) = {
+    val (x,y) = traditional(ap, bp)
+    rotate(x,y)
+  }
+
+    /** Point to 3d view space */
+    def f3dViewSpace(p: Point): Option[Vector3] = {
+      //similar to point2Complex
+      val x = (p.x - width * 0.5) / factor
+      val y = (height * 0.5 - p.y) / factor
+      val z = 0.25 - sqr(x) - sqr(y)
+      if ( 0 <= z ) Some(Vector3(x, y, -sqrt(z) ))  //front?
+      else None
+    }
+
+  private def fourth(ap: Point, bp: Point) =
+    f3dViewSpace(ap).foreach{ av3 =>
+      f3dViewSpace(bp).foreach{ bv3 =>
+        val a: Complex = point2Complex(ap).get
+
+        assert( av3.abs === 0.5 +- 0.0001 )
+        assert( bv3.abs === 0.5 +- 0.0001 )
+
+        //convert to polar spherical coordinates
+        val (am, ax, ay) = av3.polar
+        val (bm, bx, by) = bv3.polar
+        assert( am === 0.5  +- 0.0001 )
+        assert( bm === 0.5  +- 0.0001 )
+
+        val deltax = bx - ax
+        val deltay = by - ay
+
+        rotate(deltax, deltay)
+
+        //test:
+        val a1: Complex = point2Complex(bp).get
+        assert( a === a1  +- 1 )
       }
     }
 
-    /*
-    val p: Point = to  - from
+  private def third(ap: Point, bp: Point) =
+    point2Complex(ap).foreach{ a =>
+      point2Complex(bp).foreach{ b =>
 
+        /* Third attempt:
+        The number that was at ap should be at bp,
+        only by rotate(x,y).
+
+        We want:
+        Choose (x,y) so that
+
+        rotate(x,y)
+        val ar: Complex = point2Complex(bp)
+        assert( a === ar )
+        * */
+
+        val saveR = R
+        val saveR1 = R1
+
+        var (xbest,ybest) = (0,0)
+        var delta = Double.PositiveInfinity
+        for( x <- -179 to 180; y <- -179 to 180){
+          //try (x,y)
+          rotate(x.toRadians, y.toRadians)
+          val ar: Complex = point2Complex(bp).get
+          val distance = abs(a - ar)
+          if(distance < delta){
+            xbest = x
+            ybest = y
+            delta = distance
+          }
+        }
+
+        R = saveR
+        R1 = saveR1
+        rotate(xbest.toRadians, ybest.toRadians)
+      }
+    }
+
+  def traditional(from: Point, to: Point) = {
+    val p: Point = to  - from
     val x = p.y * 2 * π / width
     val y = p.x * 2 * π / height
-
     //val x = π/4 // π/2: infinity comes forward, turns clockwise, seen from right
     //val y = 0 // π/2: -1 comes forward, turns clockwise, seen from above
+    (x,y)
+  }
 
+  private def rotate(x: Double, y: Double) = {
     R = R.preRot('x', x)
     R = R.preRot('y', y)
 
@@ -195,17 +281,6 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     //They are multiplicative inverses.
     //println(R * R1)
     //println(R1 * R)
-
-    repaint()
-    */
-  }
-
-  private def rotate(x: Double, y: Double) = {
-    R = R.preRot('x', x)
-    R = R.preRot('y', y)
-
-    R1 = R1.postRot('x', -x)
-    R1 = R1.postRot('y', -y)
 
     repaint()
   }

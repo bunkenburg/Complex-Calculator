@@ -125,6 +125,8 @@ final class Matrix44 {
       data(2)(0) * x + data(2)(1) * y + data(2)(2) * z + data(2)(3)
     )
 
+  def * ( v: Vector3 ): Vector3 = this * (v.x, v.y, v.z)
+
   def * ( v: (Double, Double, Double) ): (Double, Double, Double) = {
     val (x, y, z) = v
     (

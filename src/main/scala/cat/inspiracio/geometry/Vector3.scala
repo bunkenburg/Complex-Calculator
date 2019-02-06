@@ -50,10 +50,11 @@ object Vector3{
 
 }
 case class Vector3(val x: Double, val y: Double, val z: Double) {
+  import math.atan2
 
   def -(v: Vector3) = Vector3(x - v.x, y - v.y, z - v.z)
 
-  def abs: Double = sqrt(sqr(x) + sqr(x) + sqr(z))
+  def abs: Double = sqrt(sqr(x) + sqr(y) + sqr(z))
 
   override def equals(other: Any): Boolean = other match {
       case Vector3(vx, vy, vz) => x == vx && y == vy && z == vz
@@ -63,4 +64,20 @@ case class Vector3(val x: Double, val y: Double, val z: Double) {
   override def hashCode(): Int = (x, y, z).##
 
   override def toString: String = "(" + x + ", " + y + ", " + z + ")"
+
+  /** 3d polar coordinates.
+    * (m, ax, ay)
+    * m is the distance from (0,0,0).
+    * ax is the angle around the x-axis. 0 points forward. Positive: up, negative: down.
+    * ay is the angle around the y-axis. 0 points forward. Positive: right, negative: left.
+    * ay is like longitude of Earth.
+    * But ax is not like latitude of Earth.
+    * */
+  def polar: (Double, Double, Double) = {
+    val m = abs
+    val ax = atan2(y, -z)
+    val ay = atan2(x, -z)
+    (m, ax, ay)
+  }
+
 }
