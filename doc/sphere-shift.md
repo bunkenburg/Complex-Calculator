@@ -8,8 +8,14 @@ So in fact, the traditional code is wrong in that I arbitrarily do x first.
 Experiment: only x rotation or only y rotation.
 Observations:
 1. only turns in expected direction
-2. when mouse returns to original point, sphere returns to orginial position
+2. when mouse returns to original point, sphere returns to original position
 
+Idea: do only one rotation!
+
+1. find angle between points (a,b): val theta = Vector3.angle(a,b)
+2. rotate so that rotation axis coincides with one of the axis
+3. rotate around that axis
+4. undo 2.
 
 
 # Fifth attempt

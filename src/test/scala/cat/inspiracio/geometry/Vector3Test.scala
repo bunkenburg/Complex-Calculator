@@ -1,71 +1,39 @@
 package cat.inspiracio.geometry
 
+import cat.inspiracio.complex.π
 import org.scalatest.FunSuite
-import cat.inspiracio.complex._
 
 class Vector3Test extends FunSuite {
+  import Vector3._
 
-  // centre
-  test("polar(0, 0, 0)"){
-    val v = Vector3(0,0,0)
-    val (m, ax, ay) = v.polar
-    assert( m === 0)
-    assert( ax === π )  //don't care
-    assert( ay === π )  //don't care
+  // Laws:
+  // a dot b === a.abs * b.abs * cos(angle)
+  // abs(a) === sqrt(a dot a)
+  // cos(angle) ===  (a dot b) / ( abs(a)*abs(b) )
+
+  // Laws:
+  // a cross b is perpendicular to a and b
+  // a cross b === 0 if a==0 or b==b or same direction or opposed
+
+  test("angle(inf, inf)"){
+    val a: Vector3 = Vector3(0, 0.5, 0)
+    val b: Vector3 = Vector3(0, 0.5, 0)
+    val an = angle(a,b)
+    assert( an === 0 )
   }
 
-  // 1
-  test("polar(0.5, 0, 0)"){
-    val v = Vector3(0.5, 0, 0)
-    val (m, ax, ay) = v.polar
-    assert( m === 0.5 )
-    assert( ax === π )  //don't care
-    assert( ay === π/2 )  // right: positive
+  test("angle(inf, 1)"){
+    val a: Vector3 = Vector3(0, 0.5, 0)
+    val b: Vector3 = Vector3(0.5, 0, 0)
+    val an = angle(a,b)
+    assert( an === π/2 )
   }
 
-  // -i
-  test("polar(0, 0, -0.5)"){
-    val v = Vector3(0, 0, -0.5)
-    val (m, ax, ay) = v.polar
-    assert( m === 0.5 )
-    assert( ax === 0 )
-    assert( ay === 0 )
-  }
-
-  // -1
-  test("polar(-0.5, 0, 0)"){
-    val v = Vector3(-0.5, 0, 0)
-    val (m, ax, ay) = v.polar
-    assert( m === 0.5 )
-    assert( ax === π )  //don't care
-    assert( ay === -π/2 ) // left: negative
-  }
-
-  // i
-  test("polar(0, 0, 0.5)"){
-    val v = Vector3(0, 0, 0.5)
-    val (m, ax, ay) = v.polar
-    assert( m === 0.5 )
-    assert( ax === π )  //or -π
-    assert( ay === π )  //or -π
-  }
-
-  // ∞
-  test("polar(0, 0.5, 0)"){
-    val v = Vector3(0, 0.5, 0)
-    val (m, ax, ay) = v.polar
-    assert( m === 0.5 )
-    assert( ax === π/2 )  //up: positive
-    assert( ay === π )  //don't care
-  }
-
-  // 0
-  test("polar(0, -0.5, 0)"){
-    val v = Vector3(0, -0.5, 0)
-    val (m, ax, ay) = v.polar
-    assert( m === 0.5 )
-    assert( ax === -π/2 ) //down: negative
-    assert( ay === π )    //don't care
+  test("angle(inf, 0)"){
+    val a: Vector3 = Vector3(0, 0.5, 0)
+    val b: Vector3 = Vector3(0, -0.5, 0)
+    val an = angle(a,b)
+    assert( an === π )
   }
 
 }

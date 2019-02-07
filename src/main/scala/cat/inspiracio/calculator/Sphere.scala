@@ -206,31 +206,6 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
       else None
     }
 
-  private def fourth(ap: Point, bp: Point) =
-    f3dViewSpace(ap).foreach{ av3 =>
-      f3dViewSpace(bp).foreach{ bv3 =>
-        val a: Complex = point2Complex(ap).get
-
-        assert( av3.abs === 0.5 +- 0.0001 )
-        assert( bv3.abs === 0.5 +- 0.0001 )
-
-        //convert to polar spherical coordinates
-        val (am, ax, ay) = av3.polar
-        val (bm, bx, by) = bv3.polar
-        assert( am === 0.5  +- 0.0001 )
-        assert( bm === 0.5  +- 0.0001 )
-
-        val deltax = bx - ax
-        val deltay = by - ay
-
-        rotate(deltax, deltay)
-
-        //test:
-        val a1: Complex = point2Complex(bp).get
-        assert( a === a1  +- 1 )
-      }
-    }
-
   private def third(ap: Point, bp: Point) =
     point2Complex(ap).foreach{ a =>
       point2Complex(bp).foreach{ b =>

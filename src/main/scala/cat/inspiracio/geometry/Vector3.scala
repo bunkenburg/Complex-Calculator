@@ -35,7 +35,9 @@ package cat.inspiracio.geometry
 
 import cat.inspiracio.complex.{sqr, sqrt}
 
-/** With exact equality for doubles.
+/** Immutable 3d vectors.
+  *
+  * With exact equality for doubles.
   *
   * What is the use of this class when compared to (Double, Double, Double)?
   * The names of the fields:
@@ -45,14 +47,40 @@ import cat.inspiracio.complex.{sqr, sqrt}
   *
   * */
 object Vector3{
+  import math.acos
 
   def apply(v: (Double,Double,Double)): Vector3 = Vector3(v._1,v._2,v._3)
+
+  /** The angle between the two vectors.
+    * cos(angle) ===  (a dot b) / ( abs(a)*abs(b) )
+    * */
+  def angle(a: Vector3, b: Vector3): Double = {
+    val d = a dot b
+    val divisor = a.abs * b.abs
+    if(divisor == 0)
+      ???
+    else
+      acos( d / divisor )
+  }
 
 }
 case class Vector3(val x: Double, val y: Double, val z: Double) {
   import math.atan2
 
-  def -(v: Vector3) = Vector3(x - v.x, y - v.y, z - v.z)
+  def - (v: Vector3) = Vector3(x - v.x, y - v.y, z - v.z)
+
+  /** https://en.wikipedia.org/wiki/Dot_product */
+  def dot (v: Vector3): Double = x*v.x + y*v.y + z*v.z
+
+  /** https://en.wikipedia.org/wiki/Cross_product */
+  def cross (c: Vector3): Vector3 = {
+    val b = this
+    Vector3(
+      b.y*c.z - b.z*c.y,
+      b.z*c.x - b.x*c.z,
+      b.x*c.y - b.y*c.x
+    )
+  }
 
   def abs: Double = sqrt(sqr(x) + sqr(y) + sqr(z))
 
@@ -64,20 +92,5 @@ case class Vector3(val x: Double, val y: Double, val z: Double) {
   override def hashCode(): Int = (x, y, z).##
 
   override def toString: String = "(" + x + ", " + y + ", " + z + ")"
-
-  /** 3d polar coordinates.
-    * (m, ax, ay)
-    * m is the distance from (0,0,0).
-    * ax is the angle around the x-axis. 0 points forward. Positive: up, negative: down.
-    * ay is the angle around the y-axis. 0 points forward. Positive: right, negative: left.
-    * ay is like longitude of Earth.
-    * But ax is not like latitude of Earth.
-    * */
-  def polar: (Double, Double, Double) = {
-    val m = abs
-    val ax = atan2(y, -z)
-    val ay = atan2(x, -z)
-    (m, ax, ay)
-  }
 
 }
