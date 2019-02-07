@@ -33,10 +33,9 @@
  * */
 package cat.inspiracio.geometry
 
-import math.{cos,sin}
-
 /** Makes matrices. */
 object Matrix44 {
+  import math.{cos,sin,sqrt}
 
   def translate(v: Vector3): Matrix44 = translate(v.x, v.y, v.z)
 
@@ -48,7 +47,7 @@ object Matrix44 {
     m
   }
 
-  def rotateX(a: Double): Matrix44 = {
+  def Rx(a: Double): Matrix44 = {
     val m = unit.clone()
     m(1,1) = cos(a)
     m(1,2) = sin(a)
@@ -57,7 +56,7 @@ object Matrix44 {
     m
   }
 
-  def rotateY(a: Double): Matrix44 = {
+  def Ry(a: Double): Matrix44 = {
     val m = unit.clone()
     m(0,0) = cos(a)
     m(0,2) = -sin(a)
@@ -66,12 +65,41 @@ object Matrix44 {
     m
   }
 
-  def rotateZ(a: Double): Matrix44 = {
+  def Rz(a: Double): Matrix44 = {
     val m = unit.clone()
     m(0,0) = cos(a)
     m(0,1) = sin(a)
     m(1,0) = -sin(a)
     m(1,1) = cos(a)
+    m
+  }
+
+  /** The matrix to rotate a vector about the z-axis to the xz-plane.
+    * https://sites.google.com/site/glennmurray/Home/rotation-matrices-and-formulas/rotation-about-an-arbitrary-axis-in-3-dimensions */
+  def Txz(r: Vector3): Matrix44 = {
+    val Vector3(u,v,w) = r
+    require( u != 0 || v != 0)
+    val m = unit.clone()
+    val divisor = sqrt(sqr(u)+sqr(v))
+    m(0,0) = u/divisor
+    m(0,1) = -v/divisor
+    m(1,0) = v/divisor
+    m(1,1) = u/divisor
+    m
+  }
+
+  /** The matrix to rotate the vector in the xz-plane to the z-axis.
+    * https://sites.google.com/site/glennmurray/Home/rotation-matrices-and-formulas/rotation-about-an-arbitrary-axis-in-3-dimensions */
+  def Tz(r: Vector3): Matrix44 = {
+    val Vector3(u,v,w) = r
+    require( u != 0 || v != 0)
+    val m = unit.clone()
+    val uv = sqrt(sqr(u) + sqr(v))
+    val uvw = sqrt(sqr(u) + sqr(v) + sqr(w))
+    m(0,0) = w / uvw
+    m(0,2) = uv / uvw
+    m(2,0) = -uv / uvw
+    m(2,2) = w / uvw
     m
   }
 
@@ -90,6 +118,15 @@ object Matrix44 {
     )
   )
 
+  def unapply(m: Matrix44): Option[(Double, Double, Double, Double,
+    Double, Double, Double, Double,
+    Double, Double, Double, Double,
+    Double, Double, Double, Double)] = Some((
+    m(0,0), m(0,1), m(0,2), m(0,3),
+    m(1,0), m(1,1), m(1,2), m(1,3),
+    m(2,0), m(2,1), m(2,2), m(2,3),
+    m(3,0), m(3,1), m(3,2), m(3,3)))
+
   val zero: Matrix44 = new Matrix44()
 
   val unit: Matrix44 = {
@@ -99,11 +136,15 @@ object Matrix44 {
     m
   }
 
+  // helpers --------------------------------------------
+
+  def sqr(d: Double): Double = d*d
 }
 
 /** 4*4 matrices for 3d graphical transformations.
   * These matrices are immutable. */
 final class Matrix44 {
+  import math.{cos,sin}
 
   private var data = Array(
     new Array[Double](4),
@@ -217,6 +258,24 @@ final class Matrix44 {
     }
 
     r
+  }
+
+  /** https://en.wikipedia.org/wiki/Determinant */
+  def det: Double = {
+
+    /** determinant of a 3x3 matrix */
+    def det(a: Double, b: Double, c: Double,
+            d: Double, e: Double, f: Double,
+            g: Double, h: Double, i: Double): Double = a*e*i + b*f*g + c*d*h - c*e*g - b*d*i - a*f*h
+
+    val Matrix44(
+      a, b, c, d,
+      e, f, g, h,
+      i, j, k, l,
+      m, n, o, p
+    ) = this
+
+    a * det(f, g, h, j, k, l, n, o, p) - b * det(e, g, h, i, k, l, m, o, p) + c * det(e, f, h, i, j, l, m, n, p) - d * det(e, f, g, i, j, k, m, n, o)
   }
 
   override def toString: String = "\n" +

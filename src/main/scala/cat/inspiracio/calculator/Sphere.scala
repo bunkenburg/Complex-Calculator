@@ -187,6 +187,16 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
         val theta = Vector3.angle(a,b)
         val axis = a cross b
         println(s"a=$a b=$b theta=$theta axis=$axis")
+        val Vector3(u,v,w) = axis
+        if(u==0 && v==0){
+          //special case: axis is already z-axis
+          //R1 = R1 * Rz(theta)
+          //R
+        }
+        else{
+          //R1 = R1 * Txz1(axis) * Tz1(axis) * Rz(theta) * Tz * Tzx(axis)
+          //R
+        }
       }
     }
   }

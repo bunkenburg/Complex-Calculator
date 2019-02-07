@@ -14,9 +14,10 @@ Idea: do only one rotation!
 
 1. find angle between points (a,b): val theta = Vector3.angle(a,b)
 2. find rotation axis: val axis = a cross b
-3. rotate so that rotation axis coincides with one of the axis
+3. Rotate space about the z axis so that the rotation axis lies in the xz plane. 
+4. Rotate space about the y axis so that the rotation axis lies along the z axis. 3. rotate so that rotation axis coincides with one of the axis
 5. rotate around that axis
-6. undo 3.
+6. undo 3 and 4
 
 
 # Fifth attempt

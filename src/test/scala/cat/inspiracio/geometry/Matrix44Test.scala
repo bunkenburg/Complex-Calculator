@@ -62,7 +62,7 @@ class Matrix44Test extends FunSuite {
   // rotation -------------------------------------------------------
 
   test("rotateX(0)"){
-    val m = Matrix44.rotateX(0)
+    val m = Matrix44.Rx(0)
     val result = Matrix44(
       1, 0, 0, 0,
       0, 1, 0, 0,
@@ -73,7 +73,7 @@ class Matrix44Test extends FunSuite {
   }
 
   test("rotateX(1.2)"){
-    val m = Matrix44.rotateX(1.2)
+    val m = Matrix44.Rx(1.2)
     val result = Matrix44(
       1, 0, 0, 0,
       0, 0.3623577544766736, 0.9320390859672263, 0,
@@ -84,7 +84,7 @@ class Matrix44Test extends FunSuite {
   }
 
   test("rotateY(0)"){
-    val m = Matrix44.rotateY(0)
+    val m = Matrix44.Ry(0)
     val result = Matrix44(
       1, 0, 0, 0,
       0, 1, 0, 0,
@@ -95,7 +95,7 @@ class Matrix44Test extends FunSuite {
   }
 
   test("rotateY(1.2)"){
-    val m = Matrix44.rotateY(1.2)
+    val m = Matrix44.Ry(1.2)
     val result = Matrix44(
       0.3623577544766736, 0, -0.9320390859672263, 0,
       0, 1, 0, 0,
@@ -106,7 +106,7 @@ class Matrix44Test extends FunSuite {
   }
 
   test("rotateZ(0)"){
-    val m = Matrix44.rotateZ(0)
+    val m = Matrix44.Rz(0)
     val result = Matrix44(
       1, 0, 0, 0,
       0, 1, 0, 0,
@@ -117,7 +117,7 @@ class Matrix44Test extends FunSuite {
   }
 
   test("rotateZ(1.2)"){
-    val m = Matrix44.rotateZ(1.2)
+    val m = Matrix44.Rz(1.2)
     val result = Matrix44(
       0.3623577544766736, 0.9320390859672263, 0, 0,
       -0.9320390859672263, 0.3623577544766736, 0, 0,
@@ -161,6 +161,29 @@ class Matrix44Test extends FunSuite {
       0, 0, 0, 0
     )
     assert( rotated === result )
+  }
+
+  test("det unit"){
+    val m = Matrix44.unit
+    val d = m.det
+    assert( d === 1 )
+  }
+
+  test("det zero"){
+    val m = Matrix44.zero
+    val d = m.det
+    assert( d === 0 )
+  }
+
+  test("det random"){
+    val m = Matrix44(
+      1, 0, 2.3, -1.82,
+      54.874, 0.7880107544762174, 0.6156614742127549, 0,
+      0, -0.6156614742127549, 0.7880107544762174, 0,
+      -0.11, 63.542, 0.853, 5
+    )
+    val d = m.det
+    assert( d === -5436.864652707013 )
   }
 
 }
