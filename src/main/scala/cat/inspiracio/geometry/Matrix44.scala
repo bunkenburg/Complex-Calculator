@@ -35,24 +35,43 @@ package cat.inspiracio.geometry
 
 import math.{cos,sin}
 
-/** Makes fresh matrices. */
+/** Makes matrices. */
 object Matrix44 {
 
-  /** Makes a new matrix for translation by this vector. */
-  def translation(v: Vector3): Matrix44 = translation(v.x, v.y, v.z)
+  def translate(v: Vector3): Matrix44 = translate(v.x, v.y, v.z)
 
-  /** Makes a new matrix for translation by this vector. */
-  def translation(x: Double, y: Double, z: Double): Matrix44 = {
-    val m = new Matrix44
-
-    //unit matrix
-    for ( i <- 0 to 2 )
-      m.data(i)(i) = 1
-
+  def translate(x: Double, y: Double, z: Double): Matrix44 = {
+    val m = unit.clone()
     m.data(0)(3) = -x
     m.data(1)(3) = -y
     m.data(2)(3) = -z
+    m
+  }
 
+  def rotateX(a: Double): Matrix44 = {
+    val m = unit.clone()
+    m(1,1) = cos(a)
+    m(1,2) = sin(a)
+    m(2,1) = -sin(a)
+    m(2,2) = cos(a)
+    m
+  }
+
+  def rotateY(a: Double): Matrix44 = {
+    val m = unit.clone()
+    m(0,0) = cos(a)
+    m(0,2) = -sin(a)
+    m(2,0) = sin(a)
+    m(2,2) = cos(a)
+    m
+  }
+
+  def rotateZ(a: Double): Matrix44 = {
+    val m = unit.clone()
+    m(0,0) = cos(a)
+    m(0,1) = sin(a)
+    m(1,0) = -sin(a)
+    m(1,1) = cos(a)
     m
   }
 
@@ -75,13 +94,15 @@ object Matrix44 {
 
   val unit: Matrix44 = {
     val m = new Matrix44()
-    for( x <- 0 to 3; y <- 0 to 3 )
-      m.data(x)(y) = if(x==y) 1 else 0
+    for( i <- 0 to 3 )
+      m(i,i) = 1
     m
   }
 
 }
 
+/** 4*4 matrices for 3d graphical transformations.
+  * These matrices are immutable. */
 final class Matrix44 {
 
   private var data = Array(
@@ -94,15 +115,22 @@ final class Matrix44 {
   /** look up a value in the matrix */
   def apply(x: Int, y: Int): Double = data(x)(y)
 
-  def this(ad: Array[Array[Double]]) {
+  /** This makes matrices mutable.
+    * Therefore it is private to Matrix44.
+    * From the outside, matrices are immutable and inside, we have top be careful. */
+  private def update(x: Int, y: Int, v: Double) = data(x)(y) = v
+
+  /** Keeps the array. If client still changes array, this makes matrices mutable. */
+  private def this(ad: Array[Array[Double]]) {
     this()
     data = ad
   }
 
+  /** Since matrices are immutable, a client programmer should never need this. */
   override def clone(): Matrix44 = {
     val m = new Matrix44()
     for( x <- 0 to 3; y <- 0 to 3 )
-      m.data(x)(y) = data(x)(y)
+      m(x,y) = this(x,y)
     m
   }
 
@@ -111,12 +139,14 @@ final class Matrix44 {
     case null => false
     case m: Matrix44 => {
       var b = true
-      for (i <- 0 to 3; j <- 0 to 3)
-        b = b && (data(i)(j) == m.data(i)(j))
+      for (x <- 0 to 3; y <- 0 to 3)
+        b = b && ( this(x,y) == m(x,y) )
       b
     }
     case _ => false
   }
+
+  override def hashCode(): Int = data.##
 
   def * (x: Double, y: Double, z: Double): Vector3 =
     Vector3(
@@ -127,23 +157,16 @@ final class Matrix44 {
 
   def * ( v: Vector3 ): Vector3 = this * (v.x, v.y, v.z)
 
-  def * ( v: (Double, Double, Double) ): (Double, Double, Double) = {
-    val (x, y, z) = v
-    (
-      data(0)(0) * x + data(0)(1) * y + data(0)(2) * z + data(0)(3),
-      data(1)(0) * x + data(1)(1) * y + data(1)(2) * z + data(1)(3),
-      data(2)(0) * x + data(2)(1) * y + data(2)(2) * z + data(2)(3)
-    )
-  }
+  def * ( v: (Double, Double, Double) ): Vector3 = this * (v._1, v._2, v._3)
 
   def * (b: Matrix44): Matrix44 = {
     val a = this
     val m = new Matrix44()
-    for(i <- 0 to 3; j <- 0 to 3){
+    for(x <- 0 to 3; y <- 0 to 3){
       var sum = 0.0
       for(k <- 0 to 3)
-        sum += a(i, k)*b(k,j)
-      m.data(i)(j) = sum
+        sum += a(x, k)*b(k,y)
+      m(x,y) = sum
     }
     m
   }
@@ -197,9 +220,9 @@ final class Matrix44 {
   }
 
   override def toString: String = "\n" +
-    "[" + data(0)(0) + ", " + data(0)(1) + ", " + data(0)(2) + ", " + data(0)(3) + ";\n" +
-    data(1)(0) + ", " + data(1)(1) + ", " + data(1)(2) + ", " + data(1)(3) + ";\n" +
-    data(2)(0) + ", " + data(2)(1) + ", " + data(2)(2) + ", " + data(2)(3) + ";\n" +
-    data(3)(0) + ", " + data(3)(1) + ", " + data(3)(2) + ", " + data(3)(3) + "]"
+    "[" + data(0)(0) + ", " + data(0)(1) + ", " + data(0)(2) + ", " + data(0)(3) + "\n" +
+    " " + data(1)(0) + ", " + data(1)(1) + ", " + data(1)(2) + ", " + data(1)(3) + "\n" +
+    " " + data(2)(0) + ", " + data(2)(1) + ", " + data(2)(2) + ", " + data(2)(3) + "\n" +
+    " " + data(3)(0) + ", " + data(3)(1) + ", " + data(3)(2) + ", " + data(3)(3) + "]"
 
 }

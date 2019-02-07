@@ -542,7 +542,7 @@ final class ThreeDWorld private[calculator](var calculator: Calculator) extends 
       val d4 = sqrt(d3 * d3 + direct.z * direct.z)
       val d2 = angle(-direct.x * d4, direct.y * direct.z)
 
-      Matrix44.translation(eye).preRot('z', d).preRot('y', d1).preRot('z', -d2).postRot('y', π/2)
+      Matrix44.translate(eye).preRot('z', d).preRot('y', d1).preRot('z', -d2).postRot('y', π/2)
     }
 
     /** Paint with double-buffering.

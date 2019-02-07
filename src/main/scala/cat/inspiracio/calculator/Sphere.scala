@@ -85,7 +85,7 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
   /** Maps complex to 3d space and returns whether it is visible on the front. */
   private def isFrontC(c: Complex): Option[Point] = {
     val v = fC3d(c)         // 3d space
-    val (x, y, z) = R * v   // to 3d view space
+    val Vector3(x, y, z) = R * v   // to 3d view space
     // front means z <= 0
     if ( z <= 0 )
       Some(f2dPoint(x, y))  // to pixel space

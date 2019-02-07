@@ -24,23 +24,23 @@ class Matrix44Test extends FunSuite {
   // translation ------------------------
 
   test("translate(1, 0, 0)"){
-    val m = Matrix44.translation(1, 0, 0)
+    val m = Matrix44.translate(1, 0, 0)
     val result = Matrix44(
       1, 0, 0, -1,
       0, 1, 0, 0,
       0, 0, 1, 0,
-      0, 0, 0, 0
+      0, 0, 0, 1
     )
     assert( m === result )
   }
 
   test("translate(3.8, -2.1, 18.9)"){
-    val m = Matrix44.translation(3.8, -2.1, 18.9)
+    val m = Matrix44.translate(3.8, -2.1, 18.9)
     val result = Matrix44(
       1, 0, 0, -3.8,
       0, 1, 0, 2.1,
       0, 0, 1, -18.9,
-      0, 0, 0, 0
+      0, 0, 0, 1
     )
     assert( m === result )
   }
@@ -60,6 +60,72 @@ class Matrix44Test extends FunSuite {
   }
 
   // rotation -------------------------------------------------------
+
+  test("rotateX(0)"){
+    val m = Matrix44.rotateX(0)
+    val result = Matrix44(
+      1, 0, 0, 0,
+      0, 1, 0, 0,
+      0, 0, 1, 0,
+      0, 0, 0, 1
+    )
+    assert( m === result )
+  }
+
+  test("rotateX(1.2)"){
+    val m = Matrix44.rotateX(1.2)
+    val result = Matrix44(
+      1, 0, 0, 0,
+      0, 0.3623577544766736, 0.9320390859672263, 0,
+      0, -0.9320390859672263, 0.3623577544766736, 0,
+      0, 0, 0, 1
+    )
+    assert( m === result )
+  }
+
+  test("rotateY(0)"){
+    val m = Matrix44.rotateY(0)
+    val result = Matrix44(
+      1, 0, 0, 0,
+      0, 1, 0, 0,
+      0, 0, 1, 0,
+      0, 0, 0, 1
+    )
+    assert( m === result )
+  }
+
+  test("rotateY(1.2)"){
+    val m = Matrix44.rotateY(1.2)
+    val result = Matrix44(
+      0.3623577544766736, 0, -0.9320390859672263, 0,
+      0, 1, 0, 0,
+      0.9320390859672263, 0, 0.3623577544766736, 0,
+      0, 0, 0, 1
+    )
+    assert( m === result )
+  }
+
+  test("rotateZ(0)"){
+    val m = Matrix44.rotateZ(0)
+    val result = Matrix44(
+      1, 0, 0, 0,
+      0, 1, 0, 0,
+      0, 0, 1, 0,
+      0, 0, 0, 1
+    )
+    assert( m === result )
+  }
+
+  test("rotateZ(1.2)"){
+    val m = Matrix44.rotateZ(1.2)
+    val result = Matrix44(
+      0.3623577544766736, 0.9320390859672263, 0, 0,
+      -0.9320390859672263, 0.3623577544766736, 0, 0,
+      0, 0, 1, 0,
+      0, 0, 0, 1
+    )
+    assert( m === result )
+  }
 
   test("1.preRot(x, 38)"){
     val angle = 38.toRadians
