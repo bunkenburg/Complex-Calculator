@@ -182,17 +182,24 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
   }
 
   override private[calculator] def shift(from: Point, to: Point) = {
-    //val (x,y) = traditional(from, to)
+    f3dViewSpace(from).foreach{ a =>
+      f3dViewSpace(to).foreach{ b =>
+        val theta = Vector3.angle(a,b)
+        val axis = a cross b
+        println(s"a=$a b=$b theta=$theta axis=$axis")
+      }
+    }
+  }
 
+  private def guess(from: Point, to: Point) = {
     //Guessed solution is much better.
     //XXX Still wrong:
     //XXX Restrict to sphere surface only
-    //XXX x-rotation and y-rotation not commutative.
+    //XXX x-rotation and y-rotation are not commutative!
     val dy = (to.y-from.y)/factor
     val dx = (to.x-from.x)/factor
     val x = math.tan(dy) * 2.5 //slow: 2, fast: π
     val y = math.tan(dx) * 2.5
-
     rotate(x,y)
   }
 

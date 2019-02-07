@@ -13,9 +13,10 @@ Observations:
 Idea: do only one rotation!
 
 1. find angle between points (a,b): val theta = Vector3.angle(a,b)
-2. rotate so that rotation axis coincides with one of the axis
-3. rotate around that axis
-4. undo 2.
+2. find rotation axis: val axis = a cross b
+3. rotate so that rotation axis coincides with one of the axis
+5. rotate around that axis
+6. undo 3.
 
 
 # Fifth attempt
