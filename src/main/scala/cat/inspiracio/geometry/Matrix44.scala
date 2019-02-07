@@ -40,7 +40,7 @@ object Matrix44 {
   def translate(v: Vector3): Matrix44 = translate(v.x, v.y, v.z)
 
   def translate(x: Double, y: Double, z: Double): Matrix44 = {
-    val m = unit.clone()
+    val m = One.clone()
     m.data(0)(3) = -x
     m.data(1)(3) = -y
     m.data(2)(3) = -z
@@ -48,7 +48,7 @@ object Matrix44 {
   }
 
   def Rx(a: Double): Matrix44 = {
-    val m = unit.clone()
+    val m = One.clone()
     m(1,1) = cos(a)
     m(1,2) = sin(a)
     m(2,1) = -sin(a)
@@ -57,7 +57,7 @@ object Matrix44 {
   }
 
   def Ry(a: Double): Matrix44 = {
-    val m = unit.clone()
+    val m = One.clone()
     m(0,0) = cos(a)
     m(0,2) = -sin(a)
     m(2,0) = sin(a)
@@ -66,7 +66,7 @@ object Matrix44 {
   }
 
   def Rz(a: Double): Matrix44 = {
-    val m = unit.clone()
+    val m = One.clone()
     m(0,0) = cos(a)
     m(0,1) = sin(a)
     m(1,0) = -sin(a)
@@ -79,7 +79,7 @@ object Matrix44 {
   def Txz(r: Vector3): Matrix44 = {
     val Vector3(u,v,w) = r
     require( u != 0 || v != 0)
-    val m = unit.clone()
+    val m = One.clone()
     val divisor = sqrt(sqr(u)+sqr(v))
     m(0,0) = u/divisor
     m(0,1) = -v/divisor
@@ -93,7 +93,7 @@ object Matrix44 {
   def Tz(r: Vector3): Matrix44 = {
     val Vector3(u,v,w) = r
     require( u != 0 || v != 0)
-    val m = unit.clone()
+    val m = One.clone()
     val uv = sqrt(sqr(u) + sqr(v))
     val uvw = sqrt(sqr(u) + sqr(v) + sqr(w))
     m(0,0) = w / uvw
@@ -127,13 +127,95 @@ object Matrix44 {
     m(2,0), m(2,1), m(2,2), m(2,3),
     m(3,0), m(3,1), m(3,2), m(3,3)))
 
-  val zero: Matrix44 = new Matrix44()
+  val Zero: Matrix44 = new Matrix44()
 
-  val unit: Matrix44 = {
+  val One: Matrix44 = {
     val m = new Matrix44()
     for( i <- 0 to 3 )
       m(i,i) = 1
     m
+  }
+
+  /** https://en.wikipedia.org/wiki/Determinant */
+  def det(M: Matrix44): Double = {
+
+    /** determinant of a 3x3 matrix */
+    def det(a: Double, b: Double, c: Double,
+            d: Double, e: Double, f: Double,
+            g: Double, h: Double, i: Double): Double = a*e*i + b*f*g + c*d*h - c*e*g - b*d*i - a*f*h
+
+    val Matrix44(
+    a, b, c, d,
+    e, f, g, h,
+    i, j, k, l,
+    m, n, o, p
+    ) = M
+
+    a * det(f, g, h, j, k, l, n, o, p) - b * det(e, g, h, i, k, l, m, o, p) + c * det(e, f, h, i, j, l, m, n, p) - d * det(e, f, g, i, j, k, m, n, o)
+  }
+
+  /** https://en.wikipedia.org/wiki/Transpose */
+  def tr(A: Matrix44): Matrix44 = {
+    val Matrix44(
+    a, b, c, d,
+    e, f, g, h,
+    i, j, k, l,
+    m, n, o, p
+    ) = A
+    Matrix44(
+      a, e, i, m,
+      b, f, j, n,
+      c, g, k, o,
+      d, h, l, p
+    )
+  }
+
+  /** https://en.wikipedia.org/wiki/Invertible_matrix */
+  def invert(M: Matrix44): Matrix44 = {
+    val determinant = det(M)
+    require{ determinant != 0 }
+
+    def three: Boolean = M(3,0)==0 && M(3,1)==0 && M(3,2)==0 && M(3,3)==1 && M(2,3)==0 && M(1,3)==0 && M(0,3)==0
+
+    if(three){
+
+      val Matrix44(
+      a, b, c, _,
+      d, e, f, _,
+      g, h, i, _,
+      _, _, _, _
+      ) = M
+
+      val A: Double = e*i - f*h
+      val B: Double = -(d*i - f*g)
+      val C: Double = d*h - e*g
+      val D: Double = -(b*i - c*h)
+      val E: Double = a*i - c*g
+      val F: Double = -(a*h - b*g)
+      val G: Double = b*f - c*e
+      val H: Double = -(a*f - c*d)
+      val I: Double = a*e - b*d
+      val detM = a*A + b*B + c*C
+
+      Matrix44(
+        A, D, G, 0,
+        B, E, H, 0,
+        C, F, I, 0,
+        0, 0, 0, 1
+      ) / detM
+    }
+    else ???
+
+    //Cayley-Hamilton method
+    //Not sure whether this is correct, because it give invert(One) == Zero.
+    //val trA = tr(A)
+    //val A2 = A.sqr
+    //val A3 = A.cube
+    //val trA2 = tr(A2)
+    //val one: Matrix44 = ( trA.cube - trA * trA2 * 3 + tr(A.cube) * 2 ) / 6
+    //val two: Matrix44 = A * ( trA.sqr - trA2 ) / 2
+    //val block = one - two + A2 * trA - A3
+    //block / det(A)
   }
 
   // helpers --------------------------------------------
@@ -212,6 +294,57 @@ final class Matrix44 {
     m
   }
 
+  def * (x: Double): Matrix44 = {
+    val Matrix44(
+    a, b, c, d,
+    e, f, g, h,
+    i, j, k, l,
+    m, n, o, p
+    ) = this
+    Matrix44(
+      a*x, b*x, c*x, d*x,
+      e*x, f*x, g*x, h*x,
+      i*x, j*x, k*x, l*x,
+      m*x, n*x, o*x, p*x
+    )
+  }
+
+  def / (x: Double): Matrix44 = {
+    require{ x!=0 }
+    val Matrix44(
+    a, b, c, d,
+    e, f, g, h,
+    i, j, k, l,
+    m, n, o, p
+    ) = this
+    Matrix44(
+      a/x, b/x, c/x, d/x,
+      e/x, f/x, g/x, h/x,
+      i/x, j/x, k/x, l/x,
+      m/x, n/x, o/x, p/x
+    )
+  }
+
+  def + (b: Matrix44): Matrix44 = {
+    val a = this
+    val m = new Matrix44()
+    for(x <- 0 to 3; y <- 0 to 3){
+      for(k <- 0 to 3)
+        m(x,y) = a(x, y) + b(x,y)
+    }
+    m
+  }
+
+  def - (b: Matrix44): Matrix44 = {
+    val a = this
+    val m = new Matrix44()
+    for(x <- 0 to 3; y <- 0 to 3){
+      for(k <- 0 to 3)
+        m(x,y) = a(x, y) - b(x,y)
+    }
+    m
+  }
+
   /** Puts a rotation on axis by angle before this matrix. */
   def preRot(axis: Char, angle: Double): Matrix44 = {
 
@@ -260,23 +393,8 @@ final class Matrix44 {
     r
   }
 
-  /** https://en.wikipedia.org/wiki/Determinant */
-  def det: Double = {
-
-    /** determinant of a 3x3 matrix */
-    def det(a: Double, b: Double, c: Double,
-            d: Double, e: Double, f: Double,
-            g: Double, h: Double, i: Double): Double = a*e*i + b*f*g + c*d*h - c*e*g - b*d*i - a*f*h
-
-    val Matrix44(
-      a, b, c, d,
-      e, f, g, h,
-      i, j, k, l,
-      m, n, o, p
-    ) = this
-
-    a * det(f, g, h, j, k, l, n, o, p) - b * det(e, g, h, i, k, l, m, o, p) + c * det(e, f, h, i, j, l, m, n, p) - d * det(e, f, g, i, j, k, m, n, o)
-  }
+  def sqr: Matrix44 = this * this
+  def cube: Matrix44 = this * this * this
 
   override def toString: String = "\n" +
     "[" + data(0)(0) + ", " + data(0)(1) + ", " + data(0)(2) + ", " + data(0)(3) + "\n" +

@@ -36,6 +36,7 @@ package cat.inspiracio.calculator
 import java.awt.{Dimension, Font, Graphics, Point}
 
 import cat.inspiracio.complex._
+import cat.inspiracio.geometry.Matrix44.{Rz, Txz, Tz, invert}
 import cat.inspiracio.geometry.{Matrix44, Point2, Vector3}
 
 // Referenced classes of package bunkenba.calculator:
@@ -50,8 +51,8 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
 
   private var markLength = 2
 
-  private var R = Matrix44.unit
-  private var R1 = Matrix44.unit
+  private var R = Matrix44.One
+  private var R1 = Matrix44.One
 
   private var factor: Double = 0
 
@@ -140,8 +141,8 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
   }
 
   override private[calculator] def reset() = {
-    R = Matrix44.unit
-    R1 = Matrix44.unit
+    R = Matrix44.One
+    R1 = Matrix44.One
     repaint()
   }
 
@@ -182,6 +183,14 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
   }
 
   override private[calculator] def shift(from: Point, to: Point) = {
+    guess(from,to)
+  }
+
+  /** This would be the correct implementation.
+    * But incomplete: I don't have matrix inversion
+    * and there are a lot of calculations here. */
+  private def sixth(from: Point, to: Point) = {
+    import Matrix44._
     f3dViewSpace(from).foreach{ a =>
       f3dViewSpace(to).foreach{ b =>
         val theta = Vector3.angle(a,b)
@@ -190,27 +199,35 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
         val Vector3(u,v,w) = axis
         if(u==0 && v==0){
           //special case: axis is already z-axis
-          //R1 = R1 * Rz(theta)
-          //R
+          R1 = R1 * Rz(theta)
+          R = invert(R1)
         }
         else{
-          //R1 = R1 * Txz1(axis) * Tz1(axis) * Rz(theta) * Tz * Tzx(axis)
-          //R
+          val tz = Tz(axis)
+          val txz = Txz(axis)
+          val txz1 = invert(txz)
+          val tz1 = invert(tz)
+          R1 = R1 * txz1 * tz1 * Rz(theta) * tz * txz
+          R = invert(R1)
         }
+        repaint()
       }
     }
   }
 
   private def guess(from: Point, to: Point) = {
-    //Guessed solution is much better.
-    //XXX Still wrong:
-    //XXX Restrict to sphere surface only
-    //XXX x-rotation and y-rotation are not commutative!
-    val dy = (to.y-from.y)/factor
-    val dx = (to.x-from.x)/factor
-    val x = math.tan(dy) * 2.5 //slow: 2, fast: π
-    val y = math.tan(dx) * 2.5
-    rotate(x,y)
+    f3dViewSpace(from).foreach{ a =>
+      f3dViewSpace(to).foreach{ b =>
+        //This guessed solution is quite good.
+        //XXX Still wrong: x-rotation and y-rotation are not commutative!
+        //The more you drag, the more the sphere twists out of shape.
+        val dy = (to.y-from.y)/factor
+        val dx = (to.x-from.x)/factor
+        val x = math.tan(dy) * 2.5 //slow: 2, fast: π
+        val y = math.tan(dx) * 2.5
+        rotate(x,y)
+      }
+    }
   }
 
     /** Point to 3d view space */

@@ -20,6 +20,7 @@ package cat.inspiracio.geometry
 import org.scalatest.FunSuite
 
 class Matrix44Test extends FunSuite {
+  import Matrix44._
 
   // translation ------------------------
 
@@ -164,14 +165,14 @@ class Matrix44Test extends FunSuite {
   }
 
   test("det unit"){
-    val m = Matrix44.unit
-    val d = m.det
+    val m = Matrix44.One
+    val d = det(m)
     assert( d === 1 )
   }
 
   test("det zero"){
-    val m = Matrix44.zero
-    val d = m.det
+    val m = Matrix44.Zero
+    val d = det(m)
     assert( d === 0 )
   }
 
@@ -182,8 +183,51 @@ class Matrix44Test extends FunSuite {
       0, -0.6156614742127549, 0.7880107544762174, 0,
       -0.11, 63.542, 0.853, 5
     )
-    val d = m.det
+    val d = det(m)
     assert( d === -5436.864652707013 )
+  }
+
+  test("M * 2"){
+    val M = Matrix44(
+      1, 0, 2.3, -1.82,
+      54.8, 0.78, 0.61, 0,
+      0, -0.61, 0.7, 0,
+      -0.11, 3.54, 0.85, 5
+    )
+    val R = Matrix44(
+      2, 0, 4.6, -3.64,
+      109.6, 1.56, 1.22, 0,
+      0, -1.22, 1.4, 0,
+      -0.22, 7.08, 1.7, 10
+    )
+    assert( M * 2 === R )
+  }
+
+  test("invert(One)"){
+    val R = invert(One)
+    assert( One === R )
+  }
+
+  test("invert(bla)"){
+    val M = Rz(1.23)
+    val M1 = invert(M)
+    assert( One === M * M1 )
+    assert( One === M1 * M )
+  }
+
+  test("invert(di)"){
+    val M = Rz(1.23) * Rz(0.32) * Rx(2.0)
+    val M1 = invert(M)
+    equals(One, M * M1)
+    equals(One, M1 * M)
+  }
+
+  def equals(A: Matrix44, B: Matrix44) = {
+    for(x <- 0 to 3; y <- 0 to 3){
+      val a: Double = A(x,y)
+      val b: Double = B(x,y)
+      assert( math.abs(a - b)  <= 0.001 )
+    }
   }
 
 }

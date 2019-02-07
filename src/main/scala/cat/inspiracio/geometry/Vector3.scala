@@ -65,7 +65,6 @@ object Vector3{
 
 }
 case class Vector3(val x: Double, val y: Double, val z: Double) {
-  import math.atan2
 
   def - (v: Vector3) = Vector3(x - v.x, y - v.y, z - v.z)
 
