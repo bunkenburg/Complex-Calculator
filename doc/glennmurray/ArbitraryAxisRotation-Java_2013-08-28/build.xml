@@ -1,0 +1,101 @@
+<project name="Arbitrary Axis Rotation" default="build" basedir=".">
+
+  <!--================================================================-->
+  <!-- set global properties for this project -->
+  <!--================================================================-->
+  <path id="libs">
+    <fileset id="fileset.libs" dir="lib">
+      <patternset>
+	<include name="*.jar"/>
+      </patternset>
+    </fileset>
+  </path>
+  
+  <property name="src" value="src"/>
+  <property name="test" value="test"/>
+  <property name="build" value="classes"/>
+  <!-- Comment out the ff. line to use javac -->
+  <!-- property name="build.compiler" value="jikes"/ -->
+  <!-- property name="rmic" value="rmic" -->
+  <property name="dist"  value="dist"/>
+  <property name="libs" refid="libs"/>
+  <property name="javadocsDir" value="doc/javadoc"/>
+
+  <!--================================================================-->
+  <!-- Define targets -->
+  <!--================================================================-->
+
+  <!-- build  -->
+  <target name="build" 
+	  description="Compile the java code from ${src} into ${build} (same as compile)"
+	  depends="compile">
+    <echo message="Compiling with ${build.compiler}" />
+  </target>
+
+
+  <!-- clean  -->
+  <target name="clean"
+	  description="Delete the ${build}/ directory"
+	  depends="init">
+    <delete dir="${build}"/>
+    <mkdir dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+
+  
+  <!-- compile -->
+  <target name="compile" 
+	  description="Compile the java code from ${src} into ${build}"
+	  depends="init">
+    <echo message="Compiling with ${build.compiler}" />
+    <javac srcdir="${src}:${test}" destdir="${build}" classpath="${libs}" 
+           includeantruntime="false" nowarn="no"/>
+  </target>
+
+
+  <!-- init -->
+  <target name="init"
+ 	  description="Create the build directory.">
+    <mkdir dir="${build}"/>
+  </target>
+
+
+  <!-- javadoc -->
+  <target name="javadoc"
+          description="Create the Javadocs in ${javadocsDir}" >
+    <!-- Delete and create the directory --> 
+    <delete dir="${javadocsDir}"/>
+    <mkdir dir="${javadocsDir}"/>
+    <javadoc
+      packagenames="${src}/**.*"
+      classpath="${libs}"
+      destdir="${javadocsDir}"
+      author="true"
+      version="true"
+      Private="true"
+      SplitIndex="false"
+      Windowtitle="${ant.project.name}"
+      linksource="yes"
+      additionalparam="-breakiterator ">
+      <fileset dir="${src}">
+	<include name="**/*.java"/>
+      </fileset>
+      <fileset dir="${test}">
+	<include name="**/*.java"/>
+      </fileset>
+    </javadoc>
+  </target>
+
+
+  <!-- test -->
+  <target name="test" description="Run the JUnit tests."
+          depends="clean, compile">
+    <!-- Run junit the ancient way. -->
+    <java classname="junit.swingui.TestRunner" fork="yes">
+      <arg value="arbaxisrot.AllTests"/>
+      <classpath path="${build}:${libs}"/>
+    </java>
+  </target>
+
+
+</project>

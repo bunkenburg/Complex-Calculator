@@ -41,9 +41,9 @@ object Matrix44 {
 
   def translate(x: Double, y: Double, z: Double): Matrix44 = {
     val m = One.clone()
-    m.data(0)(3) = -x
-    m.data(1)(3) = -y
-    m.data(2)(3) = -z
+    m(0,3) = -x
+    m(1,3) = -y
+    m(2,3) = -z
     m
   }
 
@@ -173,11 +173,28 @@ object Matrix44 {
   /** https://en.wikipedia.org/wiki/Invertible_matrix */
   def invert(M: Matrix44): Matrix44 = {
     val determinant = det(M)
-    require{ determinant != 0 }
 
-    def three: Boolean = M(3,0)==0 && M(3,1)==0 && M(3,2)==0 && M(3,3)==1 && M(2,3)==0 && M(1,3)==0 && M(0,3)==0
+    if(determinant == 0) {
+      println(s"det(M) == $determinant == 0")
+      require (determinant != 0)
+    }
 
-    if(three){
+    /** Is the 4x4 matrix M really a 3x3 matrix extended with 0 and 1
+      * for graphical operations?
+      * I would expect this always to be the case. */
+    def is3x3: Boolean = {
+      M(3,0)==0 &&
+        M(3,1)==0 &&
+        M(3,2)==0 &&
+        M(3,3)==1 &&
+        M(2,3)==0 &&
+        M(1,3)==0 &&
+        M(0,3)==0
+      //if it's almost true, here I could 'clean' M a little
+      //to make it true ...
+    }
+
+    if(is3x3){
 
       val Matrix44(
       a, b, c, _,
@@ -204,18 +221,20 @@ object Matrix44 {
         0, 0, 0, 1
       ) / detM
     }
-    else ???
-
-    //Cayley-Hamilton method
-    //Not sure whether this is correct, because it give invert(One) == Zero.
-    //val trA = tr(A)
-    //val A2 = A.sqr
-    //val A3 = A.cube
-    //val trA2 = tr(A2)
-    //val one: Matrix44 = ( trA.cube - trA * trA2 * 3 + tr(A.cube) * 2 ) / 6
-    //val two: Matrix44 = A * ( trA.sqr - trA2 ) / 2
-    //val block = one - two + A2 * trA - A3
-    //block / det(A)
+    else {
+      println(s"Not a 3*3 matrix: $M")
+      ???
+      //Cayley-Hamilton method
+      //Not sure whether this is correct, because it give invert(One) == Zero.
+      //val trA = tr(A)
+      //val A2 = A.sqr
+      //val A3 = A.cube
+      //val trA2 = tr(A2)
+      //val one: Matrix44 = ( trA.cube - trA * trA2 * 3 + tr(A.cube) * 2 ) / 6
+      //val two: Matrix44 = A * ( trA.sqr - trA2 ) / 2
+      //val block = one - two + A2 * trA - A3
+      //block / det(A)
+    }
   }
 
   // helpers --------------------------------------------
@@ -310,7 +329,7 @@ final class Matrix44 {
   }
 
   def / (x: Double): Matrix44 = {
-    require{ x!=0 }
+    require{ x!=0 }   //XXX specialise for x == 1?
     val Matrix44(
     a, b, c, d,
     e, f, g, h,

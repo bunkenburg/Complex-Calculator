@@ -184,6 +184,7 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
 
   override private[calculator] def shift(from: Point, to: Point) = {
     guess(from,to)
+    //sixth(from,to)
   }
 
   /** This would be the correct implementation.
@@ -191,26 +192,29 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     * and there are a lot of calculations here. */
   private def sixth(from: Point, to: Point) = {
     import Matrix44._
+    import Vector3.angle
     f3dViewSpace(from).foreach{ a =>
       f3dViewSpace(to).foreach{ b =>
-        val theta = Vector3.angle(a,b)
-        val axis = a cross b
-        println(s"a=$a b=$b theta=$theta axis=$axis")
-        val Vector3(u,v,w) = axis
-        if(u==0 && v==0){
-          //special case: axis is already z-axis
-          R1 = R1 * Rz(theta)
-          R = invert(R1)
+        if(a != b) {
+          val theta = angle(a, b) // Will be very small ...
+          val axis = a cross b
+          println(s"a=$a b=$b theta=$theta axis=$axis")
+          val Vector3(u, v, w) = axis
+          if (u == 0 && v == 0) {
+            //special case: axis is already z-axis
+            R1 = R1 * Rz(theta)
+            R = invert(R1)
+          }
+          else {
+            val tz = Tz(axis)
+            val txz = Txz(axis)
+            val txz1 = invert(txz)
+            val tz1 = invert(tz)
+            R1 = R1 * txz1 * tz1 * Rz(theta) * tz * txz
+            R = invert(R1)
+          }
+          repaint()
         }
-        else{
-          val tz = Tz(axis)
-          val txz = Txz(axis)
-          val txz1 = invert(txz)
-          val tz1 = invert(tz)
-          R1 = R1 * txz1 * tz1 * Rz(theta) * tz * txz
-          R = invert(R1)
-        }
-        repaint()
       }
     }
   }

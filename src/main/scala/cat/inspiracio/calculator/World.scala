@@ -37,8 +37,9 @@ import java.awt._
 import java.awt.event._
 import java.lang.Math.{max, min}
 import java.util.prefs.Preferences
-import javax.swing._
 
+import cat.inspiracio.calculator.Interaction.Interaction
+import javax.swing._
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.{Piclet, Point2}
 
@@ -189,6 +190,9 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
         case `sphere` => "sphere"
       }
       p.put("canvas", c)
+
+      if(interaction!=null)
+        p.put("interaction", interaction.toString)
     }
     super.dispose()
   }

@@ -106,7 +106,7 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
       val state = e.getStateChange
       if (state == ItemEvent.SELECTED) {
         val s = e.getItem.toString
-        interaction = Interaction.parse(s)
+        interaction = Interaction.withName(s)
       }
     })
     buttonPanel.add(interactionChoice)

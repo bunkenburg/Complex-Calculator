@@ -85,7 +85,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
       val state = e.getStateChange
       if (state == ItemEvent.SELECTED) {
         val s = e.getItem.asInstanceOf[String]
-        interaction = Interaction.parse(s)
+        interaction = Interaction.withName(s)
       }
     })
     buttonPanel.add(interactionChoice)
@@ -257,17 +257,18 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
     sphere.addMouseMotionListener(mouse)
 
     pack()
-    locate()
+    preferred()
     setVisible(true)
 
   }//init
 
-  /** below the calculator */
-  private def locate() = {
+  /** applies the saved preferences */
+  private def preferred() = {
+    val p = preferences
+
+    // below the calculator
     val calculatorDimension: Dimension = calculator.getSize // 319 x 328
     val calculatorPosition: Point = calculator.getLocationOnScreen  // 77 38
-
-    val p = preferences
     val x = p.getInt("x", calculatorPosition.x )
     val y = p.getInt("y", calculatorPosition.y + calculatorDimension.height + 10 )
     setLocation( x, y )
@@ -281,6 +282,10 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
       case "plane" => usePlane()
       case "sphere" => useSphere()
     }
+
+    val is = p.get("interaction", "Draw")
+    interaction = Interaction.withName(is)
+    interactionChoice.setSelectedItem(is)   //Doesn't work
   }
 
   /** during dynamic map, adds one more number */

@@ -19,6 +19,12 @@ Idea: do only one rotation!
 5. rotate around that axis
 6. undo 3 and 4
 
+Idea:
+There's a lot of floating-point calculation here which accumulates a lot of imprecision.
+During dragging, keep the original matrices R and R1 and calculates the transformed ones
+fresh for each point, between mousedown and current point.
+After dragging, forget saved original matrices.
+
 
 # Fifth attempt
 

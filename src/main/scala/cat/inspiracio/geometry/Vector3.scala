@@ -57,10 +57,18 @@ object Vector3{
   def angle(a: Vector3, b: Vector3): Double = {
     val d = a dot b
     val divisor = a.abs * b.abs
-    if(divisor == 0)
-      ???
-    else
-      acos( d / divisor )
+    if(divisor == 0) {
+      //At least one of the vectors is 0.
+      //The angle between them is not defined.
+      if(a.abs==0)
+        throw new IllegalArgumentException("a is (0,0,0)")
+      throw new IllegalArgumentException("b is (0,0,0)")
+    } else {
+      val x = d / divisor
+      if(x < -1 || 1 < x)
+        throw new IllegalArgumentException(s"(a dot b)/(a.abs * b.abs) == $x")
+      acos(x)
+    }
   }
 
 }
@@ -73,11 +81,10 @@ case class Vector3(val x: Double, val y: Double, val z: Double) {
 
   /** https://en.wikipedia.org/wiki/Cross_product */
   def cross (c: Vector3): Vector3 = {
-    val b = this
     Vector3(
-      b.y*c.z - b.z*c.y,
-      b.z*c.x - b.x*c.z,
-      b.x*c.y - b.y*c.x
+      y*c.z - z*c.y,
+      z*c.x - x*c.z,
+      x*c.y - y*c.x
     )
   }
 
