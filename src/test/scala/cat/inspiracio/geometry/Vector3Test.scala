@@ -43,7 +43,7 @@ class Vector3Test extends FunSuite {
   test("cross perpendicular"){
     val a: Vector3 = Vector3(0.4, 0.5, 1.2)
     val b: Vector3 = Vector3(1, 0.5, 0.7)
-    val cr = a cross b
+    val cr = a x b
     assert( angle(a, cr) === π/2 )
     assert( angle(b, cr) === π/2 )
   }
@@ -72,28 +72,28 @@ class Vector3Test extends FunSuite {
   test("a cross b === 0 if a==0"){
     val a: Vector3 = zero
     val b: Vector3 = Vector3(16, -3.5, 8.1)
-    val c = a cross b
+    val c = a x b
     assert( c === zero )
   }
 
   test("a cross b === 0 if b==0"){
     val a: Vector3 = Vector3(-3.4, 2.3, -0.8)
     val b: Vector3 = zero
-    val c = a cross b
+    val c = a x b
     assert( c === zero )
   }
 
   test("a cross b === 0 if same direction"){
     val a: Vector3 = Vector3(-3.4, 2.3, -0.8)
     val b: Vector3 = Vector3(-34, 23, -8)
-    val c = a cross b
+    val c = a x b
     assert( c.abs <= 0.000001  )
   }
 
   test("a cross b === 0 if opposed"){
     val a: Vector3 = Vector3(-3.4, 2.3, -0.8)
     val b: Vector3 = Vector3(34, -23, 8)
-    val c = a cross b
+    val c = a x b
     assert( c.abs <= 0.000001 )
   }
 

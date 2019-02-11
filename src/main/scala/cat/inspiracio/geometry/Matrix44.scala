@@ -170,11 +170,20 @@ object Matrix44 {
     )
   }
 
-  /** https://en.wikipedia.org/wiki/Invertible_matrix */
+  /** Inverts the matrix.
+    *
+    * Assumes this 4*4 matrix is really a 3*3 matrix extended
+    * with 0 and 1, for graphical operations.
+    *
+    * The determinant must not be 0, otherwise fail.
+    * Assumes the determinant is 1.
+    *
+    * https://en.wikipedia.org/wiki/Invertible_matrix */
   def invert(M: Matrix44): Matrix44 = {
     val determinant = det(M)
 
     if(determinant == 0) {
+      println(M)
       println(s"det(M) == $determinant == 0")
       require (determinant != 0)
     }
@@ -214,18 +223,31 @@ object Matrix44 {
       val I: Double = a*e - b*d
       val detM = a*A + b*B + c*C
 
-      Matrix44(
+      val m = Matrix44(
         A, D, G, 0,
         B, E, H, 0,
         C, F, I, 0,
         0, 0, 0, 1
-      ) / detM
+      )
+
+      //if(determinant!=detM || determinant!=1 || detM!=1) println(s"determinant=$determinant detM=$detM")
+      m   //real result is m/detM but I assume that detM=1.
     }
     else {
-      println(s"Not a 3*3 matrix: $M")
-      ???
+      //Brutally cleans the matrix and tries again.
+      println("invert cleans")
+      println(M)
+      M(3,0) = 0
+      M(3,1) = 0
+      M(3,2) = 0
+      M(3,3) = 1
+      M(2,3) = 0
+      M(1,3) = 0
+      M(0,3) = 0
+      invert(M)
+
       //Cayley-Hamilton method
-      //Not sure whether this is correct, because it give invert(One) == Zero.
+      //Not sure whether this is correct, because it gives invert(One) == Zero.
       //val trA = tr(A)
       //val A2 = A.sqr
       //val A3 = A.cube

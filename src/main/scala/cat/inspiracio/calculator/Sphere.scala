@@ -43,6 +43,7 @@ import cat.inspiracio.geometry.{Matrix44, Point2, Vector3}
 //            WorldRepresentation, DoubleBuffer, Drawing, Matrix44,
 //            Vector3, World
 
+/** A world of complex numbers on the Riemann sphere. */
 final class Sphere private[calculator](val world: World) extends WorldRepresentation(world) {
   import MoreGraphics.GraphicsExtended
   import Point2._
@@ -72,7 +73,7 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
         case Some(a) :: Nil => ()
         case None :: xs => draw(xs)
         case Some(a) :: None :: xs => draw(xs)
-        case Some(a) :: Some(b) :: xs => { g.drawLine(a, b); draw(Some(b)::xs) }
+        case Some(a) :: Some(b) :: xs => { g.drawLine(a, b); draw( Some(b)::xs ) }
       }
       draw(zs map isFrontC)
     }
@@ -83,13 +84,14 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     else if (v.y == -0.5 ) 0
     else Cartesian(v.x / (0.5 - v.y), v.z / (0.5 - v.y))
 
-  /** Maps complex to 3d space and returns whether it is visible on the front. */
+  /** Maps a complex number to pixel space.
+    * If it is visible on the front, returns the Point,
+    * else None. */
   private def isFrontC(c: Complex): Option[Point] = {
-    val v = fC3d(c)         // 3d space
-    val Vector3(x, y, z) = R * v   // to 3d view space
-    // front means z <= 0
-    if ( z <= 0 )
-      Some(f2dPoint(x, y))  // to pixel space
+    val v = fC3d(c)               // 3d space
+    val Vector3(x, y, z) = R * v  // to 3d view space
+    if ( z <= 0 )                 // front means z <= 0
+      Some( f2dPoint(x, y) )      // to pixel space
     else
       None
   }
@@ -124,6 +126,7 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     w.draw(g) //tell the world to draw its stuff (numbers, pictlets, ...)
   }
 
+  /** Maps a point to a complex number, if the point is on the sphere, else None. */
   override private[calculator] def point2Complex(p: Point): Option[Complex] = {
     //inverse to f2dPoint
     val x = (p.x - width * 0.5) / factor
@@ -131,9 +134,8 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     val z = 0.25 - sqr(x) - sqr(y)
 
     if ( 0 <= z ) {
-      // from 3d view space to 3d Riemann space
-      val v = R1 * (x, y, -sqrt(z) )
-      val c = f3dC(v)
+      val v = R1 * (x, y, -sqrt(z) )  // from 3d view space to 3d Riemann space
+      val c = f3dC(v)                 // from 3d Riemann space to complex number
       Some(c)
     }
     else
@@ -155,7 +157,8 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
   /** Takes two complex numbers on the sphere and returns the
     * x-angle and the y-angle between them.
     * The x-angle is the angle around the x-axis.
-    * Angles in radians. */
+    * Angles in radians.
+    * @deprecated */
   def angles(a: Complex, b: Complex): (Double, Double) = {
     //to 3d space
     val a3 = Vector3(fC3d(a))
@@ -182,43 +185,69 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     (x, y)
   }
 
-  override private[calculator] def shift(from: Point, to: Point) = {
-    guess(from,to)
-    //sixth(from,to)
+  /** The R1 matrix as it was at the start of shifting. */
+  private var startR1: Matrix44 = _
+
+  override private[calculator] def startShift(start: Point) = {
+    // If the start point is not on the sphere, no shifting.
+    startR1 = R1
   }
 
-  /** This would be the correct implementation.
-    * But incomplete: I don't have matrix inversion
-    * and there are a lot of calculations here. */
-  private def sixth(from: Point, to: Point) = {
+  override private[calculator] def shift(startPoint: Point, previousPoint: Point, endPoint: Point) = {
+    //guess(startPoint,endPoint)
+    sixth(startPoint,endPoint)
+  }
+
+  /** This is the correct implementation. There are a lot of calculations here.
+    * https://sites.google.com/site/glennmurray/Home/rotation-matrices-and-formulas/rotation-about-an-arbitrary-axis-in-3-dimensions
+    * */
+  private def sixth(startPoint: Point, endPoint: Point) = {
     import Matrix44._
-    import Vector3.angle
-    f3dViewSpace(from).foreach{ a =>
-      f3dViewSpace(to).foreach{ b =>
-        if(a != b) {
-          val theta = angle(a, b) // Will be very small ...
-          val axis = a cross b
-          println(s"a=$a b=$b theta=$theta axis=$axis")
+    import Vector3.{angle,unit}
+
+    if(startPoint != endPoint){
+      f3dViewSpace(startPoint).foreach{ a =>
+        f3dViewSpace(endPoint).foreach{ b =>
+
+          //find rotation angle
+          val theta = angle(a, b) // May be very small ... like 0.007
+
+          //find rotation axis
+          //Optimise: can we have abs(axis)=1 ?
+          //... then simplify multiplications
+          val axis = unit(a x b)
+          println(s"axis=$axis abs(axis) = ${axis.abs}")  // approx. abs(axis) == 1
           val Vector3(u, v, w) = axis
+
           if (u == 0 && v == 0) {
             //special case: axis is already z-axis
-            R1 = R1 * Rz(theta)
+            R1 = startR1 * Rz(theta)
             R = invert(R1)
           }
           else {
+
+            //(2) Rotate space about the z axis so that the rotation axis lies in the xz plane.
             val tz = Tz(axis)
+
+            //(3) Rotate space about the y axis so that the rotation axis lies along the z axis.
             val txz = Txz(axis)
+
+            //(4) Perform the desired rotation by θ about the z axis.
+            val rz = Rz(theta)
+
             val txz1 = invert(txz)
             val tz1 = invert(tz)
-            R1 = R1 * txz1 * tz1 * Rz(theta) * tz * txz
+
+            R1 = startR1 * txz1 * tz1 * rz * tz * txz
             R = invert(R1)
           }
           repaint()
         }
       }
-    }
+    }//if
   }
 
+  /*
   private def guess(from: Point, to: Point) = {
     f3dViewSpace(from).foreach{ a =>
       f3dViewSpace(to).foreach{ b =>
@@ -233,12 +262,12 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
       }
     }
   }
+  */
 
-    /** Point to 3d view space */
+    /** Maps Point to 3d view space. Similar to point2Complex. */
     def f3dViewSpace(p: Point): Option[Vector3] = {
-      //similar to point2Complex
       val x = (p.x - width * 0.5) / factor
-      val y = (height * 0.5 - p.y) / factor
+      val y = (p.y - height * 0.5) / factor //I would have thought this should be negative.
       val z = 0.25 - sqr(x) - sqr(y)
       if ( 0 <= z ) Some(Vector3(x, y, -sqrt(z) ))  //front?
       else None

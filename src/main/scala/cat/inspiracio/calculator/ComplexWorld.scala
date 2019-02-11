@@ -33,7 +33,7 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt.Graphics
+import java.awt.{Graphics, Point}
 import java.awt.event._
 
 import javax.swing._
@@ -58,11 +58,15 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
 
     val mouse: MouseInputListener = new MouseInputAdapter() {
 
-      /** the previous mouse position during dragging */
-      var previous: Point2 = null
+      /** start and previous mouse position during moving */
+      var startPoint: Point = null
+      var previousPoint: Point2 = null
 
       override def mousePressed(e: MouseEvent): Unit = interaction match {
-        case MOVE => previous = e.getPoint
+        case MOVE => {
+          startPoint = e.getPoint
+          previousPoint = e.getPoint
+        }
         case DRAW =>
           canvas.point2Complex(e.getPoint).foreach{ z =>
             calculator.add(z)
@@ -71,15 +75,23 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
         case _ =>
       }
 
-      override def mouseReleased(e: MouseEvent): Unit = drag(e)
-      override def mouseDragged(e: MouseEvent): Unit = drag(e)
-
-      private def drag(e: MouseEvent) = interaction match {
+      override def mouseDragged(e: MouseEvent): Unit = interaction match {
         case MOVE =>
           val p = e.getPoint
-          canvas.shift(previous, p)
-          previous = p
+          canvas.shift(startPoint, previousPoint, p)
+          previousPoint = p
         case _ =>
+      }
+
+      override def mouseReleased(e: MouseEvent): Unit = {
+        interaction match {
+          case MOVE =>
+            val end = e.getPoint
+            canvas.shift(startPoint, previousPoint, end)
+            startPoint = null
+            previousPoint = null
+          case _ =>
+        }
       }
 
     }

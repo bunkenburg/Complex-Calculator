@@ -33,7 +33,7 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt.{Dimension, Graphics, GraphicsConfiguration, Point}
+import java.awt.{Dimension, Graphics, Point}
 import java.awt.event._
 
 import javax.swing._
@@ -41,7 +41,7 @@ import cat.inspiracio.calculator.Interaction._
 import cat.inspiracio.calculator.Mode.{FZ, MODFZ}
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry._
-import javax.swing.event.{MouseInputAdapter, MouseInputListener}
+import javax.swing.event.{MouseInputAdapter}
 
 /** The z-World is where the user gives input for function f. */
 final class ZWorld private[calculator](override val calculator: Calculator) extends World(calculator) {
@@ -92,24 +92,21 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
     val mouse = new MouseInputAdapter() {
 
-      // during dragging, previous mouse position
-      var previous: Point2 = null
-
       //during dragging, starting and ending complex number
-      var start: Complex = null
-      var end: Complex = null
+      var startComplex: Complex = null
+      var endComplex: Complex = null
 
       /** start dynamic mapping of a piclet */
       private def startCurrent(p: Point) = {
         canvas.point2Complex(p).foreach{ z =>
-          start = z
-          end = z
+          startComplex = z
+          endComplex = z
           val current = interaction match {
-            case GRID => Rectangle(start, end)
-            case LINE => Line(start, end)
-            case CIRCLE => Circle(start, end)
-            case RECTANGLE => Rectangle(start, end)
-            case SQUARE => Square(start, end)
+            case GRID => Rectangle(startComplex, endComplex)
+            case LINE => Line(startComplex, endComplex)
+            case CIRCLE => Circle(startComplex, endComplex)
+            case RECTANGLE => Rectangle(startComplex, endComplex)
+            case SQUARE => Square(startComplex, endComplex)
             case _ => throw new RuntimeException(interaction.toString)
           }
           if (mode == FZ)
@@ -125,13 +122,13 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
       /** continue dynamic mapping of a piclet */
       private def continueCurrent(p: Point) = {
         canvas.point2Complex(p).foreach{ z =>
-          end = z
+          endComplex = z
           val current = interaction match {
-            case GRID => Rectangle(start, end)
-            case LINE => Line(start, end)
-            case CIRCLE => Circle(start, end)
-            case RECTANGLE => Rectangle(start, end)
-            case SQUARE => Square(start, end)
+            case GRID => Rectangle(startComplex, endComplex)
+            case LINE => Line(startComplex, endComplex)
+            case CIRCLE => Circle(startComplex, endComplex)
+            case RECTANGLE => Rectangle(startComplex, endComplex)
+            case SQUARE => Square(startComplex, endComplex)
             case _ => throw new RuntimeException(interaction.toString)
           }
           if (mode == FZ)
@@ -146,15 +143,15 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
       /** finish dynamic mapping of a piclet */
       private def finishCurrent(p: Point) =
-        if (start != null) {
+        if (startComplex != null) {
           canvas.point2Complex(p).foreach{ z =>
-            end = z
+            endComplex = z
             val current = interaction match {
-              case GRID => Rectangle(start, end)
-              case LINE => Line(start, end)
-              case CIRCLE => Circle(start, end)
-              case RECTANGLE => Rectangle(start, end)
-              case SQUARE => Square(start, end)
+              case GRID => Rectangle(startComplex, endComplex)
+              case LINE => Line(startComplex, endComplex)
+              case CIRCLE => Circle(startComplex, endComplex)
+              case RECTANGLE => Rectangle(startComplex, endComplex)
+              case SQUARE => Square(startComplex, endComplex)
               case _ => throw new RuntimeException(interaction.toString)
             }
             if (mode == FZ) {
@@ -172,8 +169,16 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
           }
         }
 
+      // during moving, start and previous end mouse position
+      var startPoint: Point = null
+      var previousPoint: Point = null
+
       override def mousePressed(e: MouseEvent): Unit = interaction match {
-        case MOVE => previous = e.getPoint
+        case MOVE => {
+          startPoint = e.getPoint
+          previousPoint = e.getPoint
+          canvas.startShift(startPoint)
+        }
 
         case DRAW => {
           canvas.point2Complex(e.getPoint).foreach{ z =>
@@ -190,14 +195,12 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
         case SQUARE => startCurrent(e.getPoint)
       }
 
-      private def drag(e: MouseEvent) = {
-        val p = e.getPoint
-        canvas.shift(previous, p)
-        previous = p
-      }
-
       override def mouseDragged(e: MouseEvent): Unit = interaction match {
-        case MOVE => drag(e)
+        case MOVE => {
+          val p = e.getPoint
+          canvas.shift(startPoint, previousPoint, p)
+          previousPoint = p
+        }
 
         case DRAW => {
           val maybe = canvas.point2Complex(e.getPoint)
@@ -228,7 +231,12 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
       }
 
       override def mouseReleased(e: MouseEvent): Unit = interaction match {
-        case MOVE => drag(e)
+        case MOVE => {
+          val endPoint = e.getPoint
+          canvas.endShift(startPoint, endPoint)
+          startPoint = null
+          previousPoint = null
+        }
 
         case DRAW => {
           if (zs != null) {
@@ -285,7 +293,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
     val is = p.get("interaction", "Draw")
     interaction = Interaction.withName(is)
-    interactionChoice.setSelectedItem(is)   //Doesn't work
+    interactionChoice.setSelectedItem(is)   //XXX Doesn't work
   }
 
   /** during dynamic map, adds one more number */

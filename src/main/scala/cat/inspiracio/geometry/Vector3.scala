@@ -71,6 +71,12 @@ object Vector3{
     }
   }
 
+  /** Makes a unit vector with the same direction and orientation. */
+  def unit(v: Vector3): Vector3 = {
+    val m = v.abs
+    require(m != 0)
+    v / m
+  }
 }
 case class Vector3(val x: Double, val y: Double, val z: Double) {
 
@@ -79,8 +85,11 @@ case class Vector3(val x: Double, val y: Double, val z: Double) {
   /** https://en.wikipedia.org/wiki/Dot_product */
   def dot (v: Vector3): Double = x*v.x + y*v.y + z*v.z
 
-  /** https://en.wikipedia.org/wiki/Cross_product */
-  def cross (c: Vector3): Vector3 = {
+  /** https://en.wikipedia.org/wiki/Cross_product
+    *
+    * Maybe "x" is not such a good method name for this
+    * because "x" is often also a variable name in the same scope. */
+  def x(c: Vector3): Vector3 = {
     Vector3(
       y*c.z - z*c.y,
       z*c.x - x*c.z,
@@ -89,6 +98,9 @@ case class Vector3(val x: Double, val y: Double, val z: Double) {
   }
 
   def abs: Double = sqrt(sqr(x) + sqr(y) + sqr(z))
+
+  def * (d: Double) = Vector3(x * d, y * d, z * d)
+  def / (d: Double) = Vector3(x / d, y / d, z / d)
 
   override def equals(other: Any): Boolean = other match {
       case Vector3(vx, vy, vz) => x == vx && y == vy && z == vz

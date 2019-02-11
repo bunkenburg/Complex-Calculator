@@ -41,7 +41,8 @@ import javax.swing._
 
 // Referenced classes of package bunkenba.calculator:
 //            DoubleBuffer, World, Drawing
-
+/** Representation of a world of complex numbers:
+  * as Cartesian plane or as Riemann sphere. */
 abstract class WorldRepresentation protected(var w: World) extends JComponent {
   setBackground(Color.white)
   setDoubleBuffered(true)
@@ -62,7 +63,9 @@ abstract class WorldRepresentation protected(var w: World) extends JComponent {
   private[calculator] def reset()
 
   /** shift calls repaint */
-  private[calculator] def shift(from: Point, to: Point)
+  private[calculator] def startShift(start: Point) = {}
+  private[calculator] def shift(start: Point, from: Point, to: Point)
+  private[calculator] def endShift(start: Point, end: Point) = {}
 
   //There is zoom for plane but not for sphere.
   //zoom causes repaint.

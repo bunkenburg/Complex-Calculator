@@ -26,7 +26,7 @@ fresh for each point, between mousedown and current point.
 After dragging, forget saved original matrices.
 
 
-# Fifth attempt
+# fifth attempt
 
 shift(a: Point, b: Point)
 

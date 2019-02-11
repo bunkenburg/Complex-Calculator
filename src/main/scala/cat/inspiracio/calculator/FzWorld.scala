@@ -65,17 +65,25 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
 
     val mouse: MouseInputListener = new MouseInputAdapter() {
 
-      /** the previous mouse position during dragging */
-      var previous: Point2 = null
+      /** start and previous mouse position during dragging */
+      var startPoint: Point = null
+      var previousPoint: Point = null
 
-      override def mousePressed(e: MouseEvent): Unit = previous=e.getPoint
-      override def mouseReleased(e: MouseEvent): Unit = drag(e)
-      override def mouseDragged(e: MouseEvent): Unit = drag(e)
+      override def mousePressed(e: MouseEvent): Unit = {
+        startPoint = e.getPoint
+        previousPoint = e.getPoint
+        canvas.startShift(startPoint)
+      }
 
-      private def drag(e: MouseEvent) = {
+      override def mouseDragged(e: MouseEvent): Unit = {
         val p = e.getPoint
-        canvas.shift(previous, p)
-        previous = p
+        canvas.shift(startPoint, previousPoint, p)
+        previousPoint = e.getPoint
+      }
+
+      override def mouseReleased(e: MouseEvent): Unit = {
+        val endPoint = e.getPoint
+        canvas.endShift(startPoint, endPoint)
       }
 
     }

@@ -231,7 +231,7 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     markLength = fontAscent / 5
   }
 
-  override private[calculator] def shift(from: Point, to: Point) = {
+  override private[calculator] def shift(start: Point, from: Point, to: Point) = {
     val p: Point = to - from
     centre = centre - pix2Math(p.x) + i*pix2Math(p.y)
     repaint()
