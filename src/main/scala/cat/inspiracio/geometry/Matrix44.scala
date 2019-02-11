@@ -47,6 +47,7 @@ object Matrix44 {
     m
   }
 
+  /** rotation around x axis. Unused. */
   def Rx(a: Double): Matrix44 = {
     val m = One.clone()
     m(1,1) = cos(a)
@@ -56,6 +57,7 @@ object Matrix44 {
     m
   }
 
+  /** rotation around y axis. Unused. */
   def Ry(a: Double): Matrix44 = {
     val m = One.clone()
     m(0,0) = cos(a)
@@ -65,6 +67,7 @@ object Matrix44 {
     m
   }
 
+  /** rotation around z axis. Unused. */
   def Rz(a: Double): Matrix44 = {
     val m = One.clone()
     m(0,0) = cos(a)
@@ -75,7 +78,8 @@ object Matrix44 {
   }
 
   /** The matrix to rotate a vector about the z-axis to the xz-plane.
-    * https://sites.google.com/site/glennmurray/Home/rotation-matrices-and-formulas/rotation-about-an-arbitrary-axis-in-3-dimensions */
+    * https://sites.google.com/site/glennmurray/Home/rotation-matrices-and-formulas/rotation-about-an-arbitrary-axis-in-3-dimensions
+    * Unused. */
   def Txz(r: Vector3): Matrix44 = {
     val Vector3(u,v,w) = r
     require( u != 0 || v != 0)
@@ -89,7 +93,8 @@ object Matrix44 {
   }
 
   /** The matrix to rotate the vector in the xz-plane to the z-axis.
-    * https://sites.google.com/site/glennmurray/Home/rotation-matrices-and-formulas/rotation-about-an-arbitrary-axis-in-3-dimensions */
+    * https://sites.google.com/site/glennmurray/Home/rotation-matrices-and-formulas/rotation-about-an-arbitrary-axis-in-3-dimensions
+    * Unused. */
   def Tz(r: Vector3): Matrix44 = {
     val Vector3(u,v,w) = r
     require( u != 0 || v != 0)
@@ -101,6 +106,49 @@ object Matrix44 {
     m(2,0) = -uv / uvw
     m(2,2) = w / uvw
     m
+  }
+
+  /** Combines Txz1 * Tz1 * Rz(theta) * Tz * Txz
+    * in terms of (u,v,w) and theta,
+    * assuming abs(u,v,w) == 1,
+    *
+    * as in section "5.2 The normalized matrix for rotations about the origin" in
+    * https://sites.google.com/site/glennmurray/Home/rotation-matrices-and-formulas/rotation-about-an-arbitrary-axis-in-3-dimensions
+    *
+    * @param axis Rotation vector. Must be unit vector.
+    * @param theta Rotation angle in radians
+    * */
+  def rotation(axis: Vector3, theta: Double): Matrix44 = {
+    val Vector3(u, v, w) = axis
+
+    val c = cos(theta)
+    val c1 = 1 - c
+    val s = sin(theta)
+    val u2 = u * u
+    val v2 = v * v
+    val w2 = w * w
+    val uvc1 = u * v * c1
+    val uwc1 = u * w * c1
+    val vwc1 = v * w * c1
+    val us = u * s
+    val vs = v * s
+    val ws = w * s
+
+    val M = One.clone()
+
+    M(0,0) = u2 + (1-u2)*c
+    M(0,1) = uvc1 + ws
+    M(0,2) = uwc1 - vs
+
+    M(1,0) = uvc1 - ws
+    M(1,1) = v2 + (1-v2)*c
+    M(1,2) = vwc1 + us
+
+    M(2,0) = uwc1 + vs
+    M(2,1) = vwc1 - us
+    M(2,2) = w2 + (1-w2)*c
+
+    M
   }
 
   /** Make a matrix from doubles. */
@@ -199,8 +247,6 @@ object Matrix44 {
         M(2,3)==0 &&
         M(1,3)==0 &&
         M(0,3)==0
-      //if it's almost true, here I could 'clean' M a little
-      //to make it true ...
     }
 
     if(is3x3){
@@ -230,7 +276,6 @@ object Matrix44 {
         0, 0, 0, 1
       )
 
-      //if(determinant!=detM || determinant!=1 || detM!=1) println(s"determinant=$determinant detM=$detM")
       m   //real result is m/detM but I assume that detM=1.
     }
     else {
@@ -351,7 +396,7 @@ final class Matrix44 {
   }
 
   def / (x: Double): Matrix44 = {
-    require{ x!=0 }   //XXX specialise for x == 1?
+    require{ x!=0 }
     val Matrix44(
     a, b, c, d,
     e, f, g, h,

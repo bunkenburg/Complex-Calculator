@@ -82,7 +82,9 @@ case class Vector3(val x: Double, val y: Double, val z: Double) {
 
   def - (v: Vector3) = Vector3(x - v.x, y - v.y, z - v.z)
 
-  /** https://en.wikipedia.org/wiki/Dot_product */
+  /** https://en.wikipedia.org/wiki/Dot_product
+    *
+    * What a pity that · cannot be a method name. */
   def dot (v: Vector3): Double = x*v.x + y*v.y + z*v.z
 
   /** https://en.wikipedia.org/wiki/Cross_product

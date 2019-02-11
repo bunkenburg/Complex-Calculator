@@ -66,6 +66,7 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
         case MOVE => {
           startPoint = e.getPoint
           previousPoint = e.getPoint
+          canvas.startShift(startPoint)
         }
         case DRAW =>
           canvas.point2Complex(e.getPoint).foreach{ z =>
@@ -87,7 +88,7 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
         interaction match {
           case MOVE =>
             val end = e.getPoint
-            canvas.shift(startPoint, previousPoint, end)
+            canvas.endShift(startPoint, end)
             startPoint = null
             previousPoint = null
           case _ =>
