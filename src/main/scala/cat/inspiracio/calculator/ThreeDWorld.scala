@@ -53,21 +53,15 @@ final class ThreeDWorld private[calculator](calculator: Calculator) extends JFra
 
   private val canvas = new ThreeDCanvas(this)
 
-  /** In grid, N axes to either side from the centre. */
-  private[calculator] val N = 10
-
   /** The absolute values: |f(z)|
     * N * N Doubles.
     * In both axes, ten to either side from the center.
     * The range from 0 to 1. */
-  private[calculator] val M = new Array[Array[Double]](2*N + 1)
+  private[calculator] val m = new M[Double](10)
 
   init()
 
   private def init()= {
-    for ( i <- 0 to 2*N )
-      M(i) = new Array[Double](2*N + 1)
-
     setLayout(new BorderLayout)
     add("Center", canvas)
 
@@ -109,6 +103,7 @@ final class ThreeDWorld private[calculator](calculator: Calculator) extends JFra
 
   /** Assigns to M values |f(z)|. */
   private[calculator] def setNeighbourhood(): Unit = {
+    val N = m.n
     val f: Syntax = if(calculator.f!=null) calculator.f else new Constant(0)
     val step: Double = square.side / (N * 2.0)
     val center: Complex = square.center
@@ -123,16 +118,16 @@ final class ThreeDWorld private[calculator](calculator: Calculator) extends JFra
       }
 
     // Find all |f(z)|
-    for( x <- -N to N ; y <- -N to N ){
-      val z = Cartesian(step * x, step * y)
-      M(N + x)(N + y) = absf(z)
+    for( i <- -N to N ; j <- -N to N ){
+      val z = Cartesian(step * i, step * j)
+      m(i,j) = absf(z)
     }
 
     //Find the maximum for scaling
     var maximum = 0.0
-    for( x <- -N to N ; y <- -N to N ){
-      val r = M(N + x)(N + y)
-      if (! x.isInfinite() )
+    for( i <- -N to N ; j <- -N to N ){
+      val r = m(i,j)
+      if (! r.isInfinite() )
         maximum = max( maximum, r )
     }
 
@@ -145,11 +140,8 @@ final class ThreeDWorld private[calculator](calculator: Calculator) extends JFra
       else if ( r < 0.0 ) -0.2    //A singularity peaks below the box.
       else r / maximum
 
-    for( x <- -N to N ; y <- -N to N ){
-      val r = M(N + x)(N + y)
-      M(N + x)(N + y) = scale(r)
-    }
-
+    for( i <- -N to N ; j <- -N to N )
+      m(i,j) = scale( m(i,j) )
   }
 
   private[calculator] def change() = {

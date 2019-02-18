@@ -4,8 +4,8 @@ import java.awt._
 import java.awt.event.MouseEvent
 import java.lang.Math.{atan2, min}
 
-import cat.inspiracio.complex.{Complex, abs, sqrt, π}
-import cat.inspiracio.geometry.{Matrix44, Point2, Vector2, Vector3}
+import cat.inspiracio.complex.{Complex, abs, sqr, sqrt, π}
+import cat.inspiracio.geometry._
 import javax.swing.JComponent
 import javax.swing.event.MouseInputAdapter
 import MoreGraphics.GraphicsExtended
@@ -41,10 +41,10 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
   /** transformation matric between 3d space and view space */
   private var Q: Matrix44 = initQ
 
-  /** Does the real axis point forward? At the start, yes. */
+  /** Does the real axis point forward? */
   private[calculator] var xforward = false
 
-  /** Does the imaginary axis point forward? At the start, no. */
+  /** Does the imaginary axis point forward? */
   private[calculator] var zforward = false
 
   init()
@@ -72,6 +72,8 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
     addMouseListener(mouse)
     addMouseMotionListener(mouse)
 
+    determineForwardNess()
+
     setDoubleBuffered(true)
   }
 
@@ -83,8 +85,8 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
     import world.square
 
     drawNumber(g, square.botLeft, -0.5, -0.5)
-    drawNumber(g, square.botRight, -0.5, 0.5)
-    drawNumber(g, square.topLeft, 0.5, -0.5)
+    drawNumber(g, square.botRight, 0.5, -0.5)
+    drawNumber(g, square.topLeft, -0.5, 0.5)
     drawNumber(g, square.topRight, 0.5, 0.5)
 
     val (xfront,xback) = if(xforward) (0.5, -0.5) else (-0.5, 0.5)
@@ -167,11 +169,8 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
 
   /** Draws the whole diagram. */
   private[calculator] def drawIt(g: Graphics) = {
-    import world.{M,N}
-
-    //On the screen, the two edges of one line of patches
-    var line0 = new Array[Vector2](2*N + 1)
-    val line1 = new Array[Vector2](2*N + 1)
+    import world.{m}
+    val N = m.n
 
     //1. the axes at the back, because everything else with overwrite them
     drawBackAxes(g)
@@ -183,45 +182,30 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
     val (zmin,zmax) = if(zforward) (-0.5, 0.5) else (0.5, -0.5)
     val zdelta = (zmax - zmin) / (2*N)
 
-    var x = xmin  //XXX get rid of this
-    var z = zmin  //XXX get rid of this
-
-    //assigns line0 for the first time
-    for ( i <- -N to N ) {
-      val y = M(N + cx(i))(N + cz(-N))
-      line0(N + i) = f3d2d(x,y,z)
-      x += xdelta
+    val vs = new M[Vector2](N)
+    for( i <- -N to N ; j <- -N to N ){
+      val x = i * xdelta
+      val y = m(cx(i), cz(j))
+      val z = j * zdelta
+      vs(i,j) = f3d2d(x,y,z)
     }
 
-    //loop over patch lines
-    for ( i <- -N+1 to N ) {
+    for( i <- -N until N ){
       if (i == 1)
         drawRealAxis(g)
-      var x = xmin
-      z += zdelta
 
-      //assigns line1
-      for ( j <- -N to N ) {
-        val y = M(N + cx(j))(N + cz(i))
-        line1(N + j) = f3d2d(x,y,z)
-        x += xdelta
-      }
-
-      //draw one line of patches
-      for ( k <- -N to N-1 ) {
-        if (k == 0 && i == 0) {
+      for(j <- -N until N ){
+        if (j == 0 && i == 0) {
           drawModAxis(g)
           drawImaginaryAxis(g)
         }
-        val a = line0(N + k)
-        val b = line0(N + k + 1)
-        val c = line1(N + k)
-        val d = line1(N + k + 1)
+        val a = vs(i, j)
+        val b = vs(i, j + 1)
+        val c = vs(i+1, j)
+        val d = vs(i+1, j + 1)
         patch(g, a, b, c, d)
       }
 
-      for( i <- 0 to 2*N )
-        line0(i) = line1(i)
     }
 
     //3. the front axes above everything else
@@ -241,19 +225,19 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
     new Point(fx(a),fy(b))
   }
 
-  private[calculator] def angle(x: Double, y: Double): Double = atan2(y, x)
+  private def angle(x: Double, y: Double): Double = atan2(y, x)
 
   /** Maps a 2d x-coordinate to horizontal screen pixel. */
-  private[calculator] def fx(x: Double): Int = (x * xyscale + getWidth * 0.5).toInt
+  private def fx(x: Double): Int = (x * xyscale + getWidth * 0.5).toInt
 
   /** Maps a 2d y-coordinate to vertical screen pixel. */
-  private[calculator] def fy(y: Double): Int = (-y * xyscale + getHeight * 0.8).toInt
+  private def fy(y: Double): Int = (-y * xyscale + getHeight * 0.8).toInt
 
   override def getPreferredSize: Dimension = getMinimumSize
   override def getMinimumSize: Dimension = new Dimension(400, 300)
 
   /** depends on vector direct and eye */
-  private[calculator] def initQ: Matrix44 = {
+  private def initQ: Matrix44 = {
 
     //position of the eye of the observer
     val eye = Vector3(3, 0.5, 1)
@@ -262,9 +246,9 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
     val direct = Vector3(2.5, 0.5, 0.5)
 
     val d = angle(-direct.x, -direct.y)
-    val d3 = sqrt(direct.x * direct.x + direct.y * direct.y)
+    val d3 = sqrt( sqr(direct.x) + sqr(direct.y) )
     val d1 = angle(-direct.z, d3)
-    val d4 = sqrt(d3 * d3 + direct.z * direct.z)
+    val d4 = sqrt( sqr(d3) + sqr(direct.z) )
     val d2 = angle(-direct.x * d4, direct.y * direct.z)
 
     Matrix44.translate(eye).preRot('z', d).preRot('y', d1).preRot('z', -d2).postRot('y', π/2)
@@ -278,7 +262,6 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
   override def paint(g: Graphics): Unit = {
     /** Determines how much of the window the diagram should take up. */
     val factor = 0.6
-
     xyscale = min(getWidth, getHeight) * factor
     drawIt(g)
   }
@@ -361,7 +344,6 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
   private def determineForwardNess() = {
     val x1 = f3d2d(1, 0, 0)
     xforward = x1.y <= 0
-
     val z1 = f3d2d(0, 0, 1)
     zforward = z1.y <= 0
   }
@@ -369,8 +351,7 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
   /** For now, we can only rotate horizontally.
     * Could consider other rotations and a reset button. */
   private[calculator] def shift(p: Point) = {
-    val size: Dimension = getSize
-    val d = p.x * 2 * π / size.height
+    val d = p.x * 2 * π / getHeight
     Q = Q.postRot('y', -d)
     determineForwardNess()
     repaint()
