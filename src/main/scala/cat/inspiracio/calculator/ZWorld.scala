@@ -65,7 +65,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
   private var piclets: List[Piclet] = Nil
 
   /** The square that is used in z -> |f(z)| */
-  private var square = Square(0, 1+i)
+  private[calculator] var square = Square(0, 1+i)
 
   init()
 
@@ -113,7 +113,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
             addCurrent(current)
           else if (mode == MODFZ && interaction==SQUARE) {
             square = current.asInstanceOf[Square]
-            modfzW.change(square)
+            modfzW.change()
           }
           canvas.repaint()
         }
@@ -135,7 +135,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
             addCurrent(current)
           else if (mode == MODFZ && interaction==SQUARE) {
             square = current.asInstanceOf[Square]
-            modfzW.change(square)
+            modfzW.change()
           }
           canvas.repaint()
         }
@@ -162,7 +162,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
             }
             else if (mode == MODFZ && interaction==SQUARE) {
               square = current.asInstanceOf[Square]
-              modfzW.change(square)
+              modfzW.change()
             }
             eraseCurrent()
             canvas.repaint()
@@ -365,7 +365,6 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
   }
 
   private[calculator] def getPiclets = piclets
-  private[calculator] def getSquare = square
 
   private[calculator] def setMode(m: Mode) = {
     mode = m

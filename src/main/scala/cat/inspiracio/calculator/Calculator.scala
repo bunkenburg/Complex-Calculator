@@ -229,7 +229,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
     if (text.startsWith("f(" + variable + ")=")) {
       f = parse(text.substring(5))
       mode match {
-        case MODFZ => modfzW.functionChanged(f)
+        case MODFZ => modfzW.functionChanged()
         case REFX => refxW.functionChanged()
         case FZ => fzW.functionChanged()
         case _ =>
@@ -238,8 +238,6 @@ final class Calculator() extends JFrame("Complex Calculator") {
   } catch {
     case _ex: ParseException =>
   }
-
-  private[calculator] def getSquare = zW.getSquare
 
   private[calculator] def quit(): Unit = {
     if(isVisible){
