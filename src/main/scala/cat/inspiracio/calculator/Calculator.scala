@@ -197,7 +197,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
     paste(text)
 
     val m = p.get("mode", "CALC")
-    mode = Mode.valueOf(m)
+    mode = Mode.withName(m)
   }
 
   /** Adds a complex number to the display. */

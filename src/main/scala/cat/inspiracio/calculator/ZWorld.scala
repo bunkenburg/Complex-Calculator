@@ -38,10 +38,10 @@ import java.awt.event._
 
 import javax.swing._
 import cat.inspiracio.calculator.Interaction._
-import cat.inspiracio.calculator.Mode.{FZ, MODFZ}
+import cat.inspiracio.calculator.Mode.{FZ, MODFZ, Mode}
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry._
-import javax.swing.event.{MouseInputAdapter}
+import javax.swing.event.MouseInputAdapter
 
 /** The z-World is where the user gives input for function f. */
 final class ZWorld private[calculator](override val calculator: Calculator) extends World(calculator) {

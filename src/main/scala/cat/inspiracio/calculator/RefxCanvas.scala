@@ -1,9 +1,9 @@
 package cat.inspiracio.calculator
 
-import java.awt.{Color,Dimension,Font,Graphics,Point,Polygon}
+import java.awt.{Color, Dimension, Font, Graphics, Point, Polygon}
 import java.awt.event.MouseEvent
 
-import cat.inspiracio.calculator.Direction.{EAST, NORTH, SOUTH, WEST}
+import cat.inspiracio.calculator.Direction._
 import cat.inspiracio.complex.{Complex, Re, double2Complex, finite}
 import cat.inspiracio.geometry.{DoubleHelper, Point2}
 import javax.swing.JComponent

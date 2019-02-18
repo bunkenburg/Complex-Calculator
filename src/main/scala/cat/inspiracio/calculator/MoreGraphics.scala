@@ -35,6 +35,8 @@ package cat.inspiracio.calculator
 
 import java.awt._
 
+import cat.inspiracio.calculator.Direction.Direction
+
 /** Make it easy to draw lines, circles, crosses, ...
   * Keeps a pen position.
   *
