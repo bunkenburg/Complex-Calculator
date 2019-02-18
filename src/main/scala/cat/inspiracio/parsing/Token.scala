@@ -1,4 +1,4 @@
-/*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
+/*	Copyright 2019 Alexander Bunkenburg alex@inspiracio.cat
  *
  * This file is part of Complex Calculator.
  *
@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with Complex Calculator. If not, see <http://www.gnu.org/licenses/>.
- * *//*	Copyright 2011 Alexander Bunkenburg alex@cat.inspiracio.com
+ * *//*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
  *
  * This file is part of Complex Calculator.
  *
@@ -33,44 +33,34 @@
  * */
 package cat.inspiracio.parsing
 
-// Referenced classes of package bunkenba.parsing:
-//            SyntaxTree
+object Token extends Enumeration {
+  type Token = Value
 
-import cat.inspiracio.complex._
-import cat.inspiracio.parsing.Token.Token
-import Token._
+  val NOTOKEN = Value("NOTOKEN")
 
-class Unary(token: Token, argument: Syntax) extends Syntax {
+  val CONJTOKEN = Value("conj")
+  val COSHTOKEN = Value("cosh")
+  val TANHTOKEN = Value("tanh")
+  val ARGTOKEN = Value("arg")
+  val COSTOKEN = Value("cos")
+  val EXPTOKEN = Value("exp")
+  val MODTOKEN = Value("mod")
+  val OPPTOKEN = Value("opp")
+  val SINTOKEN = Value("sin")
+  val TANTOKEN = Value("tan")
+  val IMTOKEN = Value("Im")
+  val LNTOKEN = Value("ln")
+  val RETOKEN = Value("Re")
+  val DTOKEN = Value("D")
+  val SINHTOKEN = Value("sinh")
+  val FACTOKEN = Value("!")
+  val ASINTOKEN = Value("asin")
+  val ACOSTOKEN = Value("acos")
+  val ATANTOKEN = Value("atan")
 
-  override def toString: String =
-    if (token == FACTOKEN) s"($argument)!"
-    else s"$token($argument)"
-
-  override def apply(z: Complex): Complex = {
-    val a: Complex = argument(z)
-
-    token match {
-
-      case FACTOKEN => fac(a)
-      case SUMTOKEN => a
-      case DIFFERENCETOKEN => -a
-      case CONJTOKEN => conj(a)
-      case SINHTOKEN => sinh(a)
-      case COSHTOKEN => cosh(a)
-      case TANHTOKEN => tanh(a)
-      case ARGTOKEN => { val Polar(_, angle) = a; angle }
-      case COSTOKEN => cos(a)
-      case EXPTOKEN => exp(a)
-      case MODTOKEN => abs(a)
-      case OPPTOKEN => opp(a)
-      case SINTOKEN => sin(a)
-      case TANTOKEN => tan(a)
-      case IMTOKEN => Im(a)
-      case LNTOKEN => ln(a)
-      case RETOKEN => Re(a)
-
-      case t => throw new RuntimeException(s"SyntaxTreeUnary.evaluate with unexpected token $t")
-    }
-  }
-
+  val SUMTOKEN = Value("+")
+  val DIFFERENCETOKEN = Value("-")
+  val PRODUCTTOKEN = Value("*")
+  val QUOTIENTTOKEN = Value("/")
+  val POWERTOKEN = Value("^")
 }

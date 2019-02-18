@@ -42,7 +42,7 @@ object Line {
   def apply(a: Complex, b: Complex): Line = new Line(a,b)
 }
 
-class Line(var a: Complex, var b: Complex) extends Piclet {
+class Line(val a: Complex, val b: Complex) extends Piclet {
 
   override def top: Double = max(Im(a), Im(b))
   override def bottom: Double = min(Im(a), Im(b))
@@ -52,13 +52,14 @@ class Line(var a: Complex, var b: Complex) extends Piclet {
   def length: Double = abs(a-b)
 
   override protected def sample(): Unit = {
+    val N = 30
+
     samples = b :: Nil
 
-    //30 steps from b to a
-    val step = ( a - b) / 30
-    var z = b
-    for ( i <- 0 until 30 ) {
-      z = z + step
+    //N steps from b to a
+    val step = ( a - b) / N
+    for ( i <- 0 until N ) {
+      val z = b + step * i
       samples = z :: samples
     }
 

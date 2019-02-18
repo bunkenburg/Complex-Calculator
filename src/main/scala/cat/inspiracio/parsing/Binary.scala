@@ -34,14 +34,15 @@
 package cat.inspiracio.parsing
 
 import cat.inspiracio.complex._
-import Syntax._
+import cat.inspiracio.parsing.Token.Token
+import Token._
 
 // Referenced classes of package bunkenba.parsing:
 //            SyntaxTree
 
-class Binary(token: Int, left: Syntax, right: Syntax) extends Syntax {
+class Binary(token: Token, left: Syntax, right: Syntax) extends Syntax {
 
-  override def toString: String = "(" + left + ")" + token2String(token) + "(" + right + ")"
+  override def toString: String = s"($left)$token($right)"
 
   override def apply(z: Complex): Complex = {
 
@@ -49,29 +50,12 @@ class Binary(token: Int, left: Syntax, right: Syntax) extends Syntax {
     val b: Complex = right(z)
 
     token match {
-
-      case NOTOKEN => throw new RuntimeException("SyntaxTreeBinary.evaluate(NOTOKEN)")
-
       case SUMTOKEN => a + b
       case DIFFERENCETOKEN => a - b
       case PRODUCTTOKEN => a * b
       case QUOTIENTTOKEN => a / b
       case POWERTOKEN => a ^ b
-
-      case 5 => throw new RuntimeException("SyntaxTreeBinary.evaluate with unary token " + Syntax.token2String(token))
-      case 6 => throw new RuntimeException("SyntaxTreeBinary.evaluate with unary token " + Syntax.token2String(token))
-      case 7 => throw new RuntimeException("SyntaxTreeBinary.evaluate with unary token " + Syntax.token2String(token))
-      case 8 => throw new RuntimeException("SyntaxTreeBinary.evaluate with unary token " + Syntax.token2String(token))
-      case 9 => throw new RuntimeException("SyntaxTreeBinary.evaluate with unary token " + Syntax.token2String(token))
-      case 10 => throw new RuntimeException("SyntaxTreeBinary.evaluate with unary token " + Syntax.token2String(token))
-      case 11 => throw new RuntimeException("SyntaxTreeBinary.evaluate with unary token " + Syntax.token2String(token))
-      case 12 => throw new RuntimeException("SyntaxTreeBinary.evaluate with unary token " + Syntax.token2String(token))
-      case 13 => throw new RuntimeException("SyntaxTreeBinary.evaluate with unary token " + Syntax.token2String(token))
-      case 14 => throw new RuntimeException("SyntaxTreeBinary.evaluate with unary token " + Syntax.token2String(token))
-      case 15 => throw new RuntimeException("SyntaxTreeBinary.evaluate with unary token " + Syntax.token2String(token))
-      case 16 => throw new RuntimeException("SyntaxTreeBinary.evaluate with unary token " + Syntax.token2String(token))
-      case 17 => throw new RuntimeException("SyntaxTreeBinary.evaluate with unary token " + Syntax.token2String(token))
-      case 18 => throw new RuntimeException("SyntaxTreeBinary.evaluate with unary token " + Syntax.token2String(token))
+      case t => throw new RuntimeException(s"SyntaxTreeBinary.evaluate with token $t")
     }
 
   }

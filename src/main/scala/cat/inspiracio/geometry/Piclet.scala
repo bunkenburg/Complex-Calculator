@@ -38,6 +38,7 @@ import cat.inspiracio.complex._
 // Referenced classes of package bunkenba.numbers:
 //            ECList
 
+/** Immutable, even if it has a var inside. */
 abstract class Piclet() {
 
   protected var samples: List[Complex] = null

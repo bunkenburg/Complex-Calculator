@@ -36,6 +36,7 @@ package cat.inspiracio.parsing
 import cat.inspiracio.complex._
 import java.text.ParseException
 import java.text.ParsePosition
+import Token._
 
 // Referenced classes of package bunkenba.parsing:
 //            SyntaxTreeBinary, SyntaxTreeConstant, SyntaxTreeUnary, SyntaxTreeVariable
@@ -53,25 +54,25 @@ object Syntax {
 
     if ( end <= start ) throw new ParseException("SyntaxTree.parse(empty)", start)
 
-    var k = last('+', s, start, end)
-    if ( -1 < k )
-      plusMinus(s, start, k, end, 0)
+    val k = last('+', s, start, end)
+    if ( k.isDefined )
+      plusMinus(s, start, k.get, end, SUMTOKEN)
 
     else {
 
-      k = last('-', s, start, end)
-      if ( -1 < k )
-        plusMinus(s, start, k, end, 1)
+      val k = last('-', s, start, end)
+      if ( k.isDefined )
+        plusMinus(s, start, k.get, end, DIFFERENCETOKEN)
 
       else {
-        k = last('*', s, start, end)
-        if ( -1 < k )
-          binary(s, start, k, end, PRODUCTTOKEN)
+        val k = last('*', s, start, end)
+        if ( k.isDefined )
+          binary(s, start, k.get, end, PRODUCTTOKEN)
 
         else {
-          k = last('/', s, start, end)
-          if ( -1 < k )
-            binary(s, start, k, end, 3)
+          val k = last('/', s, start, end)
+          if ( k.isDefined )
+            binary(s, start, k.get, end, QUOTIENTTOKEN)
 
           else {
             val p0 = new ParsePosition(start)
@@ -90,23 +91,22 @@ object Syntax {
 
   @throws[ParseException]
   private def parseFactor(s: String, start: ParsePosition, end: ParsePosition): Syntax = {
-
     var tree: Syntax = null
-    var i = 0
 
     //parse (
     if (s.charAt(start.getIndex) == '(') {
       val j = first(')', s, start.getIndex + 1, end.getIndex)
-      if (j == -1) throw new ParseException("unmatched bracket", start.getIndex)
-      tree = parse(s, start.getIndex + 1, j)
-      start.setIndex(j + 1)
+      if (j.isEmpty)
+        throw new ParseException("unmatched bracket", start.getIndex)
+      tree = parse(s, start.getIndex + 1, j.get)
+      start.setIndex(j.get + 1)
     }
 
     //parse function
     else {
-      i = recogniseFunction(s, start, end)
-      if (i != -1) {
-        tree = new Unary(i, parse(s, start.getIndex, end.getIndex))
+      val token = recogniseFunction(s, start, end)
+      if (token.isDefined) {
+        tree = new Unary(token.get, parse(s, start.getIndex, end.getIndex))
         start.setIndex(end.getIndex)
       }
 
@@ -142,31 +142,39 @@ object Syntax {
   }
 
   /** Index of the first instance of c i s(i..j). */
-  private def first(c: Char, s: String, i: Int, j: Int): Int = {
+  private def first(c: Char, s: String, i: Int, j: Int): Option[Int] = {
     var k = i
     var parenthesis = 0
     while ( k < j && (parenthesis != 0 || s.charAt(k) != c) ) {
-      if (s.charAt(k) == '(')
+      val ch = s.charAt(k)
+      if ( ch == '(')
         parenthesis += 1
-      else if (s.charAt(k) == ')')
+      else if ( ch == ')')
         parenthesis -= 1
       k += 1
     }
-    if (k < j) k else -1
+    if (k < j)
+      Some(k)
+    else
+      None
   }
 
   /** Index of the last instance of c i s(i..j). */
-  private def last(c: Char, s: String, i: Int, j: Int): Int = {
+  private def last(c: Char, s: String, i: Int, j: Int): Option[Int] = {
     var k = j - 1
     var parenthesis = 0
     while ( i <= k && (parenthesis != 0 || s.charAt(k) != c) ) {
-      if (s.charAt(k) == '(')
+      val ch = s.charAt(k)
+      if ( ch == '(')
         parenthesis += 1
-      else if (s.charAt(k) == ')')
+      else if ( ch == ')')
         parenthesis -= 1
       k -= 1
     }
-    if (i <= k) k else -1
+    if (i <= k)
+      Some(k)
+    else
+      None
   }
 
   private def readVariable(s: String, start: ParsePosition, end: ParsePosition): Variable = {
@@ -174,191 +182,131 @@ object Syntax {
     new Variable
   }
 
-  private def recogniseFunction(s: String, p0: ParsePosition, p1: ParsePosition): Int = {
+  private def recogniseFunction(s: String, p0: ParsePosition, p1: ParsePosition): Option[Token] = {
     val i = p0.getIndex
     if (s.startsWith("acos", i)) {
       p0.setIndex(i + 4)
-      ACOSTOKEN
+      Some(ACOSTOKEN)
     }
     else if (s.startsWith("arg", i)) {
       p0.setIndex(i + 3)
-      ARGTOKEN
+      Some(ARGTOKEN)
     }
     else if (s.startsWith("asin", i)) {
       p0.setIndex(i + 4)
-      ASINTOKEN
+      Some(ASINTOKEN)
     }
     else if (s.startsWith("atan", i)) {
       p0.setIndex(i + 4)
-      ATANTOKEN
+      Some(ATANTOKEN)
     }
     else if (s.startsWith("conj", i)) {
       p0.setIndex(i + 4)
-      CONJTOKEN
+      Some(CONJTOKEN)
     }
     else if (s.startsWith("cosh", i)) {
       p0.setIndex(i + 4)
-      COSHTOKEN
+      Some(COSHTOKEN)
     }
     else if (s.startsWith("cos", i)) {
       p0.setIndex(i + 3)
-      COSTOKEN
+      Some(COSTOKEN)
     }
     else if (s.startsWith("D", i)) {
       p0.setIndex(i + 1)
-      DTOKEN
+      Some(DTOKEN)
     }
     else if (s.startsWith("exp", i)) {
       p0.setIndex(i + 3)
-      EXPTOKEN
+      Some(EXPTOKEN)
     }
     else if (s.startsWith("Im", i)) {
       p0.setIndex(i + 2)
-      IMTOKEN
+      Some(IMTOKEN)
     }
     else if (s.startsWith("ln", i)) {
       p0.setIndex(i + 2)
-      LNTOKEN
+      Some(LNTOKEN)
     }
     else if (s.startsWith("mod", i)) {
       p0.setIndex(i + 3)
-      MODTOKEN
+      Some(MODTOKEN)
     }
     else if (s.startsWith("opp", i)) {
       p0.setIndex(i + 3)
-      OPPTOKEN
+      Some(OPPTOKEN)
     }
     else if (s.startsWith("Re", i )) {
       p0.setIndex(i + 2)
-      RETOKEN
+      Some(RETOKEN)
     }
     else if (s.startsWith("sinh", i )) {
       p0.setIndex(i + 4)
-      SINHTOKEN
+      Some(SINHTOKEN)
     }
     else if (s.startsWith("sin", i )) {
       p0.setIndex(i + 3)
-      SINTOKEN
+      Some(SINTOKEN)
     }
     else if (s.startsWith("tanh", i )) {
       p0.setIndex(i + 4)
-      TANHTOKEN
+      Some(TANHTOKEN)
     }
     else if (s.startsWith("tan", i )) {
       p0.setIndex(i + 3)
-      TANTOKEN
+      Some(TANTOKEN)
     }
-    else NOTOKEN
+    else None
   }
 
   /** removes all white space from the string */
   def stripBlanks(s: String): String = {
     val builder = new StringBuilder(s.length)
-    for ( i <- 0 until s.length )
-      if ( !Character.isWhitespace(s.charAt(i)) )
-        builder.append(s.charAt(i))
+    for( c <- s )
+      if ( !Character.isWhitespace(c) )
+        builder.append(c)
     builder.toString
   }
-
-  def token2String(token: Int): String = token match {
-      case -1 => "NOTOKEN"
-      case 0 => "+"
-      case 1 => "-"
-      case 2 => "*"
-      case 3 => "/"
-      case 4 => "^"
-      case 22 => "acos"
-      case 21 => "asin"
-      case 23 => "atan"
-      case 5 => "conj"
-      case 6 => "cosh"
-      case 7 => "tanh"
-      case 19 => "sinh"
-      case 8 => "arg"
-      case 9 => "cos"
-      case 10 => "exp"
-      case 11 => "mod"
-      case 12 => "opp"
-      case 13 => "sin"
-      case 14 => "tan"
-      case 15 => "Im"
-      case 16 => "ln"
-      case 17 => "Re"
-      case 18 => "D"
-      case 20 => "!"
-      case _ => "a token"
-    }
 
   private final val constants = "iepπ∞"
   private final val variables = "zx"
   private final val digits = "0123456789"
   private final val functionInitials = "acDeIlmoRst"
 
-  val NOTOKEN: Int = -1
-  val SUMTOKEN = 0
-  val DIFFERENCETOKEN = 1
-  val PRODUCTTOKEN = 2
-  val QUOTIENTTOKEN = 3
-  val POWERTOKEN = 4
-  val CONJTOKEN = 5
-  val COSHTOKEN = 6
-  val TANHTOKEN = 7
-  val ARGTOKEN = 8
-  val COSTOKEN = 9
-  val EXPTOKEN = 10
-  val MODTOKEN = 11
-  val OPPTOKEN = 12
-  val SINTOKEN = 13
-  val TANTOKEN = 14
-  val IMTOKEN = 15
-  val LNTOKEN = 16
-  val RETOKEN = 17
-  val DTOKEN = 18
-  val SINHTOKEN = 19
-  val FACTOKEN = 20
-  val ASINTOKEN = 21
-  val ACOSTOKEN = 22
-  val ATANTOKEN = 23
-
   @throws[ParseException]
   private def readConstant(s: String, start: ParsePosition, end: ParsePosition): Constant = {
-    var c: Complex = null
-    var i = start.getIndex
-
+    val i = start.getIndex
     if (s.startsWith("i", i)) {
-      c = Cartesian(0, 1)
-      i += 1
+      start.setIndex(i+1)
+      new Constant( Cartesian(0, 1) )
     }
     else if (s.startsWith("e", i)) {
-      c = e
-      i += 1
+      start.setIndex(i+1)
+      new Constant( e )
     }
     else if (s.startsWith("π", i)) {
-      c = π
-      i += 1
+      start.setIndex(i+1)
+      new Constant( π )
     }
     else if (s.startsWith("∞", i)) {
-      c = ∞
-      i += 1
+      start.setIndex(i+1)
+      new Constant( ∞ )
     }
     else
       throw new ParseException("readConstant " + s, i)
-
-    start.setIndex(i)
-    new Constant(c)
   }
 
   @throws[ParseException]
   private def readDigits(s: String, start: ParsePosition, end: ParsePosition): Constant = {
-
     var i = start.getIndex
     while ( i < end.getIndex && digits.contains(s.charAt(i) ) )
       i += 1
 
-    var c: Complex = null
-
-    if (end.getIndex == i)
-      c = ( s.substring(start.getIndex, i) ).toDouble
+    if (end.getIndex == i){
+      val c = ( s.substring(start.getIndex, i) ).toDouble
+      start.setIndex(i)
+      new Constant(c)
+    }
 
     else if (s.charAt(i) == '.') {
       var j = i + 1
@@ -367,28 +315,34 @@ object Syntax {
 
       if (i + 1 <= j - 1) {
         i = j
-        c = (s.substring(start.getIndex, i)).toDouble
+        val c = (s.substring(start.getIndex, i)).toDouble
+        start.setIndex(i)
+        new Constant(c)
       }
       else
         throw new ParseException("readDigits: decimal point followed by non-digit", i)
     }
-    else
-      c = (s.substring(start.getIndex, i)).toDouble
 
-    start.setIndex(i)
-    new Constant(c)
+    else{
+      val c = (s.substring(start.getIndex, i)).toDouble
+      start.setIndex(i)
+      new Constant(c)
+    }
   }
 
   @throws[ParseException]
-  private def binary(s: String, i: Int, j: Int, k: Int, token: Int): Binary = {
+  private def binary(s: String, i: Int, j: Int, k: Int, token: Token): Binary = {
     val a = parse(s, i, j)
     val b = parse(s, j + 1, k)
     new Binary(token, a, b)
   }
 
   @throws[ParseException]
-  private def plusMinus(s: String, i: Int, j: Int, k: Int, token: Int): Syntax =
-    if (j == i) new Unary(token, parse(s, i + 1, k)) else binary(s, i, j, k, token)
+  private def plusMinus(s: String, i: Int, j: Int, k: Int, token: Token): Syntax =
+    if (j == i)
+      new Unary(token, parse(s, i + 1, k))
+    else
+      binary(s, i, j, k, token)
 
 }
 
