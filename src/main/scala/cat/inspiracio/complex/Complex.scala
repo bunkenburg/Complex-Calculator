@@ -26,7 +26,7 @@ import cat.inspiracio.complex.imp.Circle
   * - object ∞
   *
   * */
-trait Complex {
+abstract class Complex {
 
   // Operators ---------------------------------
 
