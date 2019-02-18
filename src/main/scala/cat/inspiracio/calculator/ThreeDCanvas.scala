@@ -111,7 +111,7 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
     val front = v.y <= 0
     val left = v.x <= 0
 
-    val point = Point2(fx(v.x), fy(v.y))
+    val point = f2dPix(v)
     val s = c.toString
 
     val adjusted = point + (
@@ -175,13 +175,13 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
     //1. the axes at the back, because everything else with overwrite them
     drawBackAxes(g)
 
-    //2. draw the patches, with axis in between them
     val (xmin,xmax) = if(xforward) (-0.5, 0.5) else (0.5, -0.5)
     val xdelta = (xmax - xmin) / (2*N)
 
     val (zmin,zmax) = if(zforward) (-0.5, 0.5) else (0.5, -0.5)
     val zdelta = (zmax - zmin) / (2*N)
 
+    //2. calculate the 2d Vectors
     val vs = new M[Vector2](N)
     for( i <- -N to N ; j <- -N to N ){
       val x = i * xdelta
@@ -190,6 +190,7 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
       vs(i,j) = f3d2d(x,y,z)
     }
 
+    //3. draw the patches, with axis in between them
     for( i <- -N until N ){
       if (i == 1)
         drawRealAxis(g)
@@ -208,7 +209,7 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
 
     }
 
-    //3. the front axes above everything else
+    //4. the front axes above everything else
     drawFrontAxes(g)
   }
 
@@ -220,18 +221,15 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
     )
 
   /** Maps a 3d position to a screen pixel. */
-  private def f3dPix(x: Double, y: Double, z: Double): Point = {
-    val Vector2(a,b) = f3d2d(x,y,z)
-    new Point(fx(a),fy(b))
-  }
+  private def f3dPix(x: Double, y: Double, z: Double): Point = f2dPix(f3d2d(x,y,z))
 
   private def angle(x: Double, y: Double): Double = atan2(y, x)
 
-  /** Maps a 2d x-coordinate to horizontal screen pixel. */
-  private def fx(x: Double): Int = (x * xyscale + getWidth * 0.5).toInt
-
-  /** Maps a 2d y-coordinate to vertical screen pixel. */
-  private def fy(y: Double): Int = (-y * xyscale + getHeight * 0.8).toInt
+  /** Maps from 2d space to screen pixels. */
+  private def f2dPix(v: Vector2): Point2 = Point2(
+    (v.x * xyscale + getWidth * 0.5).toInt,
+    (-v.y * xyscale + getHeight * 0.8).toInt
+  )
 
   override def getPreferredSize: Dimension = getMinimumSize
   override def getMinimumSize: Dimension = new Dimension(400, 300)
@@ -268,69 +266,59 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
 
   /** Draws a patch for vectors a, b, c, d.
     * May be a quadrilateral or a triangle. */
-  private[calculator] def patch(g: Graphics, a: Vector2, b: Vector2, c: Vector2, d: Vector2): Unit = {
+  private def patch(g: Graphics, a: Vector2, b: Vector2, c: Vector2, d: Vector2): Unit = {
+    //I've lost the documentation for this algorithm.
 
-    val something = (b.x - a.x) * (d.y - c.y) - (b.y - a.y) * (d.x - c.x)
-    if ( 0.0001 < abs(something) ) {
-      val d1 = ((c.x - a.x) * (d.y - c.y) - (c.y - a.y) * (d.x - c.x)) / something
-
-      if ( 0 <= d1 && d1 <= 1 ) {
-        val v5 = Vector2(
-          (1 - d1) * a.x + d1 * b.x,
-          (1 - d1) * a.y + d1 * b.y
-        )
-        triangle(g, a, c, v5)
-        triangle(g, b, d, v5)
-      }
-
-      else {
-        val something = (c.x - a.x) * (d.y - b.y) - (c.y - a.y) * (d.x - b.x)
-        if ( 0.0001D < abs(something) ) {
-          val d2 = ((b.x - a.x) * (d.y - b.y) - (b.y - a.y) * (d.x - b.x)) / something
-          if ( 0 <= d2 && d2 <= 1 ) {
-            val v5 = Vector2(
-              (1 - d2) * a.x + d2 * c.x,
-              (1.0D - d2) * a.y + d2 * c.y
-            )
-            triangle(g, a, b, v5)
-            triangle(g, c, d, v5)
-          }
-          else
-            quadrilateral(g, a, b, d, c)
-        }
-        else
-          quadrilateral(g, a, b, d, c)
-      }
-    }
-
-    else {
+    def BLOCK = {
       val something = (c.x - a.x) * (d.y - b.y) - (c.y - a.y) * (d.x - b.x)
-      if ( 0.0001 < abs(something) ) {
-        val d3 = ((b.x - a.x) * (d.y - b.y) - (b.y - a.y) * (d.x - b.x)) / something
-        if (0 <= d3 && d3 <= 1) {
-          val v5 = Vector2(
-            (1 - d3) * a.x + d3 * c.x,
-            (1 - d3) * a.y + d3 * c.y
-          )
-          triangle(g, a, b, v5)
-          triangle(g, c, d, v5)
-        }
-        else
-          quadrilateral(g, a, b, d, c)
+      val d2 = ((b.x - a.x) * (d.y - b.y) - (b.y - a.y) * (d.x - b.x)) / something  //maybe Infinity
+      if ( 0 <= d2 && d2 <= 1 ) {
+        val v5 = Vector2(
+          (1 - d2) * a.x + d2 * c.x,
+          (1 - d2) * a.y + d2 * c.y
+        )
+        triangle(g, a, b, v5)
+        triangle(g, c, d, v5)
       }
       else
         quadrilateral(g, a, b, d, c)
     }
 
+    val something = (b.x - a.x) * (d.y - c.y) - (b.y - a.y) * (d.x - c.x)
+    val d1 = ((c.x - a.x) * (d.y - c.y) - (c.y - a.y) * (d.x - c.x)) / something  //maybe Infinity
+    if ( 0 <= d1 && d1 <= 1 ) {
+      val v5 = Vector2(
+        (1 - d1) * a.x + d1 * b.x,
+        (1 - d1) * a.y + d1 * b.y
+      )
+      triangle(g, a, c, v5)
+      triangle(g, b, d, v5)
+    }
+    else
+      BLOCK
+  }
+
+  /** draws a triangle */
+  private def triangle(g: Graphics, a: Vector2, b: Vector2, c: Vector2) = {
+    val triangle = new Polygon(){
+      def addPoint(p: Point): Unit = addPoint(p.x, p.y)
+    }
+    triangle.addPoint(f2dPix(a))
+    triangle.addPoint(f2dPix(b))
+    triangle.addPoint(f2dPix(c))
+    g.fillPolygon(triangle, Color.lightGray)
+    g.drawPolygon(triangle)
   }
 
   /** draws a quadrilateral */
-  private[calculator] def quadrilateral(g: Graphics, a: Vector2, b: Vector2, c: Vector2, d: Vector2) = {
-    val quad = new Polygon
-    quad.addPoint(fx(a.x), fy(a.y))
-    quad.addPoint(fx(b.x), fy(b.y))
-    quad.addPoint(fx(c.x), fy(c.y))
-    quad.addPoint(fx(d.x), fy(d.y))
+  private def quadrilateral(g: Graphics, a: Vector2, b: Vector2, c: Vector2, d: Vector2) = {
+    val quad = new Polygon(){
+      def addPoint(p: Point): Unit = addPoint(p.x, p.y)
+    }
+    quad.addPoint(f2dPix(a))
+    quad.addPoint(f2dPix(b))
+    quad.addPoint(f2dPix(c))
+    quad.addPoint(f2dPix(d))
     g.fillPolygon(quad, Color.lightGray)
     g.drawPolygon(quad)
   }
@@ -350,21 +338,11 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
 
   /** For now, we can only rotate horizontally.
     * Could consider other rotations and a reset button. */
-  private[calculator] def shift(p: Point) = {
+  private def shift(p: Point) = {
     val d = p.x * 2 * π / getHeight
     Q = Q.postRot('y', -d)
     determineForwardNess()
     repaint()
-  }
-
-  /** draws a triangle */
-  private[calculator] def triangle(g: Graphics, a: Vector2, b: Vector2, c: Vector2) = {
-    val triangle = new Polygon
-    triangle.addPoint(fx(a.x), fy(a.y))
-    triangle.addPoint(fx(b.x), fy(b.y))
-    triangle.addPoint(fx(c.x), fy(c.y))
-    g.fillPolygon(triangle, Color.lightGray)
-    g.drawPolygon(triangle)
   }
 
 }

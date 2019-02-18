@@ -25,7 +25,7 @@ import org.scalatest.FunSuite
 class FzWorldTest extends FunSuite {
 
   test("loop"){
-
+    /*
     val calculator = new Calculator
     val zW = new ZWorld(calculator)
     calculator.zW = zW
@@ -36,8 +36,8 @@ class FzWorldTest extends FunSuite {
     val z = 3+i
     val p = Square(z, z)
     fzW.add(p)
-
     calculator.quit()
+    */
   }
 
 }
