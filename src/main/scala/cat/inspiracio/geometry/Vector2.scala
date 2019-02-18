@@ -34,6 +34,9 @@
 package cat.inspiracio.geometry
 
 /** 2d vector. */
+object Vector2{
+  val Zero = Vector2(0,0)
+}
 case class Vector2(val x: Double, val y: Double) {
 
   override def toString: String = "(" + x + ", " + y + ")"

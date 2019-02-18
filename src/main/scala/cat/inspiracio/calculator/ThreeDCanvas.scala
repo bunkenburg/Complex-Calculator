@@ -4,14 +4,18 @@ import java.awt._
 import java.awt.event.MouseEvent
 import java.lang.Math.{atan2, min}
 
-import cat.inspiracio.complex.{abs, sqrt, π}
+import cat.inspiracio.complex.{Complex, abs, sqrt, π}
 import cat.inspiracio.geometry.{Matrix44, Point2, Vector2, Vector3}
 import javax.swing.JComponent
 import javax.swing.event.MouseInputAdapter
-
 import MoreGraphics.GraphicsExtended
 
-/** We are in a 3d space where x and z are flat, and y points up.
+/** Shows a grid of |f(z)|.
+  *
+  * The grid is ThreeDWorld.M corresponding to ZWorld.square,
+  * and the function f i calculator.f.
+  *
+  * We are in a 3d space where x and z are flat, and y points up.
   *
   * A cube with height 0 <= y <= 1 and sides -0.5 <= x <= 0.5
   * and -0.5 <= z <= 0.5.
@@ -20,7 +24,7 @@ import MoreGraphics.GraphicsExtended
   * The imaginary axis is z.
   *
   * The starting position is real axis comes slightly to the front,
-  * but imaginary axis points backwards. That means:
+  * but imaginary axis points backwards. That means, forward is:
   *
   *   xforward && !zforward.
   *
@@ -29,15 +33,11 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
 
   //State ----------------------------------------------------------
 
-  private var FONT_HEIGHT = 12
+  private var fontAscent = 12
 
-  private[calculator] val eye = Vector3(3, 0.5, 1)
-  private[calculator] val direct = Vector3(2.5, 0.5, 0.5)
-
-  private[calculator] var nxpix = 0
-  private[calculator] var nypix = 0
   private[calculator] var xyscale = 0.0
 
+  /** transformation matric between 3d space and view space */
   private var Q: Matrix44 = initQ
 
   /** Does the real axis point forward? At the start, yes. */
@@ -78,131 +78,43 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
 
   /** Draws the lines behind the surface.
     * Depends on xforward, zforward. */
-  private[calculator] def drawBackAxes(g: Graphics) = {
-    drawBottomLeftNumber(g)
-    drawBottomRightNumber(g)
-    drawTopleftNumber(g)
-    drawTopRightNumber(g)
+  private def drawBackAxes(g: Graphics) = {
+    import world.square
 
-    //two base lines ---
-    if (xforward)
-    //left base line, which is a bit more behind
-      drawLine3(g)( -0.5, 0.0, -0.5)( -0.5, 0.0, 0.5)
-    else
-    //right base line, which is a bit more in front
-      drawLine3(g)(  0.5, 0.0, -0.5)(  0.5, 0.0, 0.5)
+    drawNumber(g, square.botLeft, -0.5, -0.5)
+    drawNumber(g, square.botRight, -0.5, 0.5)
+    drawNumber(g, square.topLeft, 0.5, -0.5)
+    drawNumber(g, square.topRight, 0.5, 0.5)
 
-    if (zforward) //imaginary axis points forward (not at the start)
-    //front base line, which is behind
-      drawLine3(g)( -0.5, 0.0, -0.5)( 0.5, 0.0, -0.5)
-    else
-    //back base line
-      drawLine3(g)( -0.5, 0.0,  0.5)( 0.5, 0.0,  0.5)
+    val (xfront,xback) = if(xforward) (0.5, -0.5) else (-0.5, 0.5)
+    val (zfront,zback) = if(zforward) (0.5, -0.5) else (-0.5, 0.5)
 
-    //two poles ---
-    if (!xforward || !zforward)
-    //top right pole, on (x=0.5, z=0.5)
-      drawLine3(g)( 0.5, 0.0, 0.5)( 0.5, 1.0, 0.5)
+    //two base lines
+    drawLine3(g)(xback, 0.0, -0.5)(xback, 0.0, 0.5)
+    drawLine3(g)(-0.5, 0.0, zback)(0.5, 0.0, zback)
 
-    if (!xforward || zforward)
-    //bottom right pole, on (x=0.5, z=-0.5)
-      drawLine3(g)( 0.5, 0.0, -0.5)( 0.5, 1.0, -0.5)
+    //three poles
+    drawLine3(g)(xback, 0.0, zback)(xback, 1.0, zback)
+    drawLine3(g)(xback, 0.0, zfront)(xback, 1.0, zfront)
+    drawLine3(g)(xfront, 0.0, zback)(xfront, 1.0, zback)
 
-    if (xforward || !zforward)
-    //top left pole, on (x=-0.5, z=0.5)
-      drawLine3(g)( -0.5, 0.0, 0.5)( -0.5, 1.0, 0.5)
-    if (xforward || zforward)
-    //bottom left pole on (x=-0.5, z=-0.5)
-      drawLine3(g)( -0.5, 0.0, -0.5)( -0.5, 1.0, -0.5)
-
-    // two lid lines --
-    if (xforward)
-    //left lid line
-      drawLine3(g)( -0.5, 1.0, -0.5)( -0.5, 1.0, 0.5)
-    else
-    //right lid line
-      drawLine3(g)( 0.5, 1.0, -0.5)(  0.5, 1.0, 0.5)
-
-    if (zforward)
-    //front lid line
-      drawLine3(g)( -0.5, 1.0, -0.5)( 0.5, 1.0, -0.5)
-    else
-    //back lid line
-      drawLine3(g)( -0.5, 1.0,  0.5)( 0.5, 1.0,  0.5)
+    //two lid lines
+    drawLine3(g)(xback, 1, -0.5)(xback, 1, 0.5)
+    drawLine3(g)(-0.5, 1, zback)(0.5, 1, zback)
   }
 
-  private def drawBottomLeftNumber(g: Graphics) = {
-    val botleft: Point2 = f3dPix(-0.5, 0.0, -0.5)
-    val s = world.square.botLeft.toString
+  private def drawNumber(g: Graphics, c: Complex, x: Double, z: Double) = {
+    val v = f3d2d(x, 0, z)
+    val front = v.y <= 0
+    val left = v.x <= 0
 
-    val adjusted: Point =
-      if (xforward && zforward)
-        botleft + (2, -2)
-      else if (xforward && !zforward){
-        val width = g.getFontMetrics.stringWidth(s)
-        botleft + (-width - 2, FONT_HEIGHT)
-      }
-      else if (!xforward && zforward)
-        botleft + (2, FONT_HEIGHT)
-      else //if (!xforward && !zforward)
-        botleft + (2, FONT_HEIGHT)
+    val point = Point2(fx(v.x), fy(v.y))
+    val s = c.toString
 
-    g.drawString(s, adjusted)
-  }
-
-  private def drawBottomRightNumber(g: Graphics) = {
-    val botright: Point2 = f3dPix(0.5, 0.0, -0.5)
-    val s = world.square.botRight.toString
-
-    val adjusted: Point =
-      if (xforward && zforward) {
-        val width = g.getFontMetrics.stringWidth(s)
-        botright + (-width - 2, FONT_HEIGHT)
-      }
-      else if (xforward && !zforward)
-        botright + (2, FONT_HEIGHT)
-      else if (!xforward && zforward)
-        botright + (2, -2)
-      else //if (!xforward && !zforward)
-        botright + (2, FONT_HEIGHT)
-
-    g.drawString(s, adjusted)
-  }
-
-  private def drawTopleftNumber(g: Graphics)= {
-    val topleft: Point2 = f3dPix(-0.5, 0.0, 0.5)
-    val s = world.square.topLeft.toString
-
-    val adjusted: Point =
-      if (xforward && zforward)
-        topleft + (2, FONT_HEIGHT)
-      else if (xforward && !zforward)
-        topleft + (2, -2)
-      else if (!xforward && zforward)
-        topleft + (2, FONT_HEIGHT)
-      else /* if (!xforward && !zforward) */ {
-        val width = g.getFontMetrics.stringWidth(s)
-        topleft + (-width - 2, FONT_HEIGHT)
-      }
-
-    g.drawString(s, adjusted)
-  }
-
-  private def drawTopRightNumber(g: Graphics) = {
-    val topright: Point2 = f3dPix(0.5, 0.0, 0.5)
-    val s = world.square.topRight.toString
-
-    val adjusted: Point =
-      if (xforward && zforward)
-        topright + (2, FONT_HEIGHT)
-      else if (xforward && !zforward)
-        topright + (2, FONT_HEIGHT)
-      else if (!xforward && zforward) {
-        val width = g.getFontMetrics.stringWidth(s)
-        topright + (-width - 2, FONT_HEIGHT)
-      }
-      else //if (!xforward && !zforward)
-        topright + (2, -2)
+    val adjusted = point + (
+      if(left) (-g.getFontMetrics.stringWidth(s) - 2) else 2,
+      if(front) fontAscent else -2
+    )
 
     g.drawString(s, adjusted)
   }
@@ -210,6 +122,8 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
   /** Draws the lines in front of the surface.
     * Reads xforward, zforward. */
   private[calculator] def drawFrontAxes(g: Graphics) = {
+
+    //Shorten this by using zforward and zforward to assign four Integers.
 
     if (xforward)
     //right base line
@@ -272,21 +186,13 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
 
   /** Draws the whole diagram. */
   private[calculator] def drawIt(g: Graphics) = {
-    import world.N
+    import world.{M,N}
 
     //On the screen, the two edges of one line of patches
     var line0 = new Array[Vector2](2*N + 1)
     val line1 = new Array[Vector2](2*N + 1)
 
-    {
-      val zero = f3d2d(Vector3(0, 0, 0))
-      val x1 = f3d2d(Vector3(1, 0, 0))
-      val z1 = f3d2d(Vector3(0, 0, 1))
-      xforward = x1.y <= zero.y
-      zforward = z1.y <= zero.y
-    }
-
-    //first the axes at the back, because everything else with overwrite them
+    //1. the axes at the back, because everything else with overwrite them
     drawBackAxes(g)
 
     //second draw the patches, with axis in between them
@@ -301,12 +207,13 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
 
     //assigns line0 for the first time
     for ( i <- -N to N ) {
-      val y = world.M(N + cx(i))(N + cz(-N))
+      val y = M(N + cx(i))(N + cz(-N))
 
-      line0(N + i) = Vector2(
-        Q(0,0) * x + Q(0,1) * y + Q(0,2) * z,
-        Q(1,0) * x + Q(1,1) * y + Q(1,2) * z
-      )
+      line0(N + i) = f3d2d(x,y,z)
+      //Vector2(
+      //  Q(0,0) * x + Q(0,1) * y + Q(0,2) * z,
+      //  Q(1,0) * x + Q(1,1) * y + Q(1,2) * z
+      //)
 
       x += xdelta
     }
@@ -322,10 +229,11 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
       for ( j <- -N to N ) {
         val y = world.M(N + cx(j))(N + cz(i))
 
-        line1(N + j) = Vector2(
-          Q(0,0) * x + Q(0,1) * y + Q(0,2) * z,
-          Q(1,0) * x + Q(1,1) * y + Q(1,2) * z
-        )
+        line1(N + j) = f3d2d(x,y,z)
+        //Vector2(
+        //  Q(0,0) * x + Q(0,1) * y + Q(0,2) * z,
+        //  Q(1,0) * x + Q(1,1) * y + Q(1,2) * z
+        //)
 
         x += xdelta
       }
@@ -347,38 +255,42 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
         line0(i) = line1(i)
     }
 
-    //third the front axes above everything else
+    //3. the front axes above everything else
     drawFrontAxes(g)
   }
 
-  /** Maps a 3d position into 2d space.
-    * (Is the 2d space the screen pixel space?) */
-  private def f3d2d(v: Vector3): Vector2 =
+  /** Maps a 3d position into 2d space. */
+  private def f3d2d(x: Double, y: Double, z: Double): Vector2 =
     Vector2(
-      Q(0,0) * v.x + Q(0,1) * v.y + Q(0,2) * v.z,
-      Q(1,0) * v.x + Q(1,1) * v.y + Q(1,2) * v.z
+      Q(0,0) * x + Q(0,1) * y + Q(0,2) * z,
+      Q(1,0) * x + Q(1,1) * y + Q(1,2) * z
     )
 
   /** Maps a 3d position to a screen pixel. */
-  private def f3dPix(x: Double, y: Double, z: Double): Point =
-    new Point(
-      fx(Q(0,0) * x + Q(0,1) * y + Q(0,2) * z),
-      fy(Q(1,0) * x + Q(1,1) * y + Q(1,2) * z)
-    )
+  private def f3dPix(x: Double, y: Double, z: Double): Point = {
+    val Vector2(a,b) = f3d2d(x,y,z)
+    new Point(fx(a),fy(b))
+  }
 
   private[calculator] def angle(x: Double, y: Double): Double = atan2(y, x)
 
   /** Maps a 2d x-coordinate to horizontal screen pixel. */
-  private[calculator] def fx(x: Double): Int = (x * xyscale + nxpix * 0.5).toInt
+  private[calculator] def fx(x: Double): Int = (x * xyscale + getWidth * 0.5).toInt
 
   /** Maps a 2d y-coordinate to vertical screen pixel. */
-  private[calculator] def fy(y: Double): Int = (-y * xyscale + nypix * 0.8).toInt
+  private[calculator] def fy(y: Double): Int = (-y * xyscale + getHeight * 0.8).toInt
 
   override def getPreferredSize: Dimension = getMinimumSize
   override def getMinimumSize: Dimension = new Dimension(400, 300)
 
   /** depends on vector direct and eye */
   private[calculator] def initQ: Matrix44 = {
+
+    //position of the eye of the observer
+    val eye = Vector3(3, 0.5, 1)
+
+    //direction toward the cube (I think)
+    val direct = Vector3(2.5, 0.5, 0.5)
 
     val d = angle(-direct.x, -direct.y)
     val d3 = sqrt(direct.x * direct.x + direct.y * direct.y)
@@ -398,10 +310,7 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
     /** Determines how much of the window the diagram should take up. */
     val factor = 0.6
 
-    val size: Dimension = getSize
-    nxpix = size.width
-    nypix = size.height
-    xyscale = min(nxpix, nypix) * factor
+    xyscale = min(getWidth, getHeight) * factor
     drawIt(g)
   }
 
@@ -476,7 +385,16 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
 
   override def setFont(font: Font): Unit = {
     super.setFont(font)
-    FONT_HEIGHT = getFontMetrics(font).getAscent
+    fontAscent = getFontMetrics(font).getAscent
+  }
+
+  /** re-calculate xforward and zforward */
+  private def determineForwardNess() = {
+    val x1 = f3d2d(1, 0, 0)
+    xforward = x1.y <= 0
+
+    val z1 = f3d2d(0, 0, 1)
+    zforward = z1.y <= 0
   }
 
   /** For now, we can only rotate horizontally.
@@ -485,6 +403,7 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
     val size: Dimension = getSize
     val d = p.x * 2 * π / size.height
     Q = Q.postRot('y', -d)
+    determineForwardNess()
     repaint()
   }
 
