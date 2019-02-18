@@ -30,6 +30,7 @@ import MoreGraphics.GraphicsExtended
   *
   * */
 class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
+  import Color._
 
   //State ----------------------------------------------------------
 
@@ -90,17 +91,17 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
     val (zfront,zback) = if(zforward) (0.5, -0.5) else (-0.5, 0.5)
 
     //two base lines
-    drawLine3(g)(xback, 0.0, -0.5)(xback, 0.0, 0.5)
-    drawLine3(g)(-0.5, 0.0, zback)(0.5, 0.0, zback)
+    drawLine3(g, GRAY)(xback, 0, -0.5)(xback, 0, 0.5)
+    drawLine3(g, GRAY)(-0.5, 0, zback)(0.5, 0, zback)
 
     //three poles
-    drawLine3(g)(xback, 0.0, zback)(xback, 1.0, zback)
-    drawLine3(g)(xback, 0.0, zfront)(xback, 1.0, zfront)
-    drawLine3(g)(xfront, 0.0, zback)(xfront, 1.0, zback)
+    drawLine3(g, GRAY)(xback, 0, zback)(xback, 1, zback)
+    drawLine3(g, GRAY)(xback, 0, zfront)(xback, 1, zfront)
+    drawLine3(g, GRAY)(xfront, 0, zback)(xfront, 1, zback)
 
     //two lid lines
-    drawLine3(g)(xback, 1, -0.5)(xback, 1, 0.5)
-    drawLine3(g)(-0.5, 1, zback)(0.5, 1, zback)
+    drawLine3(g, GRAY)(xback, 1, -0.5)(xback, 1, 0.5)
+    drawLine3(g, GRAY)(-0.5, 1, zback)(0.5, 1, zback)
   }
 
   private def drawNumber(g: Graphics, c: Complex, x: Double, z: Double) = {
@@ -122,63 +123,43 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
   /** Draws the lines in front of the surface.
     * Reads xforward, zforward. */
   private[calculator] def drawFrontAxes(g: Graphics) = {
+    val (xfront,xback) = if(xforward) (0.5, -0.5) else (-0.5, 0.5)
+    val (zfront,zback) = if(zforward) (0.5, -0.5) else (-0.5, 0.5)
 
-    //Shorten this by using zforward and zforward to assign four Integers.
+    //two base lines
+    drawLine3(g, GRAY)( xfront, 0, -0.5)( xfront, 0, 0.5)
+    drawLine3(g, GRAY)( -0.5, 0, zfront)( 0.5, 0, zfront)
 
-    if (xforward)
-    //right base line
-      drawLine3(g)( 0.5, 0.0, -0.5)( 0.5, 0.0, 0.5)
-    else
-    //left base line
-      drawLine3(g)( -0.5, 0.0, -0.5)( -0.5, 0.0, 0.5)
+    //front pole
+    drawLine3(g, GRAY)( xfront, 0, zfront)( xfront, 1, zfront)
 
-    if (zforward)
-    //back base line
-      drawLine3(g)( -0.5, 0.0, 0.5)( 0.5, 0.0, 0.5)
-    else
-    //front base line
-      drawLine3(g)( -0.5, 0.0, -0.5)( 0.5, 0.0, -0.5)
-
-    if (xforward && zforward)
-    //top right pole on (x=0.5, z=0.5)
-      drawLine3(g)( 0.5, 0.0, 0.5)( 0.5, 1.0, 0.5)
-    else if (xforward && !zforward)
-    //bottom right pole on (x=0.5, z=-0.5)
-      drawLine3(g)( 0.5, 0.0, -0.5)( 0.5, 1.0, -0.5)
-    else if (!xforward && zforward)
-    //topleft pole on (x=-0.5, z=0.5)
-      drawLine3(g)( -0.5, 0.0, 0.5)( -0.5, 1.0, 0.5)
-    else if (!xforward && !zforward)
-    //bottom left pole on (x=-0.5, y=-0.5)
-      drawLine3(g)( -0.5, 0.0, -0.5)( -0.5, 1.0, -0.5)
-
-    if (xforward)
-      drawLine3(g)( 0.5, 1.0, -0.5)( 0.5, 1.0, 0.5)
-    else
-      drawLine3(g)( -0.5, 1.0, -0.5)( -0.5, 1.0, 0.5)
-
-    if (zforward)
-      drawLine3(g)( -0.5, 1.0, 0.5)( 0.5, 1.0, 0.5)
-    else
-      drawLine3(g)( -0.5, 1.0, -0.5)( 0.5, 1.0, -0.5)
+    //two lid lines
+    drawLine3(g, GRAY)( xfront, 1, -0.5)( xfront, 1, 0.5)
+    drawLine3(g, GRAY)( -0.5, 1, zfront)( 0.5, 1, zfront)
   }
 
   /** z is the imaginary axis */
   private[calculator] def drawImaginaryAxis(g: Graphics) =
-    drawLine3(g)( 0.0, 0.0, -0.5)( 0.0, 0.0, 0.5)
+    drawLine3(g, GRAY)( 0, 0, -0.5)( 0, 0, 0.5)
 
   /** y is the axis for |f(z)| */
   private[calculator] def drawModAxis(g: Graphics) =
-    drawLine3(g)( 0.0, 0.0, 0.0)( 0.0, 1.0, 0.0)
+    drawLine3(g, GRAY)( 0, 0, 0)( 0, 1, 0)
 
   /** x is the real axis */
   private[calculator] def drawRealAxis(g: Graphics) =
-    drawLine3(g)( -0.5, 0.0, 0.0)( 0.5, 0.0, 0.0)
+    drawLine3(g, GRAY)( -0.5, 0, 0)( 0.5, 0, 0)
 
   private[calculator] def drawLine3(g: Graphics)(x1: Double, y1: Double, z1: Double)(x2: Double, y2: Double, z2: Double) = {
     val a = f3dPix(x1, y1, z1)
     val b = f3dPix(x2, y2, z2)
     g.drawLine(a, b)
+  }
+
+  private[calculator] def drawLine3(g: Graphics, c: Color)(x1: Double, y1: Double, z1: Double)(x2: Double, y2: Double, z2: Double): Unit = {
+    val a = f3dPix(x1, y1, z1)
+    val b = f3dPix(x2, y2, z2)
+    g.drawLine(a, b, c)
   }
 
   private[calculator] def cx(x: Int) = if (xforward) x else -x
@@ -195,7 +176,7 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
     //1. the axes at the back, because everything else with overwrite them
     drawBackAxes(g)
 
-    //second draw the patches, with axis in between them
+    //2. draw the patches, with axis in between them
     val (xmin,xmax) = if(xforward) (-0.5, 0.5) else (0.5, -0.5)
     val xdelta = (xmax - xmin) / (2*N)
 
@@ -208,13 +189,7 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
     //assigns line0 for the first time
     for ( i <- -N to N ) {
       val y = M(N + cx(i))(N + cz(-N))
-
       line0(N + i) = f3d2d(x,y,z)
-      //Vector2(
-      //  Q(0,0) * x + Q(0,1) * y + Q(0,2) * z,
-      //  Q(1,0) * x + Q(1,1) * y + Q(1,2) * z
-      //)
-
       x += xdelta
     }
 
@@ -227,14 +202,8 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
 
       //assigns line1
       for ( j <- -N to N ) {
-        val y = world.M(N + cx(j))(N + cz(i))
-
+        val y = M(N + cx(j))(N + cz(i))
         line1(N + j) = f3d2d(x,y,z)
-        //Vector2(
-        //  Q(0,0) * x + Q(0,1) * y + Q(0,2) * z,
-        //  Q(1,0) * x + Q(1,1) * y + Q(1,2) * z
-        //)
-
         x += xdelta
       }
 
