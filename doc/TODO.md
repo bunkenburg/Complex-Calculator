@@ -1,10 +1,9 @@
 # TODO
 
-* Sphere: improve moving: keep same number under mouse
 * var only for variable instance variables
 * put on web page with installation instructions
-* better number formating: take into account precision
-* better expressions: don't always with parenthesis
+* better number formatting: take into account precision
+* better expressions: don't always write parenthesis
 * Take complex numbers out and make into Scala library
 * Better colours, not so dark
 * Give it a real icon
@@ -18,6 +17,7 @@
 
 # DONE
 
+* Sphere: improve moving: keep same number under mouse
 * Better initial window positions
 * Change from AWT to Swing
 * Circle-button and similar are invisible

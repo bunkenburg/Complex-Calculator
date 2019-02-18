@@ -8,7 +8,7 @@ aims:
 
 trait and classes:
 
-* trait cat.inspiracio.complex.Complex
+* abstract class cat.inspiracio.complex.Complex
     - serves as type
     - gives default implementations for many operators
 * class cat.inspiracio.complex.imp.CartesianComplex(re: Double, im: Double)
@@ -22,20 +22,16 @@ trait and classes:
 
 Could do:
 
-trait Complex
-
-object Infinity extends Complex
-
-abstract class Finite extends Complex
-    re
-    im
-    modulus
-    argument
-   
-class CartesianComplex(re,im) extends Finite
-    lazy val modulus
-    lazy val argument
-    
-class PolarComplex(m,a) extends Finite
-    lazy val re
-    lazy im
+    abstract class Finite extends Complex
+        re
+        im
+        modulus
+        argument
+       
+    class CartesianComplex(re,im) extends Finite
+        lazy val modulus
+        lazy val argument
+        
+    class PolarComplex(m,a) extends Finite
+        lazy val re
+        lazy im
