@@ -107,7 +107,8 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
   }
 
   private def gui() = {
-    val button = new JButton("Clear")
+    val clearIcon = icon("icon/clear.png")
+    val button = new JButton(clearIcon)
     button.addActionListener( _ => erase() )
     buttonPanel.add(button)
     val interactionChoice = new JComboBox[String]

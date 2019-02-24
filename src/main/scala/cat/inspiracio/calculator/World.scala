@@ -46,11 +46,22 @@ import cat.inspiracio.geometry.{Piclet, Point2}
 /** A frame that shows complex number on the complex plane or the Riemann sphere. */
 abstract class World protected(val calculator: Calculator) extends JFrame {
 
+  import javax.swing.ImageIcon
+  def icon(path: String) = {
+    val imgURL = this.getClass().getResource(path)
+    if (imgURL != null)
+      new ImageIcon(imgURL)
+    else {
+      System.err.println("Couldn't find file: " + path)
+      null
+    }
+  }
+
   /** where I show my buttons */
   protected var buttonPanel: JToolBar = null
 
-  private val zInButton = new JButton("Zoom In")
-  private val zOutButton = new JButton("Zoom Out")
+  private val zInButton = new JButton(icon("icon/zoom-in.png"))
+  private val zOutButton = new JButton(icon("icon/zoom-out.png"))
 
   /** Menu for Plane or Sphere */
   private val choice = new RepresentationChooser()
@@ -82,40 +93,27 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
       useSphere()
     )
 
-    val button = new JButton("Reset")
-    button.addActionListener(_ => canvas.reset() )
-
     buttonPanel = new JToolBar("Still draggable")  //new JPanel
     //buttonPanel.setBackground(Color.lightGray)
-    //buttonPanel.setLayout(new FlowLayout(0))
 
     //plane/sphere
-    import javax.swing.ImageIcon
-    import javax.swing.ImageIcon
-    def createImageIcon(path: String) = {
-      val imgURL = this.getClass().getResource(path)
-      if (imgURL != null)
-        new ImageIcon(imgURL)
-      else {
-        System.err.println("Couldn't find file: " + path)
-        null
-      }
-    }
-    val leftButtonIcon = createImageIcon("icon/plane.png")
-    val middleButtonIcon = createImageIcon("images/middle.gif")
-    val rightButtonIcon = createImageIcon("icon/sphere.jpeg")
-
-    //buttonPanel.add(choice)
     val rep = new ButtonGroup()
-    val planeButton = new JToggleButton(leftButtonIcon)
-    val sphereButton = new JToggleButton(rightButtonIcon)
+    val planeButton = new JToggleButton(icon("icon/plane.png"))
+    planeButton.addActionListener( _ => usePlane() )
+    val sphereButton = new JToggleButton(icon("icon/sphere.jpeg"))
+    sphereButton.addActionListener( _ => useSphere() )
     rep.add(planeButton)
     rep.add(sphereButton)
     buttonPanel.add(planeButton)
     buttonPanel.add(sphereButton)
+    buttonPanel.addSeparator()
 
     buttonPanel.add(zInButton)
     buttonPanel.add(zOutButton)
+    buttonPanel.addSeparator()
+
+    val button = new JButton(icon("icon/reset.png"))
+    button.addActionListener(_ => canvas.reset() )
     buttonPanel.add(button)
 
     //setLayout(new BorderLayout)
