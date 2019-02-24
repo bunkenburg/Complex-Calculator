@@ -3,6 +3,8 @@
 A Java application that shows operations with complex numbers graphically.
 Shows the two-dimensional number plane and the Riemann sphere.
 
+https://xkcd.com/2028/
+
 ## Turbo Pascal for Macintosh
 
 The first version was on Apple Macintosh System 6 in 1992. 

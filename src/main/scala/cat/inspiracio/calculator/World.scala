@@ -53,7 +53,7 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
   private val zOutButton = new JButton("Zoom Out")
 
   /** Menu for Plane or Sphere */
-  private val choice = new JComboBox[String]
+  private val choice = new RepresentationChooser()
 
   /** selected interaction */
   protected var interaction: Interaction = null
@@ -77,19 +77,10 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     zInButton.addActionListener(_ => canvas.zoomIn())
     zOutButton.addActionListener(_ => canvas.zoomOut())
 
-    choice.addItem("Plane")
-    choice.addItem("Sphere")
-    choice.setSelectedItem("Plane")
-    choice.addItemListener(e => {
-      val state = e.getStateChange
-      if (state == ItemEvent.SELECTED) {
-        val item = e.getItem.toString
-        item match {
-          case "Plane" => usePlane()
-          case "Sphere" => useSphere()
-        }
-      }
-    })
+    choice.addListeners (
+      usePlane(),
+      useSphere()
+    )
 
     val button = new JButton("Reset")
     button.addActionListener(_ => canvas.reset() )
@@ -121,7 +112,7 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     zOutButton.setEnabled(false)
     validate()
     canvas.repaint()
-    choice.setSelectedItem("Sphere")
+    choice.selectSphere()
   }
 
   protected def usePlane() = if(canvas!=plane) {
@@ -132,7 +123,7 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     zOutButton.setEnabled(true)
     validate()
     canvas.repaint()
-    choice.setSelectedItem("Plane")
+    choice.selectPlane()
   }
 
   private[calculator] def add(c: Complex) = {}
