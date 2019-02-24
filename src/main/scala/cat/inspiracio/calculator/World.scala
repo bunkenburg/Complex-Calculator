@@ -47,7 +47,7 @@ import cat.inspiracio.geometry.{Piclet, Point2}
 abstract class World protected(val calculator: Calculator) extends JFrame {
 
   /** where I show my buttons */
-  protected var buttonPanel: JPanel = null
+  protected var buttonPanel: JToolBar = null
 
   private val zInButton = new JButton("Zoom In")
   private val zOutButton = new JButton("Zoom Out")
@@ -85,17 +85,42 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     val button = new JButton("Reset")
     button.addActionListener(_ => canvas.reset() )
 
-    buttonPanel = new JPanel
-    buttonPanel.setBackground(Color.lightGray)
-    buttonPanel.setLayout(new FlowLayout(0))
-    buttonPanel.add(choice)
+    buttonPanel = new JToolBar("Still draggable")  //new JPanel
+    //buttonPanel.setBackground(Color.lightGray)
+    //buttonPanel.setLayout(new FlowLayout(0))
+
+    //plane/sphere
+    import javax.swing.ImageIcon
+    import javax.swing.ImageIcon
+    def createImageIcon(path: String) = {
+      val imgURL = this.getClass().getResource(path)
+      if (imgURL != null)
+        new ImageIcon(imgURL)
+      else {
+        System.err.println("Couldn't find file: " + path)
+        null
+      }
+    }
+    val leftButtonIcon = createImageIcon("icon/plane.png")
+    val middleButtonIcon = createImageIcon("images/middle.gif")
+    val rightButtonIcon = createImageIcon("icon/sphere.jpeg")
+
+    //buttonPanel.add(choice)
+    val rep = new ButtonGroup()
+    val planeButton = new JToggleButton(leftButtonIcon)
+    val sphereButton = new JToggleButton(rightButtonIcon)
+    rep.add(planeButton)
+    rep.add(sphereButton)
+    buttonPanel.add(planeButton)
+    buttonPanel.add(sphereButton)
+
     buttonPanel.add(zInButton)
     buttonPanel.add(zOutButton)
     buttonPanel.add(button)
 
-    setLayout(new BorderLayout)
-    add("North", buttonPanel)
-    add("Center", canvas)
+    //setLayout(new BorderLayout)
+    add(buttonPanel, BorderLayout.PAGE_START)
+    add(canvas, BorderLayout.CENTER)
 
     addWindowListener(new WindowAdapter() {
       override def windowClosing(windowevent: WindowEvent): Unit = calculator.quit()
