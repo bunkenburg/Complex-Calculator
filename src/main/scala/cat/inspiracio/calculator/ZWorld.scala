@@ -49,8 +49,16 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
   //State ------------------------------------------------
 
-  private var interactionChoice: JComboBox[String] = new JComboBox[String]
-  private var eraseButton: JButton = new JButton("Clear")
+  private val clearButton = new JButton(icon("icon/clear.png"))
+
+  private val interactionChoice = new ButtonGroup()
+  private val moveButton = new JToggleButton(icon("icon/hand.png"))
+  private val drawButton = new JToggleButton(icon("icon/draw.jpeg"))
+  private val lineButton = new JToggleButton(icon("icon/line.png"))
+  private val circleButton = new JToggleButton(icon("icon/circle.png"))
+  private val rectangleButton = new JToggleButton(icon("icon/rectangle.png"))
+  private val squareButton = new JToggleButton(icon("icon/square.png"))
+  private val gridButton = new JToggleButton(icon("icon/grid.png"))
 
   private var mode: Mode = null
 
@@ -75,20 +83,46 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
     setTitle("z World")
 
-    eraseButton.addActionListener((e: ActionEvent) => erase())
-    buttonPanel.add(eraseButton)
+    //XXX toolbar stuff
+    clearButton.addActionListener( _ => erase() )
+    toolbar.add(clearButton)
+    toolbar.addSeparator()
 
     interaction = DRAW
-    interactionChoice.addItem("Move")
-    interactionChoice.addItem("Square")
-    interactionChoice.addItemListener( e => {
-      val state = e.getStateChange
-      if (state == ItemEvent.SELECTED) {
-        val s = e.getItem.asInstanceOf[String]
-        interaction = Interaction.withName(s)
-      }
-    })
-    buttonPanel.add(interactionChoice)
+    //move
+    moveButton.addActionListener( _ => interaction = Interaction.MOVE )
+    interactionChoice.add(moveButton)
+    toolbar.add(moveButton)
+
+    //draw
+    drawButton.addActionListener( _ => interaction = Interaction.DRAW )
+    interactionChoice.add(drawButton)
+    toolbar.add(drawButton)
+
+    //line
+    lineButton.addActionListener( _ => interaction = Interaction.LINE )
+    interactionChoice.add(lineButton)
+    toolbar.add(lineButton)
+
+    //circle
+    circleButton.addActionListener( _ => interaction = Interaction.CIRCLE )
+    interactionChoice.add(circleButton)
+    toolbar.add(circleButton)
+
+    //rectangle
+    rectangleButton.addActionListener( _ => interaction = Interaction.RECTANGLE )
+    interactionChoice.add(rectangleButton)
+    toolbar.add(rectangleButton)
+
+    //square
+    squareButton.addActionListener( _ => interaction = Interaction.SQUARE )
+    interactionChoice.add(squareButton)
+    toolbar.add(squareButton)
+
+    //grid
+    gridButton.addActionListener( _ => interaction = Interaction.GRID )
+    interactionChoice.add(gridButton)
+    toolbar.add(gridButton)
 
     val mouse = new MouseInputAdapter() {
 
@@ -293,7 +327,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
     val is = p.get("interaction", "Draw")
     interaction = Interaction.withName(is)
-    interactionChoice.setSelectedItem(is)   //XXX Doesn't work
+    //interactionChoice.setSelected(model, true)
   }
 
   /** during dynamic map, adds one more number */
@@ -371,23 +405,23 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
     mode match {
 
       case FZ =>
-        eraseButton.setEnabled(true)
-        interactionChoice.addItem("Draw")
-        interactionChoice.addItem("Circle")
-        interactionChoice.addItem("Line")
-        interactionChoice.addItem("Grid")
-        interactionChoice.addItem("Rectangle")
-        interactionChoice.setSelectedItem("Draw")
+        clearButton.setEnabled(true)
+        drawButton.setEnabled(true)
+        circleButton.setEnabled(true)
+        lineButton.setEnabled(true)
+        gridButton.setEnabled(true)
+        rectangleButton.setEnabled(true)
+        interactionChoice.setSelected(drawButton.getModel, true)
         interaction = DRAW
 
       case MODFZ =>
-        eraseButton.setEnabled(false)
-        interactionChoice.removeItem("Draw")
-        interactionChoice.removeItem("Circle")
-        interactionChoice.removeItem("Line")
-        interactionChoice.removeItem("Grid")
-        interactionChoice.removeItem("Rectangle")
-        interactionChoice.setSelectedItem("Square")
+        clearButton.setEnabled(false)
+        drawButton.setEnabled(false)
+        circleButton.setEnabled(false)
+        lineButton.setEnabled(false)
+        gridButton.setEnabled(false)
+        rectangleButton.setEnabled(false)
+        interactionChoice.setSelected(squareButton.getModel, true)
         interaction = SQUARE
 
       case _ =>

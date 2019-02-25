@@ -57,14 +57,14 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     }
   }
 
-  /** where I show my buttons */
-  protected var buttonPanel: JToolBar = null
-
+  protected val toolbar: JToolBar = new JToolBar()
+  private val planeButton = new JToggleButton(icon("icon/plane.png"))
+  private val sphereButton = new JToggleButton(icon("icon/sphere.jpeg"))
   private val zInButton = new JButton(icon("icon/zoom-in.png"))
   private val zOutButton = new JButton(icon("icon/zoom-out.png"))
 
   /** Menu for Plane or Sphere */
-  private val choice = new RepresentationChooser()
+  private val choice = new ButtonGroup()
 
   /** selected interaction */
   protected var interaction: Interaction = null
@@ -85,39 +85,27 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
   private def init() = {
     resetExtremes()
 
+    //plane/sphere
+    planeButton.addActionListener( _ => usePlane() )
+    sphereButton.addActionListener( _ => useSphere() )
+    choice.add(planeButton)
+    choice.add(sphereButton)
+    toolbar.add(planeButton)
+    toolbar.add(sphereButton)
+    toolbar.addSeparator()
+
+    //zoom in / out
     zInButton.addActionListener(_ => canvas.zoomIn())
     zOutButton.addActionListener(_ => canvas.zoomOut())
+    toolbar.add(zInButton)
+    toolbar.add(zOutButton)
+    toolbar.addSeparator()
 
-    choice.addListeners (
-      usePlane(),
-      useSphere()
-    )
+    val resetButton = new JButton(icon("icon/reset.png"))
+    resetButton.addActionListener(_ => canvas.reset() )
+    toolbar.add(resetButton)
 
-    buttonPanel = new JToolBar("Still draggable")  //new JPanel
-    //buttonPanel.setBackground(Color.lightGray)
-
-    //plane/sphere
-    val rep = new ButtonGroup()
-    val planeButton = new JToggleButton(icon("icon/plane.png"))
-    planeButton.addActionListener( _ => usePlane() )
-    val sphereButton = new JToggleButton(icon("icon/sphere.jpeg"))
-    sphereButton.addActionListener( _ => useSphere() )
-    rep.add(planeButton)
-    rep.add(sphereButton)
-    buttonPanel.add(planeButton)
-    buttonPanel.add(sphereButton)
-    buttonPanel.addSeparator()
-
-    buttonPanel.add(zInButton)
-    buttonPanel.add(zOutButton)
-    buttonPanel.addSeparator()
-
-    val button = new JButton(icon("icon/reset.png"))
-    button.addActionListener(_ => canvas.reset() )
-    buttonPanel.add(button)
-
-    //setLayout(new BorderLayout)
-    add(buttonPanel, BorderLayout.PAGE_START)
+    add(toolbar, BorderLayout.PAGE_START)
     add(canvas, BorderLayout.CENTER)
 
     addWindowListener(new WindowAdapter() {
@@ -127,26 +115,30 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     pack()
   }
 
-  protected def useSphere() = if(canvas!=sphere) {
-    remove(plane)
-    add("Center", sphere)
-    canvas = sphere
-    zInButton.setEnabled(false)
-    zOutButton.setEnabled(false)
-    validate()
-    canvas.repaint()
-    choice.selectSphere()
+  protected def useSphere() = {
+    if(canvas!=sphere) {
+      remove(plane)
+      add("Center", sphere)
+      canvas = sphere
+      zInButton.setEnabled(false)
+      zOutButton.setEnabled(false)
+      validate()
+      canvas.repaint()
+    }
+    choice.setSelected(sphereButton.getModel, true)
   }
 
-  protected def usePlane() = if(canvas!=plane) {
-    remove(sphere)
-    add("Center", plane)
-    canvas = plane
-    zInButton.setEnabled(true)
-    zOutButton.setEnabled(true)
-    validate()
-    canvas.repaint()
-    choice.selectPlane()
+  protected def usePlane() = {
+    if(canvas!=plane) {
+      remove(sphere)
+      add("Center", plane)
+      canvas = plane
+      zInButton.setEnabled(true)
+      zOutButton.setEnabled(true)
+      validate()
+      canvas.repaint()
+    }
+    choice.setSelected(planeButton.getModel, true)
   }
 
   private[calculator] def add(c: Complex) = {}

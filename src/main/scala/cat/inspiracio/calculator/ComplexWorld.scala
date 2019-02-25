@@ -107,23 +107,23 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
   }
 
   private def gui() = {
-    val clearIcon = icon("icon/clear.png")
-    val button = new JButton(clearIcon)
-    button.addActionListener( _ => erase() )
-    buttonPanel.add(button)
-    val interactionChoice = new JComboBox[String]
-    interactionChoice.addItem("Draw")
-    interactionChoice.addItem("Move")
-    interactionChoice.setSelectedItem("Draw")
+
+    val clearButton = new JButton(icon("icon/clear.png"))
+    clearButton.addActionListener( _ => erase() )
+    toolbar.add(clearButton)
+    toolbar.addSeparator()
+
+    val drawButton = new JToggleButton(icon("icon/draw.jpeg"))
+    drawButton.addActionListener( _ => interaction = Interaction.DRAW )
+    val moveButton = new JToggleButton(icon("icon/hand.png"))
+    moveButton.addActionListener( _ => interaction = Interaction.MOVE )
+    val group = new ButtonGroup
+    group.add(drawButton)
+    group.add(moveButton)
+    group.setSelected(drawButton.getModel, true)
     interaction = DRAW
-    interactionChoice.addItemListener( e => {
-      val state = e.getStateChange
-      if (state == ItemEvent.SELECTED) {
-        val s = e.getItem.toString
-        interaction = Interaction.withName(s)
-      }
-    })
-    buttonPanel.add(interactionChoice)
+    toolbar.add(drawButton)
+    toolbar.add(moveButton)
   }
 
   private def applyPreferences() = {

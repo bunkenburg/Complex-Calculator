@@ -1,5 +1,17 @@
 # TODO
 
+* better icon images
+* Icon: don't repeat icon: String => ImageIcon, with constants
+* buttons with text and tooltip
+* buttons with action
+* World: save zoom in preferences
+* World: save movement in preferences
+* World: save sphere rotation in preferences
+* World: save interaction in preferences
+* World: save numbers and pictlets in preferences
+* ThreeDWorld: save movement in preferences
+* RefxWorld: save movement in preferences
+* Complex.toString or format
 * var only for variable instance variables
 * put on web page with installation instructions
 * better number formatting: take into account precision

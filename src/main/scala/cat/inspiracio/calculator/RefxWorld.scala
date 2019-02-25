@@ -49,7 +49,7 @@ final class RefxWorld private[calculator](calculator: Calculator) extends JFrame
 
   // GUI -----------------------------------------------------
 
-  protected val buttonPanel = new JPanel
+  private val toolbar = new JToolBar()
   private val canvas = new RefxCanvas(calculator)
 
   init()
@@ -59,22 +59,20 @@ final class RefxWorld private[calculator](calculator: Calculator) extends JFrame
 
     canvas.resetExtremes()
 
-    val btnZoomIn = new JButton("Zoom In")
+    val btnZoomIn = new JButton(icon("icon/zoom-in.png"))
     btnZoomIn.addActionListener( _ => zoomIn() )
-    val btnZoomOut = new JButton("Zoom Out")
+    toolbar.add(btnZoomIn)
+
+    val btnZoomOut = new JButton(icon("icon/zoom-out.png"))
     btnZoomOut.addActionListener( _ => zoomOut() )
-    val btnReset = new JButton("Reset")
+    toolbar.add(btnZoomOut)
+
+    val btnReset = new JButton(icon("icon/reset.png"))
     btnReset.addActionListener( _ => reset() )
+    toolbar.add(btnReset)
 
-    buttonPanel.setBackground(Color.lightGray)
-    buttonPanel.setLayout(new FlowLayout(0))
-    buttonPanel.add(btnZoomIn)
-    buttonPanel.add(btnZoomOut)
-    buttonPanel.add(btnReset)
-
-    setLayout(new BorderLayout)
-    add("North", buttonPanel)
-    add("Center", canvas)
+    add(toolbar, BorderLayout.PAGE_START)
+    add(canvas, BorderLayout.CENTER)
 
     addWindowListener(new WindowAdapter() {
       override def windowClosing(windowevent: WindowEvent): Unit = calculator.quit()
@@ -83,6 +81,17 @@ final class RefxWorld private[calculator](calculator: Calculator) extends JFrame
     pack()
     locate()
     setVisible(true)
+  }
+
+  import javax.swing.ImageIcon
+  private def icon(path: String) = {
+    val imgURL = this.getClass().getResource(path)
+    if (imgURL != null)
+      new ImageIcon(imgURL)
+    else {
+      System.err.println("Couldn't find file: " + path)
+      null
+    }
   }
 
   /** to the right of the calculator */
