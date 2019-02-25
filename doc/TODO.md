@@ -1,8 +1,11 @@
 # TODO
 
 * better icon images
-* Icon: don't repeat icon: String => ImageIcon, with constants
-* buttons with text and tooltip
+    - size
+    - format
+        png
+        jpeg
+* Control-Q on other windows
 * buttons with action
 * World: save zoom in preferences
 * World: save movement in preferences

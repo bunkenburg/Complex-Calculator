@@ -45,23 +45,21 @@ import cat.inspiracio.geometry.{Piclet, Point2}
 
 /** A frame that shows complex number on the complex plane or the Riemann sphere. */
 abstract class World protected(val calculator: Calculator) extends JFrame {
-
-  import javax.swing.ImageIcon
-  def icon(path: String) = {
-    val imgURL = this.getClass().getResource(path)
-    if (imgURL != null)
-      new ImageIcon(imgURL)
-    else {
-      System.err.println("Couldn't find file: " + path)
-      null
-    }
-  }
+  import icon._
 
   protected val toolbar: JToolBar = new JToolBar()
-  private val planeButton = new JToggleButton(icon("icon/plane.png"))
-  private val sphereButton = new JToggleButton(icon("icon/sphere.jpeg"))
-  private val zInButton = new JButton(icon("icon/zoom-in.png"))
-  private val zOutButton = new JButton(icon("icon/zoom-out.png"))
+
+  private val planeButton = new JToggleButton(planeIcon)
+  planeButton.setToolTipText("Complex plane")
+
+  private val sphereButton = new JToggleButton(sphereIcon)
+  sphereButton.setToolTipText("Riemann sphere")
+
+  private val zInButton = new JButton(zoomInIcon)
+  zInButton.setToolTipText("Zoom in")
+
+  private val zOutButton = new JButton(zoomOutIcon)
+  zOutButton.setToolTipText("Zoom out")
 
   /** Menu for Plane or Sphere */
   private val choice = new ButtonGroup()
@@ -101,7 +99,8 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     toolbar.add(zOutButton)
     toolbar.addSeparator()
 
-    val resetButton = new JButton(icon("icon/reset.png"))
+    val resetButton = new JButton(resetIcon)
+    resetButton.setToolTipText("Reset")
     resetButton.addActionListener(_ => canvas.reset() )
     toolbar.add(resetButton)
 

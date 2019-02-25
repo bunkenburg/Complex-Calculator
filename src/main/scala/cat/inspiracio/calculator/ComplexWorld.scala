@@ -107,16 +107,21 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
   }
 
   private def gui() = {
+    import icon._
 
-    val clearButton = new JButton(icon("icon/clear.png"))
+    val clearButton = new JButton(clearIcon)
     clearButton.addActionListener( _ => erase() )
     toolbar.add(clearButton)
     toolbar.addSeparator()
 
-    val drawButton = new JToggleButton(icon("icon/draw.jpeg"))
+    val drawButton = new JToggleButton(drawIcon)
+    drawButton.setToolTipText("Draw")
     drawButton.addActionListener( _ => interaction = Interaction.DRAW )
-    val moveButton = new JToggleButton(icon("icon/hand.png"))
+
+    val moveButton = new JToggleButton(handIcon)
+    moveButton.setToolTipText("Move")
     moveButton.addActionListener( _ => interaction = Interaction.MOVE )
+
     val group = new ButtonGroup
     group.add(drawButton)
     group.add(moveButton)

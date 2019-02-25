@@ -46,19 +46,28 @@ import javax.swing.event.MouseInputAdapter
 /** The z-World is where the user gives input for function f. */
 final class ZWorld private[calculator](override val calculator: Calculator) extends World(calculator) {
   import calculator.{fzW, modfzW}
+  import icon._
 
   //State ------------------------------------------------
 
-  private val clearButton = new JButton(icon("icon/clear.png"))
+  private val clearButton = new JButton(clearIcon)
+  clearButton.setToolTipText("Clear")
 
   private val interactionChoice = new ButtonGroup()
-  private val moveButton = new JToggleButton(icon("icon/hand.png"))
-  private val drawButton = new JToggleButton(icon("icon/draw.jpeg"))
-  private val lineButton = new JToggleButton(icon("icon/line.png"))
-  private val circleButton = new JToggleButton(icon("icon/circle.png"))
-  private val rectangleButton = new JToggleButton(icon("icon/rectangle.png"))
-  private val squareButton = new JToggleButton(icon("icon/square.png"))
-  private val gridButton = new JToggleButton(icon("icon/grid.png"))
+  private val moveButton = new JToggleButton(handIcon)
+  moveButton.setToolTipText("Move")
+  private val drawButton = new JToggleButton(drawIcon)
+  drawButton.setToolTipText("Draw")
+  private val lineButton = new JToggleButton(lineIcon)
+  lineButton.setToolTipText("Line")
+  private val circleButton = new JToggleButton(circleIcon)
+  circleButton.setToolTipText("Circle")
+  private val rectangleButton = new JToggleButton(rectangleIcon)
+  rectangleButton.setToolTipText("Rectangle")
+  private val squareButton = new JToggleButton(squareIcon)
+  squareButton.setToolTipText("Square")
+  private val gridButton = new JToggleButton(gridIcon)
+  gridButton.setToolTipText("Plane")
 
   private var mode: Mode = null
 
@@ -83,43 +92,36 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
     setTitle("z World")
 
-    //XXX toolbar stuff
     clearButton.addActionListener( _ => erase() )
     toolbar.add(clearButton)
     toolbar.addSeparator()
 
     interaction = DRAW
-    //move
+
     moveButton.addActionListener( _ => interaction = Interaction.MOVE )
     interactionChoice.add(moveButton)
     toolbar.add(moveButton)
 
-    //draw
     drawButton.addActionListener( _ => interaction = Interaction.DRAW )
     interactionChoice.add(drawButton)
     toolbar.add(drawButton)
 
-    //line
     lineButton.addActionListener( _ => interaction = Interaction.LINE )
     interactionChoice.add(lineButton)
     toolbar.add(lineButton)
 
-    //circle
     circleButton.addActionListener( _ => interaction = Interaction.CIRCLE )
     interactionChoice.add(circleButton)
     toolbar.add(circleButton)
 
-    //rectangle
     rectangleButton.addActionListener( _ => interaction = Interaction.RECTANGLE )
     interactionChoice.add(rectangleButton)
     toolbar.add(rectangleButton)
 
-    //square
     squareButton.addActionListener( _ => interaction = Interaction.SQUARE )
     interactionChoice.add(squareButton)
     toolbar.add(squareButton)
 
-    //grid
     gridButton.addActionListener( _ => interaction = Interaction.GRID )
     interactionChoice.add(gridButton)
     toolbar.add(gridButton)

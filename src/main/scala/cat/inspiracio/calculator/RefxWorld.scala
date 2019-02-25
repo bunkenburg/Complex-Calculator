@@ -55,19 +55,24 @@ final class RefxWorld private[calculator](calculator: Calculator) extends JFrame
   init()
 
   private def init()= {
+    import icon._
+
     setTitle("Re(f(x)) World")
 
     canvas.resetExtremes()
 
-    val btnZoomIn = new JButton(icon("icon/zoom-in.png"))
+    val btnZoomIn = new JButton(zoomInIcon)
+    btnZoomIn.setToolTipText("Zoom in")
     btnZoomIn.addActionListener( _ => zoomIn() )
     toolbar.add(btnZoomIn)
 
-    val btnZoomOut = new JButton(icon("icon/zoom-out.png"))
+    val btnZoomOut = new JButton(zoomOutIcon)
+    btnZoomOut.setToolTipText("Zoom out")
     btnZoomOut.addActionListener( _ => zoomOut() )
     toolbar.add(btnZoomOut)
 
-    val btnReset = new JButton(icon("icon/reset.png"))
+    val btnReset = new JButton(resetIcon)
+    btnReset.setToolTipText("Reset")
     btnReset.addActionListener( _ => reset() )
     toolbar.add(btnReset)
 
@@ -81,17 +86,6 @@ final class RefxWorld private[calculator](calculator: Calculator) extends JFrame
     pack()
     locate()
     setVisible(true)
-  }
-
-  import javax.swing.ImageIcon
-  private def icon(path: String) = {
-    val imgURL = this.getClass().getResource(path)
-    if (imgURL != null)
-      new ImageIcon(imgURL)
-    else {
-      System.err.println("Couldn't find file: " + path)
-      null
-    }
   }
 
   /** to the right of the calculator */
