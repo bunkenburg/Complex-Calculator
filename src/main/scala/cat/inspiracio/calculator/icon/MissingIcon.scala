@@ -31,43 +31,37 @@
  * You should have received a copy of the GNU General Public License
  * along with Complex Calculator. If not, see <http://www.gnu.org/licenses/>.
  * */
-package cat.inspiracio.calculator
+package cat.inspiracio.calculator.icon
 
+import javax.swing.Icon
 import java.awt._
 
-import javax.swing.{Icon, ImageIcon}
+class MissingIcon extends Icon {
 
-/**
-  * https://docs.oracle.com/javase/tutorial/uiswing/components/icon.html
-  * Icon
-  *   ImageIcon (gif, jpeg, png)
-  *
-  * */
-package object icon {
+  def width = 16
+  def height = 16
 
-  private def icon(path: String) = {
-    val imgURL = getClass().getResource(path)
-    if (imgURL != null)
-      new ImageIcon(imgURL)
-    else {
-      System.err.println("Couldn't find file: " + path)
-      new MissingIcon()
-    }
+  override def paintIcon(c: Component, g: Graphics, x: Int, y: Int): Unit = {
+    val g2d = g.create.asInstanceOf[Graphics2D]
+
+    //white background
+    //g2d.setColor(Color.WHITE)
+    //g2d.fillRect(x + 1, y + 1, width - 2, height - 2)
+
+    //black border
+    g2d.setColor(Color.BLACK)
+    g2d.drawRect(x + 1, y + 1, width - 2, height - 2)
+
+    //red cross
+    val stroke = new BasicStroke(4) //width
+    g2d.setColor(Color.RED)
+    g2d.setStroke(stroke)
+    //g2d.drawLine(x + 5, y + 5, x + width - 5, y + height - 5)
+    //g2d.drawLine(x + 5, y + height - 5, x + width - 5, y + 5)
+
+    g2d.dispose()
   }
 
-  val circleIcon = icon("circle.png")
-  val clearIcon = icon("clear.png")
-  val drawIcon = icon("draw.jpeg")
-  val gridIcon = icon("grid.png")
-  val handIcon = icon("hand.png")
-  val lineIcon = icon("line.png")
-  val planeIcon = icon("plane.png")
-  val rectangleIcon = icon("rectangle.png")
-  val resetIcon = icon("reset.png")
-  val sphereIcon = icon("sphere.png")
-  val squareIcon = icon("square.png")
-  val zoomInIcon = icon("zoom-in.png")
-  val zoomOutIcon = icon("zoom-out.png")
-
+  override def getIconWidth: Int = width
+  override def getIconHeight: Int = height
 }
-

@@ -48,12 +48,18 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
   import icon._
 
   protected val toolbar: JToolBar = new JToolBar()
+  //toolbar.setBackground(Color.lightGray)
 
   private val planeButton = new JToggleButton(planeIcon)
   planeButton.setToolTipText("Complex plane")
+  planeButton.setOpaque(false)
+  //planeButton.setContentAreaFilled(false) //need for signalling selected
+  planeButton.setBorderPainted(false)
 
   private val sphereButton = new JToggleButton(sphereIcon)
   sphereButton.setToolTipText("Riemann sphere")
+  sphereButton.setOpaque(false)
+  sphereButton.setBorderPainted(false)
 
   private val zInButton = new JButton(zoomInIcon)
   zInButton.setToolTipText("Zoom in")
