@@ -53,7 +53,7 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
   private var numbers: List[Complex] = Nil
 
   private def init() {
-    setTitle("Complex World")
+    setTitle("Complex numbers")
     gui()
 
     val mouse: MouseInputListener = new MouseInputAdapter() {

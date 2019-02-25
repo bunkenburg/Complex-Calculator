@@ -37,8 +37,10 @@ import java.awt.{Dimension, Graphics, GraphicsConfiguration, Point}
 import java.awt.event._
 
 import cat.inspiracio.calculator.Interaction.MOVE
+import cat.inspiracio.calculator.icon.handIcon
 import cat.inspiracio.complex.Complex
 import cat.inspiracio.geometry.{Curve, Piclet, Point2}
+import javax.swing.JToggleButton
 import javax.swing.event.{MouseInputAdapter, MouseInputListener}
 
 final class FzWorld private[calculator](override val calculator: Calculator) extends World(calculator) {
@@ -60,7 +62,17 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
   init()
 
   private def init() = {
-    setTitle("f(z) World")
+    setTitle("f(z)")
+
+    toolbar.addSeparator()
+
+    //move button always selected: just there to show user that they can move
+    val moveButton = new JToggleButton(handIcon)
+    moveButton.setToolTipText("Move")
+    moveButton.setSelected(true)
+    moveButton.setEnabled(false)
+    toolbar.add(moveButton)
+
     interaction = MOVE
 
     val mouse: MouseInputListener = new MouseInputAdapter() {

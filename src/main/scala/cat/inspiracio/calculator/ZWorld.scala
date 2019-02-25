@@ -90,7 +90,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
   private def init()= {
 
-    setTitle("z World")
+    setTitle("z")
 
     clearButton.addActionListener( _ => erase() )
     toolbar.add(clearButton)

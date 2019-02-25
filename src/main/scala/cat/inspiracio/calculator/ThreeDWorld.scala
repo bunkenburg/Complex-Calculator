@@ -62,8 +62,24 @@ final class ThreeDWorld private[calculator](calculator: Calculator) extends JFra
   init()
 
   private def init()= {
-    setLayout(new BorderLayout)
-    add("Center", canvas)
+    import icon._
+
+    val toolbar = new JToolBar()
+    val resetButton = new JButton(resetIcon)
+    resetButton.setToolTipText("Reset")
+    resetButton.addActionListener( _ => canvas.reset() )
+    toolbar.add(resetButton)
+    toolbar.addSeparator()
+
+    //move button always selected: just there to show user that they can move
+    val moveButton = new JToggleButton(handIcon)
+    moveButton.setToolTipText("Move")
+    moveButton.setSelected(true)
+    moveButton.setEnabled(false)
+    toolbar.add(moveButton)
+
+    add(toolbar, BorderLayout.PAGE_START)
+    add(canvas, BorderLayout.CENTER)
 
     addWindowListener(new WindowAdapter() {
       override def windowClosing(windowevent: WindowEvent): Unit = calculator.quit()

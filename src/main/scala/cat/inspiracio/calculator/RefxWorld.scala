@@ -45,7 +45,7 @@ import cat.inspiracio.geometry.Point2
 //            Calculator, DoubleBuffer, Drawing
 
 /** Shows Re(f(x)) */
-final class RefxWorld private[calculator](calculator: Calculator) extends JFrame {
+final class RefxWorld private[calculator](calculator: Calculator) extends JFrame("Re(f(x))") {
 
   // GUI -----------------------------------------------------
 
@@ -56,8 +56,6 @@ final class RefxWorld private[calculator](calculator: Calculator) extends JFrame
 
   private def init()= {
     import icon._
-
-    setTitle("Re(f(x)) World")
 
     canvas.resetExtremes()
 
@@ -75,6 +73,14 @@ final class RefxWorld private[calculator](calculator: Calculator) extends JFrame
     btnReset.setToolTipText("Reset")
     btnReset.addActionListener( _ => reset() )
     toolbar.add(btnReset)
+    toolbar.addSeparator()
+
+    //move button always selected: just there to show user that they can move
+    val moveButton = new JToggleButton(handIcon)
+    moveButton.setToolTipText("Move")
+    moveButton.setSelected(true)
+    moveButton.setEnabled(false)
+    toolbar.add(moveButton)
 
     add(toolbar, BorderLayout.PAGE_START)
     add(canvas, BorderLayout.CENTER)

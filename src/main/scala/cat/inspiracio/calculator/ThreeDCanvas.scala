@@ -1,3 +1,36 @@
+/*	Copyright 2019 Alexander Bunkenburg alex@inspiracio.cat
+ *
+ * This file is part of Complex Calculator.
+ *
+ * Complex Calculator is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Complex Calculator is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Complex Calculator. If not, see <http://www.gnu.org/licenses/>.
+ * *//*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
+ *
+ * This file is part of Complex Calculator.
+ *
+ * Complex Calculator is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Complex Calculator is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Complex Calculator. If not, see <http://www.gnu.org/licenses/>.
+ * */
 package cat.inspiracio.calculator
 
 import java.awt._
@@ -36,16 +69,16 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
 
   private var fontAscent = 12
 
-  private[calculator] var xyscale = 0.0
+  private var xyscale = 0.0
 
   /** transformation matric between 3d space and view space */
   private var Q: Matrix44 = initQ
 
   /** Does the real axis point forward? */
-  private[calculator] var xforward = false
+  private var xforward = false
 
   /** Does the imaginary axis point forward? */
-  private[calculator] var zforward = false
+  private var zforward = false
 
   init()
 
@@ -78,6 +111,11 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
   }
 
   //Methods -------------------------------------------------------
+
+  private[calculator] def reset() = {
+    Q = initQ
+    repaint()
+  }
 
   /** Draws the lines behind the surface.
     * Depends on xforward, zforward. */
@@ -124,7 +162,7 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
 
   /** Draws the lines in front of the surface.
     * Reads xforward, zforward. */
-  private[calculator] def drawFrontAxes(g: Graphics) = {
+  private def drawFrontAxes(g: Graphics) = {
     val (xfront,xback) = if(xforward) (0.5, -0.5) else (-0.5, 0.5)
     val (zfront,zback) = if(zforward) (0.5, -0.5) else (-0.5, 0.5)
 
@@ -141,34 +179,34 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
   }
 
   /** z is the imaginary axis */
-  private[calculator] def drawImaginaryAxis(g: Graphics) =
+  private def drawImaginaryAxis(g: Graphics) =
     drawLine3(g, GRAY)( 0, 0, -0.5)( 0, 0, 0.5)
 
   /** y is the axis for |f(z)| */
-  private[calculator] def drawModAxis(g: Graphics) =
+  private def drawModAxis(g: Graphics) =
     drawLine3(g, GRAY)( 0, 0, 0)( 0, 1, 0)
 
   /** x is the real axis */
-  private[calculator] def drawRealAxis(g: Graphics) =
+  private def drawRealAxis(g: Graphics) =
     drawLine3(g, GRAY)( -0.5, 0, 0)( 0.5, 0, 0)
 
-  private[calculator] def drawLine3(g: Graphics)(x1: Double, y1: Double, z1: Double)(x2: Double, y2: Double, z2: Double) = {
+  private def drawLine3(g: Graphics)(x1: Double, y1: Double, z1: Double)(x2: Double, y2: Double, z2: Double) = {
     val a = f3dPix(x1, y1, z1)
     val b = f3dPix(x2, y2, z2)
     g.drawLine(a, b)
   }
 
-  private[calculator] def drawLine3(g: Graphics, c: Color)(x1: Double, y1: Double, z1: Double)(x2: Double, y2: Double, z2: Double): Unit = {
+  private def drawLine3(g: Graphics, c: Color)(x1: Double, y1: Double, z1: Double)(x2: Double, y2: Double, z2: Double): Unit = {
     val a = f3dPix(x1, y1, z1)
     val b = f3dPix(x2, y2, z2)
     g.drawLine(a, b, c)
   }
 
-  private[calculator] def cx(x: Int) = if (xforward) x else -x
-  private[calculator] def cz(z: Int) = if (zforward) z else -z
+  private def cx(x: Int) = if (xforward) x else -x
+  private def cz(z: Int) = if (zforward) z else -z
 
   /** Draws the whole diagram. */
-  private[calculator] def drawIt(g: Graphics) = {
+  private def drawIt(g: Graphics) = {
     import world.{m}
     val N = m.n
 
