@@ -199,5 +199,10 @@ You have to be on Windows to build for Windows.
 
 https://www.scala-sbt.org/sbt-native-packager/formats/universal.html
 
+## JDK packager plugin
 
+https://www.scala-sbt.org/sbt-native-packager/formats/jdkpackager.html
 
+    $ sbt jdkPackager:packageBin
+
+To set Oracle jdk11 as default, install the "oracle-java11-set-default" package.
