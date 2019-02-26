@@ -4,8 +4,6 @@
 * executable for Windows
 * executable for linux
     - maybe with http://launch4j.sourceforge.net/
-* Control-Q on other windows
-* buttons with action
 * World: save zoom in preferences
 * World: save movement in preferences
 * World: save sphere rotation in preferences
@@ -13,17 +11,13 @@
 * World: save numbers and pictlets in preferences
 * ThreeDWorld: save movement in preferences
 * RefxWorld: save movement in preferences
-* Complex.toString or format
+* Complex.toString or format with precision
 * var only for variable instance variables
 * put on web page with installation instructions
-* better number formatting: take into account precision
 * better expressions: don't always write parenthesis
 * Take complex numbers out and make into Scala library
-* Better colours, not so dark
 * Give it a real icon
 * Nice About-menu
-* make a real executable application
-* Give World windows a toolbar instead of buttons and menus to read
 * separate GUI from logic
 * make a version inside a web page: GUI is html, logic with scala.js
 * make an Android app from it
