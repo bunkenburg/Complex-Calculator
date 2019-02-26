@@ -1,8 +1,9 @@
 # TODO
 
 * executable for Mac
-* better icon images
-    - retouch 32x32 shapes
+* executable for Windows
+* executable for linux
+    - maybe with http://launch4j.sourceforge.net/
 * Control-Q on other windows
 * buttons with action
 * World: save zoom in preferences
