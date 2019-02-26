@@ -50,24 +50,16 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
   //State ------------------------------------------------
 
-  private val clearButton = new JButton(clearIcon)
-  clearButton.setToolTipText("Clear")
+  private val clearButton = button(clearIcon, "Clear")
 
   private val interactionChoice = new ButtonGroup()
-  private val moveButton = new JToggleButton(handIcon)
-  moveButton.setToolTipText("Move")
-  private val drawButton = new JToggleButton(drawIcon)
-  drawButton.setToolTipText("Draw")
-  private val lineButton = new JToggleButton(lineIcon)
-  lineButton.setToolTipText("Line")
-  private val circleButton = new JToggleButton(circleIcon)
-  circleButton.setToolTipText("Circle")
-  private val rectangleButton = new JToggleButton(rectangleIcon)
-  rectangleButton.setToolTipText("Rectangle")
-  private val squareButton = new JToggleButton(squareIcon)
-  squareButton.setToolTipText("Square")
-  private val gridButton = new JToggleButton(gridIcon)
-  gridButton.setToolTipText("Plane")
+  private val moveButton = toggle(handIcon, "Move")
+  private val drawButton = toggle(drawIcon, "Draw")
+  private val lineButton = toggle(lineIcon, "Line")
+  private val circleButton = toggle(circleIcon, "Circle")
+  private val rectangleButton = toggle(rectangleIcon, "Rectangle")
+  private val squareButton = toggle(squareIcon, "Square")
+  private val gridButton = toggle(gridIcon, "Plane")
 
   private var mode: Mode = null
 

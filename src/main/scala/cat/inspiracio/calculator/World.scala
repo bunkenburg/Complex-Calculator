@@ -48,24 +48,11 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
   import icon._
 
   protected val toolbar: JToolBar = new JToolBar()
-  //toolbar.setBackground(Color.lightGray)
 
-  private val planeButton = new JToggleButton(planeIcon)
-  planeButton.setToolTipText("Complex plane")
-  planeButton.setOpaque(false)
-  //planeButton.setContentAreaFilled(false) //need for signalling selected
-  planeButton.setBorderPainted(false)
-
-  private val sphereButton = new JToggleButton(sphereIcon)
-  sphereButton.setToolTipText("Riemann sphere")
-  sphereButton.setOpaque(false)
-  sphereButton.setBorderPainted(false)
-
-  private val zInButton = new JButton(zoomInIcon)
-  zInButton.setToolTipText("Zoom in")
-
-  private val zOutButton = new JButton(zoomOutIcon)
-  zOutButton.setToolTipText("Zoom out")
+  private val planeButton = toggle(planeIcon, "Complex plane")
+  private val sphereButton = toggle(sphereIcon,"Riemann sphere")
+  private val zInButton = button(zoomInIcon, "Zoom in")
+  private val zOutButton = button(zoomOutIcon, "Zoom out")
 
   /** Menu for Plane or Sphere */
   private val choice = new ButtonGroup()
@@ -105,8 +92,7 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     toolbar.add(zOutButton)
     toolbar.addSeparator()
 
-    val resetButton = new JButton(resetIcon)
-    resetButton.setToolTipText("Reset")
+    val resetButton = button(resetIcon, "Reset")
     resetButton.addActionListener(_ => canvas.reset() )
     toolbar.add(resetButton)
 

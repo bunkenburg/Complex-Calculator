@@ -35,7 +35,7 @@ package cat.inspiracio.calculator
 
 import java.awt._
 
-import javax.swing.{Icon, ImageIcon}
+import javax.swing.{Icon, ImageIcon, JButton, JToggleButton}
 
 /**
   * https://docs.oracle.com/javase/tutorial/uiswing/components/icon.html
@@ -68,6 +68,24 @@ package object icon {
   val squareIcon = icon("square.png")
   val zoomInIcon = icon("zoom-in.png")
   val zoomOutIcon = icon("zoom-out.png")
+
+  def toggle(icon: Icon, tooltip: String): JToggleButton = {
+    val b = new JToggleButton(icon)
+    b.setToolTipText(tooltip)
+    b.setOpaque(false)
+    b.setBorderPainted(false)
+    //b.setContentAreaFilled(false) //need for signalling selected
+    b
+  }
+
+  def button(icon: Icon, tooltip: String): JButton = {
+    val b = new JButton(icon)
+    b.setToolTipText(tooltip)
+    b.setOpaque(false)
+    b.setBorderPainted(false)
+    //b.setContentAreaFilled(false) //need for signalling selected
+    b
+  }
 
 }
 

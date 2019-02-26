@@ -65,15 +65,13 @@ final class ThreeDWorld private[calculator](calculator: Calculator) extends JFra
     import icon._
 
     val toolbar = new JToolBar()
-    val resetButton = new JButton(resetIcon)
-    resetButton.setToolTipText("Reset")
+    val resetButton = button(resetIcon, "Reset")
     resetButton.addActionListener( _ => canvas.reset() )
     toolbar.add(resetButton)
     toolbar.addSeparator()
 
     //move button always selected: just there to show user that they can move
-    val moveButton = new JToggleButton(handIcon)
-    moveButton.setToolTipText("Move")
+    val moveButton = toggle(handIcon, "Move")
     moveButton.setSelected(true)
     moveButton.setEnabled(false)
     toolbar.add(moveButton)

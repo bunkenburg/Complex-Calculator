@@ -59,18 +59,15 @@ final class RefxWorld private[calculator](calculator: Calculator) extends JFrame
 
     canvas.resetExtremes()
 
-    val btnZoomIn = new JButton(zoomInIcon)
-    btnZoomIn.setToolTipText("Zoom in")
+    val btnZoomIn = button(zoomInIcon, "Zoom in")
     btnZoomIn.addActionListener( _ => zoomIn() )
     toolbar.add(btnZoomIn)
 
-    val btnZoomOut = new JButton(zoomOutIcon)
-    btnZoomOut.setToolTipText("Zoom out")
+    val btnZoomOut = button(zoomOutIcon, "Zoom out")
     btnZoomOut.addActionListener( _ => zoomOut() )
     toolbar.add(btnZoomOut)
 
-    val btnReset = new JButton(resetIcon)
-    btnReset.setToolTipText("Reset")
+    val btnReset = button(resetIcon, "Reset")
     btnReset.addActionListener( _ => reset() )
     toolbar.add(btnReset)
     toolbar.addSeparator()
