@@ -184,7 +184,8 @@ Maybe missing configuration, maybe need an rpm system to build it.
     ...
     java.io.IOException: Cannot run program "hdiutil" 
     
-Cannot make for Mac on linux.
+Cannot make for Mac on linux. On Mac, makes target/universal/complex-calculator-0.0.1-SNAPSHOT.dmg
+which again has scripts and JARs in it. It's not double-clickable.
 
 ### Package for Windows
 
