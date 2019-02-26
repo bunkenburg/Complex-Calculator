@@ -45,8 +45,8 @@ class MissingIcon extends Icon {
     val g2d = g.create.asInstanceOf[Graphics2D]
 
     //white background
-    //g2d.setColor(Color.WHITE)
-    //g2d.fillRect(x + 1, y + 1, width - 2, height - 2)
+    g2d.setColor(Color.WHITE)
+    g2d.fillRect(x + 1, y + 1, width - 2, height - 2)
 
     //black border
     g2d.setColor(Color.BLACK)
@@ -56,8 +56,8 @@ class MissingIcon extends Icon {
     val stroke = new BasicStroke(4) //width
     g2d.setColor(Color.RED)
     g2d.setStroke(stroke)
-    //g2d.drawLine(x + 5, y + 5, x + width - 5, y + height - 5)
-    //g2d.drawLine(x + 5, y + height - 5, x + width - 5, y + 5)
+    g2d.drawLine(x + 5, y + 5, x + width - 5, y + height - 5)
+    g2d.drawLine(x + 5, y + height - 5, x + width - 5, y + 5)
 
     g2d.dispose()
   }
