@@ -43,8 +43,10 @@ object RiemannSphere {
     else x/(1-z) + (y/(1-z))*i
 
   /** From sphere to plane: x/(1−z) + i * y/(1−z).
-    * @param p = (x,y,z) In 3d space on the unit sphere
-    * @return Complex number represented by this point. */
+    *
+    * param p = (x,y,z) In 3d space on the unit sphere
+    * @return Complex number represented by this point.
+    */
   val sphere2plane: Point => Complex = {
     case (x,y,z) => sphere2plane(x,y,z)
   }
