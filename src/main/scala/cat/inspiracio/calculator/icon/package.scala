@@ -57,7 +57,7 @@ package object icon {
 
   val circleIcon = icon("circle.png")
   val clearIcon = icon("clear.png")
-  val drawIcon = icon("draw.jpeg")
+  val drawIcon = icon("draw.png")
   val gridIcon = icon("grid.png")
   val handIcon = icon("hand.png")
   val lineIcon = icon("line.png")
