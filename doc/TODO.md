@@ -1,10 +1,8 @@
 # TODO
 
+* executable for Mac
 * better icon images
-    - size
-    - format
-        png
-        jpeg
+    - retouch 32x32 shapes
 * Control-Q on other windows
 * buttons with action
 * World: save zoom in preferences

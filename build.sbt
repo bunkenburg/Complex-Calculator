@@ -1,5 +1,5 @@
 ThisBuild / version      := "0.0.1-SNAPSHOT"
-ThisBuild / scalaVersion := "2.12.7"
+ThisBuild / scalaVersion := "2.12.8"
 ThisBuild / organization := "cat.inspiracio"
 
 lazy val calculator = (project in file("."))

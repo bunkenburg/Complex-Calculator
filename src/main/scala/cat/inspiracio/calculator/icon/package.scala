@@ -46,7 +46,9 @@ import javax.swing.{Icon, ImageIcon, JButton, JToggleButton}
 package object icon {
 
   private def icon(path: String) = {
-    val imgURL = getClass().getResource(path)
+    val p = "/cat/inspiracio/calculator/icon/" + path
+    val c = getClass()
+    val imgURL = c.getResource(p)
     if (imgURL != null)
       new ImageIcon(imgURL)
     else {
