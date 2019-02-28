@@ -1,10 +1,9 @@
-*.iml
+*.class
 .classpath
 .DS_Store
 .idea
+*.iml
 .project
 .settings
-bin
 target/
-*.class
 

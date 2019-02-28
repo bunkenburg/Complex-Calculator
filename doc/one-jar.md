@@ -20,6 +20,38 @@ http://one-jar.sourceforge.net/index.php?page=getting-started&file=quickstart
 The "Command-line approach" on http://one-jar.sourceforge.net/index.php?page=getting-started&file=quickstart 
 works, except that curiously the font on the displayed calculator seems a bit impaired.
 
+## Command-Line Approach
+
+The use of Ant is not required: a One-JAR archive is simple to build using just the jar tool using the following steps.
+
+    Create a working directory to act as the "root" of the one-jar with main, lib sub-directories.
+    Copy your main application jar file into root/main and library dependencies into root/lib
+    Unjar the one-jar-boot-0.97.jar file into the root directory, and delete the "src" tree
+    Edit the boot-manifest.mf file and add a new line: One-Jar-Main-Class: your-main-class
+
+    Note: make sure that your final one-jar contains a manifest that looks like this:
+
+    Manifest-Version: 1.0
+    Main-Class: com.simontuffs.onejar.Boot
+    One-Jar-Main-Class: YOUR.MAIN.CLASS.NAME.HERE
+
+    cd root; jar -cvfm ../one-jar.jar boot-manifest.mf .
+
+You should end up with a One-JAR archive which mirrors the "root" tree:
+
+one-jar.jar
+|  META-INF/MANIFEST.MF
+|  .version
+|  com/simontuffs/onejar
+   |  Boot.class, ...etc.
+|  doc/one-jar-license.txt
+|  main/main.jar
+|  lib/a.jar ...etc.
+
+Thats it: no code to write, just a directory tree, some copy operations, and a file edit. The One-JAR classloader discovers the libraries and main code based on their position in the archive, and ignores any other Jar files should you need to embed archives which should not be on the classpath. Embedding the one-jar-license.txt ensures compliance with the BSD-style license. 
+
+## automate it
+
 On Ubuntu, I can open the resulting JAR with double click!
 
 XXX If I can a proper native executable from this with launch4j, I'll automate building one-jar.
