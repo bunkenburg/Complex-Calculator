@@ -12,6 +12,11 @@
 * ThreeDWorld: save movement in preferences
 * RefxWorld: save movement in preferences
 * Complex.toString or format with precision
+    - reasonable rounding
+    - configurable rounding
+    - represent in terms of pi
+    - represent integers
+    - represent rationals
 * var only for variable instance variables
 * put on web page with installation instructions
 * better expressions: don't always write parenthesis
