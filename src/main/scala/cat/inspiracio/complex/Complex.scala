@@ -82,9 +82,9 @@ abstract class Complex {
         case Real(0) => 1
         case Cartesian(cre,cim) => {
           val lnmx = log(mx)
-          Polar(
-            exp(lnmx * cre - cim * ax),
-            cim * lnmx + cre * ax)
+          val m = exp(lnmx * cre - cim * ax)
+          val a = cim * lnmx + cre * ax
+          Polar(m, a)
         }
         case _ => ∞
       }

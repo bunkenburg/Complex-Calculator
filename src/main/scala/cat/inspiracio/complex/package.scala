@@ -281,7 +281,12 @@ package object complex {
     /** val z = Cartesian(re, im) */
     def apply(re: Double, im: Double): Complex =
       if(re.isInfinity || im.isInfinity) ∞
-      else new CartesianComplex(re, im)
+      else {
+        //avoids -0.0
+        val r = if(re==0.0) 0.0 else re
+        val i = if(im==0.0) 0.0 else im
+        new CartesianComplex(r, i)
+      }
 
     /** val Cartesian(re, im) = z
       * Matches all finite complex numbers. */

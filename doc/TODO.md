@@ -22,6 +22,7 @@
 * make a version inside a web page: GUI is html, logic with scala.js
 * make an Android app from it
 * multi-project for application, app, web
+* add Edit menu: Cut, Copy, Paste
 
 # DONE
 

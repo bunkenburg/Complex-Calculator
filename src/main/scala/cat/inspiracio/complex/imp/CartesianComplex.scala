@@ -56,7 +56,7 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
 
   /** Format a complex number nicely. */
   override def toString: String = {
-    import Math.abs
+    import math.abs
     import Complex.ε
 
       //It's just a real number.
@@ -83,11 +83,17 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
 
   // methods with 0 parameters ------------------------------------
 
-  override def unary_- : Complex = Cartesian(-re,-im)
+  override def unary_- : Complex = {
+    //Avoids -0.0. Methods == can not distinguish 0.0 and -0.0 but equals can.
+    val r = if(re==0.0) 0.0 else -re
+    val i = if(im==0.0) 0.0 else -im
+    Cartesian(r,i)
+  }
 
   lazy val argument: Double = {
     import Complex.lastQuad
     import Complex.k
+    import scala.math.atan2
 
     def quadrant: Int =
       if (0 <= re  && 0 <= im) 1
@@ -96,7 +102,12 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
       else 4
 
     if (!(this === 0)) {
-      val d = Math.atan2(im, re)
+      //Avoids -0.0. Methods == can not distinguish 0.0 and -0.0 but equals can.
+      //atan2 treats 0.0 and -0.0 differently but we always prefer 0.0.
+      val r = if(re==0.0) 0.0 else re
+      val i = if(im==0.0) 0.0 else im
+      val d = atan2(i,r)
+
       if (Complex.isArgContinuous) {
         val q = quadrant
         if (lastQuad == 2 && q == 3)
@@ -111,7 +122,7 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
     else 0
   }
 
-  lazy val modulus: Double = sqrt(sqr(re) + sqr(im))
+  lazy val modulus: Double = scala.math.hypot(re, im) //sqrt(sqr(re) + sqr(im))
 
   // operators of 2 parameters ----------------------------------
 
@@ -160,8 +171,8 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
     //I don't understand this anymore.
     //It is from decompiled code.
     //XXX Better multiply divisor by conjugate.
-    val d4 = Math.abs(br)
-    val d5 = Math.abs(bi)
+    val d4 = abs(br)
+    val d5 = abs(bi)
     var d6 = .0
     var d7 = .0
     var d10 = .0
