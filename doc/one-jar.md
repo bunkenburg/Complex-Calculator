@@ -55,7 +55,7 @@ That's it: no code to write, just a directory tree, some copy operations, and a 
 
 See bash script
 
-    bin/build.sh
+    bin/build-jar.sh
     
 On Ubuntu, I can open the resulting JAR with double click.
 
