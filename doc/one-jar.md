@@ -48,14 +48,16 @@ one-jar.jar
 |  main/main.jar
 |  lib/a.jar ...etc.
 
-Thats it: no code to write, just a directory tree, some copy operations, and a file edit. The One-JAR classloader discovers the libraries and main code based on their position in the archive, and ignores any other Jar files should you need to embed archives which should not be on the classpath. Embedding the one-jar-license.txt ensures compliance with the BSD-style license. 
+That's it: no code to write, just a directory tree, some copy operations, and a file edit. The One-JAR classloader discovers the libraries and main code based on their position in the archive, and ignores any other Jar files should you need to embed archives which should not be on the classpath. Embedding the one-jar-license.txt ensures compliance with the BSD-style license. 
+
 
 ## automate it
 
-On Ubuntu, I can open the resulting JAR with double click!
+See bash script
 
-XXX If I can a proper native executable from this with launch4j, I'll automate building one-jar.
-
+    bin/build.sh
+    
+On Ubuntu, I can open the resulting JAR with double click.
 
 
 ## for scala
@@ -108,3 +110,5 @@ Cannot load it in plugins.sbt.
 //tried https://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/org.scala-sbt.plugins/sbt-onejar/scala_2.12/sbt_1.0/0.8/ivys/ivy.xml
 //addSbtPlugin("com.github.retronym" % "sbt-onejar" % "0.8")
 //addSbtPlugin("org.scala-sbt.plugins" % "sbt-onejar" % "0.8")
+
+Abandon this line.
