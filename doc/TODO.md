@@ -4,6 +4,7 @@
 * executable for Windows
 * executable for linux
     - maybe with http://launch4j.sourceforge.net/
+* |f(z)| mode, z word: remove unused disabled icons
 * World: save zoom in preferences
 * World: save movement in preferences
 * World: save sphere rotation in preferences

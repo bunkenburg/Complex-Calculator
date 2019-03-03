@@ -57,7 +57,6 @@ See bash script
 
     bin/build-jar.sh
     
-On Ubuntu, I can open the resulting JAR with double click.
 
 
 ## for scala

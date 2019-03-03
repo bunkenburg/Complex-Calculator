@@ -10,6 +10,8 @@
 # This file is in bin/ but it works in target/root/
 # It expects to be called from Complex-Calculator/.
 
+# This file even runs on Windows 10.
+
 sbt stage
 
 rm -rf target/root
