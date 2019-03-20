@@ -23,25 +23,36 @@ There are three areas of the program:
 3. Java Swing GUI.
 
 
+## how to run the executable jar
+
+You need only java, at least a JRE at least version 8.
+
+Get the latest executable JAR from 
+
+    https://github.com/bunkenburg/Complex-Calculator/blob/master/bin/calculator.jar
+    
+Save it somewhere.
+
+Open the JAR by double-click, with a Java 8 runtime. 
+
+If your windowing system is not configured to do this via GUI, you can start from command line:
+
+    $ java -jar calculator.jar
+
+
+
 ## how to build it yourself
 
 You need git, java, scala, sbt.
 
+Clone the repository.
+
     $ git clone git@github.com:bunkenburg/Complex-Calculator.git
-    $ sbt stage
-    $ ls -lF target/universal/stage/lib
-    total 5844
-    -rw-r--r-- 1 alex alex  706227 feb 26 15:20 cat.inspiracio.complex-calculator-0.0.1-SNAPSHOT.jar
-    -rw-r--r-- 1 alex alex 5272591 dic  4 11:15 org.scala-lang.scala-library-2.12.8.jar
-    $ ls -lFr target/universal/stage/bin/
-    total 20
-    -rw-r--r-- 1 alex alex 5170 feb 26 15:15 complex-calculator.bat
-    -rwxr--r-- 1 alex alex 9483 feb 26 15:15 complex-calculator*
-    
-Run it on linux (you need java):
 
-    $ target/universal/stage/bin/complex-calculator
-    
-Run it on Windows (you need java):
+Build an executable JAR. (Works on linux and apparently on Windows 10.)
 
-    $ target/universal/stage/bin/complex-calculator.bat
+    $ bin/build-jar.sh
+
+The executable JAR is in target/calculator.jar. Double-click to run it, or:
+
+    $ java -jar calculator.jar

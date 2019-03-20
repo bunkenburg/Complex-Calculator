@@ -1,5 +1,6 @@
 # TODO
 
+* put into About: date, mvn version, git revision
 * executable for Mac
 * executable for Windows
     - maybe with http://launch4j.sourceforge.net/
@@ -32,6 +33,7 @@
 
 # DONE
 
+* executable JAR must have executable bit
 * Sphere: improve moving: keep same number under mouse
 * Better initial window positions
 * Change from AWT to Swing
