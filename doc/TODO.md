@@ -2,8 +2,8 @@
 
 * executable for Mac
 * executable for Windows
-* executable for linux
     - maybe with http://launch4j.sourceforge.net/
+* executable for linux
 * World: save zoom in preferences
 * World: save movement in preferences
 * World: save sphere rotation in preferences
