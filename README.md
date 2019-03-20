@@ -12,7 +12,7 @@ The first version was on Apple Macintosh System 6 in 1992.
 ## Java 1.1 as applet and application
 
 The first java version is from 6. 1. 1999. I made it in Java 1.1 which introduced inner classes.
-I lost the source code of that program, so the present version is based on decompiled byte code.
+I lost the source code of that program, but decompiled byte code survived.
 
 ## Scala 2.12.8 as application
 
@@ -53,6 +53,6 @@ Build an executable JAR. (Works on linux and apparently on Windows 10.)
 
     $ bin/build-jar.sh
 
-The executable JAR is in target/calculator.jar. Double-click to run it, or:
+The executable JAR is in bin/calculator.jar. Double-click to run it, or:
 
     $ java -jar calculator.jar

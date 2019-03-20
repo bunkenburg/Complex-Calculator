@@ -1,13 +1,13 @@
 # TODO
 
 * put into About: date, mvn version, git revision
-* executable for Mac
+* |f(z)| mode, z world: remove unused disabled icons
+* World: save zoom in preferences
+* World: save movement in preferences* executable for Mac
 * executable for Windows
     - maybe with http://launch4j.sourceforge.net/
 * executable for linux
-* |f(z)| mode, z word: remove unused disabled icons
-* World: save zoom in preferences
-* World: save movement in preferences
+
 * World: save sphere rotation in preferences
 * World: save interaction in preferences
 * World: save numbers and pictlets in preferences
@@ -45,3 +45,7 @@
 
 # WILL NOT DO
 
+* executable for Mac
+* executable for Windows
+    - maybe with http://launch4j.sourceforge.net/
+* executable for linux

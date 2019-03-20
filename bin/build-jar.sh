@@ -33,5 +33,6 @@ chmod +x target/calculator.jar
 
 # back to project directory and show result
 # cd ../../
+cp target/calculator.jar bin/
 echo "Executable JAR: "
-ls -lF target/calculator.jar
+ls -lF bin/calculator.jar
