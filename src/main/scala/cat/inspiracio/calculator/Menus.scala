@@ -77,7 +77,7 @@ final class Menus private[calculator](var calculator: Calculator) extends JMenuB
     val miCalc = new JRadioButtonMenuItem("Calculate", true)
     val miFz = new JRadioButtonMenuItem("z -> f(z)")
     val miModFz = new JRadioButtonMenuItem("z -> |f(z)|")
-    val miReFx = new JRadioButtonMenuItem("x -> f(x)")
+    val miReFx = new JRadioButtonMenuItem("x -> Re(f(x))")
 
     menu.add(miCalc)
     menu.add(miFz)
