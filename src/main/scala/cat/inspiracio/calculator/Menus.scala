@@ -51,7 +51,7 @@ final class Menus private[calculator](var calculator: Calculator) extends JMenuB
   private def init()= {
     file()
     mode()
-    precision()
+    //precision()
   }
 
   private def file(): Unit = {
