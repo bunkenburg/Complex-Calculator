@@ -56,3 +56,11 @@ Build an executable JAR. (Works on linux and apparently on Windows 10.)
 The executable JAR is in bin/calculator.jar. Double-click to run it, or:
 
     $ java -jar calculator.jar
+    
+
+## some ideas to try out
+
+See the wiki on github:
+
+
+    https://github.com/bunkenburg/Complex-Calculator/wiki
