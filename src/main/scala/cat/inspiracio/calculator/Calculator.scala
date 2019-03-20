@@ -36,7 +36,6 @@ package cat.inspiracio.calculator
 import java.awt._
 import java.awt.event.{ActionListener, WindowAdapter, WindowEvent}
 import java.text.ParseException
-import java.lang.Math.min
 import java.util.prefs.Preferences
 
 import cat.inspiracio.calculator.Mode._

@@ -49,6 +49,13 @@ class Operators extends FunSuite {
     assert( 0 === d )
   }
 
+  test("unary - avoids -0.0"){
+    val c: Complex = 0
+    val Cartesian(re,im) = -c
+    assert( 0.0 equals re )
+    assert( 0.0 equals im )
+  }
+
   test("-i"){
     val c: Complex = -i
     val d = 0 - i
@@ -413,8 +420,28 @@ class Operators extends FunSuite {
   }
 
   test("0^∞"){
-      val c = 0 ^ ∞
-      assert( c === 0)
+    val c = 0 ^ ∞
+    assert( c === 0)
+  }
+
+  /** This is where it all started. It will be one of the first things users will try. */
+  test("-1 ^ 0.5"){
+    val c = -1 ^ 0.5
+    assert( c === i )
+  }
+
+  /** This is where it all started. It will be one of the first things users will try. */
+  test("(-1 : Complex) ^ (0.5 : Complex)"){
+    val a: Complex = -1
+    val b: Complex = 0.5
+    val c = a ^ b
+    assert( c === i )
+  }
+
+  /** This is where it all started. It will be one of the first things users will try. */
+  test("(-1) ^ 0.5"){
+    val c = (-1) ^ 0.5
+    assert( c === i )
   }
 
 }

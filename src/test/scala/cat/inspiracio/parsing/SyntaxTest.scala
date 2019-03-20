@@ -124,4 +124,36 @@ class SyntaxTest extends FunSuite {
     assert( fz === -1 )
   }
 
+  test("e^πi + 1"){
+    val f = parse("e^πi + 1")
+    val fz = f(7863)
+    assert( fz === 0 )
+  }
+
+  /** Parsed as -(1 ^ 0.5). */
+  test("-1 ^ 0.5"){
+    val f = parse("-1 ^ 0.5")
+    val fz = f(7863)
+    assert( fz === -1 )
+  }
+
+  /** This is where it all started. */
+  test("(-1) ^ 0.5"){
+    val a: Complex = -1
+    val b: Complex = 0.5
+    val c = a ^ b
+    assert( c === i )
+
+    val f = parse("(-1) ^ 0.5")
+    val fz = f(7863)    //Polar(1, - pi/2)
+    assert( fz === i )
+  }
+
+  test("bla"){
+    val t: Complex = Cartesian(-1.0, -0.0)   //im=-0
+    val Polar(mx,ax) = t
+    assert( mx === 1 )
+    assert( ax === Pi )
+  }
+
 }

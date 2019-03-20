@@ -54,4 +54,36 @@ class Literals extends FunSuite {
     assert( c === -3.14 )
   }
 
+  // Don't produce -0.0 --------------------------------
+
+  test("Byte -0"){
+    val b: Byte = (-0).toByte
+    val c: Complex = b
+    assert( ! (Re(c) equals -0.0) )
+  }
+
+  test("Int -0"){
+    val i: Int = -0
+    val c: Complex = i
+    assert( ! (Re(c) equals -0.0) )
+  }
+
+  test("Long -0"){
+    val l: Long = -0l
+    val c: Complex = l
+    assert( ! (Re(c) equals -0.0) )
+  }
+
+  test("Float -0"){
+    val f: Float = -0.0f
+    val c: Complex = f
+    assert( ! (Re(c) equals -0.0) )
+  }
+
+  test("Double -0"){
+    val d: Double = -0.0
+    val c: Complex = d
+    assert( ! (Re(c) equals -0.0) )
+  }
+
 }
