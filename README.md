@@ -63,4 +63,4 @@ The executable JAR is in bin/calculator.jar. Double-click to run it, or:
 See the wiki on github:
 
 
-    [wiki](https://github.com/bunkenburg/Complex-Calculator/wiki)
+    https://github.com/bunkenburg/Complex-Calculator/wiki
