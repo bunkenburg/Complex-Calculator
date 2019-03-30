@@ -17,6 +17,9 @@
  * */
 package cat.inspiracio.complex
 
+import java.util.FormattableFlags.{ALTERNATE, LEFT_JUSTIFY, UPPERCASE}
+import java.util.{Formattable, Formatter, Locale}
+
 import cat.inspiracio.complex.imp.Circle
 
 /** Complex numbers.
@@ -26,7 +29,26 @@ import cat.inspiracio.complex.imp.Circle
   * - object ∞
   *
   * */
-abstract class Complex {
+abstract class Complex extends Formattable {
+
+  /** @param flags UPPERCASE ALTERNATE LEFT_JUSTIFY */
+  override def formatTo(fmt: Formatter, flags: Int, width: Int, precision: Int): Unit = {
+
+    val alternate = (flags & ALTERNATE) == ALTERNATE
+    val left = (flags & LEFT_JUSTIFY) == LEFT_JUSTIFY
+    val upper = (flags & UPPERCASE) == UPPERCASE
+    val locale = fmt.locale
+
+    val sb = new StringBuilder
+    sb.append("alternate=" + alternate + " ")
+    sb.append("left=" + left + " ")
+    sb.append("upper=" + upper + " ")
+    sb.append("locale=" + locale + " ")
+    sb.append("width=" + width + " ")
+    sb.append("precision=" + precision)
+
+    fmt.format(sb.toString)
+  }
 
   // Operators ---------------------------------
 
@@ -63,10 +85,8 @@ abstract class Complex {
       else 0
     case Polar(mx,ax) =>
       if(c == 0) 1
-      else if(!c.isInfinite){
-        val lnmx = log(mx)
-        Polar(exp(lnmx * c), c * ax)
-      }
+      else if(!c.isInfinite)
+        Polar(exp(log(mx) * c), c * ax)
       else ∞
     case ∞ =>
       if(c == 0) throw new ArithmeticException("∞^0")
@@ -184,19 +204,7 @@ abstract class Complex {
 /** Complex object. Maybe all of this can disappear? */
 object Complex {
 
-  // formatting, maybe disappears ---------------
-
-  /** for formatting */
-  private var precision: Int = 4
-  def setPrecision(p: Int): Unit = {
-    precision = p
-    ε = Math.pow(10D, -precision)
-  }
-  def getPrecision: Int = precision
-
   // state, maybe disappears --------------------
-
-  var ε: Double = Math.pow(10D, -precision)
 
   /** Should the argument function be continuous
     * or always return the principal value?

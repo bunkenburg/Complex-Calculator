@@ -52,7 +52,6 @@ object RiemannSphere {
   }
 
   /** From plane to sphere (x,y,z) = ( 2X/(1+X²+Y²) , 2Y/(1+X²+Y²) , (X²+Y²−1)/(1+X²+Y²) )
-    * @param c Complex number
     * @return 3d point on unit sphere */
   val plane2sphere: Complex => Point = {
       case ∞ => (0,0,1)

@@ -94,21 +94,4 @@ final class Menus private[calculator](var calculator: Calculator) extends JMenuB
     item.setSelected(true)
   }
 
-  private def precision(): Unit = {
-    val menu = new JMenu("Precision")
-    val group = new ButtonGroup
-    val precision = getPrecision
-    for ( j <- Array(2, 4, 6, 8, 10) ) {
-      val s = Integer.toString(j)
-      val selected = precision == j
-      val item = new JRadioButtonMenuItem(s, selected)
-      item.addActionListener( _ => setPrecision(j))
-      menu.add(item)
-      group.add(item)
-    }
-    add(menu)
-  }
-
-  private def getPrecision: Int = Complex.getPrecision
-  private def setPrecision(n: Int): Unit = Complex.setPrecision(n)
 }

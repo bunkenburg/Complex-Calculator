@@ -1,14 +1,11 @@
 # TODO
 
 * put into About: date, mvn version, git revision
-* ComplexWorld preferences
-    -
 x World: save zoom in preferences
 * World: save movement in preferences
 * World: save sphere rotation in preferences
 * Sphere: give it zoom
 * World: save interaction in preferences
-* World: save numbers and pictlets in preferences
 * ThreeDWorld: save movement in preferences
 * RefxWorld: save movement in preferences
 * use scala's combinator parsing

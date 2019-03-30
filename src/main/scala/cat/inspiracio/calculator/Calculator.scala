@@ -66,7 +66,6 @@ final class Calculator() extends JFrame("Complex Calculator") {
 
   private def buildFrame() = {
     setResizable(false)
-    Complex.setPrecision(4)
   }
 
   private def buildButtons() = {

@@ -31,14 +31,13 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
   import MoreGraphics.GraphicsExtended
   import Point2._
 
-  //State -------------------------------------------------------
-
   private var markLength = 2
+  private var factor: Double = 0
+
+  //State -------------------------------------------------------
 
   private var R = Matrix44.One
   private var R1 = Matrix44.One
-
-  private var factor: Double = 0
 
   //Methods ------------------------------------------------------
 

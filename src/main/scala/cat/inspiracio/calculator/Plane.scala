@@ -57,6 +57,8 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
   /** complex number at the bottom right of the plane */
   private var botright: Complex = 0
 
+  // methods -------------------------------------------------------------
+  
   override private[calculator] def draw(g: Graphics, z: Complex) =
     if (finite(z)) {
       val p = complex2Point(z)
