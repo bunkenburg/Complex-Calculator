@@ -14,22 +14,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with Complex Calculator. If not, see <http://www.gnu.org/licenses/>.
- * *//*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
- *
- * This file is part of Complex Calculator.
- *
- * Complex Calculator is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Complex Calculator is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Complex Calculator. If not, see <http://www.gnu.org/licenses/>.
  * */
 package cat.inspiracio.calculator
 
@@ -61,6 +45,8 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
 
   /** real * factor = pixels */
   private var factor = 40.0
+  override private[calculator] def zoom: Double = factor / 40.0
+  override private[calculator] def zoom_=(z: Double) : Unit = { factor = 40 * z}
 
   /** complex number at the centre of the plane */
   private var centre: Complex = 0
@@ -71,6 +57,8 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
   /** complex number at the bottom right of the plane */
   private var botright: Complex = 0
 
+  // methods -------------------------------------------------------------
+  
   override private[calculator] def draw(g: Graphics, z: Complex) =
     if (finite(z)) {
       val p = complex2Point(z)

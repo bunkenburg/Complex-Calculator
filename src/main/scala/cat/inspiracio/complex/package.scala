@@ -27,6 +27,7 @@ import cat.inspiracio.complex.imp.CartesianComplex
   * not as in object-oriented programming.
   * */
 package object complex {
+  import math.log
 
   // beautiful constants -----------------------------------
 
@@ -155,7 +156,7 @@ package object complex {
   val ln: Complex => Complex = {
     case ∞ => ∞
     case Real(0) => throw new ArithmeticException("ln 0")
-    case Polar(m,a) => Cartesian(math.log(m), a)
+    case Polar(m,a) => Cartesian(log(m), a)
   }
 
   /** Complex conjugate: negates the imaginary part */

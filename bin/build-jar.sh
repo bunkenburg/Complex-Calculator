@@ -10,7 +10,7 @@
 # This file is in bin/ but it works in target/root/
 # It expects to be called from Complex-Calculator/.
 
-# This file even runs on Windows 10.
+# This file even runs on Windows 10, strangely.
 
 sbt stage
 
@@ -29,8 +29,10 @@ rm -rf target/root/src/
 echo "One-Jar-Main-Class: cat.inspiracio.calculator.Calculator" >> target/root/boot-manifest.mf
 
 jar cfm target/calculator.jar target/root/boot-manifest.mf -C target/root/ .
+chmod +x target/calculator.jar
 
 # back to project directory and show result
 # cd ../../
+cp target/calculator.jar bin/
 echo "Executable JAR: "
-ls -lF target/calculator.jar
+ls -lF bin/calculator.jar

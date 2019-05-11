@@ -14,22 +14,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with Complex Calculator. If not, see <http://www.gnu.org/licenses/>.
- * *//*	Copyright 2011 Alexander Bunkenburg alex@inspiracio.cat
- *
- * This file is part of Complex Calculator.
- *
- * Complex Calculator is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Complex Calculator is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Complex Calculator. If not, see <http://www.gnu.org/licenses/>.
  * */
 package cat.inspiracio.calculator
 
@@ -51,7 +35,6 @@ final class Menus private[calculator](var calculator: Calculator) extends JMenuB
   private def init()= {
     file()
     mode()
-    precision()
   }
 
   private def file(): Unit = {
@@ -111,21 +94,4 @@ final class Menus private[calculator](var calculator: Calculator) extends JMenuB
     item.setSelected(true)
   }
 
-  private def precision(): Unit = {
-    val menu = new JMenu("Precision")
-    val group = new ButtonGroup
-    val precision = getPrecision
-    for ( j <- Array(2, 4, 6, 8, 10) ) {
-      val s = Integer.toString(j)
-      val selected = precision == j
-      val item = new JRadioButtonMenuItem(s, selected)
-      item.addActionListener( _ => setPrecision(j))
-      menu.add(item)
-      group.add(item)
-    }
-    add(menu)
-  }
-
-  private def getPrecision: Int = Complex.getPrecision
-  private def setPrecision(n: Int): Unit = Complex.setPrecision(n)
 }

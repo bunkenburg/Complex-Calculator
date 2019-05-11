@@ -57,7 +57,7 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
   /** Format a complex number nicely. */
   override def toString: String = {
     import math.abs
-    import Complex.ε
+    val ε = 0.000000001
 
       //It's just a real number.
       if (abs(im) < ε)
