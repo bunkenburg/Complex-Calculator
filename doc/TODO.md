@@ -1,5 +1,7 @@
 # TODO
 
+* rewrite parsing using Scala combinator parsing
+* rewrite GUI using scala.swing._
 * executable for Mac
 * executable for Windows
 * executable for linux
