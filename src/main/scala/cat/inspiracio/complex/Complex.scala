@@ -34,10 +34,12 @@ abstract class Complex extends Formattable {
   /** @param flags UPPERCASE ALTERNATE LEFT_JUSTIFY */
   override def formatTo(fmt: Formatter, flags: Int, width: Int, precision: Int): Unit = {
 
+    val locale = fmt.locale
     val alternate = (flags & ALTERNATE) == ALTERNATE
     val left = (flags & LEFT_JUSTIFY) == LEFT_JUSTIFY
     val upper = (flags & UPPERCASE) == UPPERCASE
-    val locale = fmt.locale
+    //width
+    //precision
 
     val sb = new StringBuilder
     sb.append("alternate=" + alternate + " ")
