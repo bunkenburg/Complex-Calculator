@@ -18,6 +18,7 @@
 package cat.inspiracio.calculator
 
 import java.awt.{Color, Dimension, Font, Graphics, Point}
+import scala.swing._
 
 import cat.inspiracio.complex._
 import cat.inspiracio.calculator.Direction._
@@ -210,9 +211,9 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
   private def real2Pix(d: Double): Int = ((d - Re(topleft)) * factor).toInt
   private def imag2Pix(d: Double): Int = ((Im(topleft) - d) * factor).toInt
 
-  override def setFont(font: Font): Unit = {
-    super.setFont(font)
-    fontAscent = getFontMetrics(font).getAscent
+  override def font_=(font: Font): Unit = {
+    super.font = font
+    fontAscent = getFontMetrics(font).ascent
     axisPadding = 3 * fontAscent
     markDistance = 4 * fontAscent
     triangleSize = fontAscent / 2

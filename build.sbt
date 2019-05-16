@@ -9,6 +9,7 @@ lazy val calculator = (project in file("."))
   .settings(
     name := "Complex Calculator",
     maintainer := "Alexander Bunkenburg <alex@inspiracio.cat>",
+    libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "2.1.1",
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % Test,
     javacOptions ++= Seq("-source", "1.8")
   )

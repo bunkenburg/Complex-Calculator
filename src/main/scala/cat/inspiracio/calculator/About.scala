@@ -17,11 +17,14 @@
  * */
 package cat.inspiracio.calculator
 
-import javax.swing._
+//import javax.swing._
 import javax.swing.text.{SimpleAttributeSet, StyleConstants}
+import scala.swing._
 
 /** Modal dialog from "About" */
-class About(val frame: JFrame) extends JDialog(frame, "About ...", true) {
+class About(val frame: Frame) extends Dialog(frame) {
+  title = "About ..."
+  modal = true
 
   fill()
   ready()
@@ -30,23 +33,24 @@ class About(val frame: JFrame) extends JDialog(frame, "About ...", true) {
     val t = text()
     add("Center", t)
 
-    val button = new JButton("Continue")
-    button.addActionListener( _ => dispose() )
+    val button = new Button("Continue"){ _ => dispose() }
     val root = getRootPane
     root.setDefaultButton(button)
 
-    val panel = new JPanel
-    panel.add(button)
+    val panel = new Panel{
+      contents += button
+    }
     add("South", panel)
   }
 
-  private def text(): JComponent = {
+  private def text(): Component = {
     val s = "\nComplex Calculator\n" + "6. 1. 2019\n" + "by Alexander Bunkenburg\n" + "http://www.inspiracio.cat\n"
 
-    val textpane = new JTextPane
-    textpane.setText(s)
-    textpane.setEditable(false)
-    textpane.setFocusable(false)  //necessary so that enter and space dismiss dialog
+    val textpane = new TextPane {
+      text = s
+      editable = false
+      focusable = false //necessary so that enter and space dismiss dialog
+    }
 
     //align pane
     //https://stackoverflow.com/questions/3213045/centering-text-in-a-jtextarea-or-jtextpane-horizontal-text-alignment

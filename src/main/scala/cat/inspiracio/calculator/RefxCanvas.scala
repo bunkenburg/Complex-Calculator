@@ -18,15 +18,15 @@
 package cat.inspiracio.calculator
 
 import java.awt.{Color, Dimension, Font, Graphics, Point, Polygon}
-import java.awt.event.MouseEvent
+import scala.swing.event.MouseEvent
 
 import cat.inspiracio.calculator.Direction._
 import cat.inspiracio.complex.{Complex, Re, double2Complex, finite}
 import cat.inspiracio.geometry.{DoubleHelper, Point2}
-import javax.swing.JComponent
-import javax.swing.event.MouseInputAdapter
+import scala.swing.Component
+import scala.swing.event.MouseInputAdapter
 
-class RefxCanvas private[calculator](calculator: Calculator) extends JComponent {
+class RefxCanvas private[calculator](calculator: Calculator) extends Component {
   import Point2._
   import calculator.f
   import MoreGraphics.GraphicsExtended
@@ -69,18 +69,18 @@ class RefxCanvas private[calculator](calculator: Calculator) extends JComponent 
   init()
 
   private def init()= {
-    setBackground(Color.white)
+    background = Color.white
 
     val mouse = new MouseInputAdapter{
       //previous mouse position during dragging
       var previous: Point2 = null
 
-      override def mousePressed(e: MouseEvent): Unit = previous = e.getPoint
+      override def mousePressed(e: MouseEvent): Unit = previous = e.point
       override def mouseReleased(e: MouseEvent): Unit = drag(e)
       override def mouseDragged(e: MouseEvent): Unit = drag(e)
 
       private def drag(e: MouseEvent) = {
-        val p = e.getPoint
+        val p = e.point
         shift(previous - p)
         repaint()
         previous = p
@@ -88,7 +88,7 @@ class RefxCanvas private[calculator](calculator: Calculator) extends JComponent 
     }
     addMouseListener(mouse)
     addMouseMotionListener(mouse)
-    setDoubleBuffered(true)
+    doubleBuffered = true
   }
 
   //Methods ------------------------------------------------------
@@ -135,8 +135,8 @@ class RefxCanvas private[calculator](calculator: Calculator) extends JComponent 
     draw(points)
   }
 
-  override def getPreferredSize: Dimension = getMinimumSize
-  override def getMinimumSize: Dimension = new Dimension(400, 300)
+  override def preferredSize_= = minimumSize
+  override def minimumSize_= = new Dimension(400, 300)
 
   /** Paint with double-buffering.
     *
@@ -144,7 +144,7 @@ class RefxCanvas private[calculator](calculator: Calculator) extends JComponent 
     * paint directly, but should instead use the repaint method to schedule
     * the component for redrawing. */
   override def paint(g: Graphics): Unit = {
-    val size: Dimension = getSize()
+    val size: Dimension = size
     val halfHeightMath = pix2Math(size.height / 2)
     val halfWidthMath = pix2Math(size.width / 2)
 
@@ -262,8 +262,8 @@ class RefxCanvas private[calculator](calculator: Calculator) extends JComponent 
     centerY = 0.0
   }
 
-  override def setFont(font: Font): Unit = {
-    super.setFont(font)
+  override def font_=(font: Font): Unit = {
+    super.font = font
     fontAscent = getFontMetrics(font).getAscent
     axisPadding = 3 * fontAscent
     markDistance = 4 * fontAscent

@@ -17,9 +17,10 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt._
+//import java.awt._
+import scala.swing._
 
-import javax.swing.{Icon, ImageIcon, JButton, JToggleButton}
+//import javax.swing.{Icon, ImageIcon, JButton, JToggleButton}
 
 /**
   * https://docs.oracle.com/javase/tutorial/uiswing/components/icon.html
@@ -34,7 +35,8 @@ package object icon {
     val c = getClass()
     val imgURL = c.getResource(p)
     if (imgURL != null)
-      new ImageIcon(imgURL)
+      //new ImageIcon(imgURL)
+      Swing.Icon(imgURL)
     else {
       System.err.println("Couldn't find file: " + path)
       new MissingIcon()
@@ -55,23 +57,24 @@ package object icon {
   val zoomInIcon = icon("zoom-in.png")
   val zoomOutIcon = icon("zoom-out.png")
 
-  def toggle(icon: Icon, tooltip: String): JToggleButton = {
-    val b = new JToggleButton(icon)
-    b.setToolTipText(tooltip)
-    b.setOpaque(false)
-    b.setBorderPainted(false)
+  def toggle(icon: Icon, tooltip: String): ToggleButton = {
+    val b = new ToggleButton
+    b.icon = icon
+    b.toolTipText = tooltip
+    b.opaque = false
+    b.borderPainted = false
     //b.setContentAreaFilled(false) //need for signalling selected
     b
   }
 
-  def button(icon: Icon, tooltip: String): JButton = {
-    val b = new JButton(icon)
-    b.setToolTipText(tooltip)
-    b.setOpaque(false)
-    b.setBorderPainted(false)
+  def button(icon: Icon, tooltip: String): Button = {
+    val b = new Button
+    b.icon = icon
+    b.toolTipText = tooltip
+    b.opaque = false
+    b.borderPainted = false
     //b.setContentAreaFilled(false) //need for signalling selected
     b
   }
 
 }
-

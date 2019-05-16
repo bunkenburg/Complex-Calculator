@@ -20,12 +20,12 @@ package cat.inspiracio.calculator
 import java.awt.{Dimension, Graphics, Point}
 import java.awt.event._
 
-import javax.swing._
+import scala.swing._
 import cat.inspiracio.calculator.Interaction._
 import cat.inspiracio.calculator.Mode.{FZ, MODFZ, Mode}
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry._
-import javax.swing.event.MouseInputAdapter
+import scala.swing.event.MouseInputAdapter
 
 /** The z-World is where the user gives input for function f. */
 final class ZWorld private[calculator](override val calculator: Calculator) extends World(calculator) {
@@ -66,7 +66,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
   private def init()= {
 
-    setTitle("z")
+    title = "z"
 
     clearButton.addActionListener( _ => erase() )
     toolbar.add(clearButton)
@@ -278,7 +278,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
     pack()
     preferred()
-    setVisible(true)
+    visible = true
 
   }//init
 
@@ -287,8 +287,8 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
     val p = preferences
 
     // below the calculator
-    val calculatorDimension: Dimension = calculator.getSize // 319 x 328
-    val calculatorPosition: Point = calculator.getLocationOnScreen  // 77 38
+    val calculatorDimension: Dimension = calculator.size // 319 x 328
+    val calculatorPosition: Point = calculator.locationOnScreen  // 77 38
     val x = p.getInt("x", calculatorPosition.x )
     val y = p.getInt("y", calculatorPosition.y + calculatorDimension.height + 10 )
     setLocation( x, y )
@@ -379,27 +379,27 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
   private[calculator] def getPiclets = piclets
 
-  private[calculator] def setMode(m: Mode) = {
+  private[calculator] def mode_=(m: Mode) = {
     mode = m
     mode match {
 
       case FZ =>
-        clearButton.setEnabled(true)
-        drawButton.setEnabled(true)
-        circleButton.setEnabled(true)
-        lineButton.setEnabled(true)
-        gridButton.setEnabled(true)
-        rectangleButton.setEnabled(true)
+        clearButton.enabled = true
+        drawButton.enabled = true
+        circleButton.enabled = true
+        lineButton.enabled = true
+        gridButton.enabled = true
+        rectangleButton.enabled = true
         interactionChoice.setSelected(drawButton.getModel, true)
         interaction = DRAW
 
       case MODFZ =>
-        clearButton.setEnabled(false)
-        drawButton.setEnabled(false)
-        circleButton.setEnabled(false)
-        lineButton.setEnabled(false)
-        gridButton.setEnabled(false)
-        rectangleButton.setEnabled(false)
+        clearButton.enabled = false
+        drawButton.enabled = false
+        circleButton.enabled = false
+        lineButton.enabled = false
+        gridButton.enabled = false
+        rectangleButton.enabled = false
         interactionChoice.setSelected(squareButton.getModel, true)
         interaction = SQUARE
 

@@ -18,9 +18,11 @@
 package cat.inspiracio.calculator
 
 import java.awt.{Graphics, Point}
-import java.awt.event._
+//import java.awt.event._
+import scala.swing.event._
 
-import javax.swing._
+//import javax.swing._
+import scala.swing._
 import cat.inspiracio.calculator.Interaction._
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.Point2
@@ -37,7 +39,7 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
   private var numbers: List[Complex] = Nil
 
   private def init() {
-    setTitle("Complex numbers")
+    title = "Complex numbers"
     gui()
 
     val mouse: MouseInputListener = new MouseInputAdapter() {
@@ -48,12 +50,12 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
 
       override def mousePressed(e: MouseEvent): Unit = interaction match {
         case MOVE => {
-          startPoint = e.getPoint
-          previousPoint = e.getPoint
+          startPoint = e.point
+          previousPoint = e.point
           canvas.startShift(startPoint)
         }
         case DRAW =>
-          canvas.point2Complex(e.getPoint).foreach{ z =>
+          canvas.point2Complex(e.point).foreach{ z =>
             calculator.add(z)
             add(z)
           }
@@ -62,7 +64,7 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
 
       override def mouseDragged(e: MouseEvent): Unit = interaction match {
         case MOVE =>
-          val p = e.getPoint
+          val p = e.point
           canvas.shift(startPoint, previousPoint, p)
           previousPoint = p
         case _ =>
@@ -71,7 +73,7 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
       override def mouseReleased(e: MouseEvent): Unit = {
         interaction match {
           case MOVE =>
-            val end = e.getPoint
+            val end = e.point
             canvas.endShift(startPoint, end)
             startPoint = null
             previousPoint = null
@@ -87,7 +89,7 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
     sphere.addMouseMotionListener(mouse)
     pack()
     applyPreferences()
-    setVisible(true)
+    visible = true
   }
 
   private def gui() = {
@@ -117,8 +119,8 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
     val p = preferences
 
     // to the right of the calculator
-    val calculatorPosition = calculator.getLocationOnScreen
-    val calculatorDimension = calculator.getSize
+    val calculatorPosition = calculator.locationOnScreen
+    val calculatorDimension = calculator.size
     val x = p.getInt("x", calculatorPosition.x + calculatorDimension.width + 10 )
     val y = p.getInt("y", calculatorPosition.y )
     setLocation( x, y )

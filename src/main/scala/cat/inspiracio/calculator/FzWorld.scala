@@ -18,7 +18,7 @@
 package cat.inspiracio.calculator
 
 import java.awt.{Dimension, Graphics, GraphicsConfiguration, Point}
-import java.awt.event._
+import scala.swing.event._
 
 import cat.inspiracio.calculator.Interaction.MOVE
 import cat.inspiracio.calculator.icon.handIcon
@@ -47,14 +47,14 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
   private def init() = {
     import icon._
 
-    setTitle("f(z)")
+    title = "f(z)"
 
     toolbar.addSeparator()
 
     //move button always selected: just there to show user that they can move
     val moveButton = toggle(handIcon, "Move")
-    moveButton.setSelected(true)
-    moveButton.setEnabled(false)
+    moveButton.selected = true
+    moveButton.enabled = false
     toolbar.add(moveButton)
 
     interaction = MOVE
@@ -66,19 +66,19 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
       var previousPoint: Point = null
 
       override def mousePressed(e: MouseEvent): Unit = {
-        startPoint = e.getPoint
-        previousPoint = e.getPoint
+        startPoint = e.point
+        previousPoint = e.point
         canvas.startShift(startPoint)
       }
 
       override def mouseDragged(e: MouseEvent): Unit = {
-        val p = e.getPoint
+        val p = e.point
         canvas.shift(startPoint, previousPoint, p)
-        previousPoint = e.getPoint
+        previousPoint = e.point
       }
 
       override def mouseReleased(e: MouseEvent): Unit = {
-        val endPoint = e.getPoint
+        val endPoint = e.point
         canvas.endShift(startPoint, endPoint)
       }
 
@@ -89,15 +89,15 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
     sphere.addMouseMotionListener(mouse)
     pack()
     applyPreferences()
-    setVisible(true)
+    visible = true
   }
 
   private def applyPreferences() = {
     val p = preferences
 
     // to the right of z-world
-    val zWorldDimension: Dimension = zW.getSize //550 372
-    val zWorldPosition: Point = zW.getLocationOnScreen  //77 414
+    val zWorldDimension: Dimension = zW.size //550 372
+    val zWorldPosition: Point = zW.locationOnScreen  //77 414
     val x = p.getInt("x", zWorldPosition.x + zWorldDimension.width + 10 )
     val y = p.getInt("y", zWorldPosition.y )
     setLocation( x, y )

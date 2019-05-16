@@ -27,7 +27,8 @@ import cat.inspiracio.complex._
 import cat.inspiracio.geometry.Point2
 import cat.inspiracio.parsing.Syntax
 import cat.inspiracio.parsing.Syntax.parse
-import javax.swing._
+//import javax.swing._
+import scala.swing._
 
 /** The Calculator application. This is a frame, the main window.
   * Run the Calculator as stand-alone application. */
@@ -35,14 +36,15 @@ object Calculator extends App {
   new Calculator
 }
 
-final class Calculator() extends JFrame("Complex Calculator") {
+final class Calculator() extends MainFrame {
+  title = "Complex Calculator"
 
   /** The mode that the program is in: Calculation, z->fz mapping, z->|fz| mapping, or Re(fz). */
   private[calculator] var mode = CALC
 
   private[calculator] val display: Display = new Display(12)
-  private var equalsButton: JButton = null
-  private var zButton: JButton = null
+  private var equalsButton: Button = null
+  private var zButton: Button = null
 
   private var variable = 'z'
 
@@ -59,97 +61,103 @@ final class Calculator() extends JFrame("Complex Calculator") {
   private def init() = {
     buildFrame()
     buildButtons()
-    setJMenuBar(new Menus(this))
+    menuBar = new Menus(this)
     pack()
     becomeVisible()
   }
 
   private def buildFrame() = {
-    setResizable(false)
+    resizable = false
   }
 
   private def buildButtons() = {
-    val layout = new GridBagLayout
-    setLayout(layout)
+    contents = new GridBagPanel{
+      def constraints(x: Int, y: Int,
+                      gridwidth: Int = 1, gridheight: Int = 1,
+                      weightx: Double = 1, weighty: Double = 1,
+                      fill: GridBagPanel.Fill.Value = GridBagPanel.Fill.None): Constraints = {
+        val c = new Constraints
+        c.gridx = x
+        c.gridy = y
+        c.gridwidth = gridwidth
+        c.gridheight = gridheight
+        c.weightx = weightx
+        c.weighty = weighty
+        c.fill = fill
+        c
+      }
 
-    display.addKeyListener(new MyKeyListener(this))
+      //display.addKeyListener(new MyKeyListener(Calculator.this))
+      println(GridBagPanel.Fill.None)//1?
+      layout(display) = constraints(0, 0, 5, 3)//fill=1
 
-    val constraints = new GridBagConstraints
-    constraints.gridx = 0
-    constraints.gridy = 0
-    constraints.gridwidth = 5
-    constraints.gridheight = 3
-    constraints.weightx = 1
-    constraints.weighty = 1
-    constraints.fill = 1
+      //listener for a 'normal' button
+      val paster: ActionListener = e => paste(e.getActionCommand)
 
-    layout.setConstraints(display, constraints)
-    add(display)
+      /** Makes a button and adds it. */
+      def bx(label: String, x: Int, y: Int, height: Int, listener: Action): Button = {
+        val button = new Button(label)
+        button.text = label
+        button.action = listener
 
-    //listener for a 'normal' button
-    val paster: ActionListener = e => paste(e.getActionCommand)
+        val constraints = new GridBagPanel.Constraints
+        constraints.gridwidth = 1
+        constraints.gridheight = 1
+        constraints.weightx = 1
+        constraints.weighty = 1
+        constraints.fill = 1
+        constraints.gridx = x
+        constraints.gridy = y
+        constraints.gridheight = height
 
-    /** Makes a button and adds it. */
-    def bx(label: String, x: Int, y: Int, height: Int, listener: ActionListener): JButton = {
-      val button = new JButton(label)
-      button.addActionListener(listener)
+        layout(button) = constraints
+        button
+      }
 
-      val constraints = new GridBagConstraints
-      constraints.gridwidth = 1
-      constraints.gridheight = 1
-      constraints.weightx = 1
-      constraints.weighty = 1
-      constraints.fill = 1
-      constraints.gridx = x
-      constraints.gridy = y
-      constraints.gridheight = height
+      bx("!", 0, 3, 1, paster)
+      bx("del", 3, 3, 1, _ => delete() )
+      bx("C", 4, 3, 1, _ => clear() )
+      bx("sinh", 0, 4, 1, paster)
+      bx("cosh", 1, 4, 1, paster)
+      bx("tanh", 2, 4, 1, paster)
+      bx("conj", 3, 4, 1, paster)
+      bx("opp", 4, 4, 1, paster)
+      bx("sin", 0, 5, 1, paster)
+      bx("cos", 1, 5, 1, paster)
+      bx("tan", 2, 5, 1, paster)
+      bx("Re", 3, 5, 1, paster)
+      bx("Im", 4, 5, 1, paster)
+      bx("ln", 0, 7, 1, paster)
+      bx("exp", 1, 7, 1, paster)
+      bx("^", 2, 7, 1, paster)
+      bx("mod", 3, 7, 1, paster)
+      bx("arg", 4, 7, 1, paster)
+      bx("i", 0, 8, 1, paster)
+      bx("e", 1, 8, 1, paster)
+      bx("π", 2, 8, 1, paster)
+      bx("(", 3, 8, 1, paster)
+      bx(")", 4, 8, 1, paster)
+      bx("7", 0, 9, 1, paster)
+      bx("8", 1, 9, 1, paster)
+      bx("9", 2, 9, 1, paster)
+      bx("*", 3, 9, 1, paster)
+      bx("/", 4, 9, 1, paster)
+      bx("4", 0, 10, 1, paster)
+      bx("5", 1, 10, 1, paster)
+      bx("6", 2, 10, 1, paster)
+      bx("+", 3, 10, 1, paster)
+      bx("-", 4, 10, 1, paster)
+      bx("1", 0, 11, 1, paster)
+      bx("2", 1, 11, 1, paster)
+      bx("3", 2, 11, 1, paster)
+      zButton = bx("z", 3, 11, 1, paster)
+      equalsButton = bx("=", 4, 11, 2, paster)
+      bx("0", 0, 12, 1, paster)
+      bx(".", 1, 12, 1, paster)
+      bx("∞", 2, 12, 1, paster)
 
-      layout.setConstraints(button, constraints)
-      add(button)
-      button
+      //layout(myComponent) = myConstraints
     }
-
-    bx("!", 0, 3, 1, paster)
-    bx("del", 3, 3, 1, _ => delete() )
-    bx("C", 4, 3, 1, _ => clear() )
-    bx("sinh", 0, 4, 1, paster)
-    bx("cosh", 1, 4, 1, paster)
-    bx("tanh", 2, 4, 1, paster)
-    bx("conj", 3, 4, 1, paster)
-    bx("opp", 4, 4, 1, paster)
-    bx("sin", 0, 5, 1, paster)
-    bx("cos", 1, 5, 1, paster)
-    bx("tan", 2, 5, 1, paster)
-    bx("Re", 3, 5, 1, paster)
-    bx("Im", 4, 5, 1, paster)
-    bx("ln", 0, 7, 1, paster)
-    bx("exp", 1, 7, 1, paster)
-    bx("^", 2, 7, 1, paster)
-    bx("mod", 3, 7, 1, paster)
-    bx("arg", 4, 7, 1, paster)
-    bx("i", 0, 8, 1, paster)
-    bx("e", 1, 8, 1, paster)
-    bx("π", 2, 8, 1, paster)
-    bx("(", 3, 8, 1, paster)
-    bx(")", 4, 8, 1, paster)
-    bx("7", 0, 9, 1, paster)
-    bx("8", 1, 9, 1, paster)
-    bx("9", 2, 9, 1, paster)
-    bx("*", 3, 9, 1, paster)
-    bx("/", 4, 9, 1, paster)
-    bx("4", 0, 10, 1, paster)
-    bx("5", 1, 10, 1, paster)
-    bx("6", 2, 10, 1, paster)
-    bx("+", 3, 10, 1, paster)
-    bx("-", 4, 10, 1, paster)
-    bx("1", 0, 11, 1, paster)
-    bx("2", 1, 11, 1, paster)
-    bx("3", 2, 11, 1, paster)
-    zButton = bx("z", 3, 11, 1, paster)
-    equalsButton = bx("=", 4, 11, 2, paster)
-    bx("0", 0, 12, 1, paster)
-    bx(".", 1, 12, 1, paster)
-    bx("∞", 2, 12, 1, paster)
   }
 
   private def becomeVisible() = {
@@ -158,8 +166,8 @@ final class Calculator() extends JFrame("Complex Calculator") {
     })
     pack()
     locate()
-    setVisible(true)
-    setMode(mode)
+    visible = true
+    mode_=(mode)
     display.requestFocus()
   }
 
@@ -222,9 +230,9 @@ final class Calculator() extends JFrame("Complex Calculator") {
   }
 
   private[calculator] def quit(): Unit = {
-    if(isVisible){
+    if(visible){
       val p = preferences
-      val Point2(x,y) = getLocationOnScreen
+      val Point2(x,y) = locationOnScreen
       p.putInt("x", x)
       p.putInt("y", y)
 
@@ -240,7 +248,7 @@ final class Calculator() extends JFrame("Complex Calculator") {
   }
 
   /** Sets the mode, opening and closing windows. */
-  private[calculator] def setMode(m: Mode) = {
+  private[calculator] def mode_=(m: Mode) = {
     m match {
       case CALC => calc()
       case FZ => fz()
@@ -250,14 +258,14 @@ final class Calculator() extends JFrame("Complex Calculator") {
     mode = m
     functionChanged()
 
-    getJMenuBar.asInstanceOf[Menus].select(mode)
+    menuBar.asInstanceOf[Menus].select(mode)
   }
 
   private def calc() = {
     Complex.setArgPrincipal()
     display.clear()
-    equalsButton.setEnabled(true)
-    zButton.setEnabled(false)
+    equalsButton.enabled = true
+    zButton.enabled = false
     complexWorld()
     disposeZWorld()
     disposeFZWorld()
@@ -274,9 +282,9 @@ final class Calculator() extends JFrame("Complex Calculator") {
       display.clear()
       display.prepend("f(z) = ")
     }
-    equalsButton.setEnabled(false)
-    zButton.setEnabled(true)
-    zButton.setText("z")
+    equalsButton.enabled = false
+    zButton.enabled = true
+    zButton.text = "z"
     disposeComplexWorld()
     zWorld()
     zW.setMode(FZ)
@@ -293,12 +301,12 @@ final class Calculator() extends JFrame("Complex Calculator") {
       display.clear()
       display.prepend("f(z) = ")
     }
-    equalsButton.setEnabled(false)
-    zButton.setEnabled(true)
-    zButton.setText("z")
+    equalsButton.enabled = false
+    zButton.enabled = true
+    zButton.text = "z"
     disposeComplexWorld()
     zWorld()
-    zW.setMode(MODFZ)
+    zW.mode = MODFZ
     disposeFZWorld()
     modFZWorld()
     disposeReFXWorld()
@@ -312,9 +320,9 @@ final class Calculator() extends JFrame("Complex Calculator") {
       display.prepend("f(x) = ")
     }
     else display.replace('z', 'x')
-    equalsButton.setEnabled(false)
-    zButton.setEnabled(true)
-    zButton.setText("x")
+    equalsButton.enabled = false
+    zButton.enabled = true
+    zButton.text = "x"
     disposeComplexWorld()
     disposeZWorld()
     disposeFZWorld()

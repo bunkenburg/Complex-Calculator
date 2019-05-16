@@ -129,8 +129,8 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     repaint()
   }
 
-  override def setFont(font: Font): Unit = {
-    super.setFont(font)
+  override def font_=(font: Font): Unit = {
+    super.font = font
     val i = getFontMetrics(font).getAscent
     markLength = i / 5
   }

@@ -59,5 +59,5 @@ what else is there?
         %
         n   line
 
-scala> f"${i}%-#20.3S"
-res23: String = alternate=true left=true upper=true locale=en_GB width=20 precision=3
+    scala> f"${i}%-#20.3S"
+    res23: String = alternate=true left=true upper=true locale=en_GB width=20 precision=3

@@ -23,8 +23,8 @@ import java.lang.Math.{atan2, min}
 
 import cat.inspiracio.complex.{Complex, abs, sqr, sqrt, π}
 import cat.inspiracio.geometry._
-import javax.swing.JComponent
-import javax.swing.event.MouseInputAdapter
+import scala.swing.Component
+import scala.swing.event.MouseInputAdapter
 import MoreGraphics.GraphicsExtended
 
 /** Shows a grid of |f(z)|.
@@ -46,7 +46,7 @@ import MoreGraphics.GraphicsExtended
   *   xforward && !zforward.
   *
   * */
-class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
+class ThreeDCanvas(world: ThreeDWorld) extends Component {
   import Color._
 
   //State ----------------------------------------------------------
@@ -69,7 +69,7 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
   //Constructor ---------------------------------------------------
 
   private def init()= {
-    setBackground(Color.white)
+    background = white
 
     val mouse = new MouseInputAdapter {
 
@@ -91,7 +91,7 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
 
     determineForwardNess()
 
-    setDoubleBuffered(true)
+    doubleBuffered = true
   }
 
   //Methods -------------------------------------------------------
@@ -191,7 +191,7 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
 
   /** Draws the whole diagram. */
   private def drawIt(g: Graphics) = {
-    import world.{m}
+    import world.m
     val N = m.n
 
     //1. the axes at the back, because everything else with overwrite them
@@ -253,8 +253,8 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
     (-v.y * xyscale + getHeight * 0.8).toInt
   )
 
-  override def getPreferredSize: Dimension = getMinimumSize
-  override def getMinimumSize: Dimension = new Dimension(400, 300)
+  override def preferredSize: Dimension = minimumSize
+  override def minimumSize: Dimension = new Dimension(400, 300)
 
   /** depends on vector direct and eye */
   private def initQ: Matrix44 = {
@@ -345,8 +345,8 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
     g.drawPolygon(quad)
   }
 
-  override def setFont(font: Font): Unit = {
-    super.setFont(font)
+  override def font_=(font: Font): Unit = {
+    super.font = font
     fontAscent = getFontMetrics(font).getAscent
   }
 
@@ -361,7 +361,7 @@ class ThreeDCanvas(world: ThreeDWorld) extends JComponent {
   /** For now, we can only rotate horizontally.
     * Could consider other rotations and a reset button. */
   private def shift(p: Point) = {
-    val d = p.x * 2 * π / getHeight
+    val d = p.x * 2 * π / height
     Q = Q.postRot('y', -d)
     determineForwardNess()
     repaint()

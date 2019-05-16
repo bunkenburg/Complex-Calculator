@@ -22,10 +22,10 @@ import java.awt.event.KeyEvent
 
 import cat.inspiracio.calculator.Mode._
 import cat.inspiracio.complex.Complex
-import javax.swing._
+import scala.swing._
 
 /** A menu bar for the Calculator. */
-final class Menus private[calculator](var calculator: Calculator) extends JMenuBar {
+final class Menus private[calculator](var calculator: Calculator) extends MenuBar {
 
   private val precisionListener = null
   private val mask = Toolkit.getDefaultToolkit.getMenuShortcutKeyMask
@@ -38,17 +38,17 @@ final class Menus private[calculator](var calculator: Calculator) extends JMenuB
   }
 
   private def file(): Unit = {
-    val menu = new JMenu("File")
-    menu.setMnemonic(KeyEvent.VK_F)
+    val menu = new Menu("File")
+    menu.mnemonic = KeyEvent.VK_F
 
-    val miAbout = new JMenuItem("About ...")
+    val miAbout = new MenuItem("About ...")
     miAbout.addActionListener( _ => new About(calculator) )
     menu.add(miAbout)
 
-    val miQuit = new JMenuItem("Quit")
-    miQuit.setMnemonic(KeyEvent.VK_Q)
+    val miQuit = new MenuItem("Quit")
+    miQuit.mnemonic = KeyEvent.VK_Q
     val CtrlQ = KeyStroke.getKeyStroke(KeyEvent.VK_Q, mask)
-    miQuit.setAccelerator( CtrlQ )
+    miQuit.accelerator = CtrlQ
     miQuit.addActionListener( _ => calculator.quit() )
     menu.add(miQuit)
 
@@ -56,12 +56,12 @@ final class Menus private[calculator](var calculator: Calculator) extends JMenuB
   }
 
   private def mode(): Unit = {
-    val menu = new JMenu("Mode")
+    val menu = new Menu("Mode")
 
-    val miCalc = new JRadioButtonMenuItem("Calculate", true)
-    val miFz = new JRadioButtonMenuItem("z -> f(z)")
-    val miModFz = new JRadioButtonMenuItem("z -> |f(z)|")
-    val miReFx = new JRadioButtonMenuItem("x -> Re(f(x))")
+    val miCalc = new RadioButtonMenuItem("Calculate", true)
+    val miFz = new RadioButtonMenuItem("z -> f(z)")
+    val miModFz = new RadioButtonMenuItem("z -> |f(z)|")
+    val miReFx = new RadioButtonMenuItem("x -> Re(f(x))")
 
     menu.add(miCalc)
     menu.add(miFz)

@@ -19,7 +19,7 @@ package cat.inspiracio.calculator
 
 import java.lang.Math.min
 
-import javax.swing._
+import scala.swing._
 
 /** The text area of the complex calculator.
   *
@@ -28,7 +28,14 @@ import javax.swing._
   *
   * This could really be a lot better,
   * taking into account the syntax tree rather than just displaying a String. */
-class Display private[calculator](val fontSize: Int) extends JTextArea("", 3, 1) {
+class Display private[calculator](val fontSize: Int) extends TextArea("", 3, 1) {
+
+  //display.addKeyListener(new MyKeyListener(Calculator.this))
+  listenTo(keys)
+  reactions += {
+    case KeyTyped(sourceComponent, char, modifiers, location) =>
+      println("KeyTyped " + c)
+  }
 
   private[calculator] def clear() = setText("")
 
@@ -46,57 +53,57 @@ class Display private[calculator](val fontSize: Int) extends JTextArea("", 3, 1)
 
   /** deletes selected text or backspaces */
   private[calculator] def delete() = {
-    val start = getSelectionStart
-    val end = getSelectionEnd
-    val caret = getCaretPosition
+    val start = selectionStart
+    val end = selectionEnd
+    val caret = caretPosition
     if (start == end) if (0 < caret) {
       replaceRange("", caret - 1, caret)
       select(caret - 1, caret - 1)
-      setCaretPosition(caret - 1)
+      caretPosition = caret - 1
     }
     else {
       replaceRange("", start, end)
-      setSelectionEnd(start)
-      setCaretPosition(start)
+      selectionEnd = start
+      caretPosition = start
     }
   }
 
   private[calculator] def paste(c: Char): Unit = paste(String.valueOf(c) )
 
   private[calculator] def paste(s: String): Unit = {
-    val start = getSelectionStart
-    val end = getSelectionEnd
-    val caret = getCaretPosition
+    val start = selectionStart
+    val end = selectionEnd
+    val caret = caretPosition
     if (start == end) {
       insert(s, caret)
-      setCaretPosition(caret + s.length)
+      caretPosition = caret + s.length
       select(caret + s.length, caret + s.length)
     }
     else {
       replaceRange(s, start, end)
-      setCaretPosition(start + s.length)
+      caretPosition = start + s.length
       select(start + s.length, start + s.length)
     }
   }
 
   /** Put s in from of displayed string */
   private[calculator] def prepend(s: String) = {
-    val start = getSelectionStart
-    val end = getSelectionEnd
-    val caret = getCaretPosition
+    val start = selectionStart
+    val end = selectionEnd
+    val caret = caretPosition
     replaceRange(s, 0, 0)
-    setSelectionStart(start + s.length)
-    setSelectionEnd(end + s.length)
-    setCaretPosition(caret + s.length)
+    selectionStart = start + s.length
+    selectionEnd = end + s.length
+    caretPosition = caret + s.length
   }
 
   /** Replace one char by another. */
   private[calculator] def replace(c: Char, c1: Char) = {
-    val start = getSelectionStart
-    val end = getSelectionEnd
-    val caret = getCaretPosition
-    setText(getText.replace(c, c1))
+    val start = selectionStart
+    val end = selectionEnd
+    val caret = caretPosition
+    text = text.replace(c, c1)
     select(start, end)
-    setCaretPosition(caret)
+    caretPosition = caret
   }
 }

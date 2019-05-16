@@ -22,7 +22,7 @@ import java.awt.event._
 import java.lang.Math.{max}
 import java.util.prefs.Preferences
 
-import javax.swing._
+import scala.swing._
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry._
 import cat.inspiracio.parsing.{Constant, Syntax}
@@ -31,7 +31,7 @@ import cat.inspiracio.parsing.{Constant, Syntax}
 //            Calculator, DoubleBuffer, Drawing, Matrix44,
 //            Vector2, Vector3
 
-final class ThreeDWorld private[calculator](calculator: Calculator) extends JFrame("|f(z)| World") {
+final class ThreeDWorld private[calculator](calculator: Calculator) extends Frame("|f(z)| World") {
 
   //State ---------------------------------------------
 
@@ -48,7 +48,7 @@ final class ThreeDWorld private[calculator](calculator: Calculator) extends JFra
   private def init()= {
     import icon._
 
-    val toolbar = new JToolBar()
+    val toolbar = new ToolBar()
     val resetButton = button(resetIcon, "Reset")
     resetButton.addActionListener( _ => canvas.reset() )
     toolbar.add(resetButton)
@@ -56,8 +56,8 @@ final class ThreeDWorld private[calculator](calculator: Calculator) extends JFra
 
     //move button always selected: just there to show user that they can move
     val moveButton = toggle(handIcon, "Move")
-    moveButton.setSelected(true)
-    moveButton.setEnabled(false)
+    moveButton.selected = true
+    moveButton.enabled = false
     toolbar.add(moveButton)
 
     add(toolbar, BorderLayout.PAGE_START)
@@ -69,7 +69,7 @@ final class ThreeDWorld private[calculator](calculator: Calculator) extends JFra
 
     pack()
     locate()
-    setVisible(true)
+    visible = true
   }
 
   //Methods -----------------------------------------
@@ -80,8 +80,8 @@ final class ThreeDWorld private[calculator](calculator: Calculator) extends JFra
   /** to the right of z-world */
   private def locate() = {
     val zW = calculator.zW
-    val zWorldDimension: Dimension = zW.getSize //550 372
-    val zWorldPosition: Point = zW.getLocationOnScreen  //77 414
+    val zWorldDimension: Dimension = zW.size //550 372
+    val zWorldPosition: Point = zW.locationOnScreen  //77 414
 
     val p = preferences
     val x = p.getInt("x", zWorldPosition.x + zWorldDimension.width + 10 )
@@ -147,9 +147,9 @@ final class ThreeDWorld private[calculator](calculator: Calculator) extends JFra
     canvas.repaint()
   }
 
-  override def setFont(font: Font): Unit = {
-    super.setFont(font)
-    canvas.setFont(font)
+  override def font_=(font: Font): Unit = {
+    super.font = font
+    canvas.font = font
   }
 
   protected def preferences = Preferences.userNodeForPackage(getClass).node(getClass.getSimpleName)
@@ -161,7 +161,6 @@ final class ThreeDWorld private[calculator](calculator: Calculator) extends JFra
       p.putInt("x", x )
       p.putInt("y", y )
 
-      val size = getSize
       p.putInt("width", size.width)
       p.putInt("height", size.height)
     }

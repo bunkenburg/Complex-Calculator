@@ -23,15 +23,15 @@ import java.lang.Math.{max, min}
 import java.util.prefs.Preferences
 
 import cat.inspiracio.calculator.Interaction.Interaction
-import javax.swing._
+import scala.swing._
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.{Piclet, Point2}
 
 /** A frame that shows complex number on the complex plane or the Riemann sphere. */
-abstract class World protected(val calculator: Calculator) extends JFrame {
+abstract class World protected(val calculator: Calculator) extends Frame {
   import icon._
 
-  protected val toolbar: JToolBar = new JToolBar()
+  protected val toolbar: ToolBar = new ToolBar()
 
   private val planeButton = toggle(planeIcon, "Complex plane")
   private val sphereButton = toggle(sphereIcon,"Riemann sphere")
@@ -95,8 +95,8 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
       remove(plane)
       add("Center", sphere)
       canvas = sphere
-      zInButton.setEnabled(false)
-      zOutButton.setEnabled(false)
+      zInButton.enabled = false
+      zOutButton.enabled = false
       validate()
       canvas.repaint()
     }
@@ -108,8 +108,8 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
       remove(sphere)
       add("Center", plane)
       canvas = plane
-      zInButton.setEnabled(true)
-      zOutButton.setEnabled(true)
+      zInButton.enabled = true
+      zOutButton.enabled = true
       validate()
       canvas.repaint()
     }
@@ -147,22 +147,21 @@ abstract class World protected(val calculator: Calculator) extends JFrame {
     MinReal = min(MinReal, piclet.left)
   }
 
-  override def setFont(font: Font): Unit = {
-    super.setFont(font)
-    plane.setFont(font)
-    sphere.setFont(font)
+  override def font_=(font: Font): Unit = {
+    super.font = font
+    plane.font = font
+    sphere.font = font
   }
 
   protected def preferences = Preferences.userNodeForPackage(getClass).node(getClass.getSimpleName)
 
   override def dispose(): Unit = {
-    if(isVisible) {
+    if(visible) {
       val p = preferences
       val Point2(x, y) = getLocationOnScreen
       p.putInt("x", x)
       p.putInt("y", y)
 
-      val size = getSize
       p.putInt("width", size.width)
       p.putInt("height", size.height)
 

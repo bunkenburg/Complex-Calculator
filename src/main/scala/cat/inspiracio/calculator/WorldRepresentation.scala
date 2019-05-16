@@ -21,15 +21,15 @@ import java.awt.{Color, Dimension, Graphics, Point}
 
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.Piclet
-import javax.swing._
+import scala.swing._
 
 // Referenced classes of package bunkenba.calculator:
 //            DoubleBuffer, World, Drawing
 /** Representation of a world of complex numbers:
   * as Cartesian plane or as Riemann sphere. */
-abstract class WorldRepresentation protected(var w: World) extends JComponent {
-  setBackground(Color.white)
-  setDoubleBuffered(true)
+abstract class WorldRepresentation protected(var w: World) extends Component {
+  background = Color.white
+  doubleBuffered = true
 
   //Methods ------------------------------------------------------
 
@@ -37,10 +37,10 @@ abstract class WorldRepresentation protected(var w: World) extends JComponent {
   private[calculator] def draw(g: Graphics, zs: List[Complex] )
   private[calculator] def draw(g: Graphics, p: Piclet): Unit = draw(g, p.getSamples)
 
-  override def getPreferredSize: Dimension = getMinimumSize
+  override def preferredSize: Dimension = minimumSize
 
   /** Initial size wide enough so that the interaction menu is visible. */
-  override def getMinimumSize: Dimension = new Dimension(550, 300)
+  override def minimumSize: Dimension = new Dimension(550, 300)
 
   private[calculator] def point2Complex(p: Point): Option[Complex]
 

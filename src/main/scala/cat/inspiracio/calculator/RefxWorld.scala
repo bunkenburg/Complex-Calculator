@@ -21,7 +21,7 @@ import java.awt._
 import java.awt.event._
 import java.util.prefs.Preferences
 
-import javax.swing._
+import scala.swing._
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.Point2
 
@@ -29,11 +29,11 @@ import cat.inspiracio.geometry.Point2
 //            Calculator, DoubleBuffer, Drawing
 
 /** Shows Re(f(x)) */
-final class RefxWorld private[calculator](calculator: Calculator) extends JFrame("Re(f(x))") {
+final class RefxWorld private[calculator](calculator: Calculator) extends Frame("Re(f(x))") {
 
   // GUI -----------------------------------------------------
 
-  private val toolbar = new JToolBar()
+  private val toolbar = new ToolBar()
   private val canvas = new RefxCanvas(calculator)
 
   init()
@@ -57,10 +57,10 @@ final class RefxWorld private[calculator](calculator: Calculator) extends JFrame
     toolbar.addSeparator()
 
     //move button always selected: just there to show user that they can move
-    val moveButton = new JToggleButton(handIcon)
-    moveButton.setToolTipText("Move")
-    moveButton.setSelected(true)
-    moveButton.setEnabled(false)
+    val moveButton = new ToggleButton(handIcon)
+    moveButton.toolTipText = "Move"
+    moveButton.selected = true
+    moveButton.enabled = false
     toolbar.add(moveButton)
 
     add(toolbar, BorderLayout.PAGE_START)
@@ -72,14 +72,14 @@ final class RefxWorld private[calculator](calculator: Calculator) extends JFrame
 
     pack()
     locate()
-    setVisible(true)
+    visible = true
   }
 
   /** to the right of the calculator */
   private def locate() = {
     //calculator
-    val calculatorDimension: Dimension = calculator.getSize // 319 x 328
-    val calculatorPosition: Point = calculator.getLocationOnScreen  // 77 38
+    val calculatorDimension: Dimension = calculator.size // 319 x 328
+    val calculatorPosition: Point = calculator.locationOnScreen  // 77 38
 
     val p = preferences
     val x = p.getInt("x", calculatorPosition.x + calculatorDimension.width + 10 )
@@ -112,9 +112,9 @@ final class RefxWorld private[calculator](calculator: Calculator) extends JFrame
     canvas.repaint()
   }
 
-  override def setFont(font: Font): Unit = {
-    super.setFont(font)
-    canvas.setFont(font)
+  override def font_=(font: Font): Unit = {
+    super.font = font
+    canvas.font = font
   }
 
   // helpers -----------------------------------
@@ -124,13 +124,12 @@ final class RefxWorld private[calculator](calculator: Calculator) extends JFrame
   protected def preferences = Preferences.userNodeForPackage(getClass).node(getClass.getSimpleName)
 
   override def dispose(): Unit = {
-    if(isVisible){
+    if(visible){
       val p = preferences
-      val Point2(x,y) = getLocationOnScreen
+      val Point2(x,y) = locationOnScreen
       p.putInt("x", x )
       p.putInt("y", y )
 
-      val size = getSize
       p.putInt("width", size.width)
       p.putInt("height", size.height)
       p.putDouble("zoom", canvas.zoom)
