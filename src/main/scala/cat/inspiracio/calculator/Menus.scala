@@ -38,13 +38,17 @@ final class Menus private[calculator](var calculator: Calculator) extends MenuBa
 
   private def file(): Unit = {
     val menu = new Menu("File")
-    //menu.mnemonic = KeyEvent.VK_F
+    menu.mnemonic = scala.swing.event.Key.F
 
-    val miAbout = new MenuItem("About ..."){ new About(calculator) }
+    val miAbout = new MenuItem("About ..."){
+      new About(calculator)
+    }
     menu.contents += miAbout
 
-    val miQuit = new MenuItem("Quit"){ calculator.quit() }
-    //miQuit.mnemonic = KeyEvent.VK_Q
+    val miQuit = new MenuItem("Quit"){
+      calculator.quit()
+    }
+    miQuit.mnemonic = scala.swing.event.Key.Q
     //val CtrlQ = KeyStroke.getKeyStroke(KeyEvent.VK_Q, mask)
     //miQuit.accelerator = CtrlQ
     menu.contents += miQuit

@@ -30,11 +30,8 @@ import scala.swing._
 
 /** The Calculator application. This is a frame, the main window.
   * Run the Calculator as stand-alone application. */
-object Calculator /*extends App*/ {
-  def main(args: Array[String]) {
-    val c = new Calculator
-    c.visible = true
-  }
+object Calculator {
+  def main(args: Array[String]) { new Calculator }
 }
 
 final class Calculator() extends MainFrame {
