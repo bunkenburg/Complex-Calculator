@@ -17,7 +17,7 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt.{Graphics, Point}
+import java.awt.{Dimension, Graphics, Point}
 //import java.awt.event._
 import scala.swing.event._
 
@@ -42,6 +42,7 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
     title = "Complex numbers"
     gui()
 
+    /*
     val mouse: MouseInputListener = new MouseInputAdapter() {
 
       /** start and previous mouse position during moving */
@@ -82,11 +83,12 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
       }
 
     }
+     */
 
-    plane.addMouseListener(mouse)
-    plane.addMouseMotionListener(mouse)
-    sphere.addMouseListener(mouse)
-    sphere.addMouseMotionListener(mouse)
+    //plane.addMouseListener(mouse)
+    //plane.addMouseMotionListener(mouse)
+    //sphere.addMouseListener(mouse)
+    //sphere.addMouseMotionListener(mouse)
     pack()
     applyPreferences()
     visible = true
@@ -96,38 +98,42 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
     import icon._
 
     val clearButton = button(clearIcon, "Clear")
-    clearButton.addActionListener( _ => erase() )
-    toolbar.add(clearButton)
-    toolbar.addSeparator()
+    //clearButton.addActionListener( _ => erase() )
+    toolbar.contents += clearButton
+    //toolbar.addSeparator()
 
     val drawButton = toggle(drawIcon, "Draw")
-    drawButton.addActionListener( _ => interaction = Interaction.DRAW )
+    //drawButton.addActionListener( _ => interaction = Interaction.DRAW )
 
     val moveButton = toggle(handIcon, "Move")
-    moveButton.addActionListener( _ => interaction = Interaction.MOVE )
+    //moveButton.addActionListener( _ => interaction = Interaction.MOVE )
 
     val group = new ButtonGroup
-    group.add(drawButton)
-    group.add(moveButton)
-    group.setSelected(drawButton.getModel, true)
+    group.buttons += drawButton
+    group.buttons += moveButton
+    //group.setSelected(drawButton.getModel, true)
     interaction = DRAW
-    toolbar.add(drawButton)
-    toolbar.add(moveButton)
+    toolbar.contents += drawButton
+    toolbar.contents += moveButton
   }
 
-  private def applyPreferences() = {
+  private def applyPreferences(): Unit = {
     val p = preferences
+
+    //Exception in thread "main" java.awt.IllegalComponentStateException: component must be showing on the screen to determine its location
+    if(!visible)
+      return ()
 
     // to the right of the calculator
     val calculatorPosition = calculator.locationOnScreen
     val calculatorDimension = calculator.size
     val x = p.getInt("x", calculatorPosition.x + calculatorDimension.width + 10 )
     val y = p.getInt("y", calculatorPosition.y )
-    setLocation( x, y )
+    location = Point2( x, y )
 
     val width = p.getInt("width", 560)
     val height = p.getInt("height", 365)
-    setSize(width,height)
+    size = new Dimension(width,height)
 
     val c = p.get("canvas", "plane")
     c match {

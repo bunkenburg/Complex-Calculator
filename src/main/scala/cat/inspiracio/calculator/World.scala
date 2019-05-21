@@ -17,12 +17,14 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt._
+//import java.awt._
+import java.awt.Graphics
 import java.awt.event._
 import java.lang.Math.{max, min}
 import java.util.prefs.Preferences
 
 import cat.inspiracio.calculator.Interaction.Interaction
+
 import scala.swing._
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.{Piclet, Point2}
@@ -61,59 +63,61 @@ abstract class World protected(val calculator: Calculator) extends Frame {
     resetExtremes()
 
     //plane/sphere
-    planeButton.addActionListener( _ => usePlane() )
-    sphereButton.addActionListener( _ => useSphere() )
-    choice.add(planeButton)
-    choice.add(sphereButton)
-    toolbar.add(planeButton)
-    toolbar.add(sphereButton)
-    toolbar.addSeparator()
+    //planeButton.addActionListener( _ => usePlane() )
+    //sphereButton.addActionListener( _ => useSphere() )
+    choice.buttons += planeButton
+    choice.buttons += sphereButton
+    toolbar.contents += planeButton
+    toolbar.contents += sphereButton
+    //toolbar.addSeparator()
 
     //zoom in / out
-    zInButton.addActionListener(_ => canvas.zoomIn())
-    zOutButton.addActionListener(_ => canvas.zoomOut())
-    toolbar.add(zInButton)
-    toolbar.add(zOutButton)
-    toolbar.addSeparator()
+    //zInButton.addActionListener(_ => canvas.zoomIn())
+    //zOutButton.addActionListener(_ => canvas.zoomOut())
+    toolbar.contents += zInButton
+    toolbar.contents += zOutButton
+    //toolbar.addSeparator()
 
     val resetButton = button(resetIcon, "Reset")
-    resetButton.addActionListener(_ => canvas.reset() )
-    toolbar.add(resetButton)
+    //resetButton.addActionListener(_ => canvas.reset() )
+    toolbar.contents += resetButton
 
-    add(toolbar, BorderLayout.PAGE_START)
-    add(canvas, BorderLayout.CENTER)
+    //layout(toolbar) = BorderPanel.Position.West
+    //layout(canvas) = BorderPanel.Position.Center
 
+    /*
     addWindowListener(new WindowAdapter() {
       override def windowClosing(windowevent: WindowEvent): Unit = calculator.quit()
     })
+     */
 
     pack()
   }
 
   protected def useSphere() = {
     if(canvas!=sphere) {
-      remove(plane)
-      add("Center", sphere)
+      //remove(plane)
+      //add("Center", sphere)
       canvas = sphere
       zInButton.enabled = false
       zOutButton.enabled = false
       validate()
       canvas.repaint()
     }
-    choice.setSelected(sphereButton.getModel, true)
+    //choice.setSelected(sphereButton.getModel, true)
   }
 
   protected def usePlane() = {
     if(canvas!=plane) {
-      remove(sphere)
-      add("Center", plane)
+      //remove(sphere)
+      //layout(plane) = BorderPanel.Position.Center
       canvas = plane
       zInButton.enabled = true
       zOutButton.enabled = true
       validate()
       canvas.repaint()
     }
-    choice.setSelected(planeButton.getModel, true)
+    //choice.setSelected(planeButton.getModel, true)
   }
 
   private[calculator] def add(c: Complex) = {}
@@ -130,7 +134,7 @@ abstract class World protected(val calculator: Calculator) extends Frame {
     MaxImaginary = Double.NegativeInfinity
   }
 
-  override def update(g: Graphics): Unit = paint(g)
+  //override def update(g: Graphics): Unit = paint(g)
 
   protected def updateExtremes(c: Complex): Unit =
     if (finite(c)) {
@@ -158,7 +162,7 @@ abstract class World protected(val calculator: Calculator) extends Frame {
   override def dispose(): Unit = {
     if(visible) {
       val p = preferences
-      val Point2(x, y) = getLocationOnScreen
+      val Point2(x, y) = locationOnScreen
       p.putInt("x", x)
       p.putInt("y", y)
 

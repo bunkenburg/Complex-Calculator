@@ -25,7 +25,7 @@ import cat.inspiracio.calculator.Interaction._
 import cat.inspiracio.calculator.Mode.{FZ, MODFZ, Mode}
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry._
-import scala.swing.event.MouseInputAdapter
+//import scala.swing.event.MouseInputAdapter
 
 /** The z-World is where the user gives input for function f. */
 final class ZWorld private[calculator](override val calculator: Calculator) extends World(calculator) {
@@ -45,7 +45,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
   private val squareButton = toggle(squareIcon, "Square")
   private val gridButton = toggle(gridIcon, "Plane")
 
-  private var mode: Mode = null
+  private var _mode: Mode = null
 
   /** During dragging of a free line, the points, otherwise null.
     * When dragging is finished, will be made into a curve and added
@@ -68,47 +68,48 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
     title = "z"
 
-    clearButton.addActionListener( _ => erase() )
-    toolbar.add(clearButton)
-    toolbar.addSeparator()
+    //clearButton.addActionListener( _ => erase() )
+    toolbar.contents += clearButton
+    //toolbar.addSeparator()
 
     interaction = DRAW
 
-    moveButton.addActionListener( _ => interaction = Interaction.MOVE )
-    interactionChoice.add(moveButton)
-    toolbar.add(moveButton)
+    //moveButton.addActionListener( _ => interaction = Interaction.MOVE )
+    interactionChoice.buttons += moveButton
+    toolbar.contents += moveButton
 
-    drawButton.addActionListener( _ => interaction = Interaction.DRAW )
-    interactionChoice.add(drawButton)
-    toolbar.add(drawButton)
+    //drawButton.addActionListener( _ => interaction = Interaction.DRAW )
+    interactionChoice.buttons += drawButton
+    toolbar.contents += drawButton
 
-    lineButton.addActionListener( _ => interaction = Interaction.LINE )
-    interactionChoice.add(lineButton)
-    toolbar.add(lineButton)
+    //lineButton.addActionListener( _ => interaction = Interaction.LINE )
+    interactionChoice.buttons += lineButton
+    toolbar.contents += lineButton
 
-    circleButton.addActionListener( _ => interaction = Interaction.CIRCLE )
-    interactionChoice.add(circleButton)
-    toolbar.add(circleButton)
+    //circleButton.addActionListener( _ => interaction = Interaction.CIRCLE )
+    interactionChoice.buttons += circleButton
+    toolbar.contents += circleButton
 
-    rectangleButton.addActionListener( _ => interaction = Interaction.RECTANGLE )
-    interactionChoice.add(rectangleButton)
-    toolbar.add(rectangleButton)
+    //rectangleButton.addActionListener( _ => interaction = Interaction.RECTANGLE )
+    interactionChoice.buttons += rectangleButton
+    toolbar.contents += rectangleButton
 
-    squareButton.addActionListener( _ => interaction = Interaction.SQUARE )
-    interactionChoice.add(squareButton)
-    toolbar.add(squareButton)
+    //squareButton.addActionListener( _ => interaction = Interaction.SQUARE )
+    interactionChoice.buttons += squareButton
+    toolbar.contents += squareButton
 
-    gridButton.addActionListener( _ => interaction = Interaction.GRID )
-    interactionChoice.add(gridButton)
-    toolbar.add(gridButton)
+    //gridButton.addActionListener( _ => interaction = Interaction.GRID )
+    interactionChoice.buttons += gridButton
+    toolbar.contents += gridButton
 
+    /*
     val mouse = new MouseInputAdapter() {
 
       //during dragging, starting and ending complex number
       var startComplex: Complex = null
       var endComplex: Complex = null
 
-      /** start dynamic mapping of a piclet */
+      // start dynamic mapping of a piclet
       private def startCurrent(p: Point) = {
         canvas.point2Complex(p).foreach{ z =>
           startComplex = z
@@ -121,9 +122,9 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
             case SQUARE => Square(startComplex, endComplex)
             case _ => throw new RuntimeException(interaction.toString)
           }
-          if (mode == FZ)
+          if (_mode == FZ)
             addCurrent(current)
-          else if (mode == MODFZ && interaction==SQUARE) {
+          else if (_mode == MODFZ && interaction==SQUARE) {
             square = current.asInstanceOf[Square]
             modfzW.change()
           }
@@ -131,7 +132,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
         }
       }
 
-      /** continue dynamic mapping of a piclet */
+      // continue dynamic mapping of a piclet
       private def continueCurrent(p: Point) = {
         canvas.point2Complex(p).foreach{ z =>
           endComplex = z
@@ -143,9 +144,9 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
             case SQUARE => Square(startComplex, endComplex)
             case _ => throw new RuntimeException(interaction.toString)
           }
-          if (mode == FZ)
+          if (_mode == FZ)
             addCurrent(current)
-          else if (mode == MODFZ && interaction==SQUARE) {
+          else if (_mode == MODFZ && interaction==SQUARE) {
             square = current.asInstanceOf[Square]
             modfzW.change()
           }
@@ -153,7 +154,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
         }
       }
 
-      /** finish dynamic mapping of a piclet */
+      // finish dynamic mapping of a piclet
       private def finishCurrent(p: Point) =
         if (startComplex != null) {
           canvas.point2Complex(p).foreach{ z =>
@@ -166,13 +167,13 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
               case SQUARE => Square(startComplex, endComplex)
               case _ => throw new RuntimeException(interaction.toString)
             }
-            if (mode == FZ) {
+            if (_mode == FZ) {
               if (interaction == GRID)
                 addGrid(current.asInstanceOf[Rectangle])
               else
                 add(current)
             }
-            else if (mode == MODFZ && interaction==SQUARE) {
+            else if (_mode == MODFZ && interaction==SQUARE) {
               square = current.asInstanceOf[Square]
               modfzW.change()
             }
@@ -270,11 +271,12 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
       }
 
     }//MouseInputAdapter
+    */
 
-    plane.addMouseListener(mouse)
-    plane.addMouseMotionListener(mouse)
-    sphere.addMouseListener(mouse)
-    sphere.addMouseMotionListener(mouse)
+    //plane.addMouseListener(mouse)
+    //plane.addMouseMotionListener(mouse)
+    //sphere.addMouseListener(mouse)
+    //sphere.addMouseMotionListener(mouse)
 
     pack()
     preferred()
@@ -283,19 +285,23 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
   }//init
 
   /** applies the saved preferences */
-  private def preferred() = {
+  private def preferred(): Unit = {
     val p = preferences
+
+    //Exception in thread "main" java.awt.IllegalComponentStateException: component must be showing on the screen to determine its location
+    if(!calculator.visible)
+      return ()
 
     // below the calculator
     val calculatorDimension: Dimension = calculator.size // 319 x 328
     val calculatorPosition: Point = calculator.locationOnScreen  // 77 38
     val x = p.getInt("x", calculatorPosition.x )
     val y = p.getInt("y", calculatorPosition.y + calculatorDimension.height + 10 )
-    setLocation( x, y )
+    location = Point2( x, y )
 
     val width = p.getInt("width", 560)
     val height = p.getInt("height", 365)
-    setSize(width,height)
+    size = new Dimension(width,height)
 
     val c = p.get("canvas", "plane")
     c match {
@@ -331,7 +337,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
   /** Adds a grid by decomposing it into lines.
     * XXX Maybe this can be improved. */
-  private def addGrid(r: Rectangle) = {
+  private def addGrid(r: cat.inspiracio.geometry.Rectangle) = {
     val N = 10
 
     val hStep = r.width / N
@@ -356,7 +362,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
       canvas.draw(g, _)
     }
 
-    if (mode == MODFZ)
+    if (_mode == MODFZ)
       canvas.draw(g, square)
   }
 
@@ -365,7 +371,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
     eraseCurrent()
     piclets = Nil
     resetExtremes()
-    if (mode == MODFZ)
+    if (_mode == MODFZ)
       updateExtremes(square)
     else if (fzW != null)
         fzW.erase()
@@ -379,9 +385,10 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
   private[calculator] def getPiclets = piclets
 
-  private[calculator] def mode_=(m: Mode) = {
-    mode = m
-    mode match {
+  //private[calculator]
+  def mode_=(m: Mode) = {
+    _mode = m
+    _mode match {
 
       case FZ =>
         clearButton.enabled = true
@@ -390,7 +397,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
         lineButton.enabled = true
         gridButton.enabled = true
         rectangleButton.enabled = true
-        interactionChoice.setSelected(drawButton.getModel, true)
+        //interactionChoice.setSelected(drawButton.getModel, true)
         interaction = DRAW
 
       case MODFZ =>
@@ -400,7 +407,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
         lineButton.enabled = false
         gridButton.enabled = false
         rectangleButton.enabled = false
-        interactionChoice.setSelected(squareButton.getModel, true)
+        //interactionChoice.setSelected(squareButton.getModel, true)
         interaction = SQUARE
 
       case _ =>

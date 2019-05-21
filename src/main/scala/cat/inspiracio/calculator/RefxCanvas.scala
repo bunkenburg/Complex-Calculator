@@ -18,13 +18,14 @@
 package cat.inspiracio.calculator
 
 import java.awt.{Color, Dimension, Font, Graphics, Point, Polygon}
-import scala.swing.event.MouseEvent
 
+import scala.swing.event.MouseEvent
 import cat.inspiracio.calculator.Direction._
 import cat.inspiracio.complex.{Complex, Re, double2Complex, finite}
 import cat.inspiracio.geometry.{DoubleHelper, Point2}
+import javax.swing.event.MouseInputAdapter
+
 import scala.swing.Component
-import scala.swing.event.MouseInputAdapter
 
 class RefxCanvas private[calculator](calculator: Calculator) extends Component {
   import Point2._
@@ -70,7 +71,7 @@ class RefxCanvas private[calculator](calculator: Calculator) extends Component {
 
   private def init()= {
     background = Color.white
-
+    /*
     val mouse = new MouseInputAdapter{
       //previous mouse position during dragging
       var previous: Point2 = null
@@ -86,9 +87,10 @@ class RefxCanvas private[calculator](calculator: Calculator) extends Component {
         previous = p
       }
     }
-    addMouseListener(mouse)
-    addMouseMotionListener(mouse)
-    doubleBuffered = true
+     */
+    //addMouseListener(mouse)
+    //addMouseMotionListener(mouse)
+    //doubleBuffered = true
   }
 
   //Methods ------------------------------------------------------
@@ -122,7 +124,7 @@ class RefxCanvas private[calculator](calculator: Calculator) extends Component {
       }
     }
 
-    val points: List[Option[Point]] = (0 until getSize().width).toList map x2op
+    val points: List[Option[Point]] = (0 until size.width).toList map x2op
 
     def draw: List[Option[Point]] => Unit = {
       case Nil => ()
@@ -135,16 +137,17 @@ class RefxCanvas private[calculator](calculator: Calculator) extends Component {
     draw(points)
   }
 
-  override def preferredSize_= = minimumSize
-  override def minimumSize_= = new Dimension(400, 300)
+  //override
+  def preferredSize_= = minimumSize
+  //override
+  def minimumSize_= = new Dimension(400, 300)
 
   /** Paint with double-buffering.
     *
     * Invoked by Swing to draw components. Applications should not invoke
     * paint directly, but should instead use the repaint method to schedule
     * the component for redrawing. */
-  override def paint(g: Graphics): Unit = {
-    val size: Dimension = size
+  override def paintComponent(g: java.awt.Graphics2D): Unit = {
     val halfHeightMath = pix2Math(size.height / 2)
     val halfWidthMath = pix2Math(size.width / 2)
 
@@ -263,8 +266,8 @@ class RefxCanvas private[calculator](calculator: Calculator) extends Component {
   }
 
   override def font_=(font: Font): Unit = {
-    super.font = font
-    fontAscent = getFontMetrics(font).getAscent
+    //super.font = font
+    //fontAscent = getFontMetrics(font).getAscent
     axisPadding = 3 * fontAscent
     markDistance = 4 * fontAscent
     triangleSize = fontAscent / 2

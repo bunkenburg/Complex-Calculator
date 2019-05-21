@@ -21,7 +21,6 @@ import java.awt.Toolkit
 import java.awt.event.KeyEvent
 
 import cat.inspiracio.calculator.Mode._
-import cat.inspiracio.complex.Complex
 import scala.swing._
 
 /** A menu bar for the Calculator. */
@@ -39,47 +38,41 @@ final class Menus private[calculator](var calculator: Calculator) extends MenuBa
 
   private def file(): Unit = {
     val menu = new Menu("File")
-    menu.mnemonic = KeyEvent.VK_F
+    //menu.mnemonic = KeyEvent.VK_F
 
-    val miAbout = new MenuItem("About ...")
-    miAbout.addActionListener( _ => new About(calculator) )
-    menu.add(miAbout)
+    val miAbout = new MenuItem("About ..."){ new About(calculator) }
+    menu.contents += miAbout
 
-    val miQuit = new MenuItem("Quit")
-    miQuit.mnemonic = KeyEvent.VK_Q
-    val CtrlQ = KeyStroke.getKeyStroke(KeyEvent.VK_Q, mask)
-    miQuit.accelerator = CtrlQ
-    miQuit.addActionListener( _ => calculator.quit() )
-    menu.add(miQuit)
+    val miQuit = new MenuItem("Quit"){ calculator.quit() }
+    //miQuit.mnemonic = KeyEvent.VK_Q
+    //val CtrlQ = KeyStroke.getKeyStroke(KeyEvent.VK_Q, mask)
+    //miQuit.accelerator = CtrlQ
+    menu.contents += miQuit
 
-    add(menu)
+    contents += menu
   }
 
   private def mode(): Unit = {
     val menu = new Menu("Mode")
 
-    val miCalc = new RadioButtonMenuItem("Calculate", true)
-    val miFz = new RadioButtonMenuItem("z -> f(z)")
-    val miModFz = new RadioButtonMenuItem("z -> |f(z)|")
-    val miReFx = new RadioButtonMenuItem("x -> Re(f(x))")
+    //selected = true
+    val miCalc = new RadioMenuItem("Calculate"){ calculator.mode_=(CALC) }
+    val miFz = new RadioMenuItem("z -> f(z)"){ calculator.mode_=(FZ) }
+    val miModFz = new RadioMenuItem("z -> |f(z)|"){ calculator.mode_=(MODFZ) }
+    val miReFx = new RadioMenuItem("x -> Re(f(x))"){ calculator.mode_=(REFX) }
 
-    menu.add(miCalc)
-    menu.add(miFz)
-    menu.add(miModFz)
-    menu.add(miReFx)
+    menu.contents += miCalc
+    menu.contents += miFz
+    menu.contents += miModFz
+    menu.contents += miReFx
 
     val group = new ButtonGroup
-    group.add(miCalc)
-    group.add(miFz)
-    group.add(miModFz)
-    group.add(miReFx)
+    group.buttons += miCalc
+    group.buttons += miFz
+    group.buttons += miModFz
+    group.buttons += miReFx
 
-    miCalc.addActionListener( _ => calculator.setMode(CALC) )
-    miFz.addActionListener( _ => calculator.setMode(FZ) )
-    miModFz.addActionListener( _ => calculator.setMode(MODFZ) )
-    miReFx.addActionListener( _ => calculator.setMode(REFX) )
-
-    add(menu)
+    contents += menu
   }
 
   private[calculator] def select(m: Mode)= {
@@ -89,9 +82,9 @@ final class Menus private[calculator](var calculator: Calculator) extends MenuBa
       case MODFZ => 2
       case REFX => 3
     }
-    val menu = getMenu(1)
-    val item = menu.getItem(index)
-    item.setSelected(true)
+    val menu = menus(1)
+    //val item = menu.getItem(index)
+    //item.setSelected(true)
   }
 
 }

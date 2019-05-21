@@ -17,7 +17,6 @@
  * */
 package cat.inspiracio.calculator
 
-//import javax.swing._
 import javax.swing.text.{SimpleAttributeSet, StyleConstants}
 import scala.swing._
 
@@ -30,17 +29,22 @@ class About(val frame: Frame) extends Dialog(frame) {
   ready()
 
   private def fill(): Unit ={
-    val t = text()
-    add("Center", t)
+    contents = new BorderPanel {
+      val t = text()
+      layout(t) = BorderPanel.Position.Center
 
-    val button = new Button("Continue"){ _ => dispose() }
-    val root = getRootPane
-    root.setDefaultButton(button)
+      val button = new Button("Continue") { dispose() }
 
-    val panel = new Panel{
-      contents += button
+      //in order to focus on the button automatically. Different?
+      //val root = getRootPane
+      //root.setDefaultButton(button)
+
+      //why this?
+      //val panel = new Panel { contents += button }
+      //layout(panel) = BorderPanel.Position.South
+
+      layout(button) = BorderPanel.Position.South
     }
-    add("South", panel)
   }
 
   private def text(): Component = {
@@ -54,19 +58,19 @@ class About(val frame: Frame) extends Dialog(frame) {
 
     //align pane
     //https://stackoverflow.com/questions/3213045/centering-text-in-a-jtextarea-or-jtextpane-horizontal-text-alignment
-    val doc = textpane.getStyledDocument
-    val center = new SimpleAttributeSet
-    StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER)
-    doc.setParagraphAttributes(0, doc.getLength, center, false)
+    //val doc = textpane.getStyledDocument
+    //val center = new SimpleAttributeSet
+    //StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER)
+    //doc.setParagraphAttributes(0, doc.getLength, center, false)
 
     textpane
   }
 
   private def ready(): Unit ={
-    setResizable(false)
+    resizable = false
     pack()
     setLocationRelativeTo(frame)
-    setVisible(true)
+    visible = true
   }
 
 }

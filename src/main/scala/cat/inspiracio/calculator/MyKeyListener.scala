@@ -33,7 +33,7 @@ class MyKeyListener private[calculator](var calculator: Calculator) extends KeyA
   /** Only the ENTER key is special: In CALC mode, it is like '='. */
   override def keyPressed(e: KeyEvent): Unit =
     if ( e.getKeyCode == LF ) {
-      if ( calculator.mode == CALC ) {
+      if ( calculator._mode == CALC ) {
         calculator.display.eraseOldResult()
         calculator.doEquals()
       }

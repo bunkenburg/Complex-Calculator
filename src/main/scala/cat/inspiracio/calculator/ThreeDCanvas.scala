@@ -24,7 +24,6 @@ import java.lang.Math.{atan2, min}
 import cat.inspiracio.complex.{Complex, abs, sqr, sqrt, π}
 import cat.inspiracio.geometry._
 import scala.swing.Component
-import scala.swing.event.MouseInputAdapter
 import MoreGraphics.GraphicsExtended
 
 /** Shows a grid of |f(z)|.
@@ -71,6 +70,7 @@ class ThreeDCanvas(world: ThreeDWorld) extends Component {
   private def init()= {
     background = white
 
+    /*
     val mouse = new MouseInputAdapter {
 
       //during dragging, the previous mouse position
@@ -86,12 +86,13 @@ class ThreeDCanvas(world: ThreeDWorld) extends Component {
         previous = p
       }
     }
-    addMouseListener(mouse)
-    addMouseMotionListener(mouse)
+     */
+    //addMouseListener(mouse)
+    //addMouseMotionListener(mouse)
 
     determineForwardNess()
 
-    doubleBuffered = true
+    //doubleBuffered = true
   }
 
   //Methods -------------------------------------------------------
@@ -249,8 +250,8 @@ class ThreeDCanvas(world: ThreeDWorld) extends Component {
 
   /** Maps from 2d space to screen pixels. */
   private def f2dPix(v: Vector2): Point2 = Point2(
-    (v.x * xyscale + getWidth * 0.5).toInt,
-    (-v.y * xyscale + getHeight * 0.8).toInt
+    (v.x * xyscale + size.width * 0.5).toInt,
+    (-v.y * xyscale + size.height * 0.8).toInt
   )
 
   override def preferredSize: Dimension = minimumSize
@@ -279,10 +280,10 @@ class ThreeDCanvas(world: ThreeDWorld) extends Component {
     * Invoked by Swing to draw components. Applications should not invoke
     * paint directly, but should instead use the repaint method to schedule
     * the component for redrawing. */
-  override def paint(g: Graphics): Unit = {
+  override def paintComponent(g: Graphics2D): Unit = {
     /** Determines how much of the window the diagram should take up. */
     val factor = 0.6
-    xyscale = min(getWidth, getHeight) * factor
+    xyscale = min(size.width, size.height) * factor
     drawIt(g)
   }
 
@@ -346,8 +347,8 @@ class ThreeDCanvas(world: ThreeDWorld) extends Component {
   }
 
   override def font_=(font: Font): Unit = {
-    super.font = font
-    fontAscent = getFontMetrics(font).getAscent
+    //super.font = font
+    //fontAscent = getFontMetrics(font).getAscent
   }
 
   /** re-calculate xforward and zforward */
@@ -361,7 +362,7 @@ class ThreeDCanvas(world: ThreeDWorld) extends Component {
   /** For now, we can only rotate horizontally.
     * Could consider other rotations and a reset button. */
   private def shift(p: Point) = {
-    val d = p.x * 2 * π / height
+    val d = p.x * 2 * π / size.height
     Q = Q.postRot('y', -d)
     determineForwardNess()
     repaint()

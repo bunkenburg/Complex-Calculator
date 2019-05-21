@@ -18,6 +18,8 @@
 package cat.inspiracio.calculator
 
 //import java.awt._
+import javax.swing.Icon
+
 import scala.swing._
 
 //import javax.swing.{Icon, ImageIcon, JButton, JToggleButton}
@@ -60,7 +62,7 @@ package object icon {
   def toggle(icon: Icon, tooltip: String): ToggleButton = {
     val b = new ToggleButton
     b.icon = icon
-    b.toolTipText = tooltip
+    b.tooltip = tooltip
     b.opaque = false
     b.borderPainted = false
     //b.setContentAreaFilled(false) //need for signalling selected
@@ -70,7 +72,7 @@ package object icon {
   def button(icon: Icon, tooltip: String): Button = {
     val b = new Button
     b.icon = icon
-    b.toolTipText = tooltip
+    b.tooltip = tooltip
     b.opaque = false
     b.borderPainted = false
     //b.setContentAreaFilled(false) //need for signalling selected

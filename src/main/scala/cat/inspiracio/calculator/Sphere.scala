@@ -100,7 +100,7 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     else (0, 0.5, 0)
 
   /** Called by swing */
-  override def paint(g: Graphics): Unit = {
+  override def paintComponent(g: java.awt.Graphics2D): Unit = {
     factor = Math.min(width, height) * 0.8
     g.drawCircle(width / 2, height / 2, 0.5 * factor)
     List[Complex](0, ∞, 1, -1, i, -i ).foreach{ draw(g, _) }
@@ -130,9 +130,9 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
   }
 
   override def font_=(font: Font): Unit = {
-    super.font = font
-    val i = getFontMetrics(font).getAscent
-    markLength = i / 5
+    //super.font = font
+    //val fontAscent = getFontMetrics(font).getAscent
+    //markLength = fontAscent / 5
   }
 
   /** The R1 matrix as it was at the start of shifting. */

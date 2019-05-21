@@ -17,7 +17,7 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt._
+//import java.awt._
 import java.awt.event._
 import java.lang.Math.{max}
 import java.util.prefs.Preferences
@@ -31,7 +31,8 @@ import cat.inspiracio.parsing.{Constant, Syntax}
 //            Calculator, DoubleBuffer, Drawing, Matrix44,
 //            Vector2, Vector3
 
-final class ThreeDWorld private[calculator](calculator: Calculator) extends Frame("|f(z)| World") {
+final class ThreeDWorld private[calculator](calculator: Calculator) extends Frame {
+  title = "|f(z)| World"
 
   //State ---------------------------------------------
 
@@ -50,22 +51,26 @@ final class ThreeDWorld private[calculator](calculator: Calculator) extends Fram
 
     val toolbar = new ToolBar()
     val resetButton = button(resetIcon, "Reset")
-    resetButton.addActionListener( _ => canvas.reset() )
-    toolbar.add(resetButton)
-    toolbar.addSeparator()
+    //resetButton.addActionListener( _ => canvas.reset() )
+    toolbar.contents += resetButton
+    //toolbar.addSeparator()
 
     //move button always selected: just there to show user that they can move
     val moveButton = toggle(handIcon, "Move")
     moveButton.selected = true
     moveButton.enabled = false
-    toolbar.add(moveButton)
+    toolbar.contents += moveButton
 
-    add(toolbar, BorderLayout.PAGE_START)
-    add(canvas, BorderLayout.CENTER)
+    //add(toolbar, BorderLayout.PAGE_START)
+    //XXX layout(toolbar) = BorderPanel.Position.West
+    //add(canvas, BorderLayout.CENTER)
+    //XXX layout(canvas) = BorderPanel.Position.Center
 
+    /*
     addWindowListener(new WindowAdapter() {
       override def windowClosing(windowevent: WindowEvent): Unit = calculator.quit()
     })
+     */
 
     pack()
     locate()
@@ -86,11 +91,11 @@ final class ThreeDWorld private[calculator](calculator: Calculator) extends Fram
     val p = preferences
     val x = p.getInt("x", zWorldPosition.x + zWorldDimension.width + 10 )
     val y = p.getInt("y", zWorldPosition.y )
-    setLocation( x, y )
+    location = Point2( x, y )
 
     val width = p.getInt("width", 560)
     val height = p.getInt("height", 365)
-    setSize(width,height)
+    size = new Dimension(width,height)
   }
 
   /** Event listener: the function has changed. */
@@ -155,9 +160,9 @@ final class ThreeDWorld private[calculator](calculator: Calculator) extends Fram
   protected def preferences = Preferences.userNodeForPackage(getClass).node(getClass.getSimpleName)
 
   override def dispose(): Unit = {
-    if(isVisible){
+    if(visible){
       val p = preferences
-      val Point2(x,y) = getLocationOnScreen
+      val Point2(x,y) = locationOnScreen
       p.putInt("x", x )
       p.putInt("y", y )
 

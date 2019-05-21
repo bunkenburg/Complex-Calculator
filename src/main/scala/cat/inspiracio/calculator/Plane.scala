@@ -85,7 +85,7 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
         val radius = math2Pix(circle.r)
         g.drawCircle( centre, radius )
 
-      case rectangle: Rectangle =>
+      case rectangle: cat.inspiracio.geometry.Rectangle =>
         import rectangle._
         line(g, botLeft, botRight)
         line(g, botRight, topRight)
@@ -117,7 +117,7 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
   }
 
   /** Called by swing to paint. */
-  override def paint(g: Graphics): Unit = {
+  override def paintComponent(g: Graphics2D): Unit = {
     val halfWidthMath = pix2Math( width / 2)
     val halfHeightMath = i*pix2Math( height / 2);
 
@@ -212,8 +212,8 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
   private def imag2Pix(d: Double): Int = ((Im(topleft) - d) * factor).toInt
 
   override def font_=(font: Font): Unit = {
-    super.font = font
-    fontAscent = getFontMetrics(font).ascent
+    //super.font = font
+    //fontAscent = getFontMetrics(font).ascent
     axisPadding = 3 * fontAscent
     markDistance = 4 * fontAscent
     triangleSize = fontAscent / 2

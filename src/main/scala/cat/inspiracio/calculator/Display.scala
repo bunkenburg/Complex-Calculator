@@ -20,6 +20,7 @@ package cat.inspiracio.calculator
 import java.lang.Math.min
 
 import scala.swing._
+import scala.swing.event.KeyTyped
 
 /** The text area of the complex calculator.
   *
@@ -33,26 +34,25 @@ class Display private[calculator](val fontSize: Int) extends TextArea("", 3, 1) 
   //display.addKeyListener(new MyKeyListener(Calculator.this))
   listenTo(keys)
   reactions += {
-    case KeyTyped(sourceComponent, char, modifiers, location) =>
+    case KeyTyped(sourceComponent, c, modifiers, location) =>
       println("KeyTyped " + c)
   }
 
-  private[calculator] def clear() = setText("")
+  private[calculator] def clear() = text = ""
 
   private[calculator] def eraseOldResult() = {
-    val text = getText
     val equals = text.lastIndexOf('=')
     if (equals != -1) {
-      val caret = getCaretPosition
       val newText = text.substring(0, equals)
-      setText(newText)
-      val newCaret = min(caret, newText.length)
-      setCaretPosition(newCaret)
+      text = newText
+      val newCaret = min(caret.position, newText.length)
+      caret.position = newCaret
     }
   }
 
   /** deletes selected text or backspaces */
   private[calculator] def delete() = {
+    /*
     val start = selectionStart
     val end = selectionEnd
     val caret = caretPosition
@@ -66,11 +66,13 @@ class Display private[calculator](val fontSize: Int) extends TextArea("", 3, 1) 
       selectionEnd = start
       caretPosition = start
     }
+     */
   }
 
   private[calculator] def paste(c: Char): Unit = paste(String.valueOf(c) )
 
   private[calculator] def paste(s: String): Unit = {
+    /*
     val start = selectionStart
     val end = selectionEnd
     val caret = caretPosition
@@ -84,10 +86,12 @@ class Display private[calculator](val fontSize: Int) extends TextArea("", 3, 1) 
       caretPosition = start + s.length
       select(start + s.length, start + s.length)
     }
+     */
   }
 
   /** Put s in from of displayed string */
   private[calculator] def prepend(s: String) = {
+    /*
     val start = selectionStart
     val end = selectionEnd
     val caret = caretPosition
@@ -95,15 +99,18 @@ class Display private[calculator](val fontSize: Int) extends TextArea("", 3, 1) 
     selectionStart = start + s.length
     selectionEnd = end + s.length
     caretPosition = caret + s.length
+     */
   }
 
   /** Replace one char by another. */
   private[calculator] def replace(c: Char, c1: Char) = {
+    /*
     val start = selectionStart
     val end = selectionEnd
     val caret = caretPosition
     text = text.replace(c, c1)
     select(start, end)
     caretPosition = caret
+     */
   }
 }

@@ -17,7 +17,7 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt._
+//import java.awt._
 import java.awt.event._
 import java.util.prefs.Preferences
 
@@ -29,7 +29,8 @@ import cat.inspiracio.geometry.Point2
 //            Calculator, DoubleBuffer, Drawing
 
 /** Shows Re(f(x)) */
-final class RefxWorld private[calculator](calculator: Calculator) extends Frame("Re(f(x))") {
+final class RefxWorld private[calculator](calculator: Calculator) extends Frame() {
+  title = "Re(f(x))"
 
   // GUI -----------------------------------------------------
 
@@ -44,31 +45,35 @@ final class RefxWorld private[calculator](calculator: Calculator) extends Frame(
     canvas.resetExtremes()
 
     val btnZoomIn = button(zoomInIcon, "Zoom in")
-    btnZoomIn.addActionListener( _ => zoomIn() )
-    toolbar.add(btnZoomIn)
+    //btnZoomIn.addActionListener( _ => zoomIn() )
+    toolbar.contents += btnZoomIn
 
     val btnZoomOut = button(zoomOutIcon, "Zoom out")
-    btnZoomOut.addActionListener( _ => zoomOut() )
-    toolbar.add(btnZoomOut)
+    //btnZoomOut.addActionListener( _ => zoomOut() )
+    toolbar.contents += btnZoomOut
 
     val btnReset = button(resetIcon, "Reset")
-    btnReset.addActionListener( _ => reset() )
-    toolbar.add(btnReset)
-    toolbar.addSeparator()
+    //btnReset.addActionListener( _ => reset() )
+    toolbar.contents += btnReset
+    //toolbar.addSeparator()
 
     //move button always selected: just there to show user that they can move
-    val moveButton = new ToggleButton(handIcon)
-    moveButton.toolTipText = "Move"
+    val moveButton = new ToggleButton{ icon = handIcon}
+    moveButton.tooltip = "Move"
     moveButton.selected = true
     moveButton.enabled = false
-    toolbar.add(moveButton)
+    toolbar.contents += moveButton
 
-    add(toolbar, BorderLayout.PAGE_START)
-    add(canvas, BorderLayout.CENTER)
+    //add(toolbar, BorderLayout.PAGE_START)
+    //XXX layout(toolbar) = BorderPanel.Position.West
+    //add(canvas, BorderLayout.CENTER)
+    //XXX layout(canvas) = BorderPanel.Position.Center
 
+    /*
     addWindowListener(new WindowAdapter() {
       override def windowClosing(windowevent: WindowEvent): Unit = calculator.quit()
     })
+     */
 
     pack()
     locate()
@@ -76,7 +81,12 @@ final class RefxWorld private[calculator](calculator: Calculator) extends Frame(
   }
 
   /** to the right of the calculator */
-  private def locate() = {
+  private def locate(): Unit = {
+
+    //Exception in thread "main" java.awt.IllegalComponentStateException: component must be showing on the screen to determine its location
+    if(!calculator.visible)
+      return ()
+
     //calculator
     val calculatorDimension: Dimension = calculator.size // 319 x 328
     val calculatorPosition: Point = calculator.locationOnScreen  // 77 38
@@ -84,11 +94,11 @@ final class RefxWorld private[calculator](calculator: Calculator) extends Frame(
     val p = preferences
     val x = p.getInt("x", calculatorPosition.x + calculatorDimension.width + 10 )
     val y = p.getInt("y", calculatorPosition.y )
-    setLocation( x, y )
+    location = Point2( x, y )
 
     val width = p.getInt("width", 560)
     val height = p.getInt("height", 365)
-    setSize(width,height)
+    size = new Dimension(width,height)
     canvas.zoom = p.getDouble("zoom", 1)
   }
 

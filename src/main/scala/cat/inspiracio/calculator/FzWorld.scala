@@ -49,16 +49,17 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
 
     title = "f(z)"
 
-    toolbar.addSeparator()
+    //toolbar.addSeparator()
 
     //move button always selected: just there to show user that they can move
     val moveButton = toggle(handIcon, "Move")
     moveButton.selected = true
     moveButton.enabled = false
-    toolbar.add(moveButton)
+    toolbar.contents += moveButton
 
     interaction = MOVE
 
+    /*
     val mouse: MouseInputListener = new MouseInputAdapter() {
 
       /** start and previous mouse position during dragging */
@@ -83,10 +84,11 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
       }
 
     }
-    plane.addMouseListener(mouse)
-    plane.addMouseMotionListener(mouse)
-    sphere.addMouseListener(mouse)
-    sphere.addMouseMotionListener(mouse)
+     */
+    //plane.addMouseListener(mouse)
+    //plane.addMouseMotionListener(mouse)
+    //sphere.addMouseListener(mouse)
+    //sphere.addMouseMotionListener(mouse)
     pack()
     applyPreferences()
     visible = true
@@ -100,11 +102,11 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
     val zWorldPosition: Point = zW.locationOnScreen  //77 414
     val x = p.getInt("x", zWorldPosition.x + zWorldDimension.width + 10 )
     val y = p.getInt("y", zWorldPosition.y )
-    setLocation( x, y )
+    location = Point2( x, y )
 
     val width = p.getInt("width", 560)
     val height = p.getInt("height", 365)
-    setSize(width,height)
+    size = new Dimension(width,height)
 
     val c = p.get("canvas", "plane")
     c match {

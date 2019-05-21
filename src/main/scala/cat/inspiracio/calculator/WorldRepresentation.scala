@@ -29,7 +29,7 @@ import scala.swing._
   * as Cartesian plane or as Riemann sphere. */
 abstract class WorldRepresentation protected(var w: World) extends Component {
   background = Color.white
-  doubleBuffered = true
+  //doubleBuffered = true
 
   //Methods ------------------------------------------------------
 
@@ -68,7 +68,7 @@ abstract class WorldRepresentation protected(var w: World) extends Component {
     case a::b::cs => (a,b) :: pairs(b::cs)
   }
 
-  protected def width() = getSize().width
-  protected def height() = getSize().height
+  protected def width() = size.width
+  protected def height() = size.height
 
 }
