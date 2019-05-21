@@ -40,7 +40,7 @@ final class Calculator() extends MainFrame {
   resizable = false
 
   /** The mode that the program is in: Calculation, z->fz mapping, z->|fz| mapping, or Re(fz). */
-  private[calculator] var _mode = CALC
+  private var _mode = CALC
 
   private[calculator] val display: Display = new Display(12)
   private var equalsButton: Button = null
@@ -236,7 +236,8 @@ final class Calculator() extends MainFrame {
   }
 
   /** Sets the mode, opening and closing windows. */
-  private[calculator] def mode_=(m: Mode): Unit = {
+  //private[calculator]
+  def mode_=(m: Mode): Unit = {
     m match {
       case CALC => calc()
       case FZ => fz()
@@ -250,6 +251,8 @@ final class Calculator() extends MainFrame {
     if(menuBar.isInstanceOf[Menus])
       menuBar.asInstanceOf[Menus].select(_mode)
   }
+
+  def mode: Mode = _mode
 
   private def calc() = {
     Complex.setArgPrincipal()

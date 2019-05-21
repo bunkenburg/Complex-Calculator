@@ -21,74 +21,70 @@ import java.awt.Toolkit
 import java.awt.event.KeyEvent
 
 import cat.inspiracio.calculator.Mode._
+import javax.swing.KeyStroke
+
 import scala.swing._
+import scala.swing.event.Key
 
 /** A menu bar for the Calculator. */
-final class Menus private[calculator](var calculator: Calculator) extends MenuBar {
+final class Menus private[calculator](calculator: Calculator) extends MenuBar {
 
-  private val precisionListener = null
-  private val mask = Toolkit.getDefaultToolkit.getMenuShortcutKeyMask
+    val meFile = new Menu("File"){
+      mnemonic = Key.F
+    }
 
-  init()
-
-  private def init()= {
-    file()
-    mode()
-  }
-
-  private def file(): Unit = {
-    val menu = new Menu("File")
-    menu.mnemonic = scala.swing.event.Key.F
-
-    val miAbout = new MenuItem("About ..."){
+    val acAbout = Action("About ..."){
       new About(calculator)
     }
-    menu.contents += miAbout
+    meFile.contents += new MenuItem(acAbout)
 
-    val miQuit = new MenuItem("Quit"){
+    val acQuit = Action("Quit"){
       calculator.quit()
     }
-    miQuit.mnemonic = scala.swing.event.Key.Q
-    //val CtrlQ = KeyStroke.getKeyStroke(KeyEvent.VK_Q, mask)
-    //miQuit.accelerator = CtrlQ
-    menu.contents += miQuit
+    acQuit.mnemonic = java.awt.event.KeyEvent.VK_Q
+    val mask = Toolkit.getDefaultToolkit.getMenuShortcutKeyMask
+    val CtrlQ = KeyStroke.getKeyStroke(KeyEvent.VK_Q, mask)
+    acQuit.accelerator = Option(CtrlQ)
+    meFile.contents += new MenuItem(acQuit)
 
-    contents += menu
-  }
+    contents += meFile
 
-  private def mode(): Unit = {
-    val menu = new Menu("Mode")
+    val meMode = new Menu("Mode")
 
-    //selected = true
-    val miCalc = new RadioMenuItem("Calculate"){ calculator.mode_=(CALC) }
-    val miFz = new RadioMenuItem("z -> f(z)"){ calculator.mode_=(FZ) }
-    val miModFz = new RadioMenuItem("z -> |f(z)|"){ calculator.mode_=(MODFZ) }
-    val miReFx = new RadioMenuItem("x -> Re(f(x))"){ calculator.mode_=(REFX) }
+    //https://github.com/ingoem/scala-swing/blob/master/scala/swing/test/UIDemo.scala
+    val miCalc = new RadioMenuItem("Calculate")
+    miCalc.action = Action("Calculate"){
+      calculator.mode = CALC
+    }
+    miCalc.selected = true
 
-    menu.contents += miCalc
-    menu.contents += miFz
-    menu.contents += miModFz
-    menu.contents += miReFx
+    val miFz = new RadioMenuItem("z -> f(z)")
+    miFz.action = Action("z -> f(z)"){
+      calculator.mode = FZ
+    }
 
-    val group = new ButtonGroup
-    group.buttons += miCalc
-    group.buttons += miFz
-    group.buttons += miModFz
-    group.buttons += miReFx
+    val miModFz = new RadioMenuItem("z -> |f(z)|")
+    miModFz.action = Action("z -> |f(z)|"){
+      calculator.mode = MODFZ
+    }
 
-    contents += menu
-  }
+    val miReFx = new RadioMenuItem("x -> Re(f(x))")
+    miReFx.action = Action("x -> Re(f(x))"){
+      calculator.mode = REFX
+    }
+
+    meMode.contents ++= new ButtonGroup(miCalc, miFz, miModFz, miReFx).buttons
+
+    contents += meMode
 
   private[calculator] def select(m: Mode)= {
-    val index = m match {
-      case CALC => 0
-      case FZ => 1
-      case MODFZ => 2
-      case REFX => 3
+    val item = m match {
+      case CALC => miCalc
+      case FZ => miFz
+      case MODFZ => miModFz
+      case REFX => miReFx
     }
-    val menu = menus(1)
-    //val item = menu.getItem(index)
-    //item.setSelected(true)
+    item.selected = true
   }
 
 }
