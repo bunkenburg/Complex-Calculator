@@ -17,39 +17,47 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt.event.{KeyAdapter, KeyEvent}
-
 import cat.inspiracio.calculator.Mode.CALC
 
-class MyKeyListener private[calculator](var calculator: Calculator) extends KeyAdapter {
+import scala.swing.event.{Event, Key, KeyPressed, KeyTyped}
 
-  /** LF = Intro = ENTER (on linux) */
-  private val LF = 10
+class MyKeyListener private[calculator](calculator: Calculator) extends PartialFunction[Event, Unit] {
 
   /** All the characters that make sense in the display. */
   private val ALLOWED_CHARS = " !sinhcoshtanhconjoppReImlnexp^modargiepi()789*/456+-123=0.z"
   private def forbidden(c: Char): Boolean = !ALLOWED_CHARS.contains(c)
 
+  override def isDefinedAt(e: Event): Boolean = e match {
+    case KeyPressed(source, c, modifiers, location) => true
+    case KeyTyped(source, c, modifiers, location) => true
+    case _ => false
+  }
+
+  override def apply(e: Event): Unit = e match {
+    case kp@KeyPressed(_, _, _, _) => keyPressed(kp)
+    case kt@KeyTyped(_, _, _, _) => keyTyped(kt)
+  }
+
   /** Only the ENTER key is special: In CALC mode, it is like '='. */
-  override def keyPressed(e: KeyEvent): Unit =
-    if ( e.getKeyCode == LF ) {
-      if ( calculator.mode == CALC ) {
+  private def keyPressed(e: KeyPressed): Unit = {
+    val KeyPressed(s, c, m, l) = e
+    if (c == Key.Enter) {
+      if (calculator.mode == CALC) {
         calculator.display.eraseOldResult()
         calculator.doEquals()
       }
       e.consume() //Don't want a line-break in display
     }
+  }
 
   /** Ignores forbidden characters,
     * erases old result,
     * inserts character, treating '=' special,
     * tells calculator of function change. */
-  override def keyTyped(e: KeyEvent): Unit = {
-    val c = e.getKeyChar
-
+  private def keyTyped(e: KeyTyped): Unit = {
+    val KeyTyped(source, c, modifiers, location) = e
     if ( !forbidden(c) )
       calculator.paste(c)
-
     e.consume() //Already handled the character, either inserted or ignored it.
   }
 

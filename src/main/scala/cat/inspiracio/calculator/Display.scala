@@ -20,7 +20,6 @@ package cat.inspiracio.calculator
 import java.lang.Math.min
 
 import scala.swing._
-import scala.swing.event.KeyTyped
 
 /** The text area of the complex calculator.
   *
@@ -32,13 +31,6 @@ import scala.swing.event.KeyTyped
 class Display private[calculator](fontSize: Int) extends TextArea("", 3, 1) {
   wordWrap = true
   lineWrap = true
-
-  //display.addKeyListener(new MyKeyListener(Calculator.this))
-  listenTo(keys)
-  reactions += {
-    case KeyTyped(source, c, modifiers, location) =>
-      println("KeyTyped " + source + " " + c + " " + modifiers + " " + location)
-  }
 
   private[calculator] def clear() = text = ""
 
@@ -92,11 +84,11 @@ class Display private[calculator](fontSize: Int) extends TextArea("", 3, 1) {
   }
 
   /** Replace one char by another. */
-  private[calculator] def replace(c: Char, c1: Char) = {
+  private[calculator] def replace(z: Char, x: Char) = {
     val start = selectionStart
     val end = selectionEnd
     val cp = caret.position
-    text = text.replace(c, c1)
+    text = text.replace(z, x)
     select(start, end)
     caret.position = cp
   }

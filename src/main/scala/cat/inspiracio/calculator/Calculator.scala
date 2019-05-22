@@ -88,7 +88,7 @@ final class Calculator() extends MainFrame {
         c
       }
 
-      //display.addKeyListener(new MyKeyListener(Calculator.this))
+      display.reactions += new MyKeyListener(Calculator.this)
       layout(display) = constraints(0, 0, 5, 3)
 
       layout(Button("!"){ paste("!") }) = constraints(0, 3)
@@ -113,7 +113,7 @@ final class Calculator() extends MainFrame {
       layout(Button("e"){ paste("e") }) = constraints(1, 8)
       layout(Button("π"){ paste("π") }) = constraints(2, 8)
       layout(Button("("){ paste("(") }) = constraints(3, 8)
-      layout(Button(")"){ paste("(") }) = constraints(4, 8)
+      layout(Button(")"){ paste(")") }) = constraints(4, 8)
       layout(Button("7"){ paste("7") }) = constraints(0, 9)
       layout(Button("8"){ paste("8") }) = constraints(1, 9)
       layout(Button("9"){ paste("9") }) = constraints(2, 9)
