@@ -19,7 +19,6 @@ package cat.inspiracio.calculator
 
 import java.awt.{Color, Dimension, Graphics, Point}
 
-import cat.inspiracio.calculator.Interaction.{DRAW, MOVE}
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.{Piclet, Point2}
 

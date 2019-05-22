@@ -37,7 +37,7 @@ object Calculator {
 }
 
 final class Calculator() extends MainFrame {
-  visible = false //after locate()
+  visible = false //make visible after locate()
   title = "Complex Calculator"
   resizable = false
   menuBar = new Menus(this)
@@ -130,7 +130,7 @@ final class Calculator() extends MainFrame {
       layout(Button("2"){ paste("2") }) = constraints(1, 11)
       layout(Button("3"){ paste("3") }) = constraints(2, 11)
 
-      zButton = Button("z"){ paste("z") }
+      zButton = Button("z"){ paste(variable) }
       layout(zButton) = constraints(3, 11)
 
       equalsButton = Button("="){ paste("=") }

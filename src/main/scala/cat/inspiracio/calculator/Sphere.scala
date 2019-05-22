@@ -17,7 +17,7 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt.{Font, Graphics, Point}
+import java.awt.{Graphics, Point}
 
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.{Matrix44, Point2, Vector3}

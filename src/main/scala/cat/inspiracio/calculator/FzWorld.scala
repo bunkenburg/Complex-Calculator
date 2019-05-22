@@ -17,14 +17,11 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt.{Dimension, Graphics, GraphicsConfiguration, Point}
-import scala.swing.event._
+import java.awt.{Graphics, Point}
 
 import cat.inspiracio.calculator.Interaction.MOVE
-import cat.inspiracio.calculator.icon.handIcon
 import cat.inspiracio.complex.Complex
 import cat.inspiracio.geometry.{Curve, Piclet, Point2}
-import javax.swing.event.{MouseInputAdapter, MouseInputListener}
 
 final class FzWorld private[calculator](override val calculator: Calculator) extends World(calculator) {
   import calculator.{f, zW}

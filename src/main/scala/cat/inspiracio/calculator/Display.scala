@@ -18,7 +18,6 @@
 package cat.inspiracio.calculator
 
 import java.lang.Math.min
-
 import scala.swing._
 
 /** The text area of the complex calculator.

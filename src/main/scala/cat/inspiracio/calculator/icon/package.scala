@@ -18,7 +18,6 @@
 package cat.inspiracio.calculator
 
 import javax.swing.Icon
-
 import scala.swing._
 
 /**
@@ -61,7 +60,7 @@ package object icon {
     b.tooltip = tooltip
     b.opaque = false
     b.borderPainted = false
-    b.contentAreaFilled = false //need for signalling selected
+    b.contentAreaFilled = true //need for signalling selected
     b
   }
 
@@ -72,7 +71,7 @@ package object icon {
     b.tooltip = tooltip
     b.opaque = false
     b.borderPainted = false
-    //b.contentAreaFilled = false //need for signalling selected
+    b.contentAreaFilled = true //need for signalling selected
     b
   }
 
@@ -82,7 +81,7 @@ package object icon {
       tooltip = tooltip
       opaque = false
       borderPainted = false
-      //b.setContentAreaFilled(false) //need for signalling selected
+      contentAreaFilled = false //need for signalling selected
     }
   }
 
@@ -92,7 +91,7 @@ package object icon {
       tooltip = tooltip
       opaque = false
       borderPainted = false
-      //b.setContentAreaFilled(false) //need for signalling selected
+      contentAreaFilled = false //need for signalling selected
     }
     b.action = Action(null)(op)
     b.icon = icon
