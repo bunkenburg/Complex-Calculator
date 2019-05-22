@@ -337,10 +337,10 @@ final class Matrix44 {
   override def equals(other: Any): Boolean = other match {
     case null => false
     case m: Matrix44 => {
-      var b = true
-      for (x <- 0 to 3; y <- 0 to 3)
-        b = b && ( this(x,y) == m(x,y) )
-      b
+      this(0,0)==m(0,0) && this(0,1)==m(0,1) && this(0,2)==m(0,2) && this(0,3)==m(0,3) &&
+        this(1,0)==m(1,0) && this(1,1)==m(1,1) && this(1,2)==m(1,2) && this(1,3)==m(1,3) &&
+        this(2,0)==m(2,0) && this(2,1)==m(2,1) && this(2,2)==m(2,2) && this(2,3)==m(2,3) &&
+        this(3,0)==m(3,0) && this(3,1)==m(3,1) && this(3,2)==m(3,2) && this(3,3)==m(3,3)
     }
     case _ => false
   }
