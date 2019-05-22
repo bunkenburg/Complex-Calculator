@@ -19,13 +19,12 @@ package cat.inspiracio.calculator
 
 import java.awt.{Color, Dimension, Font, Graphics, Point, Polygon}
 
-import scala.swing.event.MouseEvent
 import cat.inspiracio.calculator.Direction._
 import cat.inspiracio.complex.{Complex, Re, double2Complex, finite}
 import cat.inspiracio.geometry.{DoubleHelper, Point2}
-import javax.swing.event.MouseInputAdapter
 
 import scala.swing.Component
+import scala.swing.event.{MouseDragged, MousePressed, MouseReleased}
 
 class RefxCanvas private[calculator](calculator: Calculator) extends Component {
   import Point2._
@@ -71,27 +70,23 @@ class RefxCanvas private[calculator](calculator: Calculator) extends Component {
 
   private def init()= {
     background = Color.white
-    /*
-    val mouse = new MouseInputAdapter{
-      //previous mouse position during dragging
+  }
+
       var previous: Point2 = null
 
-      override def mousePressed(e: MouseEvent): Unit = previous = e.point
-      override def mouseReleased(e: MouseEvent): Unit = drag(e)
-      override def mouseDragged(e: MouseEvent): Unit = drag(e)
-
-      private def drag(e: MouseEvent) = {
-        val p = e.point
-        shift(previous - p)
-        repaint()
-        previous = p
-      }
-    }
-     */
-    //addMouseListener(mouse)
-    //addMouseMotionListener(mouse)
-    //doubleBuffered = true
+  private def drag(p: Point) = {
+    shift(previous - p)
+    repaint()
+    previous = p
   }
+
+  listenTo(mouse.clicks)
+  listenTo(mouse.moves)
+  reactions += {
+    case MousePressed(source, point, modifiers, clicks, triggersPopup) => previous = point
+    case MouseReleased(source, point, modifiers, clicks, triggersPopup) => drag(point)
+    case MouseDragged(source, point, modifiers) => drag(point)
+    }
 
   //Methods ------------------------------------------------------
 
@@ -137,10 +132,8 @@ class RefxCanvas private[calculator](calculator: Calculator) extends Component {
     draw(points)
   }
 
-  //override
-  def preferredSize_= = minimumSize
-  //override
-  def minimumSize_= = new Dimension(400, 300)
+  override def preferredSize = minimumSize
+  override def minimumSize = new Dimension(400, 300)
 
   /** Paint with double-buffering.
     *

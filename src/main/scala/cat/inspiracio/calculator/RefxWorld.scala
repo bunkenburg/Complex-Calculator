@@ -17,13 +17,13 @@
  * */
 package cat.inspiracio.calculator
 
-//import java.awt._
-import java.awt.event._
 import java.util.prefs.Preferences
 
 import scala.swing._
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.Point2
+
+import scala.swing.event.WindowClosing
 
 // Referenced classes of package bunkenba.calculator:
 //            Calculator, DoubleBuffer, Drawing
@@ -44,18 +44,15 @@ final class RefxWorld private[calculator](calculator: Calculator) extends Frame(
 
     canvas.resetExtremes()
 
-    val btnZoomIn = button(zoomInIcon, "Zoom in")
-    //btnZoomIn.addActionListener( _ => zoomIn() )
+    val btnZoomIn = button(zoomInIcon, "Zoom in",  zoomIn() )
     toolbar.contents += btnZoomIn
 
-    val btnZoomOut = button(zoomOutIcon, "Zoom out")
-    //btnZoomOut.addActionListener( _ => zoomOut() )
+    val btnZoomOut = button(zoomOutIcon, "Zoom out",  zoomOut() )
     toolbar.contents += btnZoomOut
 
-    val btnReset = button(resetIcon, "Reset")
-    //btnReset.addActionListener( _ => reset() )
+    val btnReset = button(resetIcon, "Reset",  reset() )
     toolbar.contents += btnReset
-    //toolbar.addSeparator()
+    toolbar.peer.addSeparator()
 
     //move button always selected: just there to show user that they can move
     val moveButton = new ToggleButton{ icon = handIcon}
@@ -64,16 +61,12 @@ final class RefxWorld private[calculator](calculator: Calculator) extends Frame(
     moveButton.enabled = false
     toolbar.contents += moveButton
 
-    //add(toolbar, BorderLayout.PAGE_START)
-    //XXX layout(toolbar) = BorderPanel.Position.West
-    //add(canvas, BorderLayout.CENTER)
-    //XXX layout(canvas) = BorderPanel.Position.Center
+    contents = new BorderPanel{
+      layout(toolbar) = BorderPanel.Position.North
+      layout(canvas) = BorderPanel.Position.Center
+    }
 
-    /*
-    addWindowListener(new WindowAdapter() {
-      override def windowClosing(windowevent: WindowEvent): Unit = calculator.quit()
-    })
-     */
+    reactions += { case WindowClosing(source) => calculator.quit() }
 
     pack()
     locate()
@@ -88,8 +81,8 @@ final class RefxWorld private[calculator](calculator: Calculator) extends Frame(
       return ()
 
     //calculator
-    val calculatorDimension: Dimension = calculator.size // 319 x 328
-    val calculatorPosition: Point = calculator.locationOnScreen  // 77 38
+    val calculatorDimension = calculator.size // 319 x 328
+    val calculatorPosition = calculator.locationOnScreen  // 77 38
 
     val p = preferences
     val x = p.getInt("x", calculatorPosition.x + calculatorDimension.width + 10 )
@@ -123,7 +116,6 @@ final class RefxWorld private[calculator](calculator: Calculator) extends Frame(
   }
 
   override def font_=(font: Font): Unit = {
-    super.font = font
     canvas.font = font
   }
 
