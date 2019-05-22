@@ -37,7 +37,7 @@ object Calculator {
 }
 
 final class Calculator() extends MainFrame {
-  visible = true
+  visible = false //after locate()
   title = "Complex Calculator"
   resizable = false
   menuBar = new Menus(this)
@@ -149,7 +149,7 @@ final class Calculator() extends MainFrame {
     }
     pack()  //needed?
     locate()
-    //mode = mode
+    mode = _mode  //trigger windows
     display.requestFocus()
   }
 
@@ -169,7 +169,9 @@ final class Calculator() extends MainFrame {
     paste(text)
 
     val m = p.get("mode", "CALC")
-    mode = Mode.withName(m)
+    _mode = Mode.withName(m)  //direct set
+
+    visible = true
   }
 
   /** Adds a complex number to the display. */
