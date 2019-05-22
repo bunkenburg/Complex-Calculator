@@ -17,7 +17,7 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt.{Dimension, Font, Graphics, Point}
+import java.awt.{Font, Graphics, Point}
 
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.{Matrix44, Point2, Vector3}
@@ -29,7 +29,6 @@ import cat.inspiracio.geometry.{Matrix44, Point2, Vector3}
 /** A world of complex numbers on the Riemann sphere. */
 final class Sphere private[calculator](val world: World) extends WorldRepresentation(world) {
   import MoreGraphics.GraphicsExtended
-  import Point2._
 
   private var markLength = 2
   private var factor: Double = 0
@@ -104,7 +103,7 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     factor = Math.min(width, height) * 0.8
     g.drawCircle(width / 2, height / 2, 0.5 * factor)
     List[Complex](0, ∞, 1, -1, i, -i ).foreach{ draw(g, _) }
-    w.draw(g) //tell the world to draw its stuff (numbers, pictlets, ...)
+    world.draw(g) //tell the world to draw its stuff (numbers, pictlets, ...)
   }
 
   /** Maps a point to a complex number, if the point is on the sphere, else None. */
@@ -129,11 +128,11 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
     repaint()
   }
 
-  override def font_=(font: Font): Unit = {
+  //override def font_=(font: Font): Unit = {
     //super.font = font
     //val fontAscent = getFontMetrics(font).getAscent
     //markLength = fontAscent / 5
-  }
+  //}
 
   /** The R1 matrix as it was at the start of shifting. */
   private var startR1: Matrix44 = _

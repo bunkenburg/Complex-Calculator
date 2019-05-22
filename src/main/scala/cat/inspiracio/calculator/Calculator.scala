@@ -147,12 +147,6 @@ final class Calculator() extends MainFrame {
       case WindowClosing(source) =>
         quit()
     }
-    /*
-    addWindowListener(new WindowAdapter() {
-      override def windowClosing(windowevent: WindowEvent): Unit = quit()
-    })
-     */
-
     pack()  //needed?
     locate()
     //mode = mode
@@ -245,8 +239,6 @@ final class Calculator() extends MainFrame {
     _mode = m
     functionChanged()
 
-    //if(menuBar.isInstanceOf[Menus])
-      menuBar.asInstanceOf[Menus].select(m)
   }
 
   def mode: Mode = _mode

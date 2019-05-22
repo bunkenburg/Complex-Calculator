@@ -18,20 +18,17 @@
 package cat.inspiracio.calculator
 
 import java.awt.{Dimension, Graphics, Point}
-//import java.awt.event._
-import scala.swing.event._
 
-//import javax.swing._
 import scala.swing._
 import cat.inspiracio.calculator.Interaction._
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.Point2
-import javax.swing.event.{MouseInputAdapter, MouseInputListener}
+import Point2._
 
 /** The complex world displays results of calculations
   * and allows graphical input of numbers.
   */
-final class ComplexWorld private[calculator](val c: Calculator) extends World(c) {
+final class ComplexWorld private[calculator](calculator: Calculator) extends World(calculator) {
 
   init()
 
@@ -41,77 +38,25 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
   private def init() {
     title = "Complex numbers"
     gui()
-
-    /*
-    val mouse: MouseInputListener = new MouseInputAdapter() {
-
-      /** start and previous mouse position during moving */
-      var startPoint: Point = null
-      var previousPoint: Point2 = null
-
-      override def mousePressed(e: MouseEvent): Unit = interaction match {
-        case MOVE => {
-          startPoint = e.point
-          previousPoint = e.point
-          canvas.startShift(startPoint)
-        }
-        case DRAW =>
-          canvas.point2Complex(e.point).foreach{ z =>
-            calculator.add(z)
-            add(z)
-          }
-        case _ =>
-      }
-
-      override def mouseDragged(e: MouseEvent): Unit = interaction match {
-        case MOVE =>
-          val p = e.point
-          canvas.shift(startPoint, previousPoint, p)
-          previousPoint = p
-        case _ =>
-      }
-
-      override def mouseReleased(e: MouseEvent): Unit = {
-        interaction match {
-          case MOVE =>
-            val end = e.point
-            canvas.endShift(startPoint, end)
-            startPoint = null
-            previousPoint = null
-          case _ =>
-        }
-      }
-
-    }
-     */
-
-    //plane.addMouseListener(mouse)
-    //plane.addMouseMotionListener(mouse)
-    //sphere.addMouseListener(mouse)
-    //sphere.addMouseMotionListener(mouse)
     pack()
-    applyPreferences()
     visible = true
+    applyPreferences()
   }
 
   private def gui() = {
     import icon._
 
-    val clearButton = button(clearIcon, "Clear")
-    //clearButton.addActionListener( _ => erase() )
+    val clearButton = button(clearIcon, "Clear", { erase() } )
     toolbar.contents += clearButton
-    //toolbar.addSeparator()
+    toolbar.peer.addSeparator()
 
-    val drawButton = toggle(drawIcon, "Draw")
-    //drawButton.addActionListener( _ => interaction = Interaction.DRAW )
-
-    val moveButton = toggle(handIcon, "Move")
-    //moveButton.addActionListener( _ => interaction = Interaction.MOVE )
+    val drawButton = toggle(drawIcon, "Draw", { interaction = Interaction.DRAW } )
+    val moveButton = toggle(handIcon, "Move", { interaction = Interaction.MOVE } )
 
     val group = new ButtonGroup
     group.buttons += drawButton
     group.buttons += moveButton
-    //group.setSelected(drawButton.getModel, true)
+    group.select(drawButton)
     interaction = DRAW
     toolbar.contents += drawButton
     toolbar.contents += moveButton
@@ -129,7 +74,7 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
     val calculatorDimension = calculator.size
     val x = p.getInt("x", calculatorPosition.x + calculatorDimension.width + 10 )
     val y = p.getInt("y", calculatorPosition.y )
-    location = Point2( x, y )
+    location = ( x, y )
 
     val width = p.getInt("width", 560)
     val height = p.getInt("height", 365)
@@ -150,7 +95,10 @@ final class ComplexWorld private[calculator](val c: Calculator) extends World(c)
   }
 
   override private[calculator] def draw(g: Graphics) =
-    numbers.foreach{ canvas.draw(g, _) }
+    if(canvas!=null && numbers!=null)
+      numbers.foreach{
+        canvas.draw(g, _)
+      }
 
   override private[calculator] def erase() = {
     numbers = Nil

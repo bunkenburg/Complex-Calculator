@@ -19,15 +19,18 @@ package cat.inspiracio.calculator
 
 import java.awt.{Color, Dimension, Graphics, Point}
 
+import cat.inspiracio.calculator.Interaction.{DRAW, MOVE}
 import cat.inspiracio.complex._
-import cat.inspiracio.geometry.Piclet
+import cat.inspiracio.geometry.{Piclet, Point2}
+
 import scala.swing._
+import scala.swing.event.{MouseDragged, MousePressed, MouseReleased}
 
 // Referenced classes of package bunkenba.calculator:
 //            DoubleBuffer, World, Drawing
 /** Representation of a world of complex numbers:
   * as Cartesian plane or as Riemann sphere. */
-abstract class WorldRepresentation protected(var w: World) extends Component {
+abstract class WorldRepresentation protected(w: World) extends Component {
   background = Color.white
   //doubleBuffered = true
 
@@ -51,8 +54,7 @@ abstract class WorldRepresentation protected(var w: World) extends Component {
   private[calculator] def shift(start: Point, from: Point, to: Point)
   private[calculator] def endShift(start: Point, end: Point) = {}
 
-  //There is zoom for plane but not for sphere.
-  //zoom causes repaint.
+  //There is zoom for plane but not for sphere. Zoom causes repaint.
   private[calculator] def zoomIn(): Unit = {}
   private[calculator] def zoomOut(): Unit = {}
   private[calculator] def zoom: Double = 0
@@ -68,7 +70,51 @@ abstract class WorldRepresentation protected(var w: World) extends Component {
     case a::b::cs => (a,b) :: pairs(b::cs)
   }
 
-  protected def width() = size.width
-  protected def height() = size.height
+  protected def width = size.width
+  protected def height = size.height
+
+  /** start and previous mouse position during moving */
+  var startPoint: Point = null
+  var previousPoint: Point2 = null
+  val calculator = w.calculator
+
+  listenTo(mouse.clicks)
+  listenTo(mouse.moves)
+  reactions += {
+
+    case MousePressed(source, point, modifiers, clicks, triggersPopup) => w.interaction match {
+      case MOVE => {
+        startPoint = point
+        previousPoint = point
+        startShift(startPoint)
+      }
+      case DRAW =>
+        point2Complex(point).foreach { z =>
+          calculator.add(z)
+          w.add(z)
+        }
+      case _ =>
+        //println("interaction == " + w.interaction)
+    }
+
+    case MouseDragged(source, point, modifiers) => w.interaction match {
+      case MOVE =>
+        val p = point
+        shift(startPoint, previousPoint, p)
+        previousPoint = p
+      case _ =>
+        //println("interaction == " + w.interaction)
+    }
+
+    case MouseReleased(source, point, modifiers, clicks, triggersPopup) => w.interaction match {
+      case MOVE =>
+        val end = point
+        endShift(startPoint, end)
+        startPoint = null
+        previousPoint = null
+      case _ =>
+        //println("interaction == " + w.interaction)
+    }
+  }
 
 }

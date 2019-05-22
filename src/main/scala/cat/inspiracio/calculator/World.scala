@@ -17,9 +17,7 @@
  * */
 package cat.inspiracio.calculator
 
-//import java.awt._
 import java.awt.Graphics
-import java.awt.event._
 import java.lang.Math.{max, min}
 import java.util.prefs.Preferences
 
@@ -29,22 +27,24 @@ import scala.swing._
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.{Piclet, Point2}
 
+import scala.swing.event.WindowClosing
+
 /** A frame that shows complex number on the complex plane or the Riemann sphere. */
 abstract class World protected(val calculator: Calculator) extends Frame {
   import icon._
 
   protected val toolbar: ToolBar = new ToolBar()
 
-  private val planeButton = toggle(planeIcon, "Complex plane")
-  private val sphereButton = toggle(sphereIcon,"Riemann sphere")
-  private val zInButton = button(zoomInIcon, "Zoom in")
-  private val zOutButton = button(zoomOutIcon, "Zoom out")
+  private val planeButton = toggle(planeIcon, "Complex plane", usePlane() )
+  private val sphereButton = toggle(sphereIcon,"Riemann sphere", useSphere() )
+  private val zInButton = button(zoomInIcon, "Zoom in", canvas.zoomIn() )
+  private val zOutButton = button(zoomOutIcon, "Zoom out", canvas.zoomOut() )
 
   /** Menu for Plane or Sphere */
   private val choice = new ButtonGroup()
 
   /** selected interaction */
-  protected var interaction: Interaction = null
+  var interaction: Interaction = null
 
   /** canvas: where I show stuff */
   final protected val plane = new Plane(this)
@@ -57,67 +57,55 @@ abstract class World protected(val calculator: Calculator) extends Frame {
   private[calculator] var MaxReal = 0.0
   private[calculator] var MinReal = 0.0
 
-  init()
+  resetExtremes()
 
-  private def init() = {
-    resetExtremes()
+  //plane/sphere
+  choice.buttons += planeButton
+  choice.buttons += sphereButton
+  toolbar.contents += planeButton
+  toolbar.contents += sphereButton
+  toolbar.peer.addSeparator()
 
-    //plane/sphere
-    //planeButton.addActionListener( _ => usePlane() )
-    //sphereButton.addActionListener( _ => useSphere() )
-    choice.buttons += planeButton
-    choice.buttons += sphereButton
-    toolbar.contents += planeButton
-    toolbar.contents += sphereButton
-    //toolbar.addSeparator()
+  //zoom in / out
+  toolbar.contents += zInButton
+  toolbar.contents += zOutButton
+  toolbar.peer.addSeparator()
 
-    //zoom in / out
-    //zInButton.addActionListener(_ => canvas.zoomIn())
-    //zOutButton.addActionListener(_ => canvas.zoomOut())
-    toolbar.contents += zInButton
-    toolbar.contents += zOutButton
-    //toolbar.addSeparator()
+  val resetButton = button(resetIcon, "Reset", canvas.reset() )
+  toolbar.contents += resetButton
 
-    val resetButton = button(resetIcon, "Reset")
-    //resetButton.addActionListener(_ => canvas.reset() )
-    toolbar.contents += resetButton
+  val panel = new BorderPanel{
+    layout(toolbar) = BorderPanel.Position.North
+    layout(canvas) = BorderPanel.Position.Center
+  }
+  contents = panel
 
-    //layout(toolbar) = BorderPanel.Position.West
-    //layout(canvas) = BorderPanel.Position.Center
-
-    /*
-    addWindowListener(new WindowAdapter() {
-      override def windowClosing(windowevent: WindowEvent): Unit = calculator.quit()
-    })
-     */
+  reactions += { case WindowClosing(source) => calculator.quit() }
 
     pack()
-  }
 
-  protected def useSphere() = {
+  protected def useSphere(): Unit = {
     if(canvas!=sphere) {
-      //remove(plane)
-      //add("Center", sphere)
+      panel.layout(sphere) = BorderPanel.Position.Center
       canvas = sphere
       zInButton.enabled = false
       zOutButton.enabled = false
       validate()
       canvas.repaint()
     }
-    //choice.setSelected(sphereButton.getModel, true)
+    choice.select(sphereButton)
   }
 
-  protected def usePlane() = {
+  protected def usePlane(): Unit = {
     if(canvas!=plane) {
-      //remove(sphere)
-      //layout(plane) = BorderPanel.Position.Center
+      panel.layout(plane) = BorderPanel.Position.Center
       canvas = plane
       zInButton.enabled = true
       zOutButton.enabled = true
       validate()
       canvas.repaint()
     }
-    //choice.setSelected(planeButton.getModel, true)
+    choice.select(planeButton)
   }
 
   private[calculator] def add(c: Complex) = {}
@@ -152,7 +140,6 @@ abstract class World protected(val calculator: Calculator) extends Frame {
   }
 
   override def font_=(font: Font): Unit = {
-    super.font = font
     plane.font = font
     sphere.font = font
   }

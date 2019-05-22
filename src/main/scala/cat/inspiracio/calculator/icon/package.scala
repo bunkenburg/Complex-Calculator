@@ -65,6 +65,17 @@ package object icon {
     }
   }
 
+  def toggle(icon: Icon, tooltip: String, op: => Unit): ToggleButton = {
+    val b = new ToggleButton
+    b.action = Action(null)(op)
+    b.icon = icon
+    b.tooltip = tooltip
+    b.opaque = false
+    b.borderPainted = false
+    //b.contentAreaFilled = false //need for signalling selected
+    b
+  }
+
   def button(icon: Icon, tooltip: String): Button = {
     new Button {
       icon = icon
@@ -73,6 +84,23 @@ package object icon {
       borderPainted = false
       //b.setContentAreaFilled(false) //need for signalling selected
     }
+  }
+
+  def button(icon: Icon, tooltip: String, op: => Unit): Button = {
+    val b = new Button {
+      icon = icon
+      tooltip = tooltip
+      opaque = false
+      borderPainted = false
+      //b.setContentAreaFilled(false) //need for signalling selected
+    }
+    b.action = Action(null)(op)
+    b.icon = icon
+    b.tooltip = tooltip
+    b.opaque = false
+    b.borderPainted = false
+    b.contentAreaFilled = false
+    b
   }
 
 }

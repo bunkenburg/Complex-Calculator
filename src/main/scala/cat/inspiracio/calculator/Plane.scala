@@ -155,8 +155,8 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
       val left = complex2Point(i*crossImg + axisLeftMath )
       val right = complex2Point(i*crossImg + axisRightMath )
       g.drawLine(left, right, Color.lightGray)
-      tip(g, right, EAST, Re(botright) <= w.MaxReal)
-      tip(g, left, WEST, w.MinReal <= Re(topleft))
+      tip(g, right, EAST, Re(botright) <= world.MaxReal)
+      tip(g, left, WEST, world.MinReal <= Re(topleft))
 
       //marks on horizontal axis
       var mark = round(axisLeftMath)
@@ -176,8 +176,8 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
       val top = complex2Point( i*axisTopMath + crossReal )
       g.drawLine(bottom, top, Color.lightGray)
 
-      tip(g, top, NORTH, Im(topleft) <= w.MaxImaginary)
-      tip(g, bottom, SOUTH, w.MinImaginary <= Im(botright))
+      tip(g, top, NORTH, Im(topleft) <= world.MaxImaginary)
+      tip(g, bottom, SOUTH, world.MinImaginary <= Im(botright))
 
       //marks on vertical axis
       var mark = round(axisBottomMath)
@@ -197,7 +197,7 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
 
     horizontal()
     vertical()
-    w.draw(g)
+    world.draw(g)
   }
 
   override private[calculator] def reset() = {
