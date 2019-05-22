@@ -70,13 +70,13 @@ final class Calculator() extends MainFrame {
     contents = new GridBagPanel{
 
       def constraints(x: Int,
-                              y: Int,
-                              gridwidth: Int = 1,
-                              gridheight: Int = 1,
-                              weightx: Double = 1,
-                              weighty: Double = 1,
-                              fill: GridBagPanel.Fill.Value = GridBagPanel.Fill.None
-                             ): Constraints = {
+                      y: Int,
+                      gridwidth: Int = 1,
+                      gridheight: Int = 1,
+                      weightx: Double = 1,
+                      weighty: Double = 1,
+                      fill: GridBagPanel.Fill.Value = GridBagPanel.Fill.Both
+                     ): Constraints = {
         val c = new Constraints
         c.gridx = x
         c.gridy = y
@@ -89,59 +89,54 @@ final class Calculator() extends MainFrame {
       }
 
       //display.addKeyListener(new MyKeyListener(Calculator.this))
-      println(GridBagPanel.Fill.None)//1? None
-      layout(display) = constraints(0, 0, 5, 3)//fill=1
+      layout(display) = constraints(0, 0, 5, 3)
 
-      //listener for a 'normal' button
-      //val paster: ActionListener = e => paste(e.getActionCommand)
-      val paster = null
+      layout(Button("!"){ paste("!") }) = constraints(0, 3)
+      layout(Button("del"){ delete() }) = constraints(3, 3)
+      layout(Button("C"){ clear() }) = constraints(4, 3)
+      layout(Button("sinh"){ paste("sinh") }) = constraints(0, 4)
+      layout(Button("cosh"){ paste("cosh") }) = constraints(1, 4)
+      layout(Button("tanh"){ paste("tanh") }) = constraints(2, 4)
+      layout(Button("conj"){ paste("conj") }) = constraints(3, 4)
+      layout(Button("opp"){ paste("opp") }) = constraints(4, 4)
+      layout(Button("sin"){ paste("sin") }) = constraints(0, 5)
+      layout(Button("cos"){ paste("cos") }) = constraints(1, 5)
+      layout(Button("tan"){ paste("tan") }) = constraints(2, 5)
+      layout(Button("Re"){ paste("Re") }) = constraints(3, 5)
+      layout(Button("Im"){ paste("Im") }) = constraints(4, 5)
+      layout(Button("ln"){ paste("ln") }) = constraints(0, 7)
+      layout(Button("exp"){ paste("exp") }) = constraints(1, 7)
+      layout(Button("^"){ paste("^") }) = constraints(2, 7)
+      layout(Button("mod"){ paste("mod") }) = constraints(3, 7)
+      layout(Button("arg"){ paste("arg") }) = constraints(4, 7)
+      layout(Button("i"){ paste("i") }) = constraints(0, 8)
+      layout(Button("e"){ paste("e") }) = constraints(1, 8)
+      layout(Button("π"){ paste("π") }) = constraints(2, 8)
+      layout(Button("("){ paste("(") }) = constraints(3, 8)
+      layout(Button(")"){ paste("(") }) = constraints(4, 8)
+      layout(Button("7"){ paste("7") }) = constraints(0, 9)
+      layout(Button("8"){ paste("8") }) = constraints(1, 9)
+      layout(Button("9"){ paste("9") }) = constraints(2, 9)
+      layout(Button("*"){ paste("*") }) = constraints(3, 9)
+      layout(Button("/"){ paste("/") }) = constraints(4, 9)
+      layout(Button("4"){ paste("4") }) = constraints(0, 10)
+      layout(Button("5"){ paste("5") }) = constraints(1, 10)
+      layout(Button("6"){ paste("6") }) = constraints(2, 10)
+      layout(Button("+"){ paste("+") }) = constraints(3, 10)
+      layout(Button("-"){ paste("-") }) = constraints(4, 10)
+      layout(Button("1"){ paste("1") }) = constraints(0, 11)
+      layout(Button("2"){ paste("2") }) = constraints(1, 11)
+      layout(Button("3"){ paste("3") }) = constraints(2, 11)
 
-      layout(new Button("!"){ paster }) = constraints(0, 3)
-      layout(new Button("del"){ delete() }) = constraints(3, 3)
-      layout(new Button("C"){ clear() }) = constraints(4, 3)
-      layout(new Button("sinh"){ paster }) = constraints(0, 4)
-      layout(new Button("cosh"){ paster }) = constraints(1, 4)
-      layout(new Button("tanh"){ paster }) = constraints(2, 4)
-      layout(new Button("conj"){ paster }) = constraints(3, 4)
-      layout(new Button("opp"){ paster }) = constraints(4, 4)
-      layout(new Button("sin"){ paster }) = constraints(0, 5)
-      layout(new Button("cos"){ paster }) = constraints(1, 5)
-      layout(new Button("tan"){ paster }) = constraints(2, 5)
-      layout(new Button("Re"){ paster }) = constraints(3, 5)
-      layout(new Button("Im"){ paster }) = constraints(4, 5)
-      layout(new Button("ln"){ paster }) = constraints(0, 7)
-      layout(new Button("exp"){ paster }) = constraints(1, 7)
-      layout(new Button("^"){ paster }) = constraints(2, 7)
-      layout(new Button("mod"){ paster }) = constraints(3, 7)
-      layout(new Button("arg"){ paster }) = constraints(4, 7)
-      layout(new Button("i"){ paster }) = constraints(0, 8)
-      layout(new Button("e"){ paster }) = constraints(1, 8)
-      layout(new Button("π"){ paster }) = constraints(2, 8)
-      layout(new Button("("){ paster }) = constraints(3, 8)
-      layout(new Button(")"){ paster }) = constraints(4, 8)
-      layout(new Button("7"){ paster }) = constraints(0, 9)
-      layout(new Button("8"){ paster }) = constraints(1, 9)
-      layout(new Button("9"){ paster }) = constraints(2, 9)
-      layout(new Button("*"){ paster }) = constraints(3, 9)
-      layout(new Button("/"){ paster }) = constraints(4, 9)
-      layout(new Button("4"){ paster }) = constraints(0, 10)
-      layout(new Button("5"){ paster }) = constraints(1, 10)
-      layout(new Button("6"){ paster }) = constraints(2, 10)
-      layout(new Button("+"){ paster }) = constraints(3, 10)
-      layout(new Button("-"){ paster }) = constraints(4, 10)
-      layout(new Button("1"){ paster }) = constraints(0, 11)
-      layout(new Button("2"){ paster }) = constraints(1, 11)
-      layout(new Button("3"){ paster }) = constraints(2, 11)
-
-      zButton = new Button("z"){ paster }
+      zButton = Button("z"){ paste("z") }
       layout(zButton) = constraints(3, 11)
 
-      equalsButton = new Button("="){ paster }
+      equalsButton = Button("="){ paste("=") }
       layout(equalsButton) = constraints(4, 11, gridheight = 2)
 
-      layout(new Button("0"){ paster }) = constraints(0, 12)
-      layout(new Button("."){ paster }) = constraints(1, 12)
-      layout(new Button("∞"){ paster }) = constraints(2, 12)
+      layout(Button("0"){ paste("0") }) = constraints(0, 12)
+      layout(Button("."){ paste(".") }) = constraints(1, 12)
+      layout(Button("∞"){ paste("∞") }) = constraints(2, 12)
     }
   }
 

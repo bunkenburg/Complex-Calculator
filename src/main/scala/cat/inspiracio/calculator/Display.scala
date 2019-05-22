@@ -29,13 +29,15 @@ import scala.swing.event.KeyTyped
   *
   * This could really be a lot better,
   * taking into account the syntax tree rather than just displaying a String. */
-class Display private[calculator](val fontSize: Int) extends TextArea("", 3, 1) {
+class Display private[calculator](fontSize: Int) extends TextArea("", 3, 1) {
+  wordWrap = true
+  lineWrap = true
 
   //display.addKeyListener(new MyKeyListener(Calculator.this))
   listenTo(keys)
   reactions += {
-    case KeyTyped(sourceComponent, c, modifiers, location) =>
-      println("KeyTyped " + c)
+    case KeyTyped(source, c, modifiers, location) =>
+      println("KeyTyped " + source + " " + c + " " + modifiers + " " + location)
   }
 
   private[calculator] def clear() = text = ""
@@ -43,74 +45,69 @@ class Display private[calculator](val fontSize: Int) extends TextArea("", 3, 1) 
   private[calculator] def eraseOldResult() = {
     val equals = text.lastIndexOf('=')
     if (equals != -1) {
-      val newText = text.substring(0, equals)
-      text = newText
-      val newCaret = min(caret.position, newText.length)
-      caret.position = newCaret
+      text = text.substring(0, equals)
+      caret.position = min(caret.position, text.length)
     }
   }
 
   /** deletes selected text or backspaces */
   private[calculator] def delete() = {
-    /*
     val start = selectionStart
     val end = selectionEnd
-    val caret = caretPosition
-    if (start == end) if (0 < caret) {
-      replaceRange("", caret - 1, caret)
-      select(caret - 1, caret - 1)
-      caretPosition = caret - 1
+    val cp = caret.position
+    if (start == end) {
+      replaceRange("", cp - 1, cp)
+      select(cp - 1, cp - 1)
+      caret.position = cp - 1
     }
     else {
       replaceRange("", start, end)
       selectionEnd = start
-      caretPosition = start
+      caret.position = start
     }
-     */
   }
 
   private[calculator] def paste(c: Char): Unit = paste(String.valueOf(c) )
 
   private[calculator] def paste(s: String): Unit = {
-    /*
     val start = selectionStart
     val end = selectionEnd
-    val caret = caretPosition
-    if (start == end) {
-      insert(s, caret)
-      caretPosition = caret + s.length
-      select(caret + s.length, caret + s.length)
-    }
-    else {
+    if (start == end)
+      insert(s, start)
+    else
       replaceRange(s, start, end)
-      caretPosition = start + s.length
-      select(start + s.length, start + s.length)
-    }
-     */
+    caret.position = start + s.length
+    select(start + s.length, start + s.length)
   }
 
   /** Put s in from of displayed string */
   private[calculator] def prepend(s: String) = {
-    /*
     val start = selectionStart
     val end = selectionEnd
-    val caret = caretPosition
+    val cp = caret.position
     replaceRange(s, 0, 0)
     selectionStart = start + s.length
     selectionEnd = end + s.length
-    caretPosition = caret + s.length
-     */
+    caret.position = cp + s.length
   }
 
   /** Replace one char by another. */
   private[calculator] def replace(c: Char, c1: Char) = {
-    /*
     val start = selectionStart
     val end = selectionEnd
-    val caret = caretPosition
+    val cp = caret.position
     text = text.replace(c, c1)
     select(start, end)
-    caretPosition = caret
-     */
+    caret.position = cp
   }
+
+  //Exposes a couple more methods of JTextArea
+  private def selectionStart: Int = peer.getSelectionStart
+  private def selectionStart_=(i: Int) = peer.setSelectionStart(i)
+  private def selectionEnd: Int = peer.getSelectionEnd
+  private def selectionEnd_=(i: Int) = peer.setSelectionEnd(i)
+  private def insert(str: String, pos: Int) = peer.insert(str, pos)
+  private def select(selectionStart: Int, selectionEnd: Int) = peer.select(selectionStart, selectionEnd)
+  private def replaceRange(str: String, start: Int, end: Int) = peer.replaceRange(str, start, end)
+
 }
