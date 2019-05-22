@@ -362,10 +362,7 @@ final class Matrix44 {
     val a = this
     val m = new Matrix44()
     for(x <- 0 to 3; y <- 0 to 3){
-      var sum = 0.0
-      for(k <- 0 to 3)
-        sum += a(x, k)*b(k,y)
-      m(x,y) = sum
+      m(x,y) = (for(k <- 0 to 3) yield a(x, k)*b(k,y)).sum
     }
     m
   }

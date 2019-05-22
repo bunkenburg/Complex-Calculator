@@ -163,8 +163,8 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
     }
 
   // during moving, start and previous end mouse position
-  var startPoint: Point = null
-  var previousPoint: Point = null
+  private var startPoint: Point = null
+  private var previousPoint: Point = null
 
   override def mousePressed(point: Point) = interaction match {
     case MOVE => {

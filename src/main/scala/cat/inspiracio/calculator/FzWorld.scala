@@ -60,8 +60,8 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
   }
 
       /** start and previous mouse position during dragging */
-      var startPoint: Point = null
-      var previousPoint: Point = null
+      private var startPoint: Point = null
+      private var previousPoint: Point = null
 
       override def mousePressed(point: Point) = {
         startPoint = point

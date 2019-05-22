@@ -52,7 +52,7 @@ class ThreeDCanvas(world: ThreeDWorld) extends Component {
 
   //State ----------------------------------------------------------
 
-  private var fontAscent = 12
+  private val fontAscent = 12
 
   private var xyscale = 0.0
 
@@ -70,7 +70,7 @@ class ThreeDCanvas(world: ThreeDWorld) extends Component {
   //Constructor ---------------------------------------------------
 
   //during dragging, the previous mouse position
-  var previous: Point2 = null
+  private var previous: Point2 = null
 
   private def drag(p: Point) = {
     shift(previous - p)

@@ -32,18 +32,18 @@ class RefxCanvas private[calculator](calculator: Calculator) extends Component {
   import MoreGraphics.GraphicsExtended
 
   /** pixel distance between axis tips and window edge */
-  private var axisPadding = 30
+  private val axisPadding = 30
 
   /** pixels distance between marks on axes */
-  private var markDistance = 40
+  private val markDistance = 40
 
-  private var fontAscent = 10
+  private val fontAscent = 10
 
   /** pixel size of the triangle at the tip of axes */
-  private var triangleSize = 5
+  private val triangleSize = 5
 
   /** pixel length of marks on axes */
-  private var markLength = 2
+  private val markLength = 2
 
   //State ----------------------------------------------------
 
@@ -72,7 +72,7 @@ class RefxCanvas private[calculator](calculator: Calculator) extends Component {
     background = Color.white
   }
 
-      var previous: Point2 = null
+      private var previous: Point2 = null
 
   private def drag(p: Point) = {
     shift(previous - p)
@@ -256,15 +256,6 @@ class RefxCanvas private[calculator](calculator: Calculator) extends Component {
   def reset() = {
     centerX = 0.0
     centerY = 0.0
-  }
-
-  override def font_=(font: Font): Unit = {
-    //super.font = font
-    //fontAscent = getFontMetrics(font).getAscent
-    axisPadding = 3 * fontAscent
-    markDistance = 4 * fontAscent
-    triangleSize = fontAscent / 2
-    markLength = fontAscent / 5
   }
 
   private[calculator] def shift(p: Point) = {

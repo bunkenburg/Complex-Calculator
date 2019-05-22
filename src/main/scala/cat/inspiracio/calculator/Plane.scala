@@ -29,18 +29,18 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
   import MoreGraphics.GraphicsExtended
 
   /** pixel-distance between tips of axes and window edge */
-  private var axisPadding = 30
+  private val axisPadding = 30
 
   /** pixel-distance between marks on the axes */
-  private var markDistance = 40
+  private val markDistance = 40
 
-  private var fontAscent = 10
+  private val fontAscent = 10
 
   /** pixel-size of the arrow triangles at the tips of axes */
-  private var triangleSize = 5
+  private val triangleSize = 5
 
   /** pixel-length of the marks on the axes */
-  private var markLength = 2
+  private val markLength = 2
 
   // state ----------------------------------------------------------------
 
@@ -210,15 +210,6 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
 
   private def real2Pix(d: Double): Int = ((d - Re(topleft)) * factor).toInt
   private def imag2Pix(d: Double): Int = ((Im(topleft) - d) * factor).toInt
-
-  override def font_=(font: Font): Unit = {
-    //super.font = font
-    //fontAscent = getFontMetrics(font).ascent
-    axisPadding = 3 * fontAscent
-    markDistance = 4 * fontAscent
-    triangleSize = fontAscent / 2
-    markLength = fontAscent / 5
-  }
 
   override private[calculator] def shift(start: Point, from: Point, to: Point) = {
     val p: Point = to - from

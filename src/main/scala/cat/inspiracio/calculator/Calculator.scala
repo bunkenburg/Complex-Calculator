@@ -46,8 +46,8 @@ final class Calculator() extends MainFrame {
   private var _mode = CALC
 
   private[calculator] val display: Display = new Display(12)
-  private var equalsButton: Button = null
-  private var zButton: Button = null
+  private val equalsButton: Button = Button("="){ paste("=") }
+  private val zButton: Button = Button("z"){ paste(variable) }
 
   private var variable = 'z'
 
@@ -130,10 +130,8 @@ final class Calculator() extends MainFrame {
       layout(Button("2"){ paste("2") }) = constraints(1, 11)
       layout(Button("3"){ paste("3") }) = constraints(2, 11)
 
-      zButton = Button("z"){ paste(variable) }
       layout(zButton) = constraints(3, 11)
 
-      equalsButton = Button("="){ paste("=") }
       layout(equalsButton) = constraints(4, 11, gridheight = 2)
 
       layout(Button("0"){ paste("0") }) = constraints(0, 12)

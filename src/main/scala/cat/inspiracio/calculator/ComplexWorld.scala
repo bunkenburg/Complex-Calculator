@@ -107,8 +107,8 @@ final class ComplexWorld private[calculator](calculator: Calculator) extends Wor
   }
 
   /** start and previous mouse position during moving */
-  var startPoint: Point = null
-  var previousPoint: Point2 = null
+  private var startPoint: Point = null
+  private var previousPoint: Point2 = null
 
   override def mousePressed(point: Point) = interaction match {
     case MOVE => {
