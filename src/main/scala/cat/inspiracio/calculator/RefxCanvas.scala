@@ -169,7 +169,7 @@ class RefxCanvas private[calculator](calculator: Calculator) extends Component {
       else /*if ( axisBottomMath <= 0 && 0 <= axisTopMath )*/ 0
 
     /** Point where axes cross. Often (0,0). */
-    var cross = xy2Point(crossX, crossY)
+    val cross = xy2Point(crossX, crossY)
 
     def tip(where: Point, direction: Direction)= {
       val triangle = g.mkTriangle(where, direction, triangleSize)

@@ -45,7 +45,7 @@ class LineTest extends FunSuite {
     val a: Complex = 3+i
     val b: Complex = π + 3*π*i
     val line = Line(a, b)
-    val samples: List[Complex] = line.getSamples
+    val samples: List[Complex] = line.samples
     assert( samples.head === a )
     assert( samples.last === b )
     assert( samples.contains(a) )
@@ -56,7 +56,7 @@ class LineTest extends FunSuite {
     val a: Complex = 3+i
     val b: Complex = π + 3*π*i
     val line = Line(a, b)
-    val samples: List[Complex] = line.getSamples
+    val samples: List[Complex] = line.samples
     samples.foreach{ z=> online(line, z) }
   }
 
@@ -71,7 +71,7 @@ class LineTest extends FunSuite {
     //E r: Real. r == (z-a)/v
     val r = (z-a)/v
     //Is r Real?
-    var Cartesian(re,im) = r
+    val Cartesian(re,im) = r
     im==0 && 0<=re && re<=1
   }
 

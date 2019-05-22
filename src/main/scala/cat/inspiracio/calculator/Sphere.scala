@@ -30,7 +30,7 @@ import cat.inspiracio.geometry.{Matrix44, Point2, Vector3}
 final class Sphere private[calculator](val world: World) extends WorldRepresentation(world) {
   import MoreGraphics.GraphicsExtended
 
-  private var markLength = 2
+  private val markLength = 2
   private var factor: Double = 0
 
   //State -------------------------------------------------------

@@ -28,7 +28,7 @@ object Curve {
 
 class Curve(val list: List[Complex]) extends Piclet {
 
-  samples = list
+  _samples = list
 
   //Better: bounding rectangle
   override def top = 0

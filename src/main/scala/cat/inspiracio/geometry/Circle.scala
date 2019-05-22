@@ -56,11 +56,11 @@ class Circle private (val c: Complex, val r: Double) extends Piclet {
   override protected def sample(): Unit = {
     val N = 30
     val d = 2*π / N
-    samples = Nil
+    _samples = Nil
     for ( i <- 0 to N ) {
       val angle = i * d
       val z = Polar(r, angle)
-      samples = c+z :: samples
+      _samples = c+z :: _samples
     }
   }
 

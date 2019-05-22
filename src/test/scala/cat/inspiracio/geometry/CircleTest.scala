@@ -49,7 +49,7 @@ class CircleTest extends FunSuite {
     val b: Complex = π + 3*π*i
     val c = Circle(centre, b)
     val radius = c.radius
-    val samples: List[Complex] = c.getSamples
+    val samples: List[Complex] = c.samples
     samples.foreach{ z =>
 
       val d = abs( c.center - z )

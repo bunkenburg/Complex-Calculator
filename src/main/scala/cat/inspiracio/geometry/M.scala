@@ -28,7 +28,7 @@ import scala.reflect.ClassTag
   * Exists for making initialization and indexing better. */
 class M[T : ClassTag](val n: Int) {
 
-  private var data: Array[Array[T]] = new Array[Array[T]](2*n + 1)
+  private val data: Array[Array[T]] = new Array[Array[T]](2*n + 1)
   for( i <- 0 to 2*n )
     data(i) = new Array[T](2 * n + 1)
 

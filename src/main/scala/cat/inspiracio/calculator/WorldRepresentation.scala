@@ -37,7 +37,7 @@ abstract class WorldRepresentation protected(w: World) extends Component {
 
   private[calculator] def draw(g: Graphics, z: Complex)
   private[calculator] def draw(g: Graphics, zs: List[Complex] )
-  private[calculator] def draw(g: Graphics, p: Piclet): Unit = draw(g, p.getSamples)
+  private[calculator] def draw(g: Graphics, p: Piclet): Unit = draw(g, p.samples)
 
   override def preferredSize: Dimension = minimumSize
 

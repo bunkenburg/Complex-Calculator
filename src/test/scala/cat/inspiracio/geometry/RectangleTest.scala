@@ -60,7 +60,7 @@ class RectangleTest extends FunSuite {
 
     val r = Rectangle(centre, corner)
 
-    val samples: List[Complex] = r.getSamples
+    val samples: List[Complex] = r.samples
     val eps = 0.01
     samples.foreach{ z =>
       val Cartesian(re,im) = z
@@ -94,7 +94,7 @@ class RectangleTest extends FunSuite {
     //E r: Real. r == (z-a)/v
     val r = (z-a)/v
     //Is r Real?
-    var Cartesian(re,im) = r
+    val Cartesian(re,im) = r
     im==0 && 0<=re && re<=1
   }
 

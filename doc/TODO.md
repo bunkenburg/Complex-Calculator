@@ -1,8 +1,8 @@
 # TODO
 
-* add Edit menu: Cut Copy Paste
+x add Edit menu: Cut Copy Paste
 * rewrite parsing using Scala combinator parsing
-* rewrite GUI using scala.swing._
+x rewrite GUI using scala.swing._
 * |f(z)| mode, z word: remove unused disabled icons
 * put into About: date, mvn version, git revision
 x World: save zoom in preferences

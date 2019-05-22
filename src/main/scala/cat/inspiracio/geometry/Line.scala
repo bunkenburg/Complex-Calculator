@@ -38,18 +38,18 @@ class Line(val a: Complex, val b: Complex) extends Piclet {
   override protected def sample(): Unit = {
     val N = 30
 
-    samples = b :: Nil
+    _samples = b :: Nil
 
     //N steps from b to a
     val step = ( a - b) / N
     for ( i <- 0 until N ) {
       val z = b + step * i
-      samples = z :: samples
+      _samples = z :: _samples
     }
 
     //For precision, add a rather than b + 30*step which should be equal to a,
     //but sometimes is not, because of imprecise doubles.
-    samples = a :: samples
+    _samples = a :: _samples
   }
 
   override def toString: String = s"Line( $a, $b )"

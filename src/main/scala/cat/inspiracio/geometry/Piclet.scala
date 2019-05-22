@@ -25,12 +25,12 @@ import cat.inspiracio.complex._
 /** Immutable, even if it has a var inside. */
 abstract class Piclet() {
 
-  protected var samples: List[Complex] = null
+  protected var _samples: List[Complex] = null
   protected def sample(): Unit
 
-  def getSamples: List[Complex] = {
-    if (samples == null) sample()
-    samples
+  def samples: List[Complex] = {
+    if (_samples == null) sample()
+    _samples
   }
 
   def top: Double

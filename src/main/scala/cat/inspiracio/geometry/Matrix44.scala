@@ -141,14 +141,26 @@ object Matrix44 {
              d10: Double, d11: Double, d12: Double, d13: Double,
              d20: Double, d21: Double, d22: Double, d23: Double,
              d30: Double, d31: Double, d32: Double, d33: Double
-           ): Matrix44 = new Matrix44(
-    Array(
-      Array(d00, d01, d02, d03),
-      Array(d10, d11, d12, d13),
-      Array(d20, d21, d22, d23),
-      Array(d30, d31, d32, d33)
-    )
-  )
+           ): Matrix44 = {
+    val m = new Matrix44()
+    m(0,0) = d00
+    m(0,1) = d01
+    m(0,2) = d02
+    m(0,3) = d03
+    m(1,0) = d10
+    m(1,1) = d11
+    m(1,2) = d12
+    m(1,3) = d13
+    m(2,0) = d20
+    m(2,1) = d21
+    m(2,2) = d22
+    m(2,3) = d23
+    m(3,0) = d30
+    m(3,1) = d31
+    m(3,2) = d32
+    m(3,3) = d33
+    m
+  }
 
   def unapply(m: Matrix44): Option[(Double, Double, Double, Double,
     Double, Double, Double, Double,
@@ -298,7 +310,7 @@ object Matrix44 {
 final class Matrix44 {
   import math.{cos,sin}
 
-  private var data = Array(
+  private val data = Array(
     new Array[Double](4),
     new Array[Double](4),
     new Array[Double](4),
@@ -310,14 +322,8 @@ final class Matrix44 {
 
   /** This makes matrices mutable.
     * Therefore it is private to Matrix44.
-    * From the outside, matrices are immutable and inside, we have top be careful. */
+    * From the outside, matrices are immutable and inside, we have to be careful. */
   private def update(x: Int, y: Int, v: Double) = data(x)(y) = v
-
-  /** Keeps the array. If client still changes array, this makes matrices mutable. */
-  private def this(ad: Array[Array[Double]]) {
-    this()
-    data = ad
-  }
 
   /** Since matrices are immutable, a client programmer should never need this. */
   override def clone(): Matrix44 = {

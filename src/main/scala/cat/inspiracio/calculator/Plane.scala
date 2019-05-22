@@ -93,10 +93,10 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
         line(g, topLeft, botLeft)
 
       case c: Curve =>
-        draw(g, c.getSamples)
+        draw(g, c.samples)
 
       case _ => //Curve
-        draw(g, piclet.getSamples)
+        draw(g, piclet.samples)
     }
 
   private def line(g: Graphics, a: Complex, b: Complex) = g.drawLine(complex2Point(a), complex2Point(b))

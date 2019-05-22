@@ -31,11 +31,11 @@ object DoubleHelper {
       require( 0 < d0)
       import scala.math._
 
-      var e = floor(log10(d0))
+      val e = floor(log10(d0))
       val d = d0 / pow(10, e)
       //assert( 1 <= d && d < 10)
 
-      var raised: Double =
+      val raised: Double =
         if ( 5 < d ) 10         // 5 < d < 10
         else if ( 2.5 < d ) 5   // 2.5 < d <= 5
         else if ( 2 < d ) 2.5   // 2 < d <= 2.5

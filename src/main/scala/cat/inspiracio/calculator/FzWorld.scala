@@ -120,7 +120,7 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
   /** Adds a piclet to be mapped. */
   private[calculator] def add(piclet: Piclet) = if (f != null) {
     Complex.resetArg()
-    val samples = piclet.getSamples //sure these are continuous?
+    val samples = piclet.samples //sure these are continuous?
     var zs: List[Complex] = Nil
     samples.foreach{ z =>
         try {
@@ -146,7 +146,7 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
 
       Complex.resetArg()
       zs = Nil
-      val samples = p.getSamples
+      val samples = p.samples
       if ( samples != null ) {
         samples.foreach{ z =>
           try {

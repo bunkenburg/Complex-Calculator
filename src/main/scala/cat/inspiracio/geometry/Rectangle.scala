@@ -42,11 +42,11 @@ class Rectangle private[geometry] (val center: Complex, corner: Complex) extends
   override def right: Double = Re(topRight)
 
   override protected def sample(): Unit = {
-    samples =
-      Line( topLeft, topRight ).getSamples ++
-        Line( topRight, botRight ).getSamples ++
-        Line( botRight, botLeft ).getSamples ++
-        Line( botLeft, topLeft ).getSamples
+    _samples =
+      Line( topLeft, topRight ).samples ++
+        Line( topRight, botRight ).samples ++
+        Line( botRight, botLeft ).samples ++
+        Line( botLeft, topLeft ).samples
   }
 
   override def toString: String = s"Rectangle($center, corner = $corner )"

@@ -173,22 +173,22 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
     //XXX Better multiply divisor by conjugate.
     val d4 = abs(br)
     val d5 = abs(bi)
-    var d6 = .0
-    var d7 = .0
-    var d10 = .0
 
-    if (d4 <= d5) {
+    val (d10, d6, d7) = if (d4 <= d5) {
       val d8 = br / bi
-      d10 = bi * (1.0D + d8 * d8)
-      d6 = ar * d8 + ai
-      d7 = ai * d8 - ar
+      (
+        bi * (1.0D + d8 * d8),
+        ar * d8 + ai,
+        ai * d8 - ar
+      )
     }
-
     else {
       val d9 = bi / br
-      d10 = br * (1.0D + d9 * d9)
-      d6 = ar + ai * d9
-      d7 = ai - ar * d9
+      (
+        br * (1.0D + d9 * d9),
+        ar + ai * d9,
+        ai - ar * d9
+      )
     }
 
     Cartesian(d6 / d10, d7 / d10)
