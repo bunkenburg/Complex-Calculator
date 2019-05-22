@@ -1,5 +1,6 @@
 # TODO
 
+* add Edit menu: Cut Copy Paste
 * rewrite parsing using Scala combinator parsing
 * rewrite GUI using scala.swing._
 * |f(z)| mode, z word: remove unused disabled icons

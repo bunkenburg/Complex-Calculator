@@ -24,6 +24,7 @@ import scala.swing._
 class About(val frame: Frame) extends Dialog(frame) {
   title = "About ..."
   modal = true
+  resizable = false
 
   fill()
   ready()
@@ -33,44 +34,40 @@ class About(val frame: Frame) extends Dialog(frame) {
       val t = text()
       layout(t) = BorderPanel.Position.Center
 
-      val button = new Button("Continue") { dispose() }
+      val button = Button("Continue"){ dispose() }
 
-      //in order to focus on the button automatically. Different?
-      //val root = getRootPane
-      //root.setDefaultButton(button)
+      //in order to focus on the button automatically
+      rootPane.setDefaultButton(button.peer)
 
-      //why this?
-      //val panel = new Panel { contents += button }
-      //layout(panel) = BorderPanel.Position.South
-
-      layout(button) = BorderPanel.Position.South
+      val panel = new FlowPanel(button)
+      layout(panel) = BorderPanel.Position.South
     }
   }
 
   private def text(): Component = {
     val s = "\nComplex Calculator\n" + "6. 1. 2019\n" + "by Alexander Bunkenburg\n" + "http://www.inspiracio.cat\n"
 
-    val textpane = new TextPane {
+    new TextPane {
       text = s
       editable = false
       focusable = false //necessary so that enter and space dismiss dialog
+
+      //align pane
+      //https://stackoverflow.com/questions/3213045/centering-text-in-a-jtextarea-or-jtextpane-horizontal-text-alignment
+      val doc = styledDocument
+      val center = new SimpleAttributeSet
+      StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER)
+      doc.setParagraphAttributes(0, doc.getLength, center, false)
     }
-
-    //align pane
-    //https://stackoverflow.com/questions/3213045/centering-text-in-a-jtextarea-or-jtextpane-horizontal-text-alignment
-    //val doc = textpane.getStyledDocument
-    //val center = new SimpleAttributeSet
-    //StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER)
-    //doc.setParagraphAttributes(0, doc.getLength, center, false)
-
-    textpane
   }
 
   private def ready(): Unit ={
-    resizable = false
     pack()
     setLocationRelativeTo(frame)
     visible = true
   }
+
+  //Some additional methods for Dialog
+  private def rootPane = peer.getRootPane
 
 }

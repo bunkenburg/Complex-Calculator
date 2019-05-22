@@ -23,10 +23,12 @@ import java.util.prefs.Preferences
 import cat.inspiracio.calculator.Mode._
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.Point2
+import cat.inspiracio.geometry.Point2._
 import cat.inspiracio.parsing.Syntax
 import cat.inspiracio.parsing.Syntax.parse
 
 import scala.swing._
+import scala.swing.event.WindowClosing
 
 /** The Calculator application. This is a frame, the main window.
   * Run the Calculator as stand-alone application. */
@@ -38,6 +40,7 @@ final class Calculator() extends MainFrame {
   visible = true
   title = "Complex Calculator"
   resizable = false
+  menuBar = new Menus(this)
 
   /** The mode that the program is in: Calculation, z->fz mapping, z->|fz| mapping, or Re(fz). */
   private var _mode = CALC
@@ -60,7 +63,6 @@ final class Calculator() extends MainFrame {
 
   private def init() = {
     buildButtons()
-    menuBar = new Menus(this)
     pack()
     becomeVisible()
   }
@@ -141,15 +143,19 @@ final class Calculator() extends MainFrame {
   }
 
   private def becomeVisible() = {
+    reactions += {
+      case WindowClosing(source) =>
+        quit()
+    }
     /*
     addWindowListener(new WindowAdapter() {
       override def windowClosing(windowevent: WindowEvent): Unit = quit()
     })
      */
+
     pack()  //needed?
     locate()
-    visible = true
-    mode_=(_mode)
+    //mode = mode
     display.requestFocus()
   }
 
@@ -163,14 +169,13 @@ final class Calculator() extends MainFrame {
     val p = preferences
     val x: Int = p.getInt("x", 67 + 10 )
     val y: Int = p.getInt("y", 28 + 10 )
-    //setLocation( x , y )
-    location = Point2(x,y)
+    location = (x, y)
 
     val text = p.get("text", "")
     paste(text)
 
     val m = p.get("mode", "CALC")
-    _mode = Mode.withName(m)
+    mode = Mode.withName(m)
   }
 
   /** Adds a complex number to the display. */
@@ -191,8 +196,7 @@ final class Calculator() extends MainFrame {
       display.append(c.toString)
       cW.add(c)
     } catch {
-      case e: Exception =>
-        e.printStackTrace()
+      case e: Exception => e.printStackTrace()
     }
   }
 
@@ -201,7 +205,7 @@ final class Calculator() extends MainFrame {
     val text = Syntax.stripBlanks(display.text)
     if (text.startsWith("f(" + variable + ")=")) {
       f = parse(text.substring(5))
-      _mode match {
+      mode match {
         case MODFZ => modfzW.functionChanged()
         case REFX => refxW.functionChanged()
         case FZ => fzW.functionChanged()
@@ -231,7 +235,6 @@ final class Calculator() extends MainFrame {
   }
 
   /** Sets the mode, opening and closing windows. */
-  //private[calculator]
   def mode_=(m: Mode): Unit = {
     m match {
       case CALC => calc()
@@ -242,9 +245,8 @@ final class Calculator() extends MainFrame {
     _mode = m
     functionChanged()
 
-    //Exception in thread "main" java.lang.ClassCastException: scala.swing.MenuBar$NoMenuBar$ cannot be cast to cat.inspiracio.calculator.Menus
-    if(menuBar.isInstanceOf[Menus])
-      menuBar.asInstanceOf[Menus].select(_mode)
+    //if(menuBar.isInstanceOf[Menus])
+      menuBar.asInstanceOf[Menus].select(m)
   }
 
   def mode: Mode = _mode
@@ -284,7 +286,8 @@ final class Calculator() extends MainFrame {
   private def modfz() = {
     Complex.setArgContinuous()
     variable = 'z'
-    if (_mode == REFX) display.replace('x', 'z')
+    if (_mode == REFX)
+      display.replace('x', 'z')
     else if (_mode == CALC) {
       display.clear()
       display.prepend("f(z) = ")
@@ -303,11 +306,12 @@ final class Calculator() extends MainFrame {
   private def refx() = {
     Complex.setArgContinuous()
     variable = 'x'
-    if (_mode == CALC) {
+    if (mode == CALC) {
       display.clear()
       display.prepend("f(x) = ")
     }
-    else display.replace('z', 'x')
+    else
+      display.replace('z', 'x')
     equalsButton.enabled = false
     zButton.enabled = true
     zButton.text = "x"
@@ -366,7 +370,7 @@ final class Calculator() extends MainFrame {
   /** Event listener for CLEAR button. */
   private def clear(): Unit = {
     display.clear()
-    if (_mode != CALC)
+    if (mode != CALC)
       display.prepend("f(" + variable + ") = ")
     display.requestFocus()
   }
@@ -379,10 +383,10 @@ final class Calculator() extends MainFrame {
     * Called from button listeners. */
   private[calculator] def paste(s: String): Unit = {
 
-    if ( _mode == CALC )
+    if ( mode == CALC )
       display.eraseOldResult()
 
-    if (s == "=" && _mode == CALC )
+    if (s == "=" && mode == CALC )
       doEquals()
     else
       display.paste(s)
