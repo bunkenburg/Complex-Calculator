@@ -28,6 +28,7 @@ import scala.swing.event.Key
 
 /** A menu bar for the Calculator. */
 final class Menus private[calculator](calculator: Calculator) extends MenuBar {
+  private val mask = Toolkit.getDefaultToolkit.getMenuShortcutKeyMask
 
     val meFile = new Menu("File"){ mnemonic = Key.F }
 
@@ -35,13 +36,52 @@ final class Menus private[calculator](calculator: Calculator) extends MenuBar {
     meFile.contents += new MenuItem(acAbout)
 
     val acQuit = Action("Quit"){ calculator.quit() }
-    acQuit.mnemonic = java.awt.event.KeyEvent.VK_Q
-    val mask = Toolkit.getDefaultToolkit.getMenuShortcutKeyMask
+    acQuit.mnemonic = KeyEvent.VK_Q
     val CtrlQ = KeyStroke.getKeyStroke(KeyEvent.VK_Q, mask)
     acQuit.accelerator = Option(CtrlQ)
     meFile.contents += new MenuItem(acQuit)
 
     contents += meFile
+
+  val meEdit = new Menu("Edit"){ mnemonic = Key.E }
+
+  //Cut
+  val acCut = Action("Cut"){
+    calculator.display.cut()
+  }
+  acCut.mnemonic = KeyEvent.VK_X
+  val CtrlX = KeyStroke.getKeyStroke(KeyEvent.VK_X, mask)
+  acCut.accelerator = Option(CtrlX)
+  meEdit.contents += new MenuItem(acCut)
+
+  //Copy
+  val acCopy = Action("Copy"){
+    calculator.display.copy()
+  }
+  acCopy.mnemonic = KeyEvent.VK_C
+  val CtrlC = KeyStroke.getKeyStroke(KeyEvent.VK_C, mask)
+  acCopy.accelerator = Option(CtrlC)
+  meEdit.contents += new MenuItem(acCopy)
+
+  //Paste
+  val acPaste = Action("Paste"){
+    calculator.display.paste()
+  }
+  acPaste.mnemonic = KeyEvent.VK_V
+  val CtrlV = KeyStroke.getKeyStroke(KeyEvent.VK_V, mask)
+  acPaste.accelerator = Option(CtrlV)
+  meEdit.contents += new MenuItem(acPaste)
+
+  //Select all
+  val acAll = Action("Select all"){
+    calculator.display.selectAll()
+  }
+  acAll.mnemonic = KeyEvent.VK_A
+  val CtrlA = KeyStroke.getKeyStroke(KeyEvent.VK_A, mask)
+  acAll.accelerator = Option(CtrlA)
+  meEdit.contents += new MenuItem(acAll)
+
+  contents += meEdit
 
     val meMode = new Menu("Mode")
 
