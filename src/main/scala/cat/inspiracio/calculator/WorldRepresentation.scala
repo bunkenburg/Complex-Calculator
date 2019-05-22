@@ -73,48 +73,12 @@ abstract class WorldRepresentation protected(w: World) extends Component {
   protected def width = size.width
   protected def height = size.height
 
-  /** start and previous mouse position during moving */
-  var startPoint: Point = null
-  var previousPoint: Point2 = null
-  val calculator = w.calculator
-
   listenTo(mouse.clicks)
   listenTo(mouse.moves)
   reactions += {
-
-    case MousePressed(source, point, modifiers, clicks, triggersPopup) => w.interaction match {
-      case MOVE => {
-        startPoint = point
-        previousPoint = point
-        startShift(startPoint)
-      }
-      case DRAW =>
-        point2Complex(point).foreach { z =>
-          calculator.add(z)
-          w.add(z)
-        }
-      case _ =>
-        //println("interaction == " + w.interaction)
-    }
-
-    case MouseDragged(source, point, modifiers) => w.interaction match {
-      case MOVE =>
-        val p = point
-        shift(startPoint, previousPoint, p)
-        previousPoint = p
-      case _ =>
-        //println("interaction == " + w.interaction)
-    }
-
-    case MouseReleased(source, point, modifiers, clicks, triggersPopup) => w.interaction match {
-      case MOVE =>
-        val end = point
-        endShift(startPoint, end)
-        startPoint = null
-        previousPoint = null
-      case _ =>
-        //println("interaction == " + w.interaction)
-    }
+    case MousePressed(source, point, modifiers, clicks, triggersPopup) => w.mousePressed(point)
+    case MouseDragged(source, point, modifiers) => w.mouseDragged(point)
+    case MouseReleased(source, point, modifiers, clicks, triggersPopup) => w.mouseReleased(point)
   }
 
 }

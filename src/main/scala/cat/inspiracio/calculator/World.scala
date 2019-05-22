@@ -17,11 +17,11 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt.Graphics
+import java.awt.{Graphics, Point}
 import java.lang.Math.{max, min}
 import java.util.prefs.Preferences
 
-import cat.inspiracio.calculator.Interaction.Interaction
+import cat.inspiracio.calculator.Interaction.{DRAW, Interaction, MOVE}
 
 import scala.swing._
 import cat.inspiracio.complex._
@@ -33,17 +33,15 @@ import scala.swing.event.WindowClosing
 abstract class World protected(val calculator: Calculator) extends Frame {
   import icon._
 
-  protected val toolbar: ToolBar = new ToolBar()
+  protected val toolbar: ToolBar = new ToolBar
 
   private val planeButton = toggle(planeIcon, "Complex plane", usePlane() )
   private val sphereButton = toggle(sphereIcon,"Riemann sphere", useSphere() )
   private val zInButton = button(zoomInIcon, "Zoom in", canvas.zoomIn() )
   private val zOutButton = button(zoomOutIcon, "Zoom out", canvas.zoomOut() )
 
-  /** Menu for Plane or Sphere */
-  private val choice = new ButtonGroup()
+  private val choice = new ButtonGroup(planeButton,sphereButton)
 
-  /** selected interaction */
   var interaction: Interaction = null
 
   /** canvas: where I show stuff */
@@ -59,14 +57,10 @@ abstract class World protected(val calculator: Calculator) extends Frame {
 
   resetExtremes()
 
-  //plane/sphere
-  choice.buttons += planeButton
-  choice.buttons += sphereButton
   toolbar.contents += planeButton
   toolbar.contents += sphereButton
   toolbar.peer.addSeparator()
 
-  //zoom in / out
   toolbar.contents += zInButton
   toolbar.contents += zOutButton
   toolbar.peer.addSeparator()
@@ -82,7 +76,7 @@ abstract class World protected(val calculator: Calculator) extends Frame {
 
   reactions += { case WindowClosing(source) => calculator.quit() }
 
-    pack()
+  pack()
 
   protected def useSphere(): Unit = {
     if(canvas!=sphere) {
@@ -121,8 +115,6 @@ abstract class World protected(val calculator: Calculator) extends Frame {
     MinImaginary = Double.PositiveInfinity
     MaxImaginary = Double.NegativeInfinity
   }
-
-  //override def update(g: Graphics): Unit = paint(g)
 
   protected def updateExtremes(c: Complex): Unit =
     if (finite(c)) {
@@ -169,4 +161,12 @@ abstract class World protected(val calculator: Calculator) extends Frame {
     super.dispose()
   }
 
+  def mousePressed(point: Point)
+  def mouseDragged(point: Point)
+  def mouseReleased(point: Point)
+
+  def size_= (p: (Int,Int)): Unit = {
+    val (width, height) = p
+    size = new Dimension(width, height)
+  }
 }

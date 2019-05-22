@@ -46,10 +46,9 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
 
   private def init() = {
     import icon._
-
     title = "f(z)"
 
-    //toolbar.addSeparator()
+    toolbar.peer.addSeparator()
 
     //move button always selected: just there to show user that they can move
     val moveButton = toggle(handIcon, "Move")
@@ -58,55 +57,43 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
     toolbar.contents += moveButton
 
     interaction = MOVE
-
-    /*
-    val mouse: MouseInputListener = new MouseInputAdapter() {
-
-      /** start and previous mouse position during dragging */
-      var startPoint: Point = null
-      var previousPoint: Point = null
-
-      override def mousePressed(e: MouseEvent): Unit = {
-        startPoint = e.point
-        previousPoint = e.point
-        canvas.startShift(startPoint)
-      }
-
-      override def mouseDragged(e: MouseEvent): Unit = {
-        val p = e.point
-        canvas.shift(startPoint, previousPoint, p)
-        previousPoint = e.point
-      }
-
-      override def mouseReleased(e: MouseEvent): Unit = {
-        val endPoint = e.point
-        canvas.endShift(startPoint, endPoint)
-      }
-
-    }
-     */
-    //plane.addMouseListener(mouse)
-    //plane.addMouseMotionListener(mouse)
-    //sphere.addMouseListener(mouse)
-    //sphere.addMouseMotionListener(mouse)
     pack()
     applyPreferences()
     visible = true
   }
 
+      /** start and previous mouse position during dragging */
+      var startPoint: Point = null
+      var previousPoint: Point = null
+
+      override def mousePressed(point: Point) = {
+        startPoint = point
+        previousPoint = point
+        canvas.startShift(startPoint)
+      }
+
+      override def mouseDragged(point: Point) = {
+        canvas.shift(startPoint, previousPoint, point)
+        previousPoint = point
+      }
+
+      override def mouseReleased(point: Point) = {
+        canvas.endShift(startPoint, point)
+      }
+
   private def applyPreferences() = {
     val p = preferences
 
     // to the right of z-world
-    val zWorldDimension: Dimension = zW.size //550 372
-    val zWorldPosition: Point = zW.locationOnScreen  //77 414
+    val zWorldDimension = zW.size //550 372
+    val zWorldPosition = zW.locationOnScreen  //77 414
     val x = p.getInt("x", zWorldPosition.x + zWorldDimension.width + 10 )
     val y = p.getInt("y", zWorldPosition.y )
     location = Point2( x, y )
 
     val width = p.getInt("width", 560)
     val height = p.getInt("height", 365)
-    size = new Dimension(width,height)
+    size = (width, height)
 
     val c = p.get("canvas", "plane")
     c match {
@@ -191,7 +178,7 @@ final class FzWorld private[calculator](override val calculator: Calculator) ext
   /** Event listener: function has changed. */
   private[calculator] def functionChanged() = {
     erase()
-    add(zW.getPiclets)
+    add(zW.piclets)
   }
 
   private[calculator] def stopDynamicMap() = {

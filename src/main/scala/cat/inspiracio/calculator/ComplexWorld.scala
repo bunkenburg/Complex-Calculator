@@ -105,4 +105,43 @@ final class ComplexWorld private[calculator](calculator: Calculator) extends Wor
     resetExtremes()
     canvas.repaint()
   }
+
+  /** start and previous mouse position during moving */
+  var startPoint: Point = null
+  var previousPoint: Point2 = null
+
+  override def mousePressed(point: Point) = interaction match {
+    case MOVE => {
+      startPoint = point
+      previousPoint = point
+      canvas.startShift(startPoint)
+    }
+    case DRAW =>
+      canvas.point2Complex(point).foreach { z =>
+        calculator.add(z)
+        add(z)
+      }
+    case _ =>
+      println("interaction == " + interaction)
+  }
+
+  override def mouseDragged(point: Point) = interaction match {
+    case MOVE =>
+      val p = point
+      canvas.shift(startPoint, previousPoint, p)
+      previousPoint = p
+    case _ =>
+      println("interaction == " + interaction)
+  }
+
+  override def mouseReleased(point: Point) = interaction match {
+    case MOVE =>
+      val end = point
+      canvas.endShift(startPoint, end)
+      startPoint = null
+      previousPoint = null
+    case _ =>
+      println("interaction == " + interaction)
+  }
+
 }

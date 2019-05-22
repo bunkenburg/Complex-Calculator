@@ -18,32 +18,30 @@
 package cat.inspiracio.calculator
 
 import java.awt.{Dimension, Graphics, Point}
-import java.awt.event._
 
 import scala.swing._
 import cat.inspiracio.calculator.Interaction._
 import cat.inspiracio.calculator.Mode.{FZ, MODFZ, Mode}
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry._
-//import scala.swing.event.MouseInputAdapter
 
 /** The z-World is where the user gives input for function f. */
 final class ZWorld private[calculator](override val calculator: Calculator) extends World(calculator) {
-  import calculator.{fzW, modfzW}
+  import calculator.{fzW,modfzW}
   import icon._
 
   //State ------------------------------------------------
 
-  private val clearButton = button(clearIcon, "Clear")
+  private val clearButton = button(clearIcon, "Clear", erase() )
 
-  private val interactionChoice = new ButtonGroup()
-  private val moveButton = toggle(handIcon, "Move")
-  private val drawButton = toggle(drawIcon, "Draw")
-  private val lineButton = toggle(lineIcon, "Line")
-  private val circleButton = toggle(circleIcon, "Circle")
-  private val rectangleButton = toggle(rectangleIcon, "Rectangle")
-  private val squareButton = toggle(squareIcon, "Square")
-  private val gridButton = toggle(gridIcon, "Plane")
+  private val moveButton = toggle(handIcon, "Move", { interaction = Interaction.MOVE } )
+  private val drawButton = toggle(drawIcon, "Draw", { interaction = Interaction.DRAW })
+  private val lineButton = toggle(lineIcon, "Line", { interaction = Interaction.LINE })
+  private val circleButton = toggle(circleIcon, "Circle", { interaction = Interaction.CIRCLE })
+  private val rectangleButton = toggle(rectangleIcon, "Rectangle", { interaction = Interaction.RECTANGLE })
+  private val squareButton = toggle(squareIcon, "Square", { interaction = Interaction.SQUARE })
+  private val gridButton = toggle(gridIcon, "Plane", { interaction = Interaction.GRID })
+  private val interactionChoice = new ButtonGroup(moveButton, drawButton, lineButton, circleButton, rectangleButton, squareButton, gridButton)
 
   private var _mode: Mode = null
 
@@ -55,7 +53,8 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
   /** During dragging, the current provisional piclet. */
   private var currentPiclet: Piclet = null
 
-  private var piclets: List[Piclet] = Nil
+  private var _piclets: List[Piclet] = Nil
+  def piclets: List[Piclet] = _piclets
 
   /** The square that is used in z -> |f(z)| */
   private[calculator] var square = Square(0, 1+i)
@@ -65,224 +64,193 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
   // method ----------------------------------------------
 
   private def init()= {
-
     title = "z"
 
-    //clearButton.addActionListener( _ => erase() )
     toolbar.contents += clearButton
-    //toolbar.addSeparator()
+    toolbar.peer.addSeparator()
 
     interaction = DRAW
 
-    //moveButton.addActionListener( _ => interaction = Interaction.MOVE )
-    interactionChoice.buttons += moveButton
     toolbar.contents += moveButton
-
-    //drawButton.addActionListener( _ => interaction = Interaction.DRAW )
-    interactionChoice.buttons += drawButton
     toolbar.contents += drawButton
-
-    //lineButton.addActionListener( _ => interaction = Interaction.LINE )
-    interactionChoice.buttons += lineButton
     toolbar.contents += lineButton
-
-    //circleButton.addActionListener( _ => interaction = Interaction.CIRCLE )
-    interactionChoice.buttons += circleButton
     toolbar.contents += circleButton
-
-    //rectangleButton.addActionListener( _ => interaction = Interaction.RECTANGLE )
-    interactionChoice.buttons += rectangleButton
     toolbar.contents += rectangleButton
-
-    //squareButton.addActionListener( _ => interaction = Interaction.SQUARE )
-    interactionChoice.buttons += squareButton
     toolbar.contents += squareButton
-
-    //gridButton.addActionListener( _ => interaction = Interaction.GRID )
-    interactionChoice.buttons += gridButton
     toolbar.contents += gridButton
-
-    /*
-    val mouse = new MouseInputAdapter() {
-
-      //during dragging, starting and ending complex number
-      var startComplex: Complex = null
-      var endComplex: Complex = null
-
-      // start dynamic mapping of a piclet
-      private def startCurrent(p: Point) = {
-        canvas.point2Complex(p).foreach{ z =>
-          startComplex = z
-          endComplex = z
-          val current = interaction match {
-            case GRID => Rectangle(startComplex, endComplex)
-            case LINE => Line(startComplex, endComplex)
-            case CIRCLE => Circle(startComplex, endComplex)
-            case RECTANGLE => Rectangle(startComplex, endComplex)
-            case SQUARE => Square(startComplex, endComplex)
-            case _ => throw new RuntimeException(interaction.toString)
-          }
-          if (_mode == FZ)
-            addCurrent(current)
-          else if (_mode == MODFZ && interaction==SQUARE) {
-            square = current.asInstanceOf[Square]
-            modfzW.change()
-          }
-          canvas.repaint()
-        }
-      }
-
-      // continue dynamic mapping of a piclet
-      private def continueCurrent(p: Point) = {
-        canvas.point2Complex(p).foreach{ z =>
-          endComplex = z
-          val current = interaction match {
-            case GRID => Rectangle(startComplex, endComplex)
-            case LINE => Line(startComplex, endComplex)
-            case CIRCLE => Circle(startComplex, endComplex)
-            case RECTANGLE => Rectangle(startComplex, endComplex)
-            case SQUARE => Square(startComplex, endComplex)
-            case _ => throw new RuntimeException(interaction.toString)
-          }
-          if (_mode == FZ)
-            addCurrent(current)
-          else if (_mode == MODFZ && interaction==SQUARE) {
-            square = current.asInstanceOf[Square]
-            modfzW.change()
-          }
-          canvas.repaint()
-        }
-      }
-
-      // finish dynamic mapping of a piclet
-      private def finishCurrent(p: Point) =
-        if (startComplex != null) {
-          canvas.point2Complex(p).foreach{ z =>
-            endComplex = z
-            val current = interaction match {
-              case GRID => Rectangle(startComplex, endComplex)
-              case LINE => Line(startComplex, endComplex)
-              case CIRCLE => Circle(startComplex, endComplex)
-              case RECTANGLE => Rectangle(startComplex, endComplex)
-              case SQUARE => Square(startComplex, endComplex)
-              case _ => throw new RuntimeException(interaction.toString)
-            }
-            if (_mode == FZ) {
-              if (interaction == GRID)
-                addGrid(current.asInstanceOf[Rectangle])
-              else
-                add(current)
-            }
-            else if (_mode == MODFZ && interaction==SQUARE) {
-              square = current.asInstanceOf[Square]
-              modfzW.change()
-            }
-            eraseCurrent()
-            canvas.repaint()
-          }
-        }
-
-      // during moving, start and previous end mouse position
-      var startPoint: Point = null
-      var previousPoint: Point = null
-
-      override def mousePressed(e: MouseEvent): Unit = interaction match {
-        case MOVE => {
-          startPoint = e.getPoint
-          previousPoint = e.getPoint
-          canvas.startShift(startPoint)
-        }
-
-        case DRAW => {
-          canvas.point2Complex(e.getPoint).foreach{ z =>
-            Complex.resetArg()
-            addNumberToCurve(z)
-            canvas.repaint()
-          }
-        }
-
-        case GRID => startCurrent(e.getPoint)
-        case LINE => startCurrent(e.getPoint)
-        case CIRCLE => startCurrent(e.getPoint)
-        case RECTANGLE => startCurrent(e.getPoint)
-        case SQUARE => startCurrent(e.getPoint)
-      }
-
-      override def mouseDragged(e: MouseEvent): Unit = interaction match {
-        case MOVE => {
-          val p = e.getPoint
-          canvas.shift(startPoint, previousPoint, p)
-          previousPoint = p
-        }
-
-        case DRAW => {
-          val maybe = canvas.point2Complex(e.getPoint)
-          if (zs != null) {
-            maybe match {
-              case Some(z) =>
-                addNumberToCurve(z)
-              case None => {
-                piclets = Curve(zs) :: piclets
-                zs = null
-                fzW.stopDynamicMap()
-              }
-            }
-          }
-          else if (maybe.isDefined) {
-            val Some(z) = maybe
-            Complex.resetArg()
-            addNumberToCurve(z)
-          }
-          canvas.repaint()
-        }
-
-        case CIRCLE => continueCurrent(e.getPoint)
-        case GRID => continueCurrent(e.getPoint)
-        case LINE => continueCurrent(e.getPoint)
-        case RECTANGLE => continueCurrent(e.getPoint)
-        case SQUARE => continueCurrent(e.getPoint)
-      }
-
-      override def mouseReleased(e: MouseEvent): Unit = interaction match {
-        case MOVE => {
-          val endPoint = e.getPoint
-          canvas.endShift(startPoint, endPoint)
-          startPoint = null
-          previousPoint = null
-        }
-
-        case DRAW => {
-          if (zs != null) {
-            canvas.point2Complex(e.getPoint).foreach { z =>
-              addNumberToCurve(z)
-            }
-            piclets = Curve(zs) :: piclets
-            zs = null   //mouse released => finish free line
-            canvas.repaint()
-            fzW.stopDynamicMap()
-          }
-        }
-
-        case LINE => finishCurrent(e.getPoint)
-        case CIRCLE => finishCurrent(e.getPoint)
-        case RECTANGLE => finishCurrent(e.getPoint)
-        case SQUARE => finishCurrent(e.getPoint)
-        case GRID => finishCurrent(e.getPoint)
-      }
-
-    }//MouseInputAdapter
-    */
-
-    //plane.addMouseListener(mouse)
-    //plane.addMouseMotionListener(mouse)
-    //sphere.addMouseListener(mouse)
-    //sphere.addMouseMotionListener(mouse)
 
     pack()
     preferred()
     visible = true
 
   }//init
+
+  //during dragging, starting and ending complex number
+  private var startComplex: Complex = null
+  private var endComplex: Complex = null
+
+    // start dynamic mapping of a piclet
+    private def startCurrent(p: Point) = {
+      canvas.point2Complex(p).foreach{ z =>
+        startComplex = z
+        endComplex = z
+        val current = interaction match {
+          case GRID => Rectangle(startComplex, endComplex)
+          case LINE => Line(startComplex, endComplex)
+          case CIRCLE => Circle(startComplex, endComplex)
+          case RECTANGLE => Rectangle(startComplex, endComplex)
+          case SQUARE => Square(startComplex, endComplex)
+          case _ => throw new RuntimeException(interaction.toString)
+        }
+        if (_mode == FZ)
+          addCurrent(current)
+        else if (_mode == MODFZ && interaction==SQUARE) {
+          square = current.asInstanceOf[Square]
+          modfzW.change()
+        }
+        canvas.repaint()
+      }
+    }
+
+  // continue dynamic mapping of a piclet
+  private def continueCurrent(p: Point) = {
+    canvas.point2Complex(p).foreach{ z =>
+      endComplex = z
+      val current = interaction match {
+        case GRID => Rectangle(startComplex, endComplex)
+        case LINE => Line(startComplex, endComplex)
+        case CIRCLE => Circle(startComplex, endComplex)
+        case RECTANGLE => Rectangle(startComplex, endComplex)
+        case SQUARE => Square(startComplex, endComplex)
+        case _ => throw new RuntimeException(interaction.toString)
+      }
+      if (_mode == FZ)
+        addCurrent(current)
+      else if (_mode == MODFZ && interaction==SQUARE) {
+        square = current.asInstanceOf[Square]
+        modfzW.change()
+      }
+      canvas.repaint()
+    }
+  }
+
+  // finish dynamic mapping of a piclet
+  private def finishCurrent(p: Point) =
+    if (startComplex != null) {
+      canvas.point2Complex(p).foreach{ z =>
+        endComplex = z
+        val current = interaction match {
+          case GRID => Rectangle(startComplex, endComplex)
+          case LINE => Line(startComplex, endComplex)
+          case CIRCLE => Circle(startComplex, endComplex)
+          case RECTANGLE => Rectangle(startComplex, endComplex)
+          case SQUARE => Square(startComplex, endComplex)
+          case _ => throw new RuntimeException(interaction.toString)
+        }
+        if (_mode == FZ) {
+          if (interaction == GRID)
+            addGrid(current.asInstanceOf[cat.inspiracio.geometry.Rectangle])
+          else
+            add(current)
+        }
+        else if (_mode == MODFZ && interaction==SQUARE) {
+          square = current.asInstanceOf[Square]
+          modfzW.change()
+        }
+        eraseCurrent()
+        canvas.repaint()
+      }
+    }
+
+  // during moving, start and previous end mouse position
+  var startPoint: Point = null
+  var previousPoint: Point = null
+
+  override def mousePressed(point: Point) = interaction match {
+    case MOVE => {
+      startPoint = point
+      previousPoint = point
+      canvas.startShift(startPoint)
+    }
+
+    case DRAW => {
+      canvas.point2Complex(point).foreach{ z =>
+        Complex.resetArg()
+        addNumberToCurve(z)
+        canvas.repaint()
+      }
+    }
+
+    case GRID => startCurrent(point)
+    case LINE => startCurrent(point)
+    case CIRCLE => startCurrent(point)
+    case RECTANGLE => startCurrent(point)
+    case SQUARE => startCurrent(point)
+  }
+
+  override def mouseDragged(point: Point) = interaction match {
+    case MOVE => {
+      val p = point
+      canvas.shift(startPoint, previousPoint, p)
+      previousPoint = p
+    }
+
+    case DRAW => {
+      val maybe = canvas.point2Complex(point)
+      if (zs != null) {
+        maybe match {
+          case Some(z) =>
+            addNumberToCurve(z)
+          case None => {
+            _piclets = Curve(zs) :: _piclets
+            zs = null
+            fzW.stopDynamicMap()
+          }
+        }
+      }
+      else if (maybe.isDefined) {
+        val Some(z) = maybe
+        Complex.resetArg()
+        addNumberToCurve(z)
+      }
+      canvas.repaint()
+    }
+
+    case CIRCLE => continueCurrent(point)
+    case GRID => continueCurrent(point)
+    case LINE => continueCurrent(point)
+    case RECTANGLE => continueCurrent(point)
+    case SQUARE => continueCurrent(point)
+  }
+
+  override def mouseReleased(point: Point) = interaction match {
+    case MOVE => {
+      val endPoint = point
+      canvas.endShift(startPoint, endPoint)
+      startPoint = null
+      previousPoint = null
+    }
+
+    case DRAW => {
+      if (zs != null) {
+        canvas.point2Complex(point).foreach { z =>
+          addNumberToCurve(z)
+        }
+        _piclets = Curve(zs) :: _piclets
+        zs = null   //mouse released => finish free line
+        canvas.repaint()
+        fzW.stopDynamicMap()
+      }
+    }
+
+    case LINE => finishCurrent(point)
+    case CIRCLE => finishCurrent(point)
+    case RECTANGLE => finishCurrent(point)
+    case SQUARE => finishCurrent(point)
+    case GRID => finishCurrent(point)
+    case _ =>
+      println("interaction = " + interaction)
+  }
 
   /** applies the saved preferences */
   private def preferred(): Unit = {
@@ -325,7 +293,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
 
   private def add(p: Piclet) = {
     updateExtremes(p)
-    piclets = p :: piclets
+    _piclets = p :: _piclets
     fzW.add(p)  //tell f(z) world so it can map it
   }
 
@@ -358,7 +326,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
     if (currentPiclet != null)
       canvas.draw(g, currentPiclet)
 
-    piclets.foreach{
+    _piclets.foreach{
       canvas.draw(g, _)
     }
 
@@ -369,7 +337,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
   /** Erases everything and repaints. */
   override private[calculator] def erase(): Unit = {
     eraseCurrent()
-    piclets = Nil
+    _piclets = Nil
     resetExtremes()
     if (_mode == MODFZ)
       updateExtremes(square)
@@ -383,9 +351,6 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
     currentPiclet = null
   }
 
-  private[calculator] def getPiclets = piclets
-
-  //private[calculator]
   def mode_=(m: Mode) = {
     _mode = m
     _mode match {
@@ -397,7 +362,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
         lineButton.enabled = true
         gridButton.enabled = true
         rectangleButton.enabled = true
-        //interactionChoice.setSelected(drawButton.getModel, true)
+        interactionChoice.select(drawButton)
         interaction = DRAW
 
       case MODFZ =>
@@ -407,7 +372,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
         lineButton.enabled = false
         gridButton.enabled = false
         rectangleButton.enabled = false
-        //interactionChoice.setSelected(squareButton.getModel, true)
+        interactionChoice.select(squareButton)
         interaction = SQUARE
 
       case _ =>
