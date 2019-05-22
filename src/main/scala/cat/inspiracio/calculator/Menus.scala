@@ -29,18 +29,12 @@ import scala.swing.event.Key
 /** A menu bar for the Calculator. */
 final class Menus private[calculator](calculator: Calculator) extends MenuBar {
 
-    val meFile = new Menu("File"){
-      mnemonic = Key.F
-    }
+    val meFile = new Menu("File"){ mnemonic = Key.F }
 
-    val acAbout = Action("About ..."){
-      new About(calculator)
-    }
+    val acAbout = Action("About ..."){ new About(calculator) }
     meFile.contents += new MenuItem(acAbout)
 
-    val acQuit = Action("Quit"){
-      calculator.quit()
-    }
+    val acQuit = Action("Quit"){ calculator.quit() }
     acQuit.mnemonic = java.awt.event.KeyEvent.VK_Q
     val mask = Toolkit.getDefaultToolkit.getMenuShortcutKeyMask
     val CtrlQ = KeyStroke.getKeyStroke(KeyEvent.VK_Q, mask)
@@ -53,25 +47,17 @@ final class Menus private[calculator](calculator: Calculator) extends MenuBar {
 
     //https://github.com/ingoem/scala-swing/blob/master/scala/swing/test/UIDemo.scala
     val miCalc = new RadioMenuItem("Calculate")
-    miCalc.action = Action("Calculate"){
-      calculator.mode = CALC
-    }
+    miCalc.action = Action("Calculate"){ calculator.mode = CALC }
     miCalc.selected = true
 
     val miFz = new RadioMenuItem("z -> f(z)")
-    miFz.action = Action("z -> f(z)"){
-      calculator.mode = FZ
-    }
+    miFz.action = Action("z -> f(z)"){ calculator.mode = FZ }
 
     val miModFz = new RadioMenuItem("z -> |f(z)|")
-    miModFz.action = Action("z -> |f(z)|"){
-      calculator.mode = MODFZ
-    }
+    miModFz.action = Action("z -> |f(z)|"){ calculator.mode = MODFZ }
 
     val miReFx = new RadioMenuItem("x -> Re(f(x))")
-    miReFx.action = Action("x -> Re(f(x))"){
-      calculator.mode = REFX
-    }
+    miReFx.action = Action("x -> Re(f(x))"){ calculator.mode = REFX }
 
     meMode.contents ++= new ButtonGroup(miCalc, miFz, miModFz, miReFx).buttons
 

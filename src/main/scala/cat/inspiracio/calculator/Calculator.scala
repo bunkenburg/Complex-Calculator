@@ -241,6 +241,7 @@ final class Calculator() extends MainFrame {
     _mode = m
     functionChanged()
 
+    menuBar.asInstanceOf[Menus].select(m)
   }
 
   def mode: Mode = _mode
