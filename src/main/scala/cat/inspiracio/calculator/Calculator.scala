@@ -218,7 +218,7 @@ final class Calculator() extends MainFrame {
       p.putInt("y", y)
 
       p.put("text", display.text)
-      p.put("mode", _mode.toString)
+      p.put("mode", mode.toString)
     }
     dispose()
     if (cW != null) cW.dispose()
