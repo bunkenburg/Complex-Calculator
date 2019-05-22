@@ -18,7 +18,8 @@ rm -rf target/root
 mkdir -p target/root/main/
 mkdir -p target/root/lib/
 cp target/universal/stage/lib/cat.inspiracio.complex-calculator-0.0.1-SNAPSHOT.jar target/root/main/complex-calculator.jar
-cp target/universal/stage/lib/org.scala-lang.scala-library-2.12.8.jar target/root/lib/scala-library-2.12.8.jar
+cp target/universal/stage/lib/org.scala-lang.scala-library-2.12.8.jar target/root/lib/
+cp target/universal/stage/lib/org.scala-lang.modules.scala-swing_2.12-2.1.1.jar target/root/lib/
 
 # Unjar the one-jar-boot-0.97.jar file into the root directory,
 # like ar xf one-jar.jar

@@ -122,7 +122,7 @@ final class ComplexWorld private[calculator](calculator: Calculator) extends Wor
         add(z)
       }
     case _ =>
-      println("interaction == " + interaction)
+      //println("interaction == " + interaction)
   }
 
   override def mouseDragged(point: Point) = interaction match {
@@ -131,7 +131,7 @@ final class ComplexWorld private[calculator](calculator: Calculator) extends Wor
       canvas.shift(startPoint, previousPoint, p)
       previousPoint = p
     case _ =>
-      println("interaction == " + interaction)
+      //println("interaction == " + interaction)
   }
 
   override def mouseReleased(point: Point) = interaction match {
@@ -141,7 +141,7 @@ final class ComplexWorld private[calculator](calculator: Calculator) extends Wor
       startPoint = null
       previousPoint = null
     case _ =>
-      println("interaction == " + interaction)
+      //println("interaction == " + interaction)
   }
 
 }

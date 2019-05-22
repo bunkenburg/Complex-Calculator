@@ -1,11 +1,8 @@
 # TODO
 
-x add Edit menu: Cut Copy Paste
 * rewrite parsing using Scala combinator parsing
-x rewrite GUI using scala.swing._
 * |f(z)| mode, z word: remove unused disabled icons
 * put into About: date, mvn version, git revision
-x World: save zoom in preferences
 * World: save movement in preferences
 * World: save sphere rotation in preferences
 * Sphere: give it zoom
@@ -18,7 +15,6 @@ x World: save zoom in preferences
     - represent in terms of pi
     - represent integers
     - represent rationals
-* var only for variable instance variables
 * put on web page with installation instructions
 * better expressions: don't always write parenthesis
 * Take complex numbers out and make into Scala library
@@ -31,6 +27,10 @@ x World: save zoom in preferences
 
 # DONE
 
+* rewrite GUI using scala.swing._
+* World: save zoom in preferences
+* var only for variable instance variables
+* add Edit menu: Cut Copy Paste
 * executable JAR must have executable bit
 * Sphere: improve moving: keep same number under mouse
 * Better initial window positions

@@ -35,7 +35,7 @@ package object icon {
     if (imgURL != null)
       Swing.Icon(imgURL)
     else {
-      System.err.println("Couldn't find file: " + path)
+      println("Couldn't find file: " + path)
       new MissingIcon()
     }
   }

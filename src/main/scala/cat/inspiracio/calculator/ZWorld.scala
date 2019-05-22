@@ -249,7 +249,7 @@ final class ZWorld private[calculator](override val calculator: Calculator) exte
     case SQUARE => finishCurrent(point)
     case GRID => finishCurrent(point)
     case _ =>
-      println("interaction = " + interaction)
+      //println("interaction = " + interaction)
   }
 
   /** applies the saved preferences */

@@ -18,6 +18,7 @@ I lost the source code of that program, but decompiled byte code survived.
 
 The first scala version is from 6. 1. 2019. 
 There are three areas of the program:
+
 1. Complex numbers in package cat.inspiracio.complex
 2. Vector and matrix operations for 2d and 3d graphics
 3. Java Swing GUI.
