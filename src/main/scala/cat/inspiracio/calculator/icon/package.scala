@@ -56,13 +56,13 @@ package object icon {
   val zoomOutIcon = icon("zoom-out.png")
 
   def toggle(icon: Icon, tooltip: String): ToggleButton = {
-    new ToggleButton {
-      icon = icon
-      tooltip = tooltip
-      opaque = false
-      borderPainted = false
-      //setContentAreaFilled(false) //need for signalling selected
-    }
+    val b = new ToggleButton
+    b.icon = icon
+    b.tooltip = tooltip
+    b.opaque = false
+    b.borderPainted = false
+    b.contentAreaFilled = false //need for signalling selected
+    b
   }
 
   def toggle(icon: Icon, tooltip: String, op: => Unit): ToggleButton = {

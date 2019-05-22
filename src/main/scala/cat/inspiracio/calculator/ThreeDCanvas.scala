@@ -18,13 +18,15 @@
 package cat.inspiracio.calculator
 
 import java.awt._
-import java.awt.event.MouseEvent
 import java.lang.Math.{atan2, min}
 
 import cat.inspiracio.complex.{Complex, abs, sqr, sqrt, π}
 import cat.inspiracio.geometry._
+
 import scala.swing.Component
 import MoreGraphics.GraphicsExtended
+
+import scala.swing.event.{MouseDragged, MousePressed, MouseReleased}
 
 /** Shows a grid of |f(z)|.
   *
@@ -67,28 +69,24 @@ class ThreeDCanvas(world: ThreeDWorld) extends Component {
 
   //Constructor ---------------------------------------------------
 
+  //during dragging, the previous mouse position
+  var previous: Point2 = null
+
+  private def drag(p: Point) = {
+    shift(previous - p)
+    previous = p
+  }
+
   private def init()= {
     background = white
 
-    /*
-    val mouse = new MouseInputAdapter {
-
-      //during dragging, the previous mouse position
-      var previous: Point2 = null
-
-      override def mousePressed(e: MouseEvent): Unit = previous = e.getPoint
-      override def mouseReleased(e: MouseEvent): Unit = drag(e)
-      override def mouseDragged(e: MouseEvent): Unit = drag(e)
-
-      private def drag(e: MouseEvent) = {
-        val p = e.getPoint
-        shift(previous - p)
-        previous = p
-      }
+    listenTo(mouse.clicks)
+    listenTo(mouse.moves)
+    reactions += {
+      case MousePressed(source, point, modifiers, clicks, triggersPopup) => previous = point
+      case MouseReleased(source, point, modifiers, clicks, triggersPopup) => drag(point)
+      case MouseDragged(source, point, modifiers) => drag(point)
     }
-     */
-    //addMouseListener(mouse)
-    //addMouseMotionListener(mouse)
 
     determineForwardNess()
 
@@ -344,11 +342,6 @@ class ThreeDCanvas(world: ThreeDWorld) extends Component {
     quad.addPoint(f2dPix(d))
     g.fillPolygon(quad, Color.lightGray)
     g.drawPolygon(quad)
-  }
-
-  override def font_=(font: Font): Unit = {
-    //super.font = font
-    //fontAscent = getFontMetrics(font).getAscent
   }
 
   /** re-calculate xforward and zforward */

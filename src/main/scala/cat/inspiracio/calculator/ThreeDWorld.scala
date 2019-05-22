@@ -17,9 +17,7 @@
  * */
 package cat.inspiracio.calculator
 
-//import java.awt._
-import java.awt.event._
-import java.lang.Math.{max}
+import java.lang.Math.max
 import java.util.prefs.Preferences
 
 import scala.swing._
@@ -27,11 +25,15 @@ import cat.inspiracio.complex._
 import cat.inspiracio.geometry._
 import cat.inspiracio.parsing.{Constant, Syntax}
 
+import scala.swing.event.WindowClosing
+
 // Referenced classes of package bunkenba.calculator:
 //            Calculator, DoubleBuffer, Drawing, Matrix44,
 //            Vector2, Vector3
 
 final class ThreeDWorld private[calculator](calculator: Calculator) extends Frame {
+  import Point2._
+
   title = "|f(z)| World"
 
   //State ---------------------------------------------
@@ -50,10 +52,9 @@ final class ThreeDWorld private[calculator](calculator: Calculator) extends Fram
     import icon._
 
     val toolbar = new ToolBar()
-    val resetButton = button(resetIcon, "Reset")
-    //resetButton.addActionListener( _ => canvas.reset() )
+    val resetButton = button(resetIcon, "Reset", {  canvas.reset() })
     toolbar.contents += resetButton
-    //toolbar.addSeparator()
+    toolbar.peer.addSeparator()
 
     //move button always selected: just there to show user that they can move
     val moveButton = toggle(handIcon, "Move")
@@ -61,16 +62,12 @@ final class ThreeDWorld private[calculator](calculator: Calculator) extends Fram
     moveButton.enabled = false
     toolbar.contents += moveButton
 
-    //add(toolbar, BorderLayout.PAGE_START)
-    //XXX layout(toolbar) = BorderPanel.Position.West
-    //add(canvas, BorderLayout.CENTER)
-    //XXX layout(canvas) = BorderPanel.Position.Center
+    contents = new BorderPanel{
+      layout(toolbar) = BorderPanel.Position.North
+      layout(canvas) = BorderPanel.Position.Center
+    }
 
-    /*
-    addWindowListener(new WindowAdapter() {
-      override def windowClosing(windowevent: WindowEvent): Unit = calculator.quit()
-    })
-     */
+    reactions += { case WindowClosing(source) => calculator.quit() }
 
     pack()
     locate()
@@ -85,17 +82,17 @@ final class ThreeDWorld private[calculator](calculator: Calculator) extends Fram
   /** to the right of z-world */
   private def locate() = {
     val zW = calculator.zW
-    val zWorldDimension: Dimension = zW.size //550 372
-    val zWorldPosition: Point = zW.locationOnScreen  //77 414
+    val zWorldDimension = zW.size //550 372
+    val zWorldPosition = zW.locationOnScreen  //77 414
 
     val p = preferences
     val x = p.getInt("x", zWorldPosition.x + zWorldDimension.width + 10 )
     val y = p.getInt("y", zWorldPosition.y )
-    location = Point2( x, y )
+    location = ( x, y )
 
     val width = p.getInt("width", 560)
     val height = p.getInt("height", 365)
-    size = new Dimension(width,height)
+    size = (width,height)
   }
 
   /** Event listener: the function has changed. */
@@ -108,7 +105,7 @@ final class ThreeDWorld private[calculator](calculator: Calculator) extends Fram
   private[calculator] def setNeighbourhood(): Unit = {
     val N = m.n
     val f: Syntax = if(calculator.f!=null) calculator.f else new Constant(0)
-    val step: Double = square.side / (N * 2.0)
+    val step: Double = square.side / (N * 2)
     val center: Complex = square.center
 
     /** |f(z)| but -0.2 in case of exception */
@@ -153,7 +150,7 @@ final class ThreeDWorld private[calculator](calculator: Calculator) extends Fram
   }
 
   override def font_=(font: Font): Unit = {
-    super.font = font
+    //super.font = font
     canvas.font = font
   }
 
@@ -171,4 +168,10 @@ final class ThreeDWorld private[calculator](calculator: Calculator) extends Fram
     }
     super.dispose()
   }
+
+  def size_= (p: (Int,Int)): Unit = {
+    val (width, height) = p
+    size = new Dimension(width, height)
+  }
+
 }
