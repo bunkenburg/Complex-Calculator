@@ -17,9 +17,24 @@
  * */
 package cat.inspiracio.complex
 
+import java.util.Formatter
+
 /** Infinity, the one complex number at the north
   * pole of the Riemann sphere. */
 object ∞ extends Complex{
+
+  //interface java.lang.Number
+  //All methods discard the imaginary part and are therefore useless.
+  override def byteValue() = -1 //Double.POSITIVE_INFINITY.byteValue()
+  override def shortValue() = -1 //Double.POSITIVE_INFINITY.shortValue()
+  override def intValue() = Int.MaxValue  //Double.POSITIVE_INFINITY.intValue()
+  override def longValue() = Long.MaxValue //Double.POSITIVE_INFINITY.longValue()
+  override def floatValue() = Float.PositiveInfinity
+  override def doubleValue() = Double.PositiveInfinity
+
+  override def formatTo(fmt: Formatter, flags: Int, width: Int, precision: Int): Unit = {
+    fmt.format("∞")
+  }
 
   override def toString = "∞"
 

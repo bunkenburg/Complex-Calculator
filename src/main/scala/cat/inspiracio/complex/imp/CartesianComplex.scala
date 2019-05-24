@@ -17,11 +17,44 @@
  * */
 package cat.inspiracio.complex.imp
 
+import java.util.Formatter
+
 import cat.inspiracio.complex._
 
 /** Finite complex numbers in Cartesian representation */
 class CartesianComplex(val re: Double, val im: Double) extends Complex {
   require( !re.isInfinite && !im.isInfinite, "Infinite: " + re + " " + im)
+
+  //interface java.lang.Number
+  //All methods discard the imaginary part and are therefore useless.
+  override def byteValue() = re.toByte
+  override def shortValue() = re.toShort
+  override def intValue() = re.toInt
+  override def longValue() = re.toLong
+  override def floatValue() = re.toFloat
+  override def doubleValue() = re
+
+  /** @param flags UPPERCASE ALTERNATE LEFT_JUSTIFY */
+  override def formatTo(fmt: Formatter, flags: Int, width: Int, precision: Int): Unit = {
+    import java.util.FormattableFlags.{ALTERNATE, LEFT_JUSTIFY, UPPERCASE}
+
+    val locale = fmt.locale
+    val alternate = (flags & ALTERNATE) == ALTERNATE
+    val left = (flags & LEFT_JUSTIFY) == LEFT_JUSTIFY
+    val upper = (flags & UPPERCASE) == UPPERCASE
+    //width
+    //precision
+
+    val sb = new StringBuilder
+    sb.append("alternate=" + alternate + " ")
+    sb.append("left=" + left + " ")
+    sb.append("upper=" + upper + " ")
+    sb.append("locale=" + locale + " ")
+    sb.append("width=" + width + " ")
+    sb.append("precision=" + precision)
+
+    fmt.format(sb.toString)
+  }
 
   /** Format real number nicely, with e and π.
     * Cuts off zeros after decimal point.

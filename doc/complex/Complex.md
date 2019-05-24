@@ -13,25 +13,8 @@ trait and classes:
     - gives default implementations for many operators
 * class cat.inspiracio.complex.imp.CartesianComplex(re: Double, im: Double)
     - always finite
-    - make lazy in re, im, mod, arg
+    - lazy in re, im, mod, arg
 * object cat.inspiracio.complex.∞
     - because ∞ often is a special case
     - is the only infinite value
     
-## todo
-
-Could do:
-
-    abstract class Finite extends Complex
-        re
-        im
-        modulus
-        argument
-       
-    class CartesianComplex(re,im) extends Finite
-        lazy val modulus
-        lazy val argument
-        
-    class PolarComplex(m,a) extends Finite
-        lazy val re
-        lazy im

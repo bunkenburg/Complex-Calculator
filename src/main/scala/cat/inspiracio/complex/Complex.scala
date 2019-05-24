@@ -17,7 +17,6 @@
  * */
 package cat.inspiracio.complex
 
-import java.util.FormattableFlags.{ALTERNATE, LEFT_JUSTIFY, UPPERCASE}
 import java.util.{Formattable, Formatter, Locale}
 
 import cat.inspiracio.complex.imp.Circle
@@ -29,28 +28,7 @@ import cat.inspiracio.complex.imp.Circle
   * - object ∞
   *
   * */
-abstract class Complex extends Formattable {
-
-  /** @param flags UPPERCASE ALTERNATE LEFT_JUSTIFY */
-  override def formatTo(fmt: Formatter, flags: Int, width: Int, precision: Int): Unit = {
-
-    val locale = fmt.locale
-    val alternate = (flags & ALTERNATE) == ALTERNATE
-    val left = (flags & LEFT_JUSTIFY) == LEFT_JUSTIFY
-    val upper = (flags & UPPERCASE) == UPPERCASE
-    //width
-    //precision
-
-    val sb = new StringBuilder
-    sb.append("alternate=" + alternate + " ")
-    sb.append("left=" + left + " ")
-    sb.append("upper=" + upper + " ")
-    sb.append("locale=" + locale + " ")
-    sb.append("width=" + width + " ")
-    sb.append("precision=" + precision)
-
-    fmt.format(sb.toString)
-  }
+abstract class Complex extends Number with Formattable {
 
   // Operators ---------------------------------
 
