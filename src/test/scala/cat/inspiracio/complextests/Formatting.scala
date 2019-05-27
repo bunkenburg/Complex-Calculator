@@ -196,6 +196,7 @@ class Formatting extends FunSuite {
   }
 
   // 10⁻³ <= m < 10⁷ => 1655.0 or 7856.05     //ok as it, maybe cut trailing 0 and .
+  // 0.001 <= m < 10000000
 
   //minimal magnitude
   test("0.001 toString"){

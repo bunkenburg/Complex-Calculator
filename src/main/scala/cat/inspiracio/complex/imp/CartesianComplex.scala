@@ -47,8 +47,15 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
         val m = d.abs
         if(m==e) sign + "e"
         else if(m==π) sign + "π"
-        else
-          ???
+        else{
+          val MIN = 0.0001
+          val MAX = 10000000
+          if(MIN <= m && m < MAX){
+            d.toString
+          } else{
+            ???
+          }
+        }
       }
     }
 
