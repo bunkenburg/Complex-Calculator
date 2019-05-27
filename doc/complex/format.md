@@ -288,7 +288,7 @@ In practice, there can be up to 16 digits ... must restrict that in a configurab
 
 0. null => I don't care.
 
-1. if the number is natural and small, all digits, no point.
+1. if the number is integer and small, all digits, no point.
 
     -9999999    -> "-9999999"
     

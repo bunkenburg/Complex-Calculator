@@ -37,16 +37,16 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
   /** By default, cartesian representation with
     * precision 3. */
   override def toString: String = {
-    /*
-    val a = new java.lang.StringBuilder()
-    val fmt = new java.util.Formatter(a)
-    val flags = 0
-    val width = 0
-    val precision = 3
-    formatTo(fmt, flags, width, precision)
-    a.toString
-     */
-    toStringBla
+    //1. if the number is natural and small, all digits, no point.
+    val MIN = -10000000
+    val MAX = 10000000
+    this match {
+      case Integer(n) =>
+        if(MIN < n && n < MAX){
+          n.toString
+        } else ???
+      case _ => ???
+    }
   }
 
   /** Format real number nicely, with e and π.

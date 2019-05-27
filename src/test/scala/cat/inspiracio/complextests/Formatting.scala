@@ -111,7 +111,7 @@ class Formatting extends FunSuite {
     assert( c === i+5 )
   }
 
-  // formatting naturals ========================
+  // formatting integers ========================
 
   test("0.toString"){
     val c: Complex = 0
