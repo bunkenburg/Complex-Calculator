@@ -32,10 +32,7 @@ object ∞ extends Complex{
   override def floatValue() = Float.PositiveInfinity
   override def doubleValue() = Double.PositiveInfinity
 
-  override def formatTo(fmt: Formatter, flags: Int, width: Int, precision: Int): Unit = {
-    fmt.format("∞")
-  }
-
+  override def formatTo(fmt: Formatter, flags: Int, width: Int, precision: Int): Unit = fmt.format("∞")
   override def toString = "∞"
 
   // Operators ------------------------------------

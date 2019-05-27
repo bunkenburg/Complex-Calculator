@@ -34,32 +34,25 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
   override def floatValue() = re.toFloat
   override def doubleValue() = re
 
-  /** @param flags UPPERCASE ALTERNATE LEFT_JUSTIFY */
-  override def formatTo(fmt: Formatter, flags: Int, width: Int, precision: Int): Unit = {
-    import java.util.FormattableFlags.{ALTERNATE, LEFT_JUSTIFY, UPPERCASE}
-
-    val locale = fmt.locale
-    val alternate = (flags & ALTERNATE) == ALTERNATE
-    val left = (flags & LEFT_JUSTIFY) == LEFT_JUSTIFY
-    val upper = (flags & UPPERCASE) == UPPERCASE
-    //width
-    //precision
-
-    val sb = new StringBuilder
-    sb.append("alternate=" + alternate + " ")
-    sb.append("left=" + left + " ")
-    sb.append("upper=" + upper + " ")
-    sb.append("locale=" + locale + " ")
-    sb.append("width=" + width + " ")
-    sb.append("precision=" + precision)
-
-    fmt.format(sb.toString)
+  /** By default, cartesian representation with
+    * precision 3. */
+  override def toString: String = {
+    /*
+    val a = new java.lang.StringBuilder()
+    val fmt = new java.util.Formatter(a)
+    val flags = 0
+    val width = 0
+    val precision = 3
+    formatTo(fmt, flags, width, precision)
+    a.toString
+     */
+    toStringBla
   }
 
   /** Format real number nicely, with e and π.
     * Cuts off zeros after decimal point.
     * Cuts off decimal point for integers. */
-  private def toString(d: Double): String = {
+  private def format(d: Double): String = {
 
     //Some special real numbers
     if(d == e) "e"
@@ -87,25 +80,43 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
     }
   }
 
+  /** @param flags UPPERCASE ALTERNATE LEFT_JUSTIFY */
+  override def formatTo(fmt: Formatter, flags: Int, width: Int, precision: Int) = {
+    import java.util.FormattableFlags.{ALTERNATE, LEFT_JUSTIFY, UPPERCASE}
+    import math.abs
+
+    val locale = fmt.locale
+    val alternate = (flags & ALTERNATE) == ALTERNATE
+    val left = (flags & LEFT_JUSTIFY) == LEFT_JUSTIFY
+    val upper = (flags & UPPERCASE) == UPPERCASE
+    //width
+    //precision
+    val polar = alternate   //ignore for now
+
+    val b = new StringBuilder
+    b.append(this.toString)
+    fmt.format(b.toString)
+  }
+
   /** Format a complex number nicely. */
-  override def toString: String = {
+  def toStringBla: String = {
     import math.abs
     val ε = 0.000000001
 
       //It's just a real number.
       if (abs(im) < ε)
-        toString(re)
+        format(re)
 
       //Cartesian x + yi
       else {
-        val real = toString(re)
+        val real = format(re)
 
         val imaginary = if (abs(im - 1) < ε)
           "i"
         else if (abs(im + 1) < ε)
           "-i"
         else
-          toString(im) + "i"
+          format(im) + "i"
 
         if (abs(re) < ε)
           imaginary

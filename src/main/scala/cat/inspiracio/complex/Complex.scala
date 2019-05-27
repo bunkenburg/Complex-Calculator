@@ -17,6 +17,7 @@
  * */
 package cat.inspiracio.complex
 
+import java.text.{FieldPosition, ParsePosition}
 import java.util.{Formattable, Formatter, Locale}
 
 import cat.inspiracio.complex.imp.Circle

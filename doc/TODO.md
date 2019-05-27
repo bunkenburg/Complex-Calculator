@@ -10,11 +10,14 @@
 * ThreeDWorld: save movement in preferences
 * RefxWorld: save movement in preferences
 * Complex.toString or format with precision
-    - reasonable rounding
-    - configurable rounding
-    - represent in terms of pi
+    - reasonable precision
+    - configurable precision
+    - represent in terms of π
     - represent integers
     - represent rationals
+    - implement Complex.toString
+    - implement f"${c}#s"
+    - implement ComplexFormat extends NumberFormat
 * put on web page with installation instructions
 * better expressions: don't always write parenthesis
 * Take complex numbers out and make into Scala library
