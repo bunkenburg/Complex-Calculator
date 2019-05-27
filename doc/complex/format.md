@@ -318,11 +318,11 @@ In practice, there can be up to 16 digits ... must restrict that in a configurab
 2. if the number is real:
 
     1. NaN -> "NaN"                             //should never happen
+    5. m==0 => "0"                  //already covered as natural
+    4. m==infinite => "∞"
     2. val sign = "-" or ""
     3. val m = magnitude
     
-    4. m==infinite => "∞"
-    5. m==0 => "0"                  //already covered as natural
     5. m==e => "e"
     5. m==π => "π"
     

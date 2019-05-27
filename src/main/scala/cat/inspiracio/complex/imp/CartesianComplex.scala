@@ -37,15 +37,27 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
   /** By default, cartesian representation with
     * precision 3. */
   override def toString: String = {
+
+    def formatReal(d: Double): String = {
+      if(d.isNaN) "NaN"
+      else if(d==0) "0"
+      else if(d.isInfinite) "∞"
+      else {
+        val sign = if(0 <= d) "" else "-"
+        val m = d.abs
+        if(m==e) sign + "e"
+        else if(m==π) sign + "π"
+        else
+          ???
+      }
+    }
+
     //1. if the number is natural and small, all digits, no point.
     val MIN = -10000000
     val MAX = 10000000
     this match {
-      case Integer(n) =>
-        if(MIN < n && n < MAX){
-          n.toString
-        } else ???
-      case _ => ???
+      case Integer(n) if(MIN < n && n < MAX) => n.toString
+      case Real(re) => formatReal(re)
     }
   }
 
