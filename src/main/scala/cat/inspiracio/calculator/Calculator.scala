@@ -35,7 +35,7 @@ object Calculator {
   def main(args: Array[String]) { new Calculator }
 }
 
-final class Calculator() extends MainFrame {
+final classa Calculator() extends MainFrame {
   visible = false //make visible after locate()
   title = "Complex Calculator"
   resizable = false
