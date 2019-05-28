@@ -381,9 +381,9 @@ In practice, there can be up to 16 digits ... must restrict that in a configurab
 
 4. if the number is complex:
 
-    val r = toString(re)
+    val r = formatReal(re)
     
-    val i = toString(im)
+    val i = formatImaginary(im)
     
     if 0<i => r + " + " + i    
     

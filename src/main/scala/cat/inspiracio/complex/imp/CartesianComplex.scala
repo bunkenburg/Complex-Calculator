@@ -38,11 +38,21 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
     * precision 3. */
   override def toString: String = {
 
-    /** Cleans computerized scientific notation.
-      * From "9.0E-4" makes "9.0 * 10⁻4". */
-    def clean(s: String) = s.replace("E", " * 10^")
-
+    /** Formats as real number:
+      * NaN
+      * 0
+      * ∞
+      * e -e
+      * π -π
+      * 10⁻³ <= m < 10⁷ => 1655.0 or 7856.05
+      * m < 10⁻³ or 10⁷ < m => "-3.153 * 10^-8"
+      * */
     def formatReal(d: Double): String = {
+
+      /** Cleans computerized scientific notation.
+        * From "9.0E-4" makes "9.0 * 10⁻4". */
+      def clean(s: String) = s.replace("E", " * 10^")
+
       if(d.isNaN)
         "NaN"
       else if(d==0)
@@ -52,18 +62,75 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
       else {
         val sign = if(0 <= d) "" else "-"
         val m = d.abs
-        if(m==e) sign + "e"
-        else if(m==π) sign + "π"
+        if(m==e)
+          sign + "e"
+        else if(m==π)
+          sign + "π"
         else{
           val MIN = 0.001       // 10⁻³
           val MAX = 10000000    // 10⁷
           if(MIN <= m && m < MAX){
-            d.toString
+            if( d.isWhole )
+              d.toInt.toString
+            else
+              d.toString
           } else{
             clean(d.toString)
           }
         }
       }
+    }
+
+    /** Formats as imaginary number:
+      * NaN
+      * 0
+      * ∞
+      * ei -ei
+      * πi -πi
+      * 10⁻³ <= m < 10⁷ => 1655.0i or 7856.05i
+      * m < 10⁻³ or 10⁷ < m => "-3.153i * 10^-8"
+      * */
+    def formatImaginary(d: Double): String = {
+
+      /** Cleans computerized scientific notation.
+        * From "9.0E-4" makes "9.0i * 10⁻4". */
+      def clean(s: String) = s.replace("E", "i * 10^")
+
+      if(d.isNaN)
+        "NaN"
+      else if(d==0)
+        "0"
+      else if(d.isInfinite)
+        "∞"
+      else {
+        val sign = if(0 <= d) "" else "-"
+        val m = d.abs
+        if(m==e)
+          sign + "ei"
+        else if(m==π)
+          sign + "πi"
+        else{
+          val MIN = 0.001       // 10⁻³
+          val MAX = 10000000    // 10⁷
+          if(MIN <= m && m < MAX) {
+            if( d.isWhole )
+              d.toInt.toString + "i"
+            else
+              d.toString + "i"
+          } else {
+            clean(d.toString)
+          }
+        }
+      }
+    }
+
+    def formatCartesian(re: Double, im: Double) = {
+      val r = formatReal(re)
+      val i = formatImaginary(im)
+      if(i startsWith "-" )
+        r + " " + i
+      else
+        r + " + " + i
     }
 
     //1. if the number is natural and small, all digits, no point.
@@ -72,6 +139,8 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
     this match {
       case Integer(n) if(MIN < n && n < MAX) => n.toString
       case Real(re) => formatReal(re)
+      case Imaginary(im) => formatImaginary(im)
+      case Cartesian(re,im) => formatCartesian(re,im)
     }
   }
 

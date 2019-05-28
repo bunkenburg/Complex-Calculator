@@ -232,6 +232,12 @@ class Formatting extends FunSuite {
     assert( c.toString === "-9999999.9" )
   }
 
+  test("13 toString"){
+    val c: Complex = 13
+    val s = c.toString
+    assert( s === "13" )
+  }
+
   // m < 10⁻³ or 10⁷ < m => "computerized scientific notation"
 
   //minimal magnitude
@@ -272,7 +278,7 @@ class Formatting extends FunSuite {
   }
 
   test("ei toString"){
-    val c: Complex = e*i
+    val c = i*e
     assert( c.toString === "ei" )
   }
 
@@ -289,6 +295,12 @@ class Formatting extends FunSuite {
   test("-πi toString"){
     val c: Complex = -π*i
     assert( c.toString === "-πi" )
+  }
+
+  test("5i toString"){
+    val c = i * 5
+    val s = c.toString
+    assert( s === "5i" )
   }
 
   // 10⁻³ <= m < 10⁷ => 1655.0 or 7856.05     //ok as it, maybe cut trailing 0 and .
@@ -349,20 +361,21 @@ class Formatting extends FunSuite {
   //maximal magnitude
   test("10000000i toString"){
     val c: Complex = 10000000 * i
-    assert( c.toString === "1.0i * 10^8" )  //drop 1.0 ?
+    assert( c.toString === "1.0i * 10^7" )  //drop 1.0 ?
   }
 
   //maximal magnitude
   test("-10000000i toString"){
     val c: Complex = -10000000 * i
-    assert( c.toString === "-1.0i ^ 10^8" ) //drop 1.0 ?
+    assert( c.toString === "-1.0i * 10^7" ) //drop 1.0 ?
   }
 
   // complex ---------------------------------------------------
 
   test("13 + 5i toString"){
-    val c: Complex = 13 + 5*i
-    assert( c.toString === "13 + 5i" )
+    val c = i*5 + 13
+    val s = c.toString
+    assert( s === "13 + 5i" )
   }
 
   test("13.3 + 5.7i toString"){
@@ -371,18 +384,18 @@ class Formatting extends FunSuite {
   }
 
   test("-13.3 - 5.7i toString"){
-    val c: Complex = -13.3 - 5.7*i
-    assert( c.toString === "-13.3 - 5.7i" )
+    val c: Complex = -i*5.7 -13.3
+    assert( c.toString === "-13.3 -5.7i" )
   }
 
-  test("-0.0002 - 5.7i toString"){
+  test("-0.0002 -5.7i toString"){
     val c: Complex = -0.0002 - 5.7*i
-    assert( c.toString === "-2.0 * 10^-4 - 5.7i" )
+    assert( c.toString === "-2.0 * 10^-4 -5.7i" )
   }
 
   test("-13.3 - 0.0003i toString"){
     val c: Complex = -13.3 - 0.0003*i
-    assert( c.toString === "-13.3 - 3.0i * 10^-4" )
+    assert( c.toString === "-13.3 -3.0i * 10^-4" )
   }
 
   // format polar ---------------------------------------

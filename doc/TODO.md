@@ -18,6 +18,7 @@
     - implement Complex.toString
     - implement f"${c}#s"
     - implement ComplexFormat extends NumberFormat
+    - change ^ to \ also in Calculator?
 * put on web page with installation instructions
 * better expressions: don't always write parenthesis
 * Take complex numbers out and make into Scala library
