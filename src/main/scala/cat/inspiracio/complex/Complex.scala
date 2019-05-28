@@ -48,10 +48,41 @@ abstract class Complex extends Number with Formattable {
   def / (d: Double): Complex = this / double2Complex(d)
   def / (c: Complex): Complex
 
-  def ^ (c: Int): Complex = this match {
+  /** Exponentiation operator.
+    *
+    * What should the symbol for it be?
+    * Ideally, it should be just one character
+    * that is not yet defined for numeric types,
+    * and one that fits in well with the precedence rules,
+    * so it has higher precedence than multiplicative operators.
+    *
+    * These are the precedence rules:
+    * (all letters)
+    * |
+    * ^
+    * &
+    * < >
+    * = !
+    * :
+    * + -
+    * * / %
+    * (all other special characters)
+    * It follows that the exponentiation operator has to start with
+    * one of ?\~. Now, ~ is already bitwise negation.
+    * I choose \. Graphically, it seems alright:
+    * a\b indicates that the b should be raised.
+    * Hopefully, \ is not already used for many other things.
+    *
+    * Before, I used ^ which looks goods and fits in with word processors,
+    * but is already bitwise OR and has wrong precedence.
+    * (Complex Calculator uses ^ with its own precedence rules.)
+    */
+  def \ (c: Int): Complex = this match {
     case Real(0) =>
       if(c == 0) throw new ArithmeticException("0^0")
       else 0
+    case Real(r) =>
+      Math.pow(r, c)
     case Polar(mx,ax) =>
       if(c == 0) 1
       else Polar(exp(log(mx) * c), c * ax)
@@ -60,10 +91,12 @@ abstract class Complex extends Number with Formattable {
       else ∞
   }
 
-  def ^ (c: Double): Complex = this match {
+  def \ (c: Double): Complex = this match {
     case Real(0) =>
       if(c == 0) throw new ArithmeticException("0^0")
       else 0
+    case Real(r) =>
+      Math.pow(r, c)
     case Polar(mx,ax) =>
       if(c == 0) 1
       else if(!c.isInfinite)
@@ -74,7 +107,7 @@ abstract class Complex extends Number with Formattable {
       else ∞
   }
 
-  def ^ (c: Complex): Complex = this match {
+  def \ (c: Complex): Complex = this match {
     case Real(0) =>
       if(c === 0) throw new ArithmeticException("0^0")
       else 0

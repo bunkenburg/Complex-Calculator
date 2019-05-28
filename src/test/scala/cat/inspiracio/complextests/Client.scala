@@ -55,9 +55,12 @@ class Clients extends FunSuite {
     z = 3 + i
     z = π * i
     z = 17 / ∞
-    z = i ^ 0.5   //precedence rules of ^ are bad XXX
-    z = 1 ^ 0.5
-    z = 15.3 * e^(π * i)
+
+    // exponentiation
+    z = i \ 0.5
+    z = 1 \ 0.5
+
+    z = 15.3 * e\(π * i)
 
     // functions ---------------------
 

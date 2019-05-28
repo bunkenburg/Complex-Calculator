@@ -247,20 +247,21 @@ class Formatting extends FunSuite {
   }
 
   test("-3.153 * 10^-8 toString"){
-    val c: Complex = -3.153 * 10^(-8)
-    assert( c.toString === "-3.153 * 10^-8" )
+    val c: Complex = -3.153 * 10 \ -8
+    val s = c.toString
+    assert( s === "-3.153 * 10^-8" )
   }
 
   //maximal magnitude
   test("10000000 toString"){
     val c: Complex = 10000000
-    assert( c.toString === "1.0 * 10^8" )
+    assert( c.toString === "1.0 * 10^7" )
   }
 
   //maximal magnitude
   test("-10000000 toString"){
     val c: Complex = -10000000
-    assert( c.toString === "-1.0 ^ 10^8" )
+    assert( c.toString === "-1.0 * 10^7" )
   }
 
   // imaginary toString ---------------------------------------------
@@ -341,7 +342,7 @@ class Formatting extends FunSuite {
   }
 
   test("-3.153 * 10^-8  * i toString"){
-    val c: Complex = -3.153 * 10^(-8) * i
+    val c: Complex = -3.153 * 10\ -8 * i
     assert( c.toString === "-3.153i * 10^-8" )
   }
 
@@ -400,33 +401,33 @@ class Formatting extends FunSuite {
 
   /** positive real */
   test("3.2 polar"){
-    val c: Complex = 3.2 * e^(0*π*i)
+    val c: Complex = 3.2 * e\(0*π*i)
     val s = f"${c}%#s"
     assert( s === "3.2" )
   }
 
   /** positive real */
   test("3.2 e^2πi polar"){
-    val c: Complex = 3.2 * e^(2*π*i)
+    val c: Complex = 3.2 * e\(2*π*i)
     val s = f"${c}%#s"
     assert( s === "3.2" )
   }
 
   /** negative real */
   test("3.21 polar"){
-    val c: Complex = 3.21 * e^(1*π*i)
+    val c: Complex = 3.21 * e\(1*π*i)
     val s = f"${c}%#s"
     assert( s === "3.21 e^πi" )
   }
 
   test("3.21 e^0.75πi polar"){
-    val c: Complex = 3.21 * e^(0.75*π*i)
+    val c: Complex = 3.21 * e\(0.75*π*i)
     val s = f"${c}%#s"
     assert( s === "3.21 e^0.75πi" )
   }
 
   test("3.21 e^-0.75πi polar"){
-    val c: Complex = 3.21 * e^(-0.75*π*i)
+    val c: Complex = 3.21 * e\(-0.75*π*i)
     val s = f"${c}%#s"
     assert( s === "3.21 e^-0.75πi" )
   }

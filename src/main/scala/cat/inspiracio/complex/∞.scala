@@ -58,7 +58,8 @@ object ∞ extends Complex{
     case _ => ∞
   }
 
-  override def ^ (c: Complex): Complex = c match {
+  /** exponentiation */
+  override def \ (c: Complex): Complex = c match {
     case Real(0) => throw new ArithmeticException("∞^0")
     case _ => ∞
   }

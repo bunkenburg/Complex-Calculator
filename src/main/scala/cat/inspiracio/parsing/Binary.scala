@@ -38,7 +38,7 @@ class Binary(token: Token, left: Syntax, right: Syntax) extends Syntax {
       case DIFFERENCETOKEN => a - b
       case PRODUCTTOKEN => a * b
       case QUOTIENTTOKEN => a / b
-      case POWERTOKEN => a ^ b
+      case POWERTOKEN => a \ b
       case t => throw new RuntimeException(s"SyntaxTreeBinary.evaluate with token $t")
     }
 

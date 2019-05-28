@@ -294,48 +294,48 @@ class Operators extends FunSuite {
     }
   }
 
-  // a ^ b ---------------------------
+  // a \ b ---------------------------
 
-  test("0 ^ 0"){
+  test("0 \\ 0"){
     assertThrows[ArithmeticException] {
       val a = 0
       val b: Complex = 0
-      val c = a^b
+      val c = a\b
       assert( c === 0)
     }
   }
 
-  test("0 ^ (0: Double)"){
+  test("0 \\ (0: Double)"){
     assertThrows[ArithmeticException] {
       val a: Complex = 0
       val b: Double = 0
-      val c = a^b
+      val c = a\b
       assert( c === 0)
     }
   }
 
-  test("0 ^ (3: Double)"){
+  test("0 \\ (3: Double)"){
       val a: Complex = 0
       val b: Double = 3
-      val c = a^b
+      val c = a\b
       assert( c === 0)
   }
 
-  test("3 ^ (1/0: Double)"){
+  test("3 \\ (1/0: Double)"){
       val a: Complex = 3
       val b: Double = Double.PositiveInfinity
-      val c = a^b
+      val c = a\b
       assert( c === ∞)
   }
 
-  test("0 ^ i"){
-    val c = 0^i
+  test("0 \\ i"){
+    val c = 0\i
     assert( c === 0 )
   }
 
   test("0 ^ 3"){
     val a: Complex = 0
-    val c = a ^ 3
+    val c = a \ 3
     assert( c === 0 )
   }
 
@@ -354,93 +354,93 @@ class Operators extends FunSuite {
     assert( !b )
   }
 
-  test("i^0"){
-    val c = i^0
+  test("i\\0"){
+    val c = i\0
     assert( c === 1 )
   }
 
-  test("1 ^ i"){
+  test("1 \\ i"){
     val a = 1
     val b = i
-    val c = a^b
+    val c = a\b
     assert( c === 1 )
   }
 
-  test("i^2"){
-    val z = i^2
+  test("i\\2"){
+    val z = i\2
     assert( z === -1 )
   }
 
-  test("π ^ ∞"){
-    val c = π ^ ∞
+  test("π \\ ∞"){
+    val c = π \ ∞
     assert( c === ∞ )
   }
 
-  test("∞ ^ 0.0"){
+  test("∞ \\ 0.0"){
     assertThrows[ArithmeticException] {
       val a: Complex = ∞
-      val c = a ^ 0.0
+      val c = a \ 0.0
       assert(c === ∞)
     }
   }
 
-  test("∞ ^ 3"){
+  test("∞ \\ 3"){
     val a = ∞
-    val c = a ^ 3
+    val c = a \ 3
     assert( c === ∞ )
   }
 
-  test("∞ ^ 3.0"){
+  test("∞ \\ 3.0"){
     val a = ∞
-    val c = a ^ 3.0
+    val c = a \ 3.0
     assert( c === ∞ )
   }
 
-  test("∞ ^ ∞"){
+  test("∞ \\ ∞"){
     val a: Complex = ∞
     val b = ∞
-    val c = a^b
+    val c = a\b
     assert( c === ∞ )
   }
 
-  test("∞^0"){
+  test("∞\\0"){
     assertThrows[ArithmeticException] {
-      val c = ∞ ^ 0
+      val c = ∞ \ 0
       assert( c === ∞)
     }
   }
 
-  test("∞ ^ (0: Complex)"){
+  test("∞ \\ (0: Complex)"){
     assertThrows[ArithmeticException] {
       val a: Complex = ∞
       val b: Complex = 0.0
-      val c = a ^ b
+      val c = a \ b
       assert( c === ∞)
     }
   }
 
-  test("0^∞"){
-    val c = 0 ^ ∞
+  test("0\\∞"){
+    val c = 0 \ ∞
     assert( c === 0)
   }
 
   /** This is where it all started. It will be one of the first things users will try. */
-  test("-1 ^ 0.5"){
-    val c = -1 ^ 0.5
+  test("-1 \\ 0.5"){
+    val c = -1 \ 0.5
     assert( c === i )
   }
 
   /** This is where it all started. It will be one of the first things users will try. */
-  test("(-1 : Complex) ^ (0.5 : Complex)"){
+  test("(-1 : Complex) \\ (0.5 : Complex)"){
     val a: Complex = -1
     val b: Complex = 0.5
-    val c = a ^ b
+    val c = a \ b
     assert( c === i )
   }
 
   /** This is where it all started. It will be one of the first things users will try. */
-  test("(-1) ^ 0.5"){
-    val c = (-1) ^ 0.5
+  test("(-1) \\ 0.5"){
+    val c = (-1) \ 0.5
     assert( c === i )
   }
 

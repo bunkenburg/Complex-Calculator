@@ -38,22 +38,29 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
     * precision 3. */
   override def toString: String = {
 
+    /** Cleans computerized scientific notation.
+      * From "9.0E-4" makes "9.0 * 10⁻4". */
+    def clean(s: String) = s.replace("E", " * 10^")
+
     def formatReal(d: Double): String = {
-      if(d.isNaN) "NaN"
-      else if(d==0) "0"
-      else if(d.isInfinite) "∞"
+      if(d.isNaN)
+        "NaN"
+      else if(d==0)
+        "0"
+      else if(d.isInfinite)
+        "∞"
       else {
         val sign = if(0 <= d) "" else "-"
         val m = d.abs
         if(m==e) sign + "e"
         else if(m==π) sign + "π"
         else{
-          val MIN = 0.0001
-          val MAX = 10000000
+          val MIN = 0.001       // 10⁻³
+          val MAX = 10000000    // 10⁷
           if(MIN <= m && m < MAX){
             d.toString
           } else{
-            ???
+            clean(d.toString)
           }
         }
       }

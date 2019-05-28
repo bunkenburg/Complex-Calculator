@@ -141,7 +141,7 @@ class SyntaxTest extends FunSuite {
   test("(-1) ^ 0.5"){
     val a: Complex = -1
     val b: Complex = 0.5
-    val c = a ^ b
+    val c = a \ b
     assert( c === i )
 
     val f = parse("(-1) ^ 0.5")
