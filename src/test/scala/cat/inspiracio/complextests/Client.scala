@@ -89,7 +89,7 @@ class Clients extends FunSuite {
 
     // pattern matching ----------------
 
-    z match {
+    val s = z match {
 
       case Natural(17) => ???
       case Natural(n) => ???   //binding n
@@ -100,7 +100,7 @@ class Clients extends FunSuite {
       case I => ???  // matches i
 
       case Real(0) => ???   //matches a finite real number
-      case Real(re) => ???  //binding re
+      case Real(re) => "???"  //binding re
 
       case Imaginary(4.2) => ???  //imaginary
       case Imaginary(im) => ???   //binding im

@@ -105,7 +105,9 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
       else {
         val sign = if(0 <= d) "" else "-"
         val m = d.abs
-        if(m==e)
+        if(m==1)
+          sign + "i"
+        else if(m==e)
           sign + "ei"
         else if(m==π)
           sign + "πi"
@@ -127,10 +129,20 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
     def formatCartesian(re: Double, im: Double) = {
       val r = formatReal(re)
       val i = formatImaginary(im)
-      if(i startsWith "-" )
-        r + " " + i
-      else
-        r + " + " + i
+      val length = r.length + i.length
+      val SHORT = 7
+      if(i startsWith "-" ) {
+        if( length <= SHORT )
+          r + i
+        else
+          r + " " + i
+      }
+      else {
+        if( length <= 7)
+          r + "+" + i
+        else
+          r + " + " + i
+      }
     }
 
     //1. if the number is natural and small, all digits, no point.
@@ -178,7 +190,6 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
   /** @param flags UPPERCASE ALTERNATE LEFT_JUSTIFY */
   override def formatTo(fmt: Formatter, flags: Int, width: Int, precision: Int) = {
     import java.util.FormattableFlags.{ALTERNATE, LEFT_JUSTIFY, UPPERCASE}
-    import math.abs
 
     val locale = fmt.locale
     val alternate = (flags & ALTERNATE) == ALTERNATE
@@ -186,11 +197,33 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
     val upper = (flags & UPPERCASE) == UPPERCASE
     //width
     //precision
-    val polar = alternate   //ignore for now
+    val polar = alternate
 
     val b = new StringBuilder
-    b.append(this.toString)
+
+    val s = if(polar){
+      this match {
+        case Real(0) => "0"
+        case Polar(m, rho) => {
+          val a = rho/π
+          if( a == 0 )
+            s"${m}"
+          else if( a == 1 )
+            s"${m} e^πi"
+          else if( a == -1 )
+            s"${m} e^-πi"
+          else
+            s"${m} e^${a}πi"
+        }
+      }
+    }
+    //Cartesian
+    else
+      this.toString
+
+    b.append(s)
     fmt.format(b.toString)
+
   }
 
   /** Format a complex number nicely. */

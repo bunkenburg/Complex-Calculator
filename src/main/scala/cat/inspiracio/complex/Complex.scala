@@ -95,8 +95,7 @@ abstract class Complex extends Number with Formattable {
     case Real(0) =>
       if(c == 0) throw new ArithmeticException("0^0")
       else 0
-    case Real(r) =>
-      Math.pow(r, c)
+    //case Real(r) => Math.pow(r, c)  //No. -1 \ 0.5 == i
     case Polar(mx,ax) =>
       if(c == 0) 1
       else if(!c.isInfinite)

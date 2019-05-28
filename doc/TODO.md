@@ -9,16 +9,10 @@
 * World: save interaction in preferences
 * ThreeDWorld: save movement in preferences
 * RefxWorld: save movement in preferences
-* Complex.toString or format with precision
-    - reasonable precision
-    - configurable precision
-    - represent in terms of π
-    - represent integers
-    - represent rationals
-    - implement Complex.toString
-    - implement f"${c}#s"
-    - implement ComplexFormat extends NumberFormat
-    - change ^ to \ also in Calculator?
+* f"${c}#precision"
+* Complex.toString with rationals
+* ComplexFormat extends NumberFormat
+* change ^ to \ also in Calculator?
 * put on web page with installation instructions
 * better expressions: don't always write parenthesis
 * Take complex numbers out and make into Scala library
@@ -31,6 +25,12 @@
 
 # DONE
 
+* Complex.toString or format with precision
+    - represent in terms of π
+    - represent integers
+    - implement Complex.toString
+    - implement f"${c}#s"
+    - implement ComplexFormat extends NumberFormat
 * rewrite GUI using scala.swing._
 * World: save zoom in preferences
 * var only for variable instance variables
