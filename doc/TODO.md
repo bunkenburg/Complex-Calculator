@@ -1,6 +1,5 @@
 # TODO
 
-* ENTER key does not calculate result
 * Complex.toString with reasonable precision to get short numbers
 * rewrite parsing using Scala combinator parsing
 * |f(z)| mode, z word: remove unused disabled icons

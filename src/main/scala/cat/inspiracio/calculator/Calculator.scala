@@ -35,7 +35,7 @@ object Calculator {
   def main(args: Array[String]) { new Calculator }
 }
 
-final classa Calculator() extends MainFrame {
+final class Calculator() extends MainFrame {
   visible = false //make visible after locate()
   title = "Complex Calculator"
   resizable = false
@@ -44,7 +44,7 @@ final classa Calculator() extends MainFrame {
   /** The mode that the program is in: Calculation, z->fz mapping, z->|fz| mapping, or Re(fz). */
   private var _mode = CALC
 
-  private[calculator] val display: Display = new Display(12)
+  private[calculator] val display: Display = new Display(this,12)
   private val equalsButton: Button = Button("="){ paste("=") }
   private val zButton: Button = Button("z"){ paste(variable) }
 
@@ -89,7 +89,7 @@ final classa Calculator() extends MainFrame {
         c
       }
 
-      display.reactions += new MyKeyListener(Calculator.this)
+      //display.reactions += new MyKeyListener(Calculator.this)
       layout(display) = constraints(0, 0, 5, 3)
 
       layout(Button("!"){ paste("!") }) = constraints(0, 3)

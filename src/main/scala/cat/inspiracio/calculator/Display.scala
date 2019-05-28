@@ -18,7 +18,9 @@
 package cat.inspiracio.calculator
 
 import java.lang.Math.min
+
 import scala.swing._
+import scala.swing.event.{KeyPressed, KeyTyped}
 
 /** The text area of the complex calculator.
   *
@@ -27,9 +29,11 @@ import scala.swing._
   *
   * This could really be a lot better,
   * taking into account the syntax tree rather than just displaying a String. */
-class Display private[calculator](fontSize: Int) extends TextArea("", 3, 1) {
+class Display private[calculator](calculator: Calculator, fontSize: Int) extends TextArea("", 3, 1) {
   wordWrap = true
   lineWrap = true
+  listenTo(keys)
+  reactions += new MyKeyListener(calculator)
 
   private[calculator] def clear() = text = ""
 
