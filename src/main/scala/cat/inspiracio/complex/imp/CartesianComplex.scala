@@ -180,29 +180,20 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
   /** @param flags UPPERCASE ALTERNATE LEFT_JUSTIFY */
   override def formatTo(fmt: Formatter, flags: Int, width: Int, precision: Int) = {
 
-    def formatPolar(z: Complex) = z match {
-      case Real(0) => "0"
-      case Polar(m, rho) => {
-        val a = rho/π
-        if( a == 0 )
-          s"${m}"
-        else if( a == 1 )
-          s"${m} e^πi"
-        else if( a == -1 )
-          s"${m} e^-πi"
-        else
-          s"${m} e^${a}πi"
-      }
+    def formatPolar(z: Complex) = {
+      val f = new ComplexFormat
+      f.polar = true
+      f.format(z)
     }
 
     def formatCartesian(z: Complex) = z.toString
 
     import java.util.FormattableFlags.{ALTERNATE, LEFT_JUSTIFY, UPPERCASE}
 
-    val locale = fmt.locale
+    //val locale = fmt.locale
     val alternate = (flags & ALTERNATE) == ALTERNATE
-    val left = (flags & LEFT_JUSTIFY) == LEFT_JUSTIFY
-    val upper = (flags & UPPERCASE) == UPPERCASE
+    //val left = (flags & LEFT_JUSTIFY) == LEFT_JUSTIFY
+    //val upper = (flags & UPPERCASE) == UPPERCASE
     //width
     //precision
     val polar = alternate

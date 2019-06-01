@@ -45,8 +45,7 @@ class ToString extends FunSuite {
   }
 
   test("toString NaN") {
-    val d = Double.NaN
-    val c: Complex = d
+    val c: Complex = Double.NaN
     val s = c.toString
     assert(s === "NaN")
   }
@@ -82,12 +81,12 @@ class ToString extends FunSuite {
   }
 
   test("toString(1+i)") {
-    val c: Complex = 1 + i
+    val c: Complex = i+1
     assert(c.toString === "1+i")
   }
 
   test("toString(1-i)") {
-    val c: Complex = 1 - i
+    val c: Complex = -i+1
     assert(c.toString === "1-i")
   }
 
@@ -99,11 +98,6 @@ class ToString extends FunSuite {
   test("-0 toString"){
     val c: Complex = -0
     assert( c.toString === "0" )
-  }
-
-  test("∞ toString"){
-    val c: Complex = ∞
-    assert( c.toString === "∞" )
   }
 
   test("-9999999 toString") {
@@ -271,17 +265,17 @@ class ToString extends FunSuite {
   }
 
   test("-ei toString"){
-    val c: Complex = -e*i
+    val c: Complex = -i*e
     assert( c.toString === "-ei" )
   }
 
   test("πi toString"){
-    val c: Complex = π * i
+    val c: Complex = i*π
     assert( c.toString === "πi" )
   }
 
   test("-πi toString"){
-    val c: Complex = -π*i
+    val c: Complex = -i*π
     assert( c.toString === "-πi" )
   }
 
@@ -295,18 +289,18 @@ class ToString extends FunSuite {
 
   //minimal magnitude
   test("0.001i toString"){
-    val c: Complex = 0.001*i
+    val c: Complex = i * 0.001
     assert( c.toString === "0.001i" )
   }
 
   //minimal magnitude
   test("-0.001i toString"){
-    val c: Complex = -0.001*i
+    val c: Complex = -0.001 * i
     assert( c.toString === "-0.001i" )
   }
 
   test("1655.03i toString"){
-    val c: Complex = 1655.03*i
+    val c: Complex = 1655.03 * i
     assert( c.toString === "1655.03i" )
   }
 
@@ -342,7 +336,7 @@ class ToString extends FunSuite {
   }
 
   test("-3.153 * 10^-8  * i toString"){
-    val c: Complex = -3.153 * 10\ -8 * i
+    val c: Complex = -3.153 * 10\(-8) * i
     assert( c.toString === "-3.153i * 10^-8" )
   }
 

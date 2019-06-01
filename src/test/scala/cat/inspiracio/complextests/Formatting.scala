@@ -17,8 +17,6 @@
  * */
 package cat.inspiracio.complextests
 
-import java.text.NumberFormat
-
 import cat.inspiracio.complex._
 import org.scalatest.FunSuite
 
@@ -32,6 +30,7 @@ class Formatting extends FunSuite {
     assert( c === i+5 )
   }
 
+  // testing Formattable -----------------------------------------------------
   // format polar ---------------------------------------
 
   test("0 polar"){
@@ -62,26 +61,145 @@ class Formatting extends FunSuite {
 
   /** negative real */
   test("3.21 polar"){
-    val c: Complex = 3.21 * e\(1*π*i)
+    val c: Complex = 3.21 * e\(π*i)
     val s = f"${c}%#s"
-    assert( s === "3.21 e^πi" )
+    assert( s === "-3.21" )
   }
 
   test("3.21 e^0.75πi polar"){
     val c: Complex = 3.21 * e\(0.75*π*i)
     val s = f"${c}%#s"
-    assert( s === "3.21 e^0.75πi" )
+    assert( s === "3.21e^0.75πi" )
   }
 
   test("3.21 e^-0.75πi polar"){
     val c: Complex = 3.21 * e\(-0.75*π*i)
     val s = f"${c}%#s"
-    assert( s === "3.21 e^-0.75πi" )
+    assert( s === "3.21e^-0.75πi" )
   }
 
-  // testing Formattable -----------------------------------------------------
-
   // tests for ComplexFormat ===================================================
+
+  // ComplexFormat.format(Object)
+
+  test("format(Complex < Object)"){
+    val f = new ComplexFormat
+    val c: Object = i+5
+    val s = f.format(c)
+    assert( s === "5+i" )
+  }
+
+  test("format(double < Object)"){
+    val f = new ComplexFormat
+    f.maximumFractionDigits = 3
+    val d: Double = (1.0 / 3.0)
+    val o: Any = d
+    val s = f.format(o)
+    assert( s === "0.333" )
+  }
+
+  test("format(Long.MaxValue < Object)"){
+    val f = new ComplexFormat
+    f.maximumFractionDigits = 3
+    val l: Long = Long.MaxValue
+    val o: Any = l
+    val s = f.format(o)
+    assert( s === "9223372036854775807" )
+  }
+
+  // ComplexFormat.format(double)
+
+  test("format(0: double)"){
+    val f = new ComplexFormat
+    f.maximumFractionDigits = 3
+    val d: Double = 0
+    val s = f.format(d)
+    assert( s === "0" )
+  }
+
+  test("format(e: double)"){
+    val f = new ComplexFormat
+    f.maximumFractionDigits = 3
+    val d: Double = e
+    val s = f.format(d)
+    assert( s === "e" )
+  }
+
+  test("format(-e: double)"){
+    val f = new ComplexFormat
+    f.maximumFractionDigits = 3
+    val d: Double = -e
+    val s = f.format(d)
+    assert( s === "-e" )
+  }
+
+  test("format(π: double)"){
+    val f = new ComplexFormat
+    f.maximumFractionDigits = 3
+    val d: Double = π
+    val s = f.format(d)
+    assert( s === "π" )
+  }
+
+  test("format(-π: double)"){
+    val f = new ComplexFormat
+    f.maximumFractionDigits = 3
+    val d: Double = -π
+    val s = f.format(d)
+    assert( s === "-π" )
+  }
+
+  test("format(Double.PositiveInfinity: double)"){
+    val f = new ComplexFormat
+    f.maximumFractionDigits = 3
+    val d: Double = Double.PositiveInfinity
+    val s = f.format(d)
+    assert( s === "∞" )
+  }
+
+  test("format(Double.NegativeInfinity: double)"){
+    val f = new ComplexFormat
+    f.maximumFractionDigits = 3
+    val d: Double = Double.NegativeInfinity
+    val s = f.format(d)
+    assert( s === "∞" )
+  }
+
+  test("format(1/3: double)"){
+    val f = new ComplexFormat
+    f.maximumFractionDigits = 3
+    val d = 1.0 / 3.0
+    val s = f.format(d)
+    assert( s === "0.333" )
+  }
+
+  // ComplexFormat.format(long)
+
+  test("format(0: Long)"){
+    val f = new ComplexFormat
+    f.maximumFractionDigits = 3
+    val l: Long = 0
+    val s = f.format(l)
+    assert( s === "0" )
+  }
+
+  test("format(Long.MaxValue: Long)"){
+    val f = new ComplexFormat
+    f.maximumFractionDigits = 3
+    val l: Long = Long.MaxValue
+    val s = f.format(l)
+    assert( s === "9223372036854775807" )
+  }
+
+  test("format(Long.MinValue: Long)"){
+    val f = new ComplexFormat
+    f.maximumFractionDigits = 3
+    val l: Long = Long.MinValue
+    val s = f.format(l)
+    assert( s === "-9223372036854775808" )
+  }
+
+  // ComplexFormat.format(Complex)
 
   test("format 3+i"){
     val f = new ComplexFormat
@@ -109,7 +227,7 @@ class Formatting extends FunSuite {
     f.minimumFractionDigits = 3
     val c = 1.0
     val s = f.format( c )
-    assert( s === "1.000" )
+    assert( s === "1" )
   }
 
   test("format 0 polar"){

@@ -19,10 +19,28 @@ package cat.inspiracio.complex
 
 import java.math.RoundingMode
 import java.text.{FieldPosition, NumberFormat, ParsePosition}
-import java.util.{Currency, Formatter, Locale}
+import java.util.{Currency, Locale}
 
 import cat.inspiracio.complex.imp.CartesianComplex
 
+/** Formatting and parsing of complex numbers.
+  *
+  * Complex.toString gives a string with maximal precision in a notation
+  * that should be familiar to mathematicians and useful.
+  *
+  * For more control over the format, use this class.
+  *
+  * Features:
+  * - Favours special numbers: e, π, ∞
+  * - cartesian or polar representation
+  * - ComplexFormat extends NumberFormat, and all methods of NumberFormat relating
+  *   to Object, double, and long, can be used similar to NumberFormat.
+  * - minimum/maximumFractionDigits: how many digits after decimal point
+  *   in real part, imaginary part, and magnitude part of polar representation
+  * - minimum/maximumIntegerDigits: like in NumberFormat, not really useful for complex
+  * - polar: Boolean: whether to generate a polar representation of the number
+  *
+  * */
 class ComplexFormat extends NumberFormat {
 
   // state ----------------------------------------------
@@ -108,11 +126,55 @@ class ComplexFormat extends NumberFormat {
     else
       super.format( number, toAppendTo, pos )
 
-  /** Formats a real number.
+  /** Formats a real number:
+    * NaN
+    * 0
+    * ∞
+    * e -e
+    * π -π
+    * 10⁻³ <= m < 10⁷ => 1655.0 or 7856.05
+    * m < 10⁻³ or 10⁷ < m => "-3.153 * 10^-8"
     * @param pos Ignored.
     *            On input: an alignment field, if desired.
     *            On output: the offsets of the alignment field. */
-  override def format(v: Double, buffer: StringBuffer, pos: FieldPosition): StringBuffer = nf.format(v, buffer, pos)
+  override def format(d: Double, buffer: StringBuffer, pos: FieldPosition): StringBuffer = {
+
+    /** Cleans computerized scientific notation.
+      * From "9.0E-4" makes "9.0 * 10⁻4". */
+    def clean(s: String) = s.replace("E", " * 10^")
+
+    if(d.isNaN)
+      buffer append "NaN"
+    else if(d==0.0 || d== -0.0 )
+      buffer append "0"
+    else if(d.isInfinite)
+      buffer append "∞"
+    else {
+      val sign = if(0 <= d) "" else "-"
+      val m = d.abs
+      if(m==e)
+        buffer append (sign + "e")
+      else if(m==π)
+        buffer append (sign + "π")
+      else{
+        val MIN = 0.001       // 10⁻³
+        val MAX = 10000000    // 10⁷
+        //decimal notation
+        if(MIN <= m && m < MAX){
+          if( d.isWhole )
+            buffer append d.toInt.toString
+          else {
+            nf.format(d, buffer, pos)
+          }
+        }
+        //scientific notation
+        else{
+          buffer append clean(d.toString)
+        }
+      }
+    }
+
+  }
 
   /** Formats a real number.
     * @param pos Ignored.
@@ -125,53 +187,6 @@ class ComplexFormat extends NumberFormat {
   def format(c: Complex, buffer: StringBuffer, pos: FieldPosition): StringBuffer = {
     val s = format(c)
     buffer append s
-  }
-
-  /** Formats as real number:
-    * NaN
-    * 0
-    * ∞
-    * e -e
-    * π -π
-    * 10⁻³ <= m < 10⁷ => 1655.0 or 7856.05
-    * m < 10⁻³ or 10⁷ < m => "-3.153 * 10^-8"
-    * */
-  private def formatReal(d: Double): String = {
-
-    /** Cleans computerized scientific notation.
-      * From "9.0E-4" makes "9.0 * 10⁻4". */
-    def clean(s: String) = s.replace("E", " * 10^")
-
-    if(d.isNaN)
-      "NaN"
-    else if(d==0)
-      "0"
-    else if(d.isInfinite)
-      "∞"
-    else {
-      val sign = if(0 <= d) "" else "-"
-      val m = d.abs
-      if(m==e)
-        sign + "e"
-      else if(m==π)
-        sign + "π"
-      else{
-        val MIN = 0.001       // 10⁻³
-        val MAX = 10000000    // 10⁷
-        //decimal notation
-        if(MIN <= m && m < MAX){
-          if( d.isWhole )
-            d.toInt.toString
-          else {
-            nf.format(d)
-          }
-        }
-        //scientific notation
-        else{
-          clean(d.toString)
-        }
-      }
-    }
   }
 
   /** Formats as imaginary number:
@@ -220,7 +235,7 @@ class ComplexFormat extends NumberFormat {
   }
 
   private def formatCartesian(re: Double, im: Double) = {
-    val r = formatReal(re)
+    val r = format(re)
     val i = formatImaginary(im)
     val length = r.length + i.length
     val SHORT = 7
@@ -255,7 +270,12 @@ class ComplexFormat extends NumberFormat {
         val rho: Double = c match {
           case c: CartesianComplex => c.argument / π
         }
-        nf.format(m) + "e^" + nf.format(rho) + "πi"
+        if(rho == 0 )
+          nf.format(m)
+        else if(rho == 1 )
+          nf.format(-m)
+        else
+          nf.format(m) + "e^" + nf.format(rho) + "πi"
       }
     }
   }
@@ -302,7 +322,7 @@ class ComplexFormat extends NumberFormat {
       c match {
         case ∞ => "∞"
         case Integer(n) if(MIN < n && n < MAX) => n.toString
-        case Real(re) => formatReal(re)
+        case Real(re) => format(re)
         case Imaginary(im) => formatImaginary(im)
         case Cartesian(re,im) => formatCartesian(re,im)
       }
