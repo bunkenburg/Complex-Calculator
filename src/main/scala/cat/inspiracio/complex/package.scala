@@ -265,12 +265,12 @@ package object complex {
     /** val Polar(m, a) = z
       * Matches all finite numbers. */
     def unapply(c: Complex): Option[(Double,Double)] = c match {
-      case ∞ => None
       case cc: CartesianComplex => {
         val m = cc.modulus
         val a = cc.argument
         Some( (m, a) )
       }
+      case ∞ => None
     }
 
   }
@@ -292,8 +292,8 @@ package object complex {
     /** val Cartesian(re, im) = z
       * Matches all finite complex numbers. */
     def unapply(c: Complex): Option[(Double,Double)] = c match {
-      case ∞ => None
       case cc: CartesianComplex => Some( (cc.re, cc.im) )
+      case ∞ => None
     }
 
   }

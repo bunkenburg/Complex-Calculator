@@ -34,8 +34,27 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
   override def floatValue() = re.toFloat
   override def doubleValue() = re
 
-  /** By default, cartesian representation with
-    * precision 3. */
+  /** Gives a practical precise String representation of the complex number.
+    * No loss of information: different complex numbers map to different strings.
+    * If you want to round or polar representation, use ComplexFormat.
+    *
+    * If the number is infinity, "∞".
+    *
+    * If the number is integer and |c| < 10⁷ = 10 000 000, just all digits.
+    *
+    * For e and π, "e" and "π".
+    *
+    * If the number is real and 10⁻³ <= |c| < 10⁷, digits, decimal point, digits.
+    * If the number is real, like "-3.153 * 10^-8".
+    *
+    * If the number is imaginary:
+    *   special values: i, -i, ei, -ei, πi, -πi.
+    *   10⁻³ <= |c| < 10⁷ then like "-7856.05i".
+    *   otherwise like "-3.153i * 10^-87".
+    *
+    * Otherwise, cartesian representation.
+    *
+    * */
   override def toString: String = {
 
     /** Formats as real number:
@@ -69,12 +88,15 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
         else{
           val MIN = 0.001       // 10⁻³
           val MAX = 10000000    // 10⁷
+          //decimal notation
           if(MIN <= m && m < MAX){
             if( d.isWhole )
               d.toInt.toString
             else
               d.toString
-          } else{
+          }
+          //scientific notation
+          else{
             clean(d.toString)
           }
         }
@@ -145,7 +167,6 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
       }
     }
 
-    //1. if the number is natural and small, all digits, no point.
     val MIN = -10000000
     val MAX = 10000000
     this match {
@@ -156,39 +177,26 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
     }
   }
 
-  /** Format real number nicely, with e and π.
-    * Cuts off zeros after decimal point.
-    * Cuts off decimal point for integers. */
-  private def format(d: Double): String = {
-
-    //Some special real numbers
-    if(d == e) "e"
-    else if(d == -e) "-e"
-    else if(d == π) "π"
-    else if(d == -π) "-π"
-
-    //General formatting
-    else {
-      val s = d.toString
-      if (s.contains('.')) {
-        val b = new StringBuilder(s)
-
-        //Cuts off trailing zeros.
-        while ( b.charAt(b.length - 1) == '0')
-          b.setLength(b.length - 1)
-
-        //Maybe cut off trailing '.' too.
-        if (b.charAt(b.length - 1) == '.')
-          b.setLength(b.length - 1)
-
-        b.toString
-      }
-      else s  //NaN and other special cases
-    }
-  }
-
   /** @param flags UPPERCASE ALTERNATE LEFT_JUSTIFY */
   override def formatTo(fmt: Formatter, flags: Int, width: Int, precision: Int) = {
+
+    def formatPolar(z: Complex) = z match {
+      case Real(0) => "0"
+      case Polar(m, rho) => {
+        val a = rho/π
+        if( a == 0 )
+          s"${m}"
+        else if( a == 1 )
+          s"${m} e^πi"
+        else if( a == -1 )
+          s"${m} e^-πi"
+        else
+          s"${m} e^${a}πi"
+      }
+    }
+
+    def formatCartesian(z: Complex) = z.toString
+
     import java.util.FormattableFlags.{ALTERNATE, LEFT_JUSTIFY, UPPERCASE}
 
     val locale = fmt.locale
@@ -201,56 +209,9 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
 
     val b = new StringBuilder
 
-    val s = if(polar){
-      this match {
-        case Real(0) => "0"
-        case Polar(m, rho) => {
-          val a = rho/π
-          if( a == 0 )
-            s"${m}"
-          else if( a == 1 )
-            s"${m} e^πi"
-          else if( a == -1 )
-            s"${m} e^-πi"
-          else
-            s"${m} e^${a}πi"
-        }
-      }
-    }
-    //Cartesian
-    else
-      this.toString
-
+    val s = if(polar) formatPolar(this) else formatCartesian(this)
     b.append(s)
     fmt.format(b.toString)
-
-  }
-
-  /** Format a complex number nicely. */
-  def toStringBla: String = {
-    import math.abs
-    val ε = 0.000000001
-
-      //It's just a real number.
-      if (abs(im) < ε)
-        format(re)
-
-      //Cartesian x + yi
-      else {
-        val real = format(re)
-
-        val imaginary = if (abs(im - 1) < ε)
-          "i"
-        else if (abs(im + 1) < ε)
-          "-i"
-        else
-          format(im) + "i"
-
-        if (abs(re) < ε)
-          imaginary
-        else
-          real + (if (im <= 0) "" else "+") + imaginary
-      }
   }
 
   // methods with 0 parameters ------------------------------------

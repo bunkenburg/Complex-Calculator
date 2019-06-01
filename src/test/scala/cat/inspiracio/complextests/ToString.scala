@@ -40,7 +40,8 @@ class ToString extends FunSuite {
 
   test("toString 0.5") {
     val c: Complex = 0.5
-    assert(c.toString === "0.5")
+    val s = c.toString
+    assert( s === "0.5")
   }
 
   test("toString NaN") {

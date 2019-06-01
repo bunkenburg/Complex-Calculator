@@ -17,6 +17,8 @@
  * */
 package cat.inspiracio.complextests
 
+import java.text.NumberFormat
+
 import cat.inspiracio.complex._
 import org.scalatest.FunSuite
 
@@ -77,6 +79,59 @@ class Formatting extends FunSuite {
     assert( s === "3.21 e^-0.75πi" )
   }
 
+  // testing Formattable -----------------------------------------------------
+
   // tests for ComplexFormat ===================================================
-  
+
+  test("format 3+i"){
+    val f = new ComplexFormat
+    val s = f.format(i+3)
+    assert( s === "3+i" )
+  }
+
+  test("format 1.0/3.0"){
+    val f = new ComplexFormat
+    val c = 1.0/3.0
+    val s = f.format( c )
+    assert( s === "0.3333333333333333" )
+  }
+
+  test("format 1.0/3.0 maxfraction 3"){
+    val f = new ComplexFormat
+    f.maximumFractionDigits = 3
+    val c = 1.0/3.0
+    val s = f.format( c )
+    assert( s === "0.333" )
+  }
+
+  test("format 1.0 minfraction 3"){
+    val f = new ComplexFormat
+    f.minimumFractionDigits = 3
+    val c = 1.0
+    val s = f.format( c )
+    assert( s === "1.000" )
+  }
+
+  test("format 0 polar"){
+    val f = new ComplexFormat
+    f.polar = true
+    val c: Complex = 0
+    assert( f.format(c) === "0" )
+  }
+
+  test("format 1+i polar"){
+    val f = new ComplexFormat
+    f.maximumFractionDigits = 3
+    f.polar = true
+    val c = i+1
+    val s = f.format( c )
+    assert( s === "1.414e^0.25πi" )
+  }
+
+  test("format ∞ polar"){
+    val f = new ComplexFormat
+    f.polar = true
+    assert( f.format(∞) === "∞" )
+  }
+
 }

@@ -17,7 +17,7 @@
  * */
 package cat.inspiracio.calculator
 
-import java.awt.{Color, Dimension, Font, Graphics, Point}
+import java.awt.{Color, Graphics, Point}
 import scala.swing._
 
 import cat.inspiracio.complex._
@@ -64,7 +64,8 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     if (finite(z)) {
       val p = complex2Point(z)
       g.drawCross(p, markLength)
-      g.drawString(z.toString, p.x+2, p.y+2 )
+      val s = z.toString
+      g.drawString(s, p.x+2, p.y+2 )
     }
 
   override private[calculator] def draw(g: Graphics, zs: List[Complex]) =

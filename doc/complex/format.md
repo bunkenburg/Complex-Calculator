@@ -373,7 +373,7 @@ In practice, there can be up to 16 digits ... must restrict that in a configurab
         
         restrict digits in a amb n to precision
         
-        clean it: "-3.153E-8.764" => "-3.153i * 10^(-8.764)"
+        clean it: "-3.153E-87" => "-3.153i * 10^-87"
 
         //if a==1 , just i * 10^n ?
         
@@ -398,3 +398,15 @@ In practice, there can be up to 16 digits ... must restrict that in a configurab
         val rho = principal value
         
         ${m}e^${rho}πi  like    3.21e^0.75πi
+        
+## how to implement it
+
+As far as I can see, NumberFormat is the only existing implementation that can round a double
+to with specified fractional digits but also not pad with zeros.
+
+As far as I can see, however, there is no existing implementation that can do that also for 
+scientific notation. It seems I have to implement that myself.
+
+Decision
+* Complex.toString without loss of precision. If two Complex are different, their toString is different. (like Double)
+* ComplexFormat is for configurable formatting, maybe with loss of precision. (like Double and NumberFormat)

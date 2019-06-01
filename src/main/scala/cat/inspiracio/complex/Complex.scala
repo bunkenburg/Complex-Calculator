@@ -31,6 +31,30 @@ import cat.inspiracio.complex.imp.Circle
   * */
 abstract class Complex extends Number with Formattable {
 
+  /** Gives a practical precise String representation of the complex number.
+    * No loss of information: different complex numbers map to different strings.
+    * If you want to round or polar representation, use ComplexFormat.
+    *
+    * If the number is infinity, "∞".
+    *
+    * If the number is integer and |c| < 10⁷ = 10 000 000, just all digits.
+    *
+    * For e and π, "e" and "π".
+    *
+    * If the number is real and 10⁻³ <= |c| < 10⁷, digits, decimal point, digits.
+    * If the number is real, like "-3.153 * 10^-8".
+    *
+    * If the number is imaginary:
+    *   special values: i, -i, ei, -ei, πi, -πi.
+    *   10⁻³ <= |c| < 10⁷ then like "-7856.05i".
+    *   otherwise like "-3.153i * 10^-87".
+    *
+    * Otherwise, cartesian representation.
+    *
+    * See the subclasses for details.
+    * */
+  override def toString: String
+
   // Operators ---------------------------------
 
   def unary_+ : Complex = this

@@ -174,7 +174,7 @@ final class Calculator() extends MainFrame {
   /** Adds a complex number to the display. */
   final private[calculator] def add(c: Complex) = {
     //Could improve: parenthesis only when necessary
-    val s = "(" + c + ")"
+    val s = "(" + c + ")"   //XXX precision
     display.paste(s)
   }
 
