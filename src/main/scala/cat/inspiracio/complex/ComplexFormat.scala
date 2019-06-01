@@ -226,9 +226,9 @@ class ComplexFormat extends NumberFormat {
           if( d.isWhole )
             d.toInt.toString + "i"
           else
-            d.toString + "i"
+            nf.format(d) + "i"
         } else {
-          clean(d.toString)
+          clean( nf.format(d) )
         }
       }
     }
