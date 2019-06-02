@@ -1,6 +1,8 @@
 # TODO
 
-* Complex.toString with reasonable precision to get short numbers
+* Complex.toString and ComplexFormat with reasonable precision to get short numbers
+* exponentiation symbol: \ not ^
+* These symbols can be used for multiplication without '*': eπi∞
 * rewrite parsing using Scala combinator parsing
 * |f(z)| mode, z word: remove unused disabled icons
 * put into About: date, mvn version, git revision

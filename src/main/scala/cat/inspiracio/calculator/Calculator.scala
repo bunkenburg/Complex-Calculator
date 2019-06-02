@@ -41,6 +41,11 @@ final class Calculator() extends MainFrame {
   resizable = false
   menuBar = new Menus(this)
 
+  /** For all formatting of complex numbers that will be visible to the user */
+  private val cf = new ComplexFormat
+  cf.minimumFractionDigits = 0
+  cf.maximumFractionDigits = 3
+
   /** The mode that the program is in: Calculation, z->fz mapping, z->|fz| mapping, or Re(fz). */
   private var _mode = CALC
 
@@ -174,7 +179,7 @@ final class Calculator() extends MainFrame {
   /** Adds a complex number to the display. */
   final private[calculator] def add(c: Complex) = {
     //Could improve: parenthesis only when necessary
-    val s = "(" + c + ")"   //XXX precision
+    val s = "(" + cf.format(c) + ")"
     display.paste(s)
   }
 

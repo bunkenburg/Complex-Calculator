@@ -229,6 +229,43 @@ class Formatting extends FunSuite {
     assert( s === "0.3333333333333333i" )
   }
 
+  test("1.0 * 10^7"){
+    val c: Complex = 1.0 * 10\7
+    val f = new ComplexFormat
+    f.minimumFractionDigits = 0
+
+    assert( f.format(1.0) === "1" )
+
+    val s = f.format(c)
+    assert( s === "10000000" )
+
+  }
+
+  test("1.0 * 10^7 * i"){
+    val c: Complex = 1.0 * 10\7 * i
+    val f = new ComplexFormat
+    f.minimumFractionDigits = 0
+    val s = f.format(c)
+    assert( s === "10000000i" )
+
+  }
+
+  test("1.0 * 10^8"){
+    val c: Complex = 1.0 * 10\8
+    val f = new ComplexFormat
+    f.minimumFractionDigits = 0
+    val s = f.format(c)
+    assert( s === "100000000" )
+  }
+
+  test("1.0 * 10^8 * i"){
+    val c: Complex = 1.0 * 10\8 * i
+    val f = new ComplexFormat
+    f.minimumFractionDigits = 0
+    val s = f.format(c)
+    assert( s === "100000000i" )
+  }
+
   test("format 1.0/3.0 i maxfraction 3"){
     val f = new ComplexFormat
     f.maximumFractionDigits = 3

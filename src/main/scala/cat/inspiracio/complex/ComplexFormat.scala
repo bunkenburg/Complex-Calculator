@@ -169,7 +169,8 @@ class ComplexFormat extends NumberFormat {
         }
         //scientific notation
         else{
-          buffer append clean(d.toString)
+          val s = nf.format(d)  //never does scientific notation?
+          buffer append clean(s)
         }
       }
     }
@@ -199,38 +200,13 @@ class ComplexFormat extends NumberFormat {
     * m < 10⁻³ or 10⁷ < m => "-3.153i * 10^-8"
     * */
   private def formatImaginary(d: Double): String = {
-
-    /** Cleans computerized scientific notation.
-      * From "9.0E-4" makes "9.0i * 10⁻4". */
-    def clean(s: String) = s.replace("E", "i * 10^")
-
-    if(d.isNaN)
-      "NaN"
-    else if(d==0)
-      "0"
-    else if(d.isInfinite)
-      "∞"
+    if(d == 1)
+      "i"
+    else if(d == -1)
+      "-i"
     else {
-      val sign = if(0 <= d) "" else "-"
-      val m = d.abs
-      if(m==1)
-        sign + "i"
-      else if(m==e)
-        sign + "ei"
-      else if(m==π)
-        sign + "πi"
-      else{
-        val MIN = 0.001       // 10⁻³
-        val MAX = 10000000    // 10⁷
-        if(MIN <= m && m < MAX) {
-          if( d.isWhole )
-            d.toInt.toString + "i"
-          else
-            nf.format(d) + "i"
-        } else {
-          clean( nf.format(d) )
-        }
-      }
+      val s = format(d)
+      s + "i"
     }
   }
 
@@ -321,10 +297,14 @@ class ComplexFormat extends NumberFormat {
     else
       c match {
         case ∞ => "∞"
-        case Integer(n) if(MIN < n && n < MAX) => n.toString
-        case Real(re) => format(re)
-        case Imaginary(im) => formatImaginary(im)
-        case Cartesian(re,im) => formatCartesian(re,im)
+        case Integer(n) if(MIN < n && n < MAX) =>
+          n.toString
+        case Real(re) =>
+          format(re)
+        case Imaginary(im) =>
+          formatImaginary(im)
+        case Cartesian(re,im) =>
+          formatCartesian(re,im)
       }
   }
 
