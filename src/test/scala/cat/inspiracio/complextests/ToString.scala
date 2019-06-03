@@ -21,54 +21,164 @@ import org.scalatest.FunSuite
 
 import cat.inspiracio.complex._
 
+/** Tests Complex.toString */
 class ToString extends FunSuite {
 
-  test("toString 0") {
+  // small integers -----------------------
+
+  test("-9999999") {
+    val c: Complex = -9999999
+    assert(c.toString === "-9999999")
+  }
+
+  test("-1000000") {
+    val c: Complex = -1000000
+    assert(c.toString === "-1000000")
+  }
+
+  test("-1000") {
+    val c: Complex = -1000
+    assert(c.toString === "-1000")
+  }
+
+  test("-3") {
+    val c: Complex = -3
+    assert(c.toString === "-3")
+  }
+
+  test("-1") {
+    val c: Complex = -1
+    assert(c.toString === "-1")
+  }
+
+  test("-0") {
+    val c: Complex = -0
+    assert(c.toString === "0")
+  }
+
+  test("0") {
     val c: Complex = 0
     assert(c.toString === "0")
   }
 
-  test("toString 1") {
+  test("1") {
     val c: Complex = 1
     assert(c.toString === "1")
   }
 
-  test("toString 3") {
-    val c: Complex = 3
-    assert(c.toString === "3")
+  test("16") {
+    val c: Complex = 16
+    assert(c.toString === "16")
   }
 
-  test("toString 0.5") {
-    val c: Complex = 0.5
-    val s = c.toString
-    assert( s === "0.5")
+  test("1000") {
+    val c: Complex = 1000
+    assert(c.toString === "1000")
   }
 
-  test("toString NaN") {
+  test("1000000") {
+    val c: Complex = 1000000
+    assert(c.toString === "1000000")
+  }
+
+  test("9999999") {
+    val c: Complex = 9999999
+    assert(c.toString === "9999999")
+  }
+
+  // real -> special --------------------
+
+  test("NaN") {
     val c: Complex = Double.NaN
-    val s = c.toString
-    assert(s === "NaN")
+    assert(c.toString === "NaN")
   }
 
-  test("toString e") {
+  test("0.0") {
+    val c = 0.0
+    assert(c.toString === "0")
+  }
+
+  test("-0.0") {
+    val c = -0.0
+    assert(c.toString === "0")
+  }
+
+  test("Double.PositiveInfinity") {
+    val c = Double.PositiveInfinity
+    assert(c.toString === "∞")
+  }
+
+  test("Double.NegativeInfinity") {
+    val c = Double.NegativeInfinity
+    assert(c.toString === "∞")
+  }
+
+  test("Float.PositiveInfinity") {
+    val c = Float.PositiveInfinity
+    assert(c.toString === "∞")
+  }
+
+  test("Float.NegativeInfinity") {
+    val c = Float.NegativeInfinity
+    assert(c.toString === "∞")
+  }
+
+  test("∞") {
+    val c = ∞
+    assert(c.toString === "∞")
+  }
+
+  test("e") {
     val c: Complex = e
     assert(c.toString === "e")
   }
 
-  test("toString(-e)") {
+  test("-e") {
     val c: Complex = -e
     assert(c.toString === "-e")
   }
 
-  test("toString π") {
+  test("π") {
     val c: Complex = π
     assert(c.toString === "π")
   }
 
-  test("toString i") {
-    val c: Complex = i
-    assert(c.toString === "i")
+  test("-π") {
+    val c: Complex = -π
+    assert(c.toString === "-π")
   }
+
+  // real -> decimal representation
+
+  test("-1655.0") {
+    val c: Complex = -1655.0
+    assert(c.toString === "-1655")
+  }
+
+  test("7856.05") {
+    val c: Complex = 7856.05
+    assert(c.toString === "7856.05")
+  }
+
+  test("0.001") {
+    val c: Complex = 0.001
+    assert(c.toString === "0.001")
+  }
+
+  test("-0.001") {
+    val c: Complex = -0.001
+    assert(c.toString === "-0.001")
+  }
+
+  // real -> scientific notation
+
+  test("0.0003") {
+    val c: Complex = 0.0003
+    assert(c.toString === "3 * 10^-4")
+  }
+
+
+
 
   test("toString 3+i") {
     val c: Complex = 3+i
