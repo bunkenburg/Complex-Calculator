@@ -22,8 +22,6 @@ import org.scalatest.FunSuite
 
 class ComplexFormatPolarTest extends FunSuite {
 
-  // polar representation ------------------------
-
   test("format 0: Long polar"){
     val f = new ComplexFormat
     f.polar = true
