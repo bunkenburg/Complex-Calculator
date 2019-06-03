@@ -147,6 +147,12 @@ abstract class Complex extends Number with Formattable {
       }
   }
 
+  /** a\-b == a \ -b
+    * This is a bit hacky. */
+  def \- (c: Int): Complex = this \ -c
+  def \- (c: Double): Complex = this \ -c
+  def \- (c: Complex): Complex = this \ -c
+
   def === (c: Byte): Boolean = this match {
     case Integer(n) => n == c.toLong
     case _ => false

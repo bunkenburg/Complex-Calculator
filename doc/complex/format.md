@@ -361,7 +361,7 @@ outputs:
     * 100000000         -> 10^8
     * -100000000        -> -10^8
 
-3. if the number is imaginary (byte, int, long, float, double, Comple):
+3. if the number is imaginary:
 
     * NaN           -> "NaN"
     * infinite      -> "∞"
@@ -369,7 +369,7 @@ outputs:
     * ei, -ei       -> "ei", "-ei"
     * πi, -πi       -> "πi", "-πi"
     * 10⁻³ <= m < 10⁷    -> decimal representation (max/min fraction digits)
-    * -1655.0i      -> "-1655.0i"
+    * -1655.0i      -> "-1655i"
     * 7856.05i      -> "7856.05i"
     * m < 10⁻³ or 10⁷ < m   -> "computerized scientific notation"
         - val n = such that 10^n ≤ m < 10^(n+1)
@@ -386,7 +386,7 @@ outputs:
     * 0.0001i            -> i * 10^-4
     * -0.0003i           -> -3i * 10^-4
     * -0.00034i          -> -3.4i * 10^-4
-    * -0.0001i           -> i * -10^-4
+    * -0.0001i           -> -i * 10^-4
     * 12345678.9i        -> 1.234i * 10^7
     * -12345678.9i       -> -1.234i * 10^7
     * 100000000i         -> i * 10^8
