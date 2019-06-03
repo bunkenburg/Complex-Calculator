@@ -1,5 +1,6 @@
 # TODO
 
+* a\b and a\-b for long and double possible?
 * Complex.toString and ComplexFormat with reasonable precision to get short numbers
 * exponentiation symbol: \ not ^
 * These symbols can be used for multiplication without '*': eπi∞
