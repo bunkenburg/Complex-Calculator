@@ -135,7 +135,7 @@ class FormattableTest extends FunSuite {
   test("format -10\\-4: Complex polar"){
     val c: Complex = -0.0001
     val s = f"${c}%#s"
-    assert( s === "-10\\-4" )
+    assert( s === "-1 * 10\\-4" )
   }
 
   test("format -1.23 * 10\\-4: Complex polar"){
@@ -258,23 +258,23 @@ class FormattableTest extends FunSuite {
 
   test("1.2 * e\\-0.25πi"){
     val m = 1.2
-    val r = 0.25
+    val r = -0.25
     val c: Complex = m * e\(r*π*i)
     val s = f"${c}%#s"
     assert( s === "1.2 * e\\-0.25πi" )
   }
 
-  test("1.234 * 10\\-4 * e\\-0.25πi"){
-    val m = 1.234 * 10\-4
-    val r = 0.25
+  test("1.23 * 10\\-4 * e\\-0.25πi"){
+    val m = 1.23 * 10\-4
+    val r = -0.25
     val c: Complex = m * e\(r*π*i)
     val s = f"${c}%#s"
-    assert( s === "1.234 * 10\\-4 * e\\-0.25πi" )
+    assert( s === "1.23 * 10\\-4 * e\\-0.25πi" )
   }
 
   test("10\\-5 * e\\-0.25πi"){
     val m = 10\-5
-    val r = 0.25
+    val r = -0.25
     val c: Complex = m * e\(r*π*i)
     val s = f"${c}%#s"
     assert( s === "10\\-5 * e\\-0.25πi" )

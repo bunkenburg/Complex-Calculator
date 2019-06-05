@@ -64,7 +64,7 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     if (finite(z)) {
       val p = complex2Point(z)
       g.drawCross(p, markLength)
-      val s = z.toString
+      val s = short(z)
       g.drawString(s, p.x+2, p.y+2 )
     }
 
@@ -152,6 +152,8 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     /** rounds towards zero and towards a mark */
     def round(d: Double) = Math.ceil(d / markDistanceMath) * markDistanceMath
 
+    val cf = new ComplexFormat
+
     def horizontal() = {
       val left = complex2Point(i*crossImg + axisLeftMath )
       val right = complex2Point(i*crossImg + axisRightMath )
@@ -166,7 +168,8 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
         val a: Point = Point2(real2Pix(mark), cross.y)
         val b: Point = a + (0, markLength)
         g.drawLine(a, b)
-        g.drawString(toString(mark), a.x + markLength, cross.y + fontAscent)
+        val s = cf.format(mark)
+        g.drawString(s, a.x + markLength, cross.y + fontAscent)
 
         mark += markDistanceMath
       }
@@ -188,7 +191,7 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
           val a: Point = Point2(cross.x, imag2Pix(mark))
           val b = a + (-markLength, 0)
           g.drawLine(a, b)
-          val s = toString(mark) + "i"
+          val s = cf.format(i * mark)
           g.drawString(s, cross.x - markLength - g.getFontMetrics.stringWidth(s), a.y + fontAscent)
         }
 

@@ -17,8 +17,7 @@
  * */
 package cat.inspiracio.complex
 
-import java.text.{FieldPosition, ParsePosition}
-import java.util.{Formattable, Formatter, Locale}
+import java.util.Formattable
 
 import cat.inspiracio.complex.imp.Circle
 
@@ -33,25 +32,10 @@ abstract class Complex extends Number with Formattable {
 
   /** Gives a practical precise String representation of the complex number.
     * No loss of information: different complex numbers map to different strings.
-    * If you want to round or polar representation, use ComplexFormat.
     *
-    * If the number is infinity, "∞".
-    *
-    * If the number is integer and |c| < 10⁷ = 10 000 000, just all digits.
-    *
-    * For e and π, "e" and "π".
-    *
-    * If the number is real and 10⁻³ <= |c| < 10⁷, digits, decimal point, digits.
-    * If the number is real, like "-3.153 * 10\-8".
-    *
-    * If the number is imaginary:
-    *   special values: i, -i, ei, -ei, πi, -πi.
-    *   10⁻³ <= |c| < 10⁷ then like "-7856.05i".
-    *   otherwise like "-3.153i * 10\-87".
-    *
-    * Otherwise, cartesian representation.
-    *
-    * See the subclasses for details.
+    * Equivalent to
+    *   val f = new ComplexFormat
+    *   f.format(this)
     * */
   override def toString: String
 
@@ -100,14 +84,14 @@ abstract class Complex extends Number with Formattable {
     * Before, I used ^ which looks goods and fits in with word processors,
     * but is already bitwise OR and has wrong precedence.
     *
-    * Problem: prefix - binds more than \, so -3\-4 == (-3)\(-4) which may surprise.
+    * Careful: prefix - binds more than \, so -3\-4 == (-3)\(-4) which may surprise.
     * */
   def \ (c: Int): Complex = this match {
     case Real(0) =>
       if(c == 0) throw new ArithmeticException("0\\0")
       else 0
     case Real(r) =>
-      Math.pow(r, c)  // Is that ok? -1 \ -2 == -1
+      Math.pow(r, c)
     case Polar(mx,ax) =>
       if(c == 0) 1
       else Polar(exp(log(mx) * c), c * ax)
@@ -150,7 +134,8 @@ abstract class Complex extends Number with Formattable {
 
   /** a\-b == a \ -b
     * This is a bit hacky.
-    * Problem: prefix - binds more than \, so -3\-4 == (-3)\(-4) which may surprise. */
+    * But otherwise would have to write 10\(-7) whereas -10\7 = (-10)\7.
+    * With these definitions, prefix - binds more than \, on both sides. */
   def \- (c: Int): Complex = this \ -c
   def \- (c: Double): Complex = this \ -c
   def \- (c: Complex): Complex = this \ -c

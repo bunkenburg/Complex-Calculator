@@ -43,7 +43,8 @@ final class Sphere private[calculator](val world: World) extends WorldRepresenta
   override private[calculator] def draw(g: Graphics, c: Complex) = {
     isFrontC(c).foreach{ point =>
       g.drawCross( point, markLength )
-      g.drawString(c.toString, point.x+2, point.y+2 )
+      val s = short(c)
+      g.drawString(s, point.x+2, point.y+2 )
     }
   }
 

@@ -33,6 +33,9 @@ abstract class WorldRepresentation protected(w: World) extends Component {
   background = Color.white
   //doubleBuffered = true
 
+  protected val short = new ComplexFormat
+  short.maximumFractionDigits = 3
+
   //Methods ------------------------------------------------------
 
   private[calculator] def draw(g: Graphics, z: Complex)
@@ -60,8 +63,6 @@ abstract class WorldRepresentation protected(w: World) extends Component {
   private[calculator] def zoom_=(z: Double) : Unit = {}
 
   // helpers -----------------------------------
-
-  protected def toString(d: Double): String = double2Complex(d).toString
 
   protected[calculator] def pairs[A](cs : List[A]): List[(A,A)] = cs match {
     case Nil => Nil

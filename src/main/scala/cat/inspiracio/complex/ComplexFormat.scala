@@ -117,6 +117,10 @@ class ComplexFormat extends NumberFormat {
 
   // formatting ----------------------------------------------------------
 
+  def apply(c: Long) = format(c)
+  def apply(c: Double) = format(c)
+  def apply(c: Complex) = format(c)
+
   /** If number is a Complex, calls specialised method,
     * rather than treating Complex as Number.
     * @param pos
@@ -154,8 +158,8 @@ class ComplexFormat extends NumberFormat {
       else if(m==π)
         buffer append (sign + "π")
       else{
-        val MIN = 0.001       // 10⁻³
-        val MAX = 10000000    // 10⁷
+        val MIN = 0.001       // 10\-3
+        val MAX = 10000000    // 10\7
         //decimal notation
         if(MIN <= m && m < MAX){
           if( d.isWhole )
@@ -170,7 +174,7 @@ class ComplexFormat extends NumberFormat {
           val s = if(mantissa == 1.0)
             "10\\" + format(exponent)
           else if(mantissa == -1.0)
-            "-1 * 10\\" + format(exponent)  // wrong! -10\a = (-10)\a
+            "-1 * 10\\" + format(exponent)  // Trap: -10\a = (-10)\a
           else
             format(mantissa) + " * 10\\" + format(exponent)
           buffer append s
@@ -192,18 +196,11 @@ class ComplexFormat extends NumberFormat {
     * @param pos Ignored.
     *            On input: an alignment field, if desired.
     *            On output: the offsets of the alignment field. */
-  override def format(l: Long, buffer: StringBuffer, pos: FieldPosition): StringBuffer = {
-    //separate method in case later this becomes configurable
-    val s = l.toString
-    buffer append s
-  }
+  override def format(l: Long, buffer: StringBuffer, pos: FieldPosition): StringBuffer = buffer append l.toString
 
   /** Formats a complex number to a buffer. New method.
     * @pos Ignored. */
-  def format(c: Complex, buffer: StringBuffer, pos: FieldPosition): StringBuffer = {
-    val s = format(c)
-    buffer append s
-  }
+  def format(c: Complex, buffer: StringBuffer, pos: FieldPosition): StringBuffer = buffer append format(c)
 
   /** Formats as imaginary number:
     * NaN
@@ -211,8 +208,8 @@ class ComplexFormat extends NumberFormat {
     * ∞
     * ei -ei
     * πi -πi
-    * 10⁻³ <= m < 10⁷ => 1655.0i or 7856.05i
-    * m < 10⁻³ or 10⁷ < m => "-3.153i * 10\-8"
+    * 10\-3 <= m < 10\7 => 1655i or 7856.05i
+    * m < 10\-3 or 10\7 < m => "-3.153i * 10\-8"
     * */
   private def formatImaginary(d: Double): String = {
     if(d.isNaN)
@@ -233,8 +230,8 @@ class ComplexFormat extends NumberFormat {
       else if(m==π)
         sign + "πi"
       else{
-        val MIN = 0.001       // 10⁻³
-        val MAX = 10000000    // 10⁷
+        val MIN = 0.001       // 10\-3
+        val MAX = 10000000    // 10\7
         //decimal notation
         if(MIN <= m && m < MAX){
           if( d.isWhole )
@@ -259,7 +256,7 @@ class ComplexFormat extends NumberFormat {
 
   private def formatCartesian(re: Double, im: Double) = {
     if(re.isNaN || im.isNaN)
-      "NaN"   //decision: don't differenciate NaN real part and NaN imaginary part
+      "NaN"   //decision: don't differentiate NaN real part and NaN imaginary part
     else {
       val r = format(re)
       val i = formatImaginary(im)
@@ -326,12 +323,12 @@ class ComplexFormat extends NumberFormat {
     *
     * For e and π, "e" and "π".
     *
-    * If the number is real and 10⁻³ <= |c| < 10⁷, digits, decimal point, digits.
+    * If the number is real and 10\-3 <= |c| < 10\7, digits, decimal point, digits.
     * If the number is real, like "-3.153 * 10\-8". Configurable precision.
     *
     * If the number is imaginary:
     *   special values: i, -i, ei, -ei, πi, -πi.
-    *   10⁻³ <= |c| < 10⁷ then like "-7856.05i".
+    *   10\-3 <= |c| < 10\7 then like "-7856.05i".
     *   otherwise like "-3.153i * 10\-87". Configurable precision.
     *
     * Otherwise, cartesian representation. Configurable precision.
@@ -345,7 +342,6 @@ class ComplexFormat extends NumberFormat {
     *     val rho = principal value
     *     ${m}e\${rho}πi  like    3.21e\0.75πi. Configurable precision.
     *
-    * New method.
     * */
   def format(c: Complex): String = {
     if(polar)
@@ -364,11 +360,6 @@ class ComplexFormat extends NumberFormat {
           formatCartesian(re, im)
         case `∞` =>
           "∞"
-        case _ => {
-          val s = "ComplexFormat.format " + Re(c) + " + " + Im(c) + "i"
-          println(s)
-          s
-        }
       }
     }
   }
@@ -376,7 +367,7 @@ class ComplexFormat extends NumberFormat {
   // parsing ------------------------------------------------------------------
 
   /** Parses a complex number from a buffer.
-    * XXX Does nothing with the parse position. */
+    * @param position unused */
   override def parse(s: String, position: ParsePosition): Complex = parse(s)
 
   import cat.inspiracio.parsing.Syntax

@@ -60,7 +60,9 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
     f.format(this)
   }
 
-  /** @param flags UPPERCASE ALTERNATE LEFT_JUSTIFY */
+  /** Formats the complex number in string interpolation.
+    * So far, just one configuration: alternate which means polar.
+    * @param flags UPPERCASE ALTERNATE LEFT_JUSTIFY */
   override def formatTo(fmt: Formatter, flags: Int, width: Int, precision: Int) = {
     import java.util.FormattableFlags.{ALTERNATE, LEFT_JUSTIFY, UPPERCASE}
 
@@ -192,8 +194,7 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
   }
 
   override def / (c: Complex): Complex =
-    // See http://www.mesacc.edu/~scotz47781/mat120/notes/complex/dividing/dividing_complex.html
-    // for a better algorithm.
+    // See http://www.mesacc.edu/~scotz47781/mat120/notes/complex/dividing/dividing_complex.html for a better algorithm.
 
     if (this === 0) {
       c match {

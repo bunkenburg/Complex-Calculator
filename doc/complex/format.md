@@ -154,37 +154,6 @@ The class DecimalFormat uses patterns.
 If I make my own patterns, lots of freedom, but can get very complicated
 and it is not needed by any client or use case.
 
-    class DecimalFormat extends NumberFormat{ 
-        DecimalFormat(pattern: String)
-        
-        applyPattern(pattern: String)
-        applyLocalizedPattern(pattern: String)
-        
-        getDecimalFormatSymbols(): DecimalFormatSymbols <-- not interested
-        setDecimalFormatSYmbols(DecimalFormatSymbols)
-        
-        getGroupingSize(): Int  <-- not interested
-        setGroupingSize(Int)
-        
-        getMultiplier(): Int    <-- 100 for percent
-        setMultiplier(Int)
-        
-        getNegativePrefix(): String <-- not interested
-        getNegativeSuffix(): String
-        
-        getPositivePrefix(): String <-- not interested
-        getPositiveSuffix(): String
-        
-        isDecimalSeparatorAlwaysShown(): Boolean    <-- not interested
-        setDecimalSeparatorAlwaysShown(Boolean)
-        
-        isParseBigDecimal(): Boolean    <-- does not apply
-        setParseBigDecimal(Boolean)
-        
-        toLocalizedPattern(): String    
-        toPattern(): String
-    }
-
 ComplexFormat extends NumberFormat
 
     /** A class like this would give me any freedom that I need. */
@@ -221,35 +190,6 @@ Complex could implement that, with useless implementations.
 * Complex implements Formattable
 * ComplexFormat extends NumberFormat
 
-For easy configuration, best if ComplexFormat does the work: 
-it has most information, and we can always add
-more configuration by adding setters to it.
-
-But better to let Complex do toString: don't want
-to instantiate ComplexFormat for each c.toString.
-
-    class Complex {
-        def toString = formatTo(some defaults)
-        def formatTo(...)
-    }
-
-Configuration:
-
-* locale    --nothing
-* alternate --for polar
-* left      --nothing
-* upper     --nothing
-* width     --nothing, we are not making fixed-width fields
-* precision --interesting
-* maximumFractionDigits
-* minimumFractionDigits
-* maximumIntegerDigits
-* minimumIntegerDigits
-* currency
-* roundingMode  --can be interesting
-* groupingUsed
-* parseIntegerOnly
-
 ## Double.toString spec as inspiration
 
 https://docs.oracle.com/javase/8/docs/api/index.html?java/lang/Double.html
@@ -264,7 +204,7 @@ https://docs.oracle.com/javase/8/docs/api/index.html?java/lang/Double.html
 
     val n = such that 10\n ≤ m < 10\(n+1)
     
-    val a = the mathematically exact quotient of m and 10^n so that 1 ≤ a < 10
+    val a = the mathematically exact quotient of m and 10\n so that 1 ≤ a < 10
     
     the integer part of a, as a single decimal digit, followed by '.', 
     followed by decimal digits representing the fractional part of a, 
@@ -284,7 +224,7 @@ significand of d must be 0.
 
 In practice, there can be up to 16 digits ... must restrict that in a configurable way.
 
-10^(-3) = 0.001
+10\(-3) = 0.001
 
 10⁷ = 10000000
 
@@ -323,8 +263,8 @@ outputs:
     choose a limit:
     
     * Double.toString limit for scientific = 10⁷ = 10 000 000
-    * Integer.MAX_VALUE = 2^31 -1 =             2 147 483 647 
-    * Long.MAX_VALUE = 2^63 -1 =    9 223 372 036 854 775 807
+    * Integer.MAX_VALUE = 2\31 -1 =             2 147 483 647 
+    * Long.MAX_VALUE = 2\63 -1 =    9 223 372 036 854 775 807
     
     def small = |n| < limit
     
@@ -341,25 +281,25 @@ outputs:
     * -1655.0             -> "-1655"
     * 7856.05             -> "7856.05"
     * |r| < 10⁻³ or 10⁷ < |r|   -> "computerized scientific notation"
-        - val n = such that 10^n ≤ |r| < 10^(n+1)
-        - val a = the mathematically exact quotient of |r| and 10^n so that 1 ≤ a < 10
+        - val n = such that 10\n ≤ |r| < 10\(n+1)
+        - val a = the mathematically exact quotient of |r| and 10\n so that 1 ≤ a < 10
         - the integer part of a, as a single decimal digit, followed by '.', 
         followed by decimal digits representing the fractional part of a, 
         followed by the letter 'E', followed by a representation of n as a decimal integer, 
         as produced by the method Integer.toString(int)
         - restrict digits in a amb n to precision        
-        - clean it: "-3.153E-8" => "-3.153 * 10^-8"        
-        - if a==1 , just 10^n
-    * 0.0003            -> 3 * 10^-4
-    * 0.00034           -> 3.4 * 10^-4
-    * 0.0001            -> 10^-4
-    * -0.0003           -> -3 * 10^-4
-    * -0.00034          -> -3.4 * 10^-4
-    * -0.0001           -> -10^-4
-    * 12345678.9        -> 1.234 * 10^7
-    * -12345678.9       -> -1.234 * 10^7
-    * 100000000         -> 10^8
-    * -100000000        -> -10^8
+        - clean it: "-3.153E-8" => "-3.153 * 10\-8"        
+        - if a==1 , just 10\n
+    * 0.0003            -> 3 * 10\-4
+    * 0.00034           -> 3.4 * 10\-4
+    * 0.0001            -> 10\-4
+    * -0.0003           -> -3 * 10\-4
+    * -0.00034          -> -3.4 * 10\-4
+    * -0.0001           -> -10\-4
+    * 12345678.9        -> 1.234 * 10\7
+    * -12345678.9       -> -1.234 * 10\7
+    * 100000000         -> 10\8
+    * -100000000        -> -1 * 10\8
 
 3. if the number is imaginary:
 
@@ -372,25 +312,25 @@ outputs:
     * -1655.0i      -> "-1655i"
     * 7856.05i      -> "7856.05i"
     * m < 10⁻³ or 10⁷ < m   -> "computerized scientific notation"
-        - val n = such that 10^n ≤ m < 10^(n+1)
-        - val a = the mathematically exact quotient of m and 10^n so that 1 ≤ a < 10
+        - val n = such that 10\n ≤ m < 10\(n+1)
+        - val a = the mathematically exact quotient of m and 10\n so that 1 ≤ a < 10
         - the integer part of a, as a single decimal digit, followed by '.', 
         followed by decimal digits representing the fractional part of a, 
         followed by the letter 'E', followed by a representation of n as a decimal integer, 
         as produced by the method Integer.toString(int)
         - restrict digits in a amb n to precision
-        - clean: "-3.153E-87" => "-3.153i * 10^-87"
-        - if a==1 , just i * 10^n
-    * 0.0003i            -> 3i * 10^-4
-    * 0.00034i           -> 3.4i * 10^-4
-    * 0.0001i            -> i * 10^-4
-    * -0.0003i           -> -3i * 10^-4
-    * -0.00034i          -> -3.4i * 10^-4
-    * -0.0001i           -> -i * 10^-4
-    * 12345678.9i        -> 1.234i * 10^7
-    * -12345678.9i       -> -1.234i * 10^7
-    * 100000000i         -> i * 10^8
-    * -100000000i        -> i * -10^8
+        - clean: "-3.153E-87" => "-3.153i * 10\-87"
+        - if a==1 , just i * 10\n
+    * 0.0003i            -> 3i * 10\-4
+    * 0.00034i           -> 3.4i * 10\-4
+    * 0.0001i            -> i * 10\-4
+    * -0.0003i           -> -3i * 10\-4
+    * -0.00034i          -> -3.4i * 10\-4
+    * -0.0001i           -> -i * 10\-4
+    * 12345678.9i        -> 1.234i * 10\7
+    * -12345678.9i       -> -1.234i * 10\7
+    * 100000000i         -> i * 10\8
+    * -100000000i        -> -i * 10\8
 
 4. if the number is complex:
 
@@ -402,8 +342,8 @@ outputs:
     * -1-i
     * 1-i
     * 123456 +123456i 
-    * 1.234 * 10^7 +1.234i * 10^7
-    * -1.234 * 10^-4 -1.234i * 10^-4
+    * 1.234 * 10\7 +1.234i * 10\7
+    * -1.234 * 10\-4 -1.234i * 10\-4
     
 5. if polar is requested:
     
@@ -412,34 +352,34 @@ outputs:
     * real positive
         - 3
         - 3.2
-        - 10^-4
-        - 1.234 * 10^-4
-        - 1.234 * 10^8
+        - 10\-4
+        - 1.234 * 10\-4
+        - 1.234 * 10\8
     * real negative
         - -3
         - -3.2
-        - -10^-4
-        - -1.234 * 10^-4
-        - -1.234 * 10^8
+        - -10\-4
+        - -1.234 * 10\-4
+        - -1.234 * 10\8
     * imaginary positive
         - 3i
         - 3.2i
-        - i * 10^-4
-        - 1.234i * 10^-4
-        - 1.234i * 10^8
+        - i * 10\-4
+        - 1.234i * 10\-4
+        - 1.234i * 10\8
     * imaginary negative
         - -3i
         - -3.2i
-        - i * -10^-4
-        - -1.234i * 10^-4
-        - -1.234i * 10^8
+        - i * -10\-4
+        - -1.234i * 10\-4
+        - -1.234i * 10\8
     * else
         - val m = |c|
         - val r = principal argument / π
-        - m==1 && r==1 -> e^πi
-        - m==1 && r!=1 -> e^rπi     // example r=0.25 r=-0.25
-        - m!=1 && r==1 -> m * e^πi  // example m=1.2, 1.234 * 10^-4, 10^-5
-        - m!=1 && r!=1 -> m * e^rπi // example m=1.2, 1.234 * 10^-4, 10^-5
+        - m==1 && r==1 -> e\πi
+        - m==1 && r!=1 -> e\rπi     // example r=0.25 r=-0.25
+        - m!=1 && r==1 -> m * e\πi  // example m=1.2, 1.234 * 10\-4, 10\-5
+        - m!=1 && r!=1 -> m * e\rπi // example m=1.2, 1.234 * 10\-4, 10\-5
         
 ## how to implement it
 
