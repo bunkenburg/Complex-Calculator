@@ -119,7 +119,8 @@ class ComplexFormatTest extends FunSuite {
 
   test("format(1000000: Long)"){
     val f = new ComplexFormat
-    assert( f.format(10000000) === "1000000" )
+    val s = f.format(10000000)
+    assert( s ===   "10000000" )
   }
 
   test("format(9999999: Long)"){
@@ -212,7 +213,8 @@ class ComplexFormatTest extends FunSuite {
   test("format(1000000: Double)"){
     val f = new ComplexFormat
     val d: Double = 10000000
-    assert( f.format(d) === "1000000" )
+    val s = f.format(d)
+    assert( s === "10\\7" )
   }
 
   test("format(9999999: Double)"){

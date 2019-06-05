@@ -166,7 +166,13 @@ class ComplexFormat extends NumberFormat {
         }
         //scientific notation
         else{
-          val s = formatScientific(d)
+          val (mantissa,exponent) = log10(d)
+          val s = if(mantissa == 1.0)
+            "10\\" + format(exponent)
+          else if(mantissa == -1.0)
+            "-10\\" + format(exponent)
+          else
+            format(mantissa) + " * 10\\" + format(exponent)
           buffer append s
         }
       }
@@ -180,16 +186,6 @@ class ComplexFormat extends NumberFormat {
     val mantissa = parts(0).toDouble
     val exponent = parts(1).toLong
     (mantissa, exponent)
-  }
-
-  private def formatScientific(d: Double): String = {
-    val (mantissa,exponent) = log10(d)
-    if(mantissa == 1.0)
-      "10\\" + format(exponent)
-    else if(mantissa == -1.0)
-      "-10\\" + format(exponent)
-    else
-      format(mantissa) + " * 10\\" + format(exponent)
   }
 
   /** Formats a real number.
