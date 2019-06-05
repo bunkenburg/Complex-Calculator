@@ -305,8 +305,12 @@ class ComplexFormat extends NumberFormat {
           format(m)
         else if(rho == 1 )
           format(-m)
-        else
-          format(m) + "e\\" + format(rho) + "πi"
+        else {
+          if(m == 1)
+            "e\\" + format(rho) + "πi"
+          else
+            format(m) + "e\\" + format(rho) + "πi"
+        }
       }
     }
   }
