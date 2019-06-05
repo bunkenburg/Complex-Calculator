@@ -290,19 +290,23 @@ class ComplexFormat extends NumberFormat {
     * */
   private def formatPolar(c: Complex): String = {
     c match {
-      case Real(0) => "0"
-      case ∞ => "∞"
+      case Real(0) =>
+        "0"
+      case Imaginary(im) =>
+        formatImaginary(im)
+      case ∞ =>
+        "∞"
       case _ => {
         val m = abs(c)
         val rho: Double = c match {
           case c: CartesianComplex => c.argument / π
         }
         if(rho == 0 )
-          nf.format(m)
+          format(m)
         else if(rho == 1 )
-          nf.format(-m)
+          format(-m)
         else
-          nf.format(m) + "e\\" + nf.format(rho) + "πi"
+          format(m) + "e\\" + format(rho) + "πi"
       }
     }
   }
@@ -340,23 +344,27 @@ class ComplexFormat extends NumberFormat {
     * New method.
     * */
   def format(c: Complex): String = {
-    val MIN = -10000000
-    val MAX = 10000000
-    c match {
-      case Integer(n) if(MIN < n && n < MAX) =>
-        format(n)
-      case Real(re) =>
-        format(re)
-      case Imaginary(im) =>
-        formatImaginary(im)
-      case Cartesian(re,im) =>
-        formatCartesian(re,im)
-      case `∞` =>
-        "∞"
-      case _ => {
-        val s = "ComplexFormat.format " + Re(c) + " + " + Im(c) + "i"
-        println(s)
-        s
+    if(polar)
+      formatPolar(c)
+    else {
+      val MIN = -10000000
+      val MAX = 10000000
+      c match {
+        case Integer(n) if (MIN < n && n < MAX) =>
+          format(n)
+        case Real(re) =>
+          format(re)
+        case Imaginary(im) =>
+          formatImaginary(im)
+        case Cartesian(re, im) =>
+          formatCartesian(re, im)
+        case `∞` =>
+          "∞"
+        case _ => {
+          val s = "ComplexFormat.format " + Re(c) + " + " + Im(c) + "i"
+          println(s)
+          s
+        }
       }
     }
   }

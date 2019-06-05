@@ -247,7 +247,7 @@ class ComplexFormatPolarTest extends FunSuite {
   test("format 3i polar"){
     val f = new ComplexFormat
     f.polar = true
-    val c: Complex = 3 * i
+    val c: Complex = i * 3
     val s = f.format( c )
     assert( s === "3i" )
   }
@@ -310,12 +310,12 @@ class ComplexFormatPolarTest extends FunSuite {
     assert( s === "-i * 10\\-4" )
   }
 
-  test("format -1.234i * 10\\-4 polar"){
+  test("format -1.23i * 10\\-4 polar"){
     val f = new ComplexFormat
     f.polar = true
-    val c: Complex = -1.234*i * 10\-4
+    val c: Complex = -1.23*i * 10\-4
     val s = f.format( c )
-    assert( s === "-1.234i * 10\\-4" )
+    assert( s === "-1.23i * 10\\-4" )
   }
 
   test("format -1.234i * 10\\8 polar"){
