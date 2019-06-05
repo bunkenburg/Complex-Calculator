@@ -140,7 +140,6 @@ class ComplexFormat extends NumberFormat {
     *            On input: an alignment field, if desired.
     *            On output: the offsets of the alignment field. */
   override def format(d: Double, buffer: StringBuffer, pos: FieldPosition): StringBuffer = {
-
     if(d.isNaN)
       buffer append "NaN"
     else if(d==0.0 || d== -0.0 )
@@ -172,16 +171,19 @@ class ComplexFormat extends NumberFormat {
         }
       }
     }
-
   }
 
-  private def formatScientific(d: Double): String = {
+  private def log10(d: Double) = {
     //maybe this has to be more robust
     val s = d.toString
     val parts = s.split("E")
-    //val sign = if( d < 0 ) "-" else ""
     val mantissa = parts(0).toDouble
     val exponent = parts(1).toLong
+    (mantissa, exponent)
+  }
+
+  private def formatScientific(d: Double): String = {
+    val (mantissa,exponent) = log10(d)
     if(mantissa == 1.0)
       "10\\" + format(exponent)
     else if(mantissa == -1.0)
@@ -217,13 +219,40 @@ class ComplexFormat extends NumberFormat {
     * m < 10⁻³ or 10⁷ < m => "-3.153i * 10\-8"
     * */
   private def formatImaginary(d: Double): String = {
-    if(d == 1)
+    if(d.isNaN)
+      "NaN"
+    else if(d==0.0 || d== -0.0 )
+      "0"
+    else if(d == 1)
       "i"
     else if(d == -1)
       "-i"
+    else if(d.isInfinite)
+      "∞"
     else {
-      val s = format(d)
-      s + "i"
+      val sign = if(0 <= d) "" else "-"
+      val m = d.abs
+      if(m==e)
+        sign + "ei"
+      else if(m==π)
+        sign + "πi"
+      else{
+        val MIN = 0.001       // 10⁻³
+        val MAX = 10000000    // 10⁷
+        //decimal notation
+        if(MIN <= m && m < MAX){
+          if( d.isWhole )
+            format(d.toLong) + "i"
+          else {
+            nf.format(d) + "i"
+          }
+        }
+        //scientific notation
+        else{
+          val (mantissa,exponent) = log10(d)
+          format(mantissa) + "i * 10\\" + format(exponent)
+        }
+      }
     }
   }
 
