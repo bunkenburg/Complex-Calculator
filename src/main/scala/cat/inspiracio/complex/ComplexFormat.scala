@@ -250,7 +250,10 @@ class ComplexFormat extends NumberFormat {
         //scientific notation
         else{
           val (mantissa,exponent) = log10(d)
-          format(mantissa) + "i * 10\\" + format(exponent)
+          if(mantissa == 1)
+            "i * 10\\" + format(exponent)
+          else
+            format(mantissa) + "i * 10\\" + format(exponent)
         }
       }
     }
