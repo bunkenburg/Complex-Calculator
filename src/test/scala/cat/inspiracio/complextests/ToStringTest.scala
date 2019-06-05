@@ -254,7 +254,7 @@ class ToStringTest extends FunSuite {
 
   test("c -0.0001") {
     val c: Complex = -0.0001
-    assert(c.toString === "-10\\-4")
+    assert(c.toString === "-1 * 10\\-4")
   }
 
   test("c 12345678.9") {
@@ -269,7 +269,7 @@ class ToStringTest extends FunSuite {
 
   test("c -100000000") {
     val c: Complex = -100000000
-    assert(c.toString === "-10\\8")
+    assert(c.toString === "-1 * 10\\8")
   }
 
   // imaginary numbers

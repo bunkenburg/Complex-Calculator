@@ -170,7 +170,7 @@ class ComplexFormat extends NumberFormat {
           val s = if(mantissa == 1.0)
             "10\\" + format(exponent)
           else if(mantissa == -1.0)
-            "-10\\" + format(exponent)
+            "-1 * 10\\" + format(exponent)  // wrong! -10\a = (-10)\a
           else
             format(mantissa) + " * 10\\" + format(exponent)
           buffer append s

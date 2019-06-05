@@ -56,139 +56,12 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
     *
     * */
   override def toString: String = {
-
-    /** Formats as real number:
-      * NaN
-      * 0
-      * ∞
-      * e -e
-      * π -π
-      * 10⁻³ <= m < 10⁷ => 1655.0 or 7856.05
-      * m < 10⁻³ or 10⁷ < m => "-3.153 * 10\-8"
-      * */
-    def formatReal(d: Double): String = {
-
-      /** Cleans computerized scientific notation.
-        * From "9.0E-4" makes "9.0 * 10⁻4". */
-      def clean(s: String) = s.replace("E", " * 10\\")
-
-      if(d.isNaN)
-        "NaN"
-      else if(d==0)
-        "0"
-      else if(d.isInfinite)
-        "∞"
-      else {
-        val sign = if(0 <= d) "" else "-"
-        val m = d.abs
-        if(m==e)
-          sign + "e"
-        else if(m==π)
-          sign + "π"
-        else{
-          val MIN = 0.001       // 10⁻³
-          val MAX = 10000000    // 10⁷
-          //decimal notation
-          if(MIN <= m && m < MAX){
-            if( d.isWhole )
-              d.toInt.toString
-            else
-              d.toString
-          }
-          //scientific notation
-          else{
-            val log = Math.log10(m)
-            val n = Math.floor(log)
-            val a =  m / 10\n
-            //println("1 ≤ " + a + " < 10")
-            val t = a + " * 10\\" + n
-
-            val s = d.toString
-            clean(s)
-          }
-        }
-      }
-    }
-
-    /** Formats as imaginary number:
-      * NaN
-      * 0
-      * ∞
-      * ei -ei
-      * πi -πi
-      * 10⁻³ <= m < 10⁷ => 1655.0i or 7856.05i
-      * m < 10⁻³ or 10⁷ < m => "-3.153i * 10\-8"
-      * */
-    def formatImaginary(d: Double): String = {
-
-      /** Cleans computerized scientific notation.
-        * From "9.0E-4" makes "9.0i * 10⁻4". */
-      def clean(s: String) = s.replace("E", "i * 10\\")
-
-      if(d.isNaN)
-        "NaN"
-      else if(d==0)
-        "0"
-      else if(d.isInfinite)
-        "∞"
-      else {
-        val sign = if(0 <= d) "" else "-"
-        val m = d.abs
-        if(m==1)
-          sign + "i"
-        else if(m==e)
-          sign + "ei"
-        else if(m==π)
-          sign + "πi"
-        else{
-          val MIN = 0.001       // 10⁻³
-          val MAX = 10000000    // 10⁷
-          if(MIN <= m && m < MAX) {
-            if( d.isWhole )
-              d.toInt.toString + "i"
-            else
-              d.toString + "i"
-          } else {
-            clean(d.toString)
-          }
-        }
-      }
-    }
-
-    def formatCartesian(re: Double, im: Double) = {
-      val r = formatReal(re)
-      val i = formatImaginary(im)
-      val length = r.length + i.length
-      val SHORT = 7
-      if(i startsWith "-" ) {
-        if( length <= SHORT )
-          r + i
-        else
-          r + " " + i
-      }
-      else {
-        if( length <= 7)
-          r + "+" + i
-        else
-          r + " + " + i
-      }
-    }
-
     val f = new ComplexFormat
     f.format(this)
   }
 
   /** @param flags UPPERCASE ALTERNATE LEFT_JUSTIFY */
   override def formatTo(fmt: Formatter, flags: Int, width: Int, precision: Int) = {
-
-    def formatPolar(z: Complex) = {
-      val f = new ComplexFormat
-      f.polar = true
-      f.format(z)
-    }
-
-    def formatCartesian(z: Complex) = z.toString
-
     import java.util.FormattableFlags.{ALTERNATE, LEFT_JUSTIFY, UPPERCASE}
 
     //val locale = fmt.locale
@@ -197,13 +70,12 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
     //val upper = (flags & UPPERCASE) == UPPERCASE
     //width
     //precision
-    val polar = alternate
 
-    val b = new StringBuilder
+    val f = new ComplexFormat
+    f.polar = alternate
+    val s = f.format(this)
 
-    val s = if(polar) formatPolar(this) else formatCartesian(this)
-    b.append(s)
-    fmt.format(b.toString)
+    fmt.format(s)
   }
 
   // methods with 0 parameters ------------------------------------
