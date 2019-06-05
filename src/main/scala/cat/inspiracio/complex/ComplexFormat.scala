@@ -252,6 +252,8 @@ class ComplexFormat extends NumberFormat {
           val (mantissa,exponent) = log10(d)
           if(mantissa == 1)
             "i * 10\\" + format(exponent)
+          else if(mantissa == -1)
+            "-i * 10\\" + format(exponent)
           else
             format(mantissa) + "i * 10\\" + format(exponent)
         }
