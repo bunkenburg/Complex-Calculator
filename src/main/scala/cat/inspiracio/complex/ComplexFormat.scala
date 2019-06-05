@@ -228,21 +228,25 @@ class ComplexFormat extends NumberFormat {
   }
 
   private def formatCartesian(re: Double, im: Double) = {
-    val r = format(re)
-    val i = formatImaginary(im)
-    val length = r.length + i.length
-    val SHORT = 7
-    if(i startsWith "-" ) {
-      if( length <= SHORT )
-        r + i
-      else
-        r + " " + i
-    }
+    if(re.isNaN || im.isNaN)
+      "NaN"   //decision: don't differenciate NaN real part and NaN imaginary part
     else {
-      if( length <= 7)
-        r + "+" + i
-      else
-        r + " + " + i
+      val r = format(re)
+      val i = formatImaginary(im)
+      val length = r.length + i.length
+      val SHORT = 7
+      if (i startsWith "-") {
+        if (length <= SHORT)
+          r + i
+        else
+          r + " " + i
+      }
+      else {
+        if (length <= 7)
+          r + "+" + i
+        else
+          r + " + " + i
+      }
     }
   }
 
