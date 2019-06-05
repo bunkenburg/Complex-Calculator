@@ -104,47 +104,47 @@ class SyntaxTest extends FunSuite {
     assert( t.toString === "(π)/(i)")
   }
 
-  test(" π ^ i "){
-    val t = parse("π ^ i ")
-    assert( t.toString === "(π)^(i)")
+  test(" π \\ i "){
+    val t = parse("π \\ i ")
+    assert( t.toString === "(π)\\(i)")
   }
 
   // ---------------------------------------
 
-  test("3e^πi"){
-    val t = parse("3e^πi")
-    assert( t.toString === "(3)*((e)^((π)*(i)))")
+  test("3e\\πi"){
+    val t = parse("3e\\πi")
+    assert( t.toString === "(3)*((e)\\((π)*(i)))")
   }
 
   // ----------------------------------------
 
-  test("e^πiz"){
-    val f = parse("e^πiz")
+  test("e\\πiz"){
+    val f = parse("e\\πiz")
     val fz = f(1)
     assert( fz === -1 )
   }
 
-  test("e^πi + 1"){
-    val f = parse("e^πi + 1")
+  test("e\\πi + 1"){
+    val f = parse("e\\πi + 1")
     val fz = f(7863)
     assert( fz === 0 )
   }
 
-  /** Parsed as -(1 ^ 0.5). */
-  test("-1 ^ 0.5"){
-    val f = parse("-1 ^ 0.5")
+  /** Parsed as -(1 \ 0.5). */
+  test("-1 \\ 0.5"){
+    val f = parse("-1 \\ 0.5")
     val fz = f(7863)
     assert( fz === -1 )
   }
 
   /** This is where it all started. */
-  test("(-1) ^ 0.5"){
+  test("(-1) \\ 0.5"){
     val a: Complex = -1
     val b: Complex = 0.5
     val c = a \ b
     assert( c === i )
 
-    val f = parse("(-1) ^ 0.5")
+    val f = parse("(-1) \\ 0.5")
     val fz = f(7863)    //Polar(1, - pi/2)
     assert( fz === i )
   }

@@ -22,7 +22,7 @@ object DoubleHelper {
     /** Raises a positive number a little bit so that it is 'smooth',
       * that means of the form
       *
-      *   n * 10^m
+      *   n * 10\m
       *
       * where n is 1, 2, 2.5, or 5.
       *

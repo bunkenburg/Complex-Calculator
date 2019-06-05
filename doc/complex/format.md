@@ -262,7 +262,7 @@ https://docs.oracle.com/javase/8/docs/api/index.html?java/lang/Double.html
 6. 10⁻³ <= m < 10⁷ => 1655.0 or 7856.05
 7. m < 10⁻³ or 10⁷ < m => "computerized scientific notation"
 
-    val n = such that 10^n ≤ m < 10^(n+1)
+    val n = such that 10\n ≤ m < 10\(n+1)
     
     val a = the mathematically exact quotient of m and 10^n so that 1 ≤ a < 10
     

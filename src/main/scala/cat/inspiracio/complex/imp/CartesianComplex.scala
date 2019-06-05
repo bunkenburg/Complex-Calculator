@@ -45,12 +45,12 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
     * For e and π, "e" and "π".
     *
     * If the number is real and 10⁻³ <= |c| < 10⁷, digits, decimal point, digits.
-    * If the number is real, like "-3.153 * 10^-8".
+    * If the number is real, like "-3.153 * 10\-8".
     *
     * If the number is imaginary:
     *   special values: i, -i, ei, -ei, πi, -πi.
     *   10⁻³ <= |c| < 10⁷ then like "-7856.05i".
-    *   otherwise like "-3.153i * 10^-87".
+    *   otherwise like "-3.153i * 10\-87".
     *
     * Otherwise, cartesian representation.
     *
@@ -64,13 +64,13 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
       * e -e
       * π -π
       * 10⁻³ <= m < 10⁷ => 1655.0 or 7856.05
-      * m < 10⁻³ or 10⁷ < m => "-3.153 * 10^-8"
+      * m < 10⁻³ or 10⁷ < m => "-3.153 * 10\-8"
       * */
     def formatReal(d: Double): String = {
 
       /** Cleans computerized scientific notation.
         * From "9.0E-4" makes "9.0 * 10⁻4". */
-      def clean(s: String) = s.replace("E", " * 10^")
+      def clean(s: String) = s.replace("E", " * 10\\")
 
       if(d.isNaN)
         "NaN"
@@ -97,7 +97,14 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
           }
           //scientific notation
           else{
-            clean(d.toString)
+            val log = Math.log10(m)
+            val n = Math.floor(log)
+            val a =  m / 10\n
+            //println("1 ≤ " + a + " < 10")
+            val t = a + " * 10\\" + n
+
+            val s = d.toString
+            clean(s)
           }
         }
       }
@@ -110,13 +117,13 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
       * ei -ei
       * πi -πi
       * 10⁻³ <= m < 10⁷ => 1655.0i or 7856.05i
-      * m < 10⁻³ or 10⁷ < m => "-3.153i * 10^-8"
+      * m < 10⁻³ or 10⁷ < m => "-3.153i * 10\-8"
       * */
     def formatImaginary(d: Double): String = {
 
       /** Cleans computerized scientific notation.
         * From "9.0E-4" makes "9.0i * 10⁻4". */
-      def clean(s: String) = s.replace("E", "i * 10^")
+      def clean(s: String) = s.replace("E", "i * 10\\")
 
       if(d.isNaN)
         "NaN"
@@ -167,14 +174,8 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
       }
     }
 
-    val MIN = -10000000
-    val MAX = 10000000
-    this match {
-      case Integer(n) if(MIN < n && n < MAX) => n.toString
-      case Real(re) => formatReal(re)
-      case Imaginary(im) => formatImaginary(im)
-      case Cartesian(re,im) => formatCartesian(re,im)
-    }
+    val f = new ComplexFormat
+    f.format(this)
   }
 
   /** @param flags UPPERCASE ALTERNATE LEFT_JUSTIFY */

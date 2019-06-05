@@ -42,7 +42,7 @@ class Patterns extends FunSuite {
     case Cartesian(14.7, -9.3) => "Cartesian(14.7, -9.3)"
     case Cartesian(x, y) => x + " + " + y + "i"
 
-    case Polar(m, a) => m + " e^i" + a
+    case Polar(m, a) => m + " e\\i" + a
 
     case ∞ => "Infinity"
 
@@ -197,16 +197,16 @@ class Patterns extends FunSuite {
   test("Polar(m, a)") {
     val c = Polar(3, 2)
     val s = c match {
-      case Polar(m,a) => s"$m * e^i$a"
+      case Polar(m,a) => s"$m * e\\i$a"
       case _ => "fail"
     }
-    assert( s === "3.0 * e^i2.0" )
+    assert( s === "3.0 * e\\i2.0" )
   }
 
   test("polar ∞") {
     val c = ∞
     val s = c match {
-      case Polar(m,a) => s"$m * e^i$a"
+      case Polar(m,a) => s"$m * e\\i$a"
       case _ => "fail"
     }
     assert( s === "fail" )

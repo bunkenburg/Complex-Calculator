@@ -112,7 +112,7 @@ final class Calculator() extends MainFrame {
       layout(Button("Im"){ paste("Im") }) = constraints(4, 5)
       layout(Button("ln"){ paste("ln") }) = constraints(0, 7)
       layout(Button("exp"){ paste("exp") }) = constraints(1, 7)
-      layout(Button("^"){ paste("^") }) = constraints(2, 7)
+      layout(Button("\\"){ paste("\\") }) = constraints(2, 7)
       layout(Button("mod"){ paste("mod") }) = constraints(3, 7)
       layout(Button("arg"){ paste("arg") }) = constraints(4, 7)
       layout(Button("i"){ paste("i") }) = constraints(0, 8)

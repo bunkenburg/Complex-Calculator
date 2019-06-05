@@ -46,5 +46,5 @@ object Token extends Enumeration {
   val DIFFERENCETOKEN = Value("-")
   val PRODUCTTOKEN = Value("*")
   val QUOTIENTTOKEN = Value("/")
-  val POWERTOKEN = Value("^")
+  val POWERTOKEN = Value("\\")
 }

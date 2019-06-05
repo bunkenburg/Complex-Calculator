@@ -116,8 +116,8 @@ object Syntax {
       start.setIndex(start.getIndex + 1)
     }
 
-    //parse ^
-    if (start.getIndex < end.getIndex && s.charAt(start.getIndex) == '^') {
+    //parse \
+    if (start.getIndex < end.getIndex && s.charAt(start.getIndex) == '\\') {
       tree = new Binary( POWERTOKEN, tree, parse(s, start.getIndex + 1, end.getIndex))
       start.setIndex(end.getIndex)
     }

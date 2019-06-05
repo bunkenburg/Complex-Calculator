@@ -42,12 +42,12 @@ abstract class Complex extends Number with Formattable {
     * For e and π, "e" and "π".
     *
     * If the number is real and 10⁻³ <= |c| < 10⁷, digits, decimal point, digits.
-    * If the number is real, like "-3.153 * 10^-8".
+    * If the number is real, like "-3.153 * 10\-8".
     *
     * If the number is imaginary:
     *   special values: i, -i, ei, -ei, πi, -πi.
     *   10⁻³ <= |c| < 10⁷ then like "-7856.05i".
-    *   otherwise like "-3.153i * 10^-87".
+    *   otherwise like "-3.153i * 10\-87".
     *
     * Otherwise, cartesian representation.
     *
@@ -99,11 +99,10 @@ abstract class Complex extends Number with Formattable {
     *
     * Before, I used ^ which looks goods and fits in with word processors,
     * but is already bitwise OR and has wrong precedence.
-    * (Complex Calculator uses ^ with its own precedence rules.)
     */
   def \ (c: Int): Complex = this match {
     case Real(0) =>
-      if(c == 0) throw new ArithmeticException("0^0")
+      if(c == 0) throw new ArithmeticException("0\\0")
       else 0
     case Real(r) =>
       Math.pow(r, c)
@@ -111,13 +110,13 @@ abstract class Complex extends Number with Formattable {
       if(c == 0) 1
       else Polar(exp(log(mx) * c), c * ax)
     case ∞ =>
-      if(c == 0) throw new ArithmeticException("∞^0")
+      if(c == 0) throw new ArithmeticException("∞\\0")
       else ∞
   }
 
   def \ (c: Double): Complex = this match {
     case Real(0) =>
-      if(c == 0) throw new ArithmeticException("0^0")
+      if(c == 0) throw new ArithmeticException("0\\0")
       else 0
     //case Real(r) => Math.pow(r, c)  //No. -1 \ 0.5 == i
     case Polar(mx,ax) =>
@@ -126,13 +125,13 @@ abstract class Complex extends Number with Formattable {
         Polar(exp(log(mx) * c), c * ax)
       else ∞
     case ∞ =>
-      if(c == 0) throw new ArithmeticException("∞^0")
+      if(c == 0) throw new ArithmeticException("∞\\0")
       else ∞
   }
 
   def \ (c: Complex): Complex = this match {
     case Real(0) =>
-      if(c === 0) throw new ArithmeticException("0^0")
+      if(c === 0) throw new ArithmeticException("0\\0")
       else 0
     case Polar(mx,ax) =>
       c match {

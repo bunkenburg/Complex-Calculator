@@ -60,7 +60,7 @@ object ∞ extends Complex{
 
   /** exponentiation */
   override def \ (c: Complex): Complex = c match {
-    case Real(0) => throw new ArithmeticException("∞^0")
+    case Real(0) => throw new ArithmeticException("∞\\0")
     case _ => ∞
   }
 

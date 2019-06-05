@@ -133,7 +133,7 @@ class ComplexFormat extends NumberFormat {
     * e -e
     * π -π
     * 10⁻³ <= m < 10⁷ => 1655.0 or 7856.05
-    * m < 10⁻³ or 10⁷ < m => "-3.153 * 10^-8"
+    * m < 10⁻³ or 10⁷ < m => "-3.153 * 10\-8"
     * @param pos Ignored.
     *            On input: an alignment field, if desired.
     *            On output: the offsets of the alignment field. */
@@ -141,7 +141,7 @@ class ComplexFormat extends NumberFormat {
 
     /** Cleans computerized scientific notation.
       * From "9.0E-4" makes "9.0 * 10⁻4". */
-    def clean(s: String) = s.replace("E", " * 10^")
+    def clean(s: String) = s.replace("E", " * 10\\")
 
     if(d.isNaN)
       buffer append "NaN"
@@ -197,7 +197,7 @@ class ComplexFormat extends NumberFormat {
     * ei -ei
     * πi -πi
     * 10⁻³ <= m < 10⁷ => 1655.0i or 7856.05i
-    * m < 10⁻³ or 10⁷ < m => "-3.153i * 10^-8"
+    * m < 10⁻³ or 10⁷ < m => "-3.153i * 10\-8"
     * */
   private def formatImaginary(d: Double): String = {
     if(d == 1)
@@ -235,7 +235,7 @@ class ComplexFormat extends NumberFormat {
     * - otherwise:
     *     val m = |c|
     *     val rho = principal value / π
-    *     ${m}e^${rho}πi  like    3.21e^0.75πi. Configurable precision.
+    *     ${m}e\${rho}πi  like    3.21e\0.75πi. Configurable precision.
     * */
   private def formatPolar(c: Complex): String = {
     c match {
@@ -251,7 +251,7 @@ class ComplexFormat extends NumberFormat {
         else if(rho == 1 )
           nf.format(-m)
         else
-          nf.format(m) + "e^" + nf.format(rho) + "πi"
+          nf.format(m) + "e\\" + nf.format(rho) + "πi"
       }
     }
   }
@@ -268,12 +268,12 @@ class ComplexFormat extends NumberFormat {
     * For e and π, "e" and "π".
     *
     * If the number is real and 10⁻³ <= |c| < 10⁷, digits, decimal point, digits.
-    * If the number is real, like "-3.153 * 10^-8". Configurable precision.
+    * If the number is real, like "-3.153 * 10\-8". Configurable precision.
     *
     * If the number is imaginary:
     *   special values: i, -i, ei, -ei, πi, -πi.
     *   10⁻³ <= |c| < 10⁷ then like "-7856.05i".
-    *   otherwise like "-3.153i * 10^-87". Configurable precision.
+    *   otherwise like "-3.153i * 10\-87". Configurable precision.
     *
     * Otherwise, cartesian representation. Configurable precision.
     *
@@ -284,28 +284,28 @@ class ComplexFormat extends NumberFormat {
     * - otherwise:
     *     val m = |c|
     *     val rho = principal value
-    *     ${m}e^${rho}πi  like    3.21e^0.75πi. Configurable precision.
+    *     ${m}e\${rho}πi  like    3.21e\0.75πi. Configurable precision.
     *
     * New method.
     * */
   def format(c: Complex): String = {
     val MIN = -10000000
     val MAX = 10000000
-
-    if(polar)
-      formatPolar(c)
-    else
-      c match {
-        case ∞ => "∞"
-        case Integer(n) if(MIN < n && n < MAX) =>
-          n.toString
-        case Real(re) =>
-          format(re)
-        case Imaginary(im) =>
-          formatImaginary(im)
-        case Cartesian(re,im) =>
-          formatCartesian(re,im)
+    this match {
+      case Integer(n) if(MIN < n && n < MAX) =>
+        n.toString
+      case Real(re) =>
+        format(re)
+      case Imaginary(im) =>
+        formatImaginary(im)
+      case Cartesian(re,im) =>
+        formatCartesian(re,im)
+      case _ => {
+        val s = "ComplexFormat.format " + Re(c) + " + " + Im(c) + "i"
+        println(s)
+        s
       }
+    }
   }
 
   // parsing ------------------------------------------------------------------

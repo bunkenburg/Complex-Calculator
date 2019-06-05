@@ -24,7 +24,7 @@ import scala.swing.event.{Event, Key, KeyPressed, KeyTyped}
 class MyKeyListener private[calculator](calculator: Calculator) extends PartialFunction[Event, Unit] {
 
   /** All the characters that make sense in the display. */
-  private val ALLOWED_CHARS = " !sinhcoshtanhconjoppReImlnexp^modargiepi()789*/456+-123=0.z"
+  private val ALLOWED_CHARS = " !sinhcoshtanhconjoppReImlnexp\\modargiepi()789*/456+-123=0.z"
   private def forbidden(c: Char): Boolean = !ALLOWED_CHARS.contains(c)
 
   override def isDefinedAt(e: Event): Boolean = e match {

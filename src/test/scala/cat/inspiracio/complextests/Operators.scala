@@ -333,7 +333,7 @@ class Operators extends FunSuite {
     assert( c === 0 )
   }
 
-  test("0 ^ 3"){
+  test("0 \\ 3"){
     val a: Complex = 0
     val c = a \ 3
     assert( c === 0 )
