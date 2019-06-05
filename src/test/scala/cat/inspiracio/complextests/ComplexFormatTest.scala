@@ -225,16 +225,16 @@ class ComplexFormatTest extends FunSuite {
 
   test("format(Long.MaxValue: Double)"){
     val f = new ComplexFormat
-    val d: Double = Long.MaxValue
+    val d: Double = Long.MaxValue // lost precision to 9.223372036854776E18
     val s = f.format(d)
-    assert( s === "9223372036854775807" )
+    assert( s === "9.223372036854776 * 10\\18" )
   }
 
   test("format(Long.MinValue: Double)"){
     val f = new ComplexFormat
-    val d: Double = Long.MinValue
+    val d: Double = Long.MinValue // lost precision to -9.223372036854776E18
     val s = f.format(d)
-    assert( s === "-9223372036854775808" )
+    assert( s === "-9.223372036854776 * 10\\18" )
   }
 
   test("format(NaN: double)"){
