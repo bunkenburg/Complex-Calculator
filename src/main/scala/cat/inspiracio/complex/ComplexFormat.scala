@@ -279,7 +279,7 @@ class ComplexFormat extends NumberFormat {
         if (length <= 7)
           r + "+" + i
         else
-          r + " + " + i
+          r + " +" + i
       }
     }
   }

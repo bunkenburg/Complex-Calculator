@@ -351,12 +351,12 @@ class ToStringTest extends FunSuite {
 
   test("12345678.9i") {
     val c = i * 12345678.9
-    assert(c.toString === "1.234i * 10\\7")
+    assert(c.toString === "1.23456789i * 10\\7")
   }
 
   test("-12345678.9i") {
     val c = i * -12345678.9
-    assert(c.toString === "-1.234i * 10\\7")
+    assert(c.toString === "-1.23456789i * 10\\7")
   }
 
   test("100000000i") {
@@ -366,7 +366,7 @@ class ToStringTest extends FunSuite {
 
   test("-100000000i") {
     val c = i * -100000000
-    assert(c.toString === "-10\\8")
+    assert(c.toString === "-i * 10\\8")
   }
 
   // complex numbers
@@ -388,7 +388,7 @@ class ToStringTest extends FunSuite {
 
   test("123456 +123456i") {
     val c = 123456 +123456*i
-    assert(c.toString === "123456 +123456*i")
+    assert(c.toString === "123456 +123456i")
   }
 
   test("1.234 * 10\\7 +1.234i * 10\\7"){
