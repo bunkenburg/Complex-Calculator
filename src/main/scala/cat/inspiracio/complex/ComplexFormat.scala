@@ -351,6 +351,8 @@ class ComplexFormat extends NumberFormat {
         formatImaginary(im)
       case Cartesian(re,im) =>
         formatCartesian(re,im)
+      case `∞` =>
+        "∞"
       case _ => {
         val s = "ComplexFormat.format " + Re(c) + " + " + Im(c) + "i"
         println(s)
