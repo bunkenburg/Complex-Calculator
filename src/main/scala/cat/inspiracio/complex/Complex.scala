@@ -99,13 +99,15 @@ abstract class Complex extends Number with Formattable {
     *
     * Before, I used ^ which looks goods and fits in with word processors,
     * but is already bitwise OR and has wrong precedence.
-    */
+    *
+    * Problem: prefix - binds more than \, so -3\-4 == (-3)\(-4) which may surprise.
+    * */
   def \ (c: Int): Complex = this match {
     case Real(0) =>
       if(c == 0) throw new ArithmeticException("0\\0")
       else 0
     case Real(r) =>
-      Math.pow(r, c)
+      Math.pow(r, c)  // Is that ok? -1 \ -2 == -1
     case Polar(mx,ax) =>
       if(c == 0) 1
       else Polar(exp(log(mx) * c), c * ax)
@@ -147,7 +149,8 @@ abstract class Complex extends Number with Formattable {
   }
 
   /** a\-b == a \ -b
-    * This is a bit hacky. */
+    * This is a bit hacky.
+    * Problem: prefix - binds more than \, so -3\-4 == (-3)\(-4) which may surprise. */
   def \- (c: Int): Complex = this \ -c
   def \- (c: Double): Complex = this \ -c
   def \- (c: Complex): Complex = this \ -c
