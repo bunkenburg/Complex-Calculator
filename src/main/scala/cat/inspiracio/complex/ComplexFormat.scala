@@ -182,8 +182,10 @@ class ComplexFormat extends NumberFormat {
     //val sign = if( d < 0 ) "-" else ""
     val mantissa = parts(0).toDouble
     val exponent = parts(1).toLong
-    if(mantissa==1.0)
+    if(mantissa == 1.0)
       "10\\" + format(exponent)
+    else if(mantissa == -1.0)
+      "-10\\" + format(exponent)
     else
       format(mantissa) + " * 10\\" + format(exponent)
   }
