@@ -396,9 +396,10 @@ class ToStringTest extends FunSuite {
     assert( c.toString === "1.234 * 10\\7 +1.234i * 10\\7" )
   }
 
-  test("-1.234 * 10\\-4 -1.234i * 10\\-4"){
-    val c = -1.234 * 10\-4 -1.234*i * 10\-4
-    assert( c.toString === "-1.234 * 10\\-4 -1.234i * 10\\-4" )
+  test("-1.23 * 10\\-4 -1.23i * 10\\-4"){
+    val c = -1.23 * 10\-4 -1.23*i * 10\-4
+    val s = c.toString
+    assert( s === "-1.23 * 10\\-4 -1.23i * 10\\-4" )
   }
 
 }
