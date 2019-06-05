@@ -259,12 +259,12 @@ class ToStringTest extends FunSuite {
 
   test("c 12345678.9") {
     val c: Complex = 12345678.9
-    assert(c.toString === "1.234 * 10\\7")
+    assert(c.toString === "1.23456789 * 10\\7")
   }
 
   test("c -12345678.9") {
     val c: Complex = -12345678.9
-    assert(c.toString === "-1.234 * 10\\7")
+    assert(c.toString === "-1.23456789 * 10\\7")
   }
 
   test("c -100000000") {
