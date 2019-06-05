@@ -607,14 +607,14 @@ class ComplexFormatTest extends FunSuite {
     val f = new ComplexFormat
     val c: Complex = 12345678.9
     val s = f.format(c)
-    assert( s === "1.234 * 10\\7" )
+    assert( s === "1.23456789 * 10\\7" )
   }
 
   test("format -12345678.9 : Complex"){
     val f = new ComplexFormat
     val c: Complex = -12345678.9
     val s = f.format(c)
-    assert( s === "-1.234 * 10\\7" )
+    assert( s === "-1.23456789 * 10\\7" )
   }
 
   test("format 100000000 : Complex"){
@@ -693,7 +693,7 @@ class ComplexFormatTest extends FunSuite {
     val f = new ComplexFormat
     val c: Complex = -1655.0 * i
     val s = f.format(c)
-    assert( s === "-1655.0i" )
+    assert( s === "-1655i" )
   }
 
   test("format 7856.05i : Complex"){
@@ -749,14 +749,14 @@ class ComplexFormatTest extends FunSuite {
     val f = new ComplexFormat
     val c: Complex = 12345678.9 * i
     val s = f.format(c)
-    assert( s === "1.234i * 10\\7" )
+    assert( s === "1.23456789i * 10\\7" )
   }
 
   test("format -12345678.9i : Complex"){
     val f = new ComplexFormat
     val c: Complex = -12345678.9 * i
     val s = f.format(c)
-    assert( s === "-1.234i * 10\\7" )
+    assert( s === "-1.23456789i * 10\\7" )
   }
 
   test("format 100000000i : Complex"){
@@ -770,7 +770,7 @@ class ComplexFormatTest extends FunSuite {
     val f = new ComplexFormat
     val c: Complex = -100000000 * i
     val s = f.format(c)
-    assert( s === "i * -10\\8" )
+    assert( s === "-i * 10\\8" )
   }
 
   // complex number -------------------------
