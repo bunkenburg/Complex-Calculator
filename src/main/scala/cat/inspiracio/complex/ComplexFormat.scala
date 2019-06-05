@@ -60,6 +60,8 @@ class ComplexFormat extends NumberFormat {
   roundingMode = RoundingMode.HALF_EVEN
   groupingUsed = false
 
+  // Make configurable limits for scientific notation?
+
   // Scala-style configuration methods ------------------
 
   def maximumFractionDigits: Int = getMaximumFractionDigits
@@ -139,10 +141,6 @@ class ComplexFormat extends NumberFormat {
     *            On output: the offsets of the alignment field. */
   override def format(d: Double, buffer: StringBuffer, pos: FieldPosition): StringBuffer = {
 
-    /** Cleans computerized scientific notation.
-      * From "9.0E-4" makes "9.0 * 10⁻4". */
-    def clean(s: String) = s.replace("E", " * 10\\")
-
     if(d.isNaN)
       buffer append "NaN"
     else if(d==0.0 || d== -0.0 )
@@ -162,26 +160,40 @@ class ComplexFormat extends NumberFormat {
         //decimal notation
         if(MIN <= m && m < MAX){
           if( d.isWhole )
-            buffer append d.toInt.toString
+            buffer append format(d.toLong)
           else {
             nf.format(d, buffer, pos)
           }
         }
         //scientific notation
         else{
-          val s = nf.format(d)  //never does scientific notation?
-          buffer append clean(s)
+          val s = formatScientific(d)
+          buffer append s
         }
       }
     }
 
   }
 
+  private def formatScientific(d: Double): String = {
+    //maybe this has to be more robust
+    val s = d.toString
+    val parts = s.split("E")
+    //val sign = if( d < 0 ) "-" else ""
+    val mantissa = parts(0).toDouble
+    val exponent = parts(1).toLong
+    format(mantissa) + " * 10\\" + format(exponent)
+  }
+
   /** Formats a real number.
     * @param pos Ignored.
     *            On input: an alignment field, if desired.
     *            On output: the offsets of the alignment field. */
-  override def format(l: Long, buffer: StringBuffer, pos: FieldPosition): StringBuffer = nf.format(l, buffer, pos)
+  override def format(l: Long, buffer: StringBuffer, pos: FieldPosition): StringBuffer = {
+    //separate method in case later this becomes configurable
+    val s = l.toString
+    buffer append s
+  }
 
   /** Formats a complex number to a buffer. New method.
     * @pos Ignored. */
@@ -291,9 +303,9 @@ class ComplexFormat extends NumberFormat {
   def format(c: Complex): String = {
     val MIN = -10000000
     val MAX = 10000000
-    this match {
+    c match {
       case Integer(n) if(MIN < n && n < MAX) =>
-        n.toString
+        format(n)
       case Real(re) =>
         format(re)
       case Imaginary(im) =>
