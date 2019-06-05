@@ -444,4 +444,23 @@ class Operators extends FunSuite {
     assert( c === i )
   }
 
+  test("3\\2"){
+    val c = 3\2
+    assert( c === 9 )
+  }
+
+  test("3\\2 Double"){
+    val a: Complex = 3
+    val b: Double = 2
+    val c = a\b
+    assert( c === 9 )
+  }
+
+  test("3\\2 Complex"){
+    val a: Complex = 3
+    val b: Complex = 2
+    val c = a\b
+    assert( c === 9 )
+  }
+
 }

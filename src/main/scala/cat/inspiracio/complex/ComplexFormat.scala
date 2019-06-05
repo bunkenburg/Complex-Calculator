@@ -199,8 +199,8 @@ class ComplexFormat extends NumberFormat {
   override def format(l: Long, buffer: StringBuffer, pos: FieldPosition): StringBuffer = buffer append l.toString
 
   /** Formats a complex number to a buffer. New method.
-    * @pos Ignored. */
-  def format(c: Complex, buffer: StringBuffer, pos: FieldPosition): StringBuffer = buffer append format(c)
+    * @param position Ignored. */
+  def format(c: Complex, buffer: StringBuffer, position: FieldPosition): StringBuffer = buffer append format(c)
 
   /** Formats as imaginary number:
     * NaN
@@ -340,7 +340,7 @@ class ComplexFormat extends NumberFormat {
     * - otherwise:
     *     val m = |c|
     *     val rho = principal value
-    *     ${m}e\${rho}πi  like    3.21e\0.75πi. Configurable precision.
+    *     m e\(rho πi)  like    3.21e\0.75πi. Configurable precision.
     *
     * */
   def format(c: Complex): String = {

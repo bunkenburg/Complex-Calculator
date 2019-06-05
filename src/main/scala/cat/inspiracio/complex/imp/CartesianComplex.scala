@@ -34,6 +34,8 @@ class CartesianComplex(val re: Double, val im: Double) extends Complex {
   override def floatValue() = re.toFloat
   override def doubleValue() = re
 
+  override def isInteger: Boolean = re.isWhole() && im==0.0
+
   /** Gives a practical precise String representation of the complex number.
     * No loss of information: different complex numbers map to different strings.
     * If you want to round or polar representation, use ComplexFormat.

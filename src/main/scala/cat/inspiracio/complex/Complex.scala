@@ -39,6 +39,8 @@ abstract class Complex extends Number with Formattable {
     * */
   override def toString: String
 
+  def isInteger: Boolean
+
   // Operators ---------------------------------
 
   def unary_+ : Complex = this
@@ -67,9 +69,9 @@ abstract class Complex extends Number with Formattable {
     * These are the precedence rules:
     * (all letters)
     * |
-    * ^
+    * up-arrow
     * &
-    * < >
+    * less-than greater-than
     * = !
     * :
     * + -
@@ -81,15 +83,13 @@ abstract class Complex extends Number with Formattable {
     * a\b indicates that the b should be raised.
     * Hopefully, \ is not already used for many other things.
     *
-    * Before, I used ^ which looks goods and fits in with word processors,
+    * Before, I used up-arrow which looks goods and fits in with word processors,
     * but is already bitwise OR and has wrong precedence.
     *
     * Careful: prefix - binds more than \, so -3\-4 == (-3)\(-4) which may surprise.
     * */
   def \ (c: Int): Complex = this match {
-    case Real(0) =>
-      if(c == 0) throw new ArithmeticException("0\\0")
-      else 0
+    case Real(0) => if(c == 0) throw new ArithmeticException("0\\0") else 0
     case Real(r) =>
       Math.pow(r, c)
     case Polar(mx,ax) =>
@@ -100,11 +100,15 @@ abstract class Complex extends Number with Formattable {
       else ∞
   }
 
+  /** 3\2 = 9.000000000000002 */
   def \ (c: Double): Complex = this match {
-    case Real(0) =>
-      if(c == 0) throw new ArithmeticException("0\\0")
-      else 0
+    case Real(0) => if(c == 0) throw new ArithmeticException("0\\0") else 0
     //case Real(r) => Math.pow(r, c)  //No. -1 \ 0.5 == i
+
+      // just for more precision
+    case Real(r) if c.isWhole() =>
+      Math.pow(r, c)
+
     case Polar(mx,ax) =>
       if(c == 0) 1
       else if(!c.isInfinite)
@@ -116,12 +120,24 @@ abstract class Complex extends Number with Formattable {
   }
 
   def \ (c: Complex): Complex = this match {
-    case Real(0) =>
-      if(c === 0) throw new ArithmeticException("0\\0")
-      else 0
+    case Real(0) => if(c === 0) throw new ArithmeticException("0\\0") else 0
+
+    // just for more precision
+    case Real(are) if c.isInteger =>
+      Math.pow(are, c.longValue())
+
     case Polar(mx,ax) =>
       c match {
         case Real(0) => 1
+
+        // not sure this case adds anything
+        case Real(cre) => {
+          val lnmx = log(mx)
+          val m = exp(lnmx * cre)
+          val a = cre * ax
+          Polar(m, a)
+        }
+
         case Cartesian(cre,cim) => {
           val lnmx = log(mx)
           val m = exp(lnmx * cre - cim * ax)

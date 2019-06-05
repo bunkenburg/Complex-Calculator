@@ -32,7 +32,7 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
   private val axisPadding = 30
 
   /** pixel-distance between marks on the axes */
-  private val markDistance = 40
+  private val markDistance = 64 //40
 
   private val fontAscent = 10
 
@@ -126,7 +126,7 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     botright = centre + halfWidthMath - halfHeightMath
 
     val markDistanceMath = DoubleHelper.raiseSmooth(pix2Math(markDistance))
-    val markDistancePix = math2Pix(markDistanceMath)
+    //val markDistancePix = math2Pix(markDistanceMath)
 
     val axisPaddingMath = pix2Math(axisPadding)
 
@@ -152,8 +152,6 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
     /** rounds towards zero and towards a mark */
     def round(d: Double) = Math.ceil(d / markDistanceMath) * markDistanceMath
 
-    val cf = new ComplexFormat
-
     def horizontal() = {
       val left = complex2Point(i*crossImg + axisLeftMath )
       val right = complex2Point(i*crossImg + axisRightMath )
@@ -168,7 +166,7 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
         val a: Point = Point2(real2Pix(mark), cross.y)
         val b: Point = a + (0, markLength)
         g.drawLine(a, b)
-        val s = cf.format(mark)
+        val s = short(mark)
         g.drawString(s, a.x + markLength, cross.y + fontAscent)
 
         mark += markDistanceMath
@@ -191,7 +189,7 @@ final class Plane private[calculator](val world: World) extends WorldRepresentat
           val a: Point = Point2(cross.x, imag2Pix(mark))
           val b = a + (-markLength, 0)
           g.drawLine(a, b)
-          val s = cf.format(i * mark)
+          val s = short(i * mark)
           g.drawString(s, cross.x - markLength - g.getFontMetrics.stringWidth(s), a.y + fontAscent)
         }
 

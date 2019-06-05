@@ -773,6 +773,13 @@ class ComplexFormatTest extends FunSuite {
     assert( s === "-i * 10\\8" )
   }
 
+  test("-1i * 10\\-4"){
+    val f = new ComplexFormat
+    val c: Complex = -1 * i * 10\-4
+    val s = f.format(c)
+    assert( s === "-i * 10\\-4" )
+  }
+
   // complex number -------------------------
 
   test("format 1+i : Complex"){

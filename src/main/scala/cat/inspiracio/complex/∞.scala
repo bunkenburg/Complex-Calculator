@@ -34,6 +34,7 @@ object ∞ extends Complex{
 
   override def formatTo(fmt: Formatter, flags: Int, width: Int, precision: Int): Unit = fmt.format("∞")
   override def toString = "∞"
+  override def isInteger = false
 
   // Operators ------------------------------------
 

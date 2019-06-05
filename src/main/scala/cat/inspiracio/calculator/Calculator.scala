@@ -94,7 +94,6 @@ final class Calculator() extends MainFrame {
         c
       }
 
-      //display.reactions += new MyKeyListener(Calculator.this)
       layout(display) = constraints(0, 0, 5, 3)
 
       layout(Button("!"){ paste("!") }) = constraints(0, 3)
@@ -179,7 +178,7 @@ final class Calculator() extends MainFrame {
   /** Adds a complex number to the display. */
   final private[calculator] def add(c: Complex) = {
     //Could improve: parenthesis only when necessary
-    val s = "(" + cf.format(c) + ")"
+    val s = "(" + cf(c) + ")"
     display.paste(s)
   }
 
@@ -191,7 +190,8 @@ final class Calculator() extends MainFrame {
     try {
       val f = parse(text)
       val c = f(null)
-      display.append(c.toString)
+      val s = c.toString  // maybe should depend on configured precision
+      display.append(s)
       cW.add(c)
     } catch {
       case e: Exception => e.printStackTrace()

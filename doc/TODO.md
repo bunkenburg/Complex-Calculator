@@ -1,6 +1,7 @@
 # TODO
 
-* exponentiation symbol: \ not ^
+* in extreme zooms of plane, factor out a scaling factor like 10\-5 and write it apart
+* configurable precision
 * These symbols can be used for multiplication without '*': eπi∞
 * rewrite parsing using Scala combinator parsing
 * |f(z)| mode, z word: remove unused disabled icons
@@ -13,20 +14,17 @@
 * RefxWorld: save movement in preferences
 * f"${c}#precision"
 * Complex.toString with rationals
-* ComplexFormat extends NumberFormat
-* change ^ to \ also in Calculator?
 * put on web page with installation instructions
 * better expressions: don't always write parenthesis
 * Take complex numbers out and make into Scala library
-* Give it a real icon
 * separate GUI from logic
 * make a version inside a web page: GUI is html, logic with scala.js
 * make an Android app from it
 * multi-project for application, app, web
-* add Edit menu: Cut, Copy, Paste
 
 # DONE
 
+* exponentiation symbol: \ not ^
 * Complex.toString and ComplexFormat with reasonable precision to get short numbers
 * Complex.toString or format with precision
     - represent in terms of π
