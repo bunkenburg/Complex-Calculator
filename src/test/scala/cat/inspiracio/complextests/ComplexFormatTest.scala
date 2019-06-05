@@ -371,7 +371,7 @@ class ComplexFormatTest extends FunSuite {
     f.maximumFractionDigits = 3
     val d: Double = 12345678.9
     val s = f.format(d)
-    assert( s === "1.234 * 10\\7" )
+    assert( s === "1.235 * 10\\7" )
   }
 
   test("format(-12345678.9: double)"){
@@ -379,7 +379,7 @@ class ComplexFormatTest extends FunSuite {
     f.maximumFractionDigits = 3
     val d: Double = -12345678.9
     val s = f.format(d)
-    assert( s === "-1.234 * 10\\7" )
+    assert( s === "-1.235 * 10\\7" )
   }
 
   test("format(100000000: double)"){
