@@ -4,6 +4,7 @@
 * configurable precision
 * These symbols can be used for multiplication without '*': eπi∞
 * rewrite parsing using Scala combinator parsing
+* symbols for modulus: |z|
 * |f(z)| mode, z word: remove unused disabled icons
 * put into About: date, mvn version, git revision
 * World: save movement in preferences

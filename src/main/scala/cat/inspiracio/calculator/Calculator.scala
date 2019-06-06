@@ -50,8 +50,8 @@ final class Calculator() extends MainFrame {
   private var _mode = CALC
 
   private[calculator] val display: Display = new Display(this,12)
-  private val equalsButton: Button = Button("="){ paste("=") }
-  private val zButton: Button = Button("z"){ paste(variable) }
+  private val equalsButton: Button = button("=", "evaluate"){ paste("=") }
+  private val zButton: Button = button("z"){ paste(variable) }
 
   private var variable = 'z'
 
@@ -64,6 +64,13 @@ final class Calculator() extends MainFrame {
   private[calculator] var f: cat.inspiracio.parsing.Syntax = null
 
   init()
+
+  private def button(label: String, tooltip: String)(op: => Unit): Button = {
+    val b = Button(label){op}
+    b.tooltip = tooltip
+    b
+  }
+  private def button(label: String)(op: => Unit): Button = button(label, label){op}
 
   private def init() = {
     buildButtons()
@@ -96,50 +103,50 @@ final class Calculator() extends MainFrame {
 
       layout(display) = constraints(0, 0, 5, 3)
 
-      layout(Button("!"){ paste("!") }) = constraints(0, 3)
-      layout(Button("del"){ delete() }) = constraints(3, 3)
-      layout(Button("C"){ clear() }) = constraints(4, 3)
-      layout(Button("sinh"){ paste("sinh") }) = constraints(0, 4)
-      layout(Button("cosh"){ paste("cosh") }) = constraints(1, 4)
-      layout(Button("tanh"){ paste("tanh") }) = constraints(2, 4)
-      layout(Button("conj"){ paste("conj") }) = constraints(3, 4)
-      layout(Button("opp"){ paste("opp") }) = constraints(4, 4)
-      layout(Button("sin"){ paste("sin") }) = constraints(0, 5)
-      layout(Button("cos"){ paste("cos") }) = constraints(1, 5)
-      layout(Button("tan"){ paste("tan") }) = constraints(2, 5)
-      layout(Button("Re"){ paste("Re") }) = constraints(3, 5)
-      layout(Button("Im"){ paste("Im") }) = constraints(4, 5)
-      layout(Button("ln"){ paste("ln") }) = constraints(0, 7)
-      layout(Button("exp"){ paste("exp") }) = constraints(1, 7)
-      layout(Button("\\"){ paste("\\") }) = constraints(2, 7)
-      layout(Button("mod"){ paste("mod") }) = constraints(3, 7)
-      layout(Button("arg"){ paste("arg") }) = constraints(4, 7)
-      layout(Button("i"){ paste("i") }) = constraints(0, 8)
-      layout(Button("e"){ paste("e") }) = constraints(1, 8)
-      layout(Button("π"){ paste("π") }) = constraints(2, 8)
-      layout(Button("("){ paste("(") }) = constraints(3, 8)
-      layout(Button(")"){ paste(")") }) = constraints(4, 8)
-      layout(Button("7"){ paste("7") }) = constraints(0, 9)
-      layout(Button("8"){ paste("8") }) = constraints(1, 9)
-      layout(Button("9"){ paste("9") }) = constraints(2, 9)
-      layout(Button("*"){ paste("*") }) = constraints(3, 9)
-      layout(Button("/"){ paste("/") }) = constraints(4, 9)
-      layout(Button("4"){ paste("4") }) = constraints(0, 10)
-      layout(Button("5"){ paste("5") }) = constraints(1, 10)
-      layout(Button("6"){ paste("6") }) = constraints(2, 10)
-      layout(Button("+"){ paste("+") }) = constraints(3, 10)
-      layout(Button("-"){ paste("-") }) = constraints(4, 10)
-      layout(Button("1"){ paste("1") }) = constraints(0, 11)
-      layout(Button("2"){ paste("2") }) = constraints(1, 11)
-      layout(Button("3"){ paste("3") }) = constraints(2, 11)
+      layout(button("!", "factorial"){ paste("!") }) = constraints(0, 3)
+      layout(button("del", "delete one character"){ delete() }) = constraints(3, 3)
+      layout(button("C", "clear all"){ clear() }) = constraints(4, 3)
+      layout(button("sinh"){ paste("sinh") }) = constraints(0, 4)
+      layout(button("cosh"){ paste("cosh") }) = constraints(1, 4)
+      layout(button("tanh"){ paste("tanh") }) = constraints(2, 4)
+      layout(button("conj", "complex conjugate"){ paste("conj") }) = constraints(3, 4)
+      layout(button("opp", "opposite on Riemann sphere"){ paste("opp") }) = constraints(4, 4)
+      layout(button("sin"){ paste("sin") }) = constraints(0, 5)
+      layout(button("cos"){ paste("cos") }) = constraints(1, 5)
+      layout(button("tan"){ paste("tan") }) = constraints(2, 5)
+      layout(button("Re", "Real part"){ paste("Re") }) = constraints(3, 5)
+      layout(button("Im", "Imaginary part"){ paste("Im") }) = constraints(4, 5)
+      layout(button("ln", "natural logarithm"){ paste("ln") }) = constraints(0, 7)
+      layout(button("exp", "e raised by"){ paste("exp") }) = constraints(1, 7)
+      layout(button("\\", "exponentiation"){ paste("\\") }) = constraints(2, 7)
+      layout(button("mod", "modulus"){ paste("mod") }) = constraints(3, 7)
+      layout(button("arg", "argument or angle"){ paste("arg") }) = constraints(4, 7)
+      layout(button("i"){ paste("i") }) = constraints(0, 8)
+      layout(button("e"){ paste("e") }) = constraints(1, 8)
+      layout(button("π"){ paste("π") }) = constraints(2, 8)
+      layout(button("("){ paste("(") }) = constraints(3, 8)
+      layout(button(")"){ paste(")") }) = constraints(4, 8)
+      layout(button("7"){ paste("7") }) = constraints(0, 9)
+      layout(button("8"){ paste("8") }) = constraints(1, 9)
+      layout(button("9"){ paste("9") }) = constraints(2, 9)
+      layout(button("*", "multiplication"){ paste("*") }) = constraints(3, 9)
+      layout(button("/", "division"){ paste("/") }) = constraints(4, 9)
+      layout(button("4"){ paste("4") }) = constraints(0, 10)
+      layout(button("5"){ paste("5") }) = constraints(1, 10)
+      layout(button("6"){ paste("6") }) = constraints(2, 10)
+      layout(button("+", "addition"){ paste("+") }) = constraints(3, 10)
+      layout(button("-", "subtraction"){ paste("-") }) = constraints(4, 10)
+      layout(button("1"){ paste("1") }) = constraints(0, 11)
+      layout(button("2"){ paste("2") }) = constraints(1, 11)
+      layout(button("3"){ paste("3") }) = constraints(2, 11)
 
       layout(zButton) = constraints(3, 11)
 
       layout(equalsButton) = constraints(4, 11, gridheight = 2)
 
-      layout(Button("0"){ paste("0") }) = constraints(0, 12)
-      layout(Button("."){ paste(".") }) = constraints(1, 12)
-      layout(Button("∞"){ paste("∞") }) = constraints(2, 12)
+      layout(button("0"){ paste("0") }) = constraints(0, 12)
+      layout(button(".", "decimal point"){ paste(".") }) = constraints(1, 12)
+      layout(button("∞", "infinity"){ paste("∞") }) = constraints(2, 12)
     }
   }
 
@@ -252,7 +259,10 @@ final class Calculator() extends MainFrame {
     Complex.setArgPrincipal()
     display.clear()
     equalsButton.enabled = true
+    equalsButton.tooltip = "evaluate"
     zButton.enabled = false
+    zButton.text = "z"
+    zButton.tooltip = "z"
     complexWorld()
     disposeZWorld()
     disposeFZWorld()
@@ -272,6 +282,7 @@ final class Calculator() extends MainFrame {
     equalsButton.enabled = false
     zButton.enabled = true
     zButton.text = "z"
+    zButton.tooltip = "z"
     disposeComplexWorld()
     zWorld()
     zW.mode_=(FZ)
@@ -292,6 +303,7 @@ final class Calculator() extends MainFrame {
     equalsButton.enabled = false
     zButton.enabled = true
     zButton.text = "z"
+    zButton.tooltip = "z"
     disposeComplexWorld()
     zWorld()
     zW.mode_=(MODFZ)
@@ -312,6 +324,7 @@ final class Calculator() extends MainFrame {
     equalsButton.enabled = false
     zButton.enabled = true
     zButton.text = "x"
+    zButton.tooltip = "x"
     disposeComplexWorld()
     disposeZWorld()
     disposeFZWorld()
