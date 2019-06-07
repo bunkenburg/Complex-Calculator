@@ -18,37 +18,167 @@
 package cat.inspiracio.combinator
 
 import cat.inspiracio.complex._
-import cat.inspiracio.parsing.{C, Expression}
+import cat.inspiracio.parsing
+import cat.inspiracio.parsing._
 import org.scalatest.FunSuite
 
 class ParserTest extends FunSuite {
 
-  test("i"){
-    val in = "i"
+  def parse(s: String): Expression = {
     val p = new Parser
-    val r: Expression = p.parseAll(p.numb, in).get
+    p.parseAll(p.expr, s).get
+  }
+
+  test("i"){
+    val r = parse("i")
     assert( r === C(i) )
   }
 
   test("e"){
-    val in = "e"
-    val p = new Parser
-    val r: Expression = p.parseAll(p.numb, in).get
+    val r = parse("e")
     assert( r === C(e) )
   }
 
   test("π"){
-    val in = "π"
-    val p = new Parser
-    val r: Expression = p.parseAll(p.numb, in).get
+    val r = parse("π")
     assert( r === C(π) )
   }
 
   test("∞"){
-    val in = "∞"
-    val p = new Parser
-    val r: Expression = p.parseAll(p.numb, in).get
+    val r = parse("∞")
     assert( r === C(∞) )
   }
+
+  test("3.16"){
+    val r = parse("3.16")
+    assert( r === C(3.16) )
+  }
+
+  test("z"){
+    val r = parse("z")
+    assert( r === V() )
+  }
+
+  test("x"){
+    val r = parse("x")
+    assert( r === V() )
+  }
+
+  test("3!"){
+    val r = parse("3!")
+    assert( r === Fac(C(3)) )
+  }
+
+  test("+3"){
+    val r = parse("+3")
+    assert( r === PrePlus(C(3)) )
+  }
+
+  test("-3"){
+    val r = parse("-3")
+    assert( r === PreMinus(C(3)) )
+  }
+
+  test("arg(i)"){
+    val r = parse("arg(i)")
+    assert( r === Arg(C(i)) )
+  }
+
+  test("conj i"){
+    val r = parse("conj i")
+    assert( r === Conj(C(i)) )
+  }
+
+  test("cos 0.5"){
+    val r = parse("cos 0.5 ")
+    assert( r === Cos(C(0.5)) )
+  }
+
+  test("cosh π"){
+    val r = parse("cosh π")
+    assert( r === Cosh(C(π)) )
+  }
+
+  test("exp 0"){
+    val r = parse("exp 0")
+    assert( r === Exp(C(0)) )
+  }
+
+  test("Im(z)"){
+    val r = parse("Im(z)")
+    assert( r === parsing.Im(V()) )
+  }
+
+  test("ln(z)"){
+    val r = parse("ln(z)")
+    assert( r === Ln(V()) )
+  }
+
+  test("mod(z)"){
+    val r = parse("mod(z)")
+    assert( r === Mod(V()) )
+  }
+
+  test("opp z"){
+    val r = parse("opp z")
+    assert( r === Opp(V()) )
+  }
+
+  test("Re z"){
+    val r = parse("Re z")
+    assert( r === parsing.Re(V()) )
+  }
+
+  test("sinπ"){
+    val r = parse("sinπ")
+    assert( r === Sin(C(π)) )
+  }
+
+  test("sinhπ"){
+    val r = parse("sinhπ")
+    assert( r === Sinh(C(π)) )
+  }
+
+  test("tanπ"){
+    val r = parse("tanπ")
+    assert( r === Tan(C(π)) )
+  }
+
+  test("tanhπ"){
+    val r = parse("tanhπ")
+    assert( r === Tanh(C(π)) )
+  }
+
+  test("3+i"){
+    val r = parse("3+i")
+    assert( r === Plus(C(3), C(i)) )
+  }
+
+  test("3-i"){
+    val r = parse("3-i")
+    assert( r === Minus(C(3), C(i)) )
+  }
+
+  test("3*i"){
+    val r = parse("3*i")
+    assert( r === Mult(C(3), C(i)) )
+  }
+
+  test("3/i"){
+    val r = parse("3/i")
+    assert( r === Div(C(3), C(i)) )
+  }
+
+  test("e\\i"){
+    val r = parse("e\\i")
+    assert( r === Power(C(e), C(i)) )
+  }
+
+  test("πi"){
+    val r = parse("πi")
+    assert( r === Mult(C(π), C(i)) )
+  }
+
+  // combinations
 
 }

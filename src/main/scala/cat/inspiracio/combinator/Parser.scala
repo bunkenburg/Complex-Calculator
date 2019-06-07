@@ -18,7 +18,7 @@
 package cat.inspiracio.combinator
 
 import cat.inspiracio.complex._
-import cat.inspiracio.parsing.{C, Expression}
+import cat.inspiracio.parsing.{Arg, C, Conj, Cos, Cosh, Div, Exp, Expression, Fac, Ln, Minus, Mod, Mult, Opp, Plus, Power, PreMinus, PrePlus, Sin, Sinh, Tan, Tanh, V}
 
 import scala.util.parsing.combinator.JavaTokenParsers
 
@@ -48,20 +48,80 @@ import scala.util.parsing.combinator.JavaTokenParsers
   * */
 class Parser extends JavaTokenParsers {
 
-  def expr: Parser[Expression] =
-    term ~ rep( "+"~term | "-"~term ) ^^ (_ => C(4))    // expression (additive)
+  def expr: Parser[Expression] = e0
 
-  def term: Parser[Expression] =
-    fact ~ rep( "*"~fact | "/"~fact ) ^^ (_ => C(3))     // term (multiplicative)
+  /** summands */
+  def e0 = e1 ~ rep( "+"~e1 | "-"~e1 ) ^^ {
+    case r~rs => {
+      (r /: rs) { case (a, c~b ) => if(c=="+") Plus(a,b) else Minus(a,b) }
+    }
+  }
 
-  def fact: Parser[Expression] =
-    numb | rep( "("~expr~")" ) ^^ (_ => C(2))         // F (parentheses)
+  /** prefix + - */
+  def e1 = rep( "+" | "-" ) ~ e2 ^^ {
+    case rs~r =>
+      (r /: rs) { (a,c) => if(c=="+") PrePlus(a) else PreMinus(a) }
+  }
 
-  def numb: Parser[Expression] =
-    "i" ^^ (_ => C(i)) |
-    "e" ^^ (_ => C(e))  |
-    "π" ^^ (_ => C(π)) |
-    "∞" ^^ (_ => C(∞)) |
-    decimalNumber ^^ (s => C(6)) |
-    "(" ~> expr <~ ")" ^^ (_ => C(5))  // numbers
+  /** factors */
+  def e2 = e3 ~ rep( "*"~e3 | "/"~e3 ) ^^ {
+    case r ~ rs => {
+      (r /: rs) { case (a, c ~ b) => if (c == "*") Mult(a, b) else Div(a, b) }
+    }
+  }
+
+  /** power */
+  def e3 = e4 ~ rep( "\\"~>e4 ) ^^ {
+    case r~rs =>
+      (r /: rs) { case (a, b) => Power(a, b) }
+  }
+
+  /** factorial */
+  def e4 = e5 ~ rep( "!") ^^ {
+    case r~rs =>
+      (r /: rs) { (a,_) => Fac(a) }
+  }
+
+  /** functions */
+  def e5 = rep(
+    // Mustn't have prefixes before longer strings.
+    "arg" | "conj" | "cosh" | "cos" |
+      "exp" | "Im" | "ln" | "mod" |
+      "opp" | "Re" | "sinh" | "sin" |
+      "tanh" | "tan" ) ~ e6 ^^ {
+    case rs~r =>
+      (r /: rs) { (a,f) => f match {
+        case "arg" => Arg(a)
+        case "conj" => Conj(a)
+        case "cos" => Cos(a)
+        case "cosh" => Cosh(a)
+        case "exp" => Exp(a)
+        case "Im" => cat.inspiracio.parsing.Im(a)
+        case "ln" => Ln(a)
+        case "mod" => Mod(a)
+        case "opp" => Opp(a)
+        case "Re" => cat.inspiracio.parsing.Re(a)
+        case "sin" => Sin(a)
+        case "sinh" => Sinh(a)
+        case "tan" => Tan(a)
+        case "tanh" => Tanh(a)
+        case _ => throw new RuntimeException(f)
+      }}
+  }
+
+  /** invisible multiplication */
+  def e6 = e7 ~ rep(e7) ^^ {
+    case r~rs =>
+      (r /: rs) { case (a, b) => Mult(a, b) }
+  }
+
+  def e7: Parser[Expression] =
+    ("z" | "x") ^^ (_ => V()) |
+      "i" ^^ (_ => C(i)) |
+      "e" ^^ (_ => C(e)) |
+      "π" ^^ (_ => C(π)) |
+      "∞" ^^ (_ => C(∞)) |
+      decimalNumber ^^ (d => C(d.toDouble)) |
+    "(" ~> e0 <~ ")"
+
 }
