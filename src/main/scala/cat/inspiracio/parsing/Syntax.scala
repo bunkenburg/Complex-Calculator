@@ -40,23 +40,23 @@ object Syntax {
 
     val k = last('+', s, start, end)
     if ( k.isDefined )
-      plusMinus(s, start, k.get, end, SUMTOKEN)
+      plusMinus(s, start, k.get, end, Plus)
 
     else {
 
       val k = last('-', s, start, end)
       if ( k.isDefined )
-        plusMinus(s, start, k.get, end, DIFFERENCETOKEN)
+        plusMinus(s, start, k.get, end, Minus)
 
       else {
         val k = last('*', s, start, end)
         if ( k.isDefined )
-          binary(s, start, k.get, end, PRODUCTTOKEN)
+          binary(s, start, k.get, end, Mult)
 
         else {
           val k = last('/', s, start, end)
           if ( k.isDefined )
-            binary(s, start, k.get, end, QUOTIENTTOKEN)
+            binary(s, start, k.get, end, Div)
 
           else {
             val p0 = new ParsePosition(start)
@@ -64,7 +64,7 @@ object Syntax {
             var tree = parseFactor(s, p0, p1)
             while ( p0.getIndex != p1.getIndex ) {
               val factor = parseFactor(s, p0, p1)
-              tree = new Binary(PRODUCTTOKEN, tree, factor )
+              tree = new B(tree, Mult, factor )
             }
             tree
           }
@@ -90,7 +90,7 @@ object Syntax {
     else {
       val token = recogniseFunction(s, start, end)
       if (token.isDefined) {
-        tree = new Unary(token.get, parse(s, start.getIndex, end.getIndex))
+        tree = new U(token.get, parse(s, start.getIndex, end.getIndex))
         start.setIndex(end.getIndex)
       }
 
@@ -112,13 +112,13 @@ object Syntax {
 
     //parse trailing !
     while ( start.getIndex < end.getIndex && s.charAt(start.getIndex) == '!' ) {
-      tree = new Unary( FACTOKEN, tree )
+      tree = new U( Fac, tree )
       start.setIndex(start.getIndex + 1)
     }
 
     //parse \
     if (start.getIndex < end.getIndex && s.charAt(start.getIndex) == '\\') {
-      tree = new Binary( POWERTOKEN, tree, parse(s, start.getIndex + 1, end.getIndex))
+      tree = new B( tree, Power, parse(s, start.getIndex + 1, end.getIndex))
       start.setIndex(end.getIndex)
     }
 
@@ -161,84 +161,80 @@ object Syntax {
       None
   }
 
-  private def readVariable(s: String, start: ParsePosition, end: ParsePosition): Variable = {
+  private def readVariable(s: String, start: ParsePosition, end: ParsePosition): V = {
     start.setIndex(start.getIndex + 1)
-    new Variable
+    new V
   }
 
   private def recogniseFunction(s: String, p0: ParsePosition, p1: ParsePosition): Option[Token] = {
     val i = p0.getIndex
     if (s.startsWith("acos", i)) {
       p0.setIndex(i + 4)
-      Some(ACOSTOKEN)
+      Some(Acos)
     }
     else if (s.startsWith("arg", i)) {
       p0.setIndex(i + 3)
-      Some(ARGTOKEN)
+      Some(Arg)
     }
     else if (s.startsWith("asin", i)) {
       p0.setIndex(i + 4)
-      Some(ASINTOKEN)
+      Some(Asin)
     }
     else if (s.startsWith("atan", i)) {
       p0.setIndex(i + 4)
-      Some(ATANTOKEN)
+      Some(Atan)
     }
     else if (s.startsWith("conj", i)) {
       p0.setIndex(i + 4)
-      Some(CONJTOKEN)
+      Some(Conj)
     }
     else if (s.startsWith("cosh", i)) {
       p0.setIndex(i + 4)
-      Some(COSHTOKEN)
+      Some(Cosh)
     }
     else if (s.startsWith("cos", i)) {
       p0.setIndex(i + 3)
-      Some(COSTOKEN)
-    }
-    else if (s.startsWith("D", i)) {
-      p0.setIndex(i + 1)
-      Some(DTOKEN)
+      Some(Cos)
     }
     else if (s.startsWith("exp", i)) {
       p0.setIndex(i + 3)
-      Some(EXPTOKEN)
+      Some(Exp)
     }
     else if (s.startsWith("Im", i)) {
       p0.setIndex(i + 2)
-      Some(IMTOKEN)
+      Some(ImToken)
     }
     else if (s.startsWith("ln", i)) {
       p0.setIndex(i + 2)
-      Some(LNTOKEN)
+      Some(Ln)
     }
     else if (s.startsWith("mod", i)) {
       p0.setIndex(i + 3)
-      Some(MODTOKEN)
+      Some(Mod)
     }
     else if (s.startsWith("opp", i)) {
       p0.setIndex(i + 3)
-      Some(OPPTOKEN)
+      Some(Opp)
     }
     else if (s.startsWith("Re", i )) {
       p0.setIndex(i + 2)
-      Some(RETOKEN)
+      Some(ReToken)
     }
     else if (s.startsWith("sinh", i )) {
       p0.setIndex(i + 4)
-      Some(SINHTOKEN)
+      Some(Sinh)
     }
     else if (s.startsWith("sin", i )) {
       p0.setIndex(i + 3)
-      Some(SINTOKEN)
+      Some(Sin)
     }
     else if (s.startsWith("tanh", i )) {
       p0.setIndex(i + 4)
-      Some(TANHTOKEN)
+      Some(Tanh)
     }
     else if (s.startsWith("tan", i )) {
       p0.setIndex(i + 3)
-      Some(TANTOKEN)
+      Some(Tan)
     }
     else None
   }
@@ -258,30 +254,30 @@ object Syntax {
   private final val functionInitials = "acDeIlmoRst"
 
   @throws[ParseException]
-  private def readConstant(s: String, start: ParsePosition, end: ParsePosition): Constant = {
+  private def readConstant(s: String, start: ParsePosition, end: ParsePosition): C = {
     val i = start.getIndex
     if (s.startsWith("i", i)) {
       start.setIndex(i+1)
-      new Constant( Cartesian(0, 1) )
+      new C( Cartesian(0, 1) )
     }
     else if (s.startsWith("e", i)) {
       start.setIndex(i+1)
-      new Constant( e )
+      new C( e )
     }
     else if (s.startsWith("π", i)) {
       start.setIndex(i+1)
-      new Constant( π )
+      new C( π )
     }
     else if (s.startsWith("∞", i)) {
       start.setIndex(i+1)
-      new Constant( ∞ )
+      new C( ∞ )
     }
     else
       throw new ParseException("readConstant " + s, i)
   }
 
   @throws[ParseException]
-  private def readDigits(s: String, start: ParsePosition, end: ParsePosition): Constant = {
+  private def readDigits(s: String, start: ParsePosition, end: ParsePosition): C = {
     var i = start.getIndex
     while ( i < end.getIndex && digits.contains(s.charAt(i) ) )
       i += 1
@@ -289,7 +285,7 @@ object Syntax {
     if (end.getIndex == i){
       val c = ( s.substring(start.getIndex, i) ).toDouble
       start.setIndex(i)
-      new Constant(c)
+      new C(c)
     }
 
     else if (s.charAt(i) == '.') {
@@ -301,7 +297,7 @@ object Syntax {
         i = j
         val c = (s.substring(start.getIndex, i)).toDouble
         start.setIndex(i)
-        new Constant(c)
+        new C(c)
       }
       else
         throw new ParseException("readDigits: decimal point followed by non-digit", i)
@@ -310,21 +306,21 @@ object Syntax {
     else{
       val c = (s.substring(start.getIndex, i)).toDouble
       start.setIndex(i)
-      new Constant(c)
+      new C(c)
     }
   }
 
   @throws[ParseException]
-  private def binary(s: String, i: Int, j: Int, k: Int, token: Token): Binary = {
+  private def binary(s: String, i: Int, j: Int, k: Int, token: Token): B = {
     val a = parse(s, i, j)
     val b = parse(s, j + 1, k)
-    new Binary(token, a, b)
+    new B(a, token, b)
   }
 
   @throws[ParseException]
   private def plusMinus(s: String, i: Int, j: Int, k: Int, token: Token): Syntax =
     if (j == i)
-      new Unary(token, parse(s, i + 1, k))
+      new U(token, parse(s, i + 1, k))
     else
       binary(s, i, j, k, token)
 

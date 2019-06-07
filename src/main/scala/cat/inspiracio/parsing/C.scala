@@ -17,15 +17,12 @@
  * */
 package cat.inspiracio.parsing
 
-// Referenced classes of package bunkenba.parsing:
-//            SyntaxTree
-
 import cat.inspiracio.complex._
 
-class Variable() extends Syntax {
+/** An expression that is a Complex number */
+case class C(constant: Complex) extends Syntax {
 
-  override def toString: String = "z"
+  override def toString: String = constant.toString
 
-  override def apply(z: Complex): Complex = z
-
+  override def apply(z: Complex): Complex = constant
 }

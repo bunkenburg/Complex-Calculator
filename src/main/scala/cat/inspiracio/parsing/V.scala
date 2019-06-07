@@ -19,12 +19,11 @@ package cat.inspiracio.parsing
 
 import cat.inspiracio.complex._
 
-// Referenced classes of package bunkenba.parsing:
-//            SyntaxTree
+/** Variable */
+case class V() extends Syntax {
 
-class Constant(constant: Complex) extends Syntax {
+  override def toString: String = "z"
 
-  override def toString: String = constant.toString
+  override def apply(z: Complex): Complex = z
 
-  override def apply(z: Complex): Complex = constant
 }

@@ -21,26 +21,38 @@ import cat.inspiracio.complex._
 import cat.inspiracio.parsing.Token.Token
 import Token._
 
-// Referenced classes of package bunkenba.parsing:
-//            SyntaxTree
+/** An expression that is a unary function application */
+case class U(token: Token, argument: Syntax) extends Syntax {
 
-class Binary(token: Token, left: Syntax, right: Syntax) extends Syntax {
-
-  override def toString: String = s"($left)$token($right)"
+  override def toString: String =
+    if (token == Fac) s"($argument)!"
+    else s"$token($argument)"
 
   override def apply(z: Complex): Complex = {
-
-    val a: Complex = left(z)
-    val b: Complex = right(z)
+    val a: Complex = argument(z)
 
     token match {
-      case SUMTOKEN => a + b
-      case DIFFERENCETOKEN => a - b
-      case PRODUCTTOKEN => a * b
-      case QUOTIENTTOKEN => a / b
-      case POWERTOKEN => a \ b
-      case t => throw new RuntimeException(s"SyntaxTreeBinary.evaluate with token $t")
-    }
 
+      case Fac => fac(a)
+      case Plus => a
+      case Minus => -a
+      case Conj => conj(a)
+      case Sinh => sinh(a)
+      case Cosh => cosh(a)
+      case Tanh => tanh(a)
+      case Arg => { val Polar(_, angle) = a; angle }
+      case Cos => cos(a)
+      case Exp => exp(a)
+      case Mod => abs(a)
+      case Opp => opp(a)
+      case Sin => sin(a)
+      case Tan => tan(a)
+      case Im => Im(a)
+      case Ln => ln(a)
+      case ReToken => Re(a)
+
+      case t => throw new RuntimeException(s"SyntaxTreeUnary.evaluate with unexpected token $t")
+    }
   }
+
 }

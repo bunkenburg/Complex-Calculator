@@ -23,7 +23,7 @@ import java.util.prefs.Preferences
 import scala.swing._
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry._
-import cat.inspiracio.parsing.{Constant, Syntax}
+import cat.inspiracio.parsing.{C, Syntax}
 
 import scala.swing.event.WindowClosing
 
@@ -104,7 +104,7 @@ final class ThreeDWorld private[calculator](calculator: Calculator) extends Fram
   /** Assigns to M values |f(z)|. */
   private[calculator] def setNeighbourhood(): Unit = {
     val N = m.n
-    val f: Syntax = if(calculator.f!=null) calculator.f else new Constant(0)
+    val f: Syntax = if(calculator.f!=null) calculator.f else new C(0)
     val step: Double = square.side / (N * 2)
     val center: Complex = square.center
 

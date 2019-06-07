@@ -19,101 +19,102 @@ package cat.inspiracio.parsing
 
 import cat.inspiracio.complex._
 import Syntax._
+import Token._
 import org.scalatest.FunSuite
 
 class SyntaxTest extends FunSuite {
 
   test("3"){
     val t = parse("3")
-    assert( t.toString === "3")
+    assert( t === C(3) )
   }
 
   test("i"){
     val t = parse("i")
-    assert( t.toString === "i")
+    assert( t === C(i) )
   }
 
   test("∞"){
     val t = parse("∞")
-    assert( t.toString === "∞")
+    assert( t === C(∞) )
   }
 
   test("π"){
     val t = parse("π")
-    assert( t.toString === "π")
+    assert( t === C(π) )
   }
 
   // --------------------------------
 
   test("z"){
     val t = parse("z")
-    assert( t.toString === "z")
+    assert( t === V() )
   }
 
   // --------------------------------
 
   test("-3"){
     val t = parse("-3")
-    assert( t.toString === "-(3)")
+    assert( t === U(Minus, C(3)) )
   }
 
   test("+3"){
     val t = parse("+3")
-    assert( t.toString === "+(3)")
+    assert( t === U(Plus, C(3)) )
   }
 
   test("3!"){
     val t = parse("3!")
-    assert( t.toString === "(3)!")
+    assert( t === U(Fac, C(3) ))
   }
 
   test("ln(3)"){
     val t = parse("ln(3)")
-    assert( t.toString === "ln(3)")
+    assert( t === U(Ln, C(3) ) )
   }
 
-  test("sinz"){
+  test("sinz") {
     val t = parse("sinz ")
-    assert( t.toString === "sin(z)")
+    assert(t === U(Sin, V()))
   }
 
   test("sinπ"){
     val t = parse("sinπ")
-    assert( t.toString === "sin(π)")
+    assert( t === U(Sin, C(π)) )
   }
 
   // -------------------------------------
 
   test("π + i "){
     val t = parse("π + i ")
-    assert( t.toString === "(π)+(i)")
+    assert( t === B( C(π), Plus, C(i) ) )
   }
 
   test(" π - i "){
     val t = parse(" π - i ")
-    assert( t.toString === "(π)-(i)")
+    assert( t === B(C(π), Minus, C(i)) )
   }
 
   test("  π * i "){
     val t = parse("  π * i ")
-    assert( t.toString === "(π)*(i)")
+    assert( t === B(C(π), Mult, C(i) ) )
   }
 
   test("π / i "){
     val t = parse("π / i ")
-    assert( t.toString === "(π)/(i)")
+    assert( t === B(C(π), Div, C(i)) )
   }
 
   test(" π \\ i "){
     val t = parse("π \\ i ")
-    assert( t.toString === "(π)\\(i)")
+    assert( t === B(C(π), Power, C(i) ) )
   }
 
   // ---------------------------------------
 
   test("3e\\πi"){
     val t = parse("3e\\πi")
-    assert( t.toString === "(3)*((e)\\((π)*(i)))")
+    assert( t === B(C(3), Mult, B(C(e), Power, B(C(Pi), Mult, C(i)))) )
   }
 
   // ----------------------------------------
