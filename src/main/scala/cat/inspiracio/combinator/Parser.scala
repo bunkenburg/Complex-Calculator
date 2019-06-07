@@ -17,6 +17,9 @@
  * */
 package cat.inspiracio.combinator
 
+import cat.inspiracio.complex._
+import cat.inspiracio.parsing.{C, Expression}
+
 import scala.util.parsing.combinator.JavaTokenParsers
 
 /** An alternative parser, built using Scala's combinator parsing.
@@ -44,8 +47,21 @@ import scala.util.parsing.combinator.JavaTokenParsers
   *
   * */
 class Parser extends JavaTokenParsers {
-  def expr: Parser[Any] = term ~ rep( "+"~term | "-"~term )     // expression (additive)
-  def term: Parser[Any] = fact ~ rep( "*"~fact | "/"~fact )     // term (multiplicative)
-  def fact: Parser[Any] = numb | rep( "("~expr~")" )         // F (parentheses)
-  def numb: Parser[Any] = "i" | "e" | "π" | "∞" | decimalNumber | "("~expr~")"   // numbers
+
+  def expr: Parser[Expression] =
+    term ~ rep( "+"~term | "-"~term ) ^^ (_ => C(4))    // expression (additive)
+
+  def term: Parser[Expression] =
+    fact ~ rep( "*"~fact | "/"~fact ) ^^ (_ => C(3))     // term (multiplicative)
+
+  def fact: Parser[Expression] =
+    numb | rep( "("~expr~")" ) ^^ (_ => C(2))         // F (parentheses)
+
+  def numb: Parser[Expression] =
+    "i" ^^ (_ => C(i)) |
+    "e" ^^ (_ => C(e))  |
+    "π" ^^ (_ => C(π)) |
+    "∞" ^^ (_ => C(∞)) |
+    decimalNumber ^^ (s => C(6)) |
+    "(" ~> expr <~ ")" ^^ (_ => C(5))  // numbers
 }

@@ -17,15 +17,38 @@
  * */
 package cat.inspiracio.combinator
 
+import cat.inspiracio.complex._
+import cat.inspiracio.parsing.{C, Expression}
 import org.scalatest.FunSuite
 
 class ParserTest extends FunSuite {
 
-  test("3.14"){
-    val in = "3.14"
+  test("i"){
+    val in = "i"
     val p = new Parser
-    val r = p.parseAll(p.expr, in)
-    println(r)
+    val r: Expression = p.parseAll(p.numb, in).get
+    assert( r === C(i) )
+  }
+
+  test("e"){
+    val in = "e"
+    val p = new Parser
+    val r: Expression = p.parseAll(p.numb, in).get
+    assert( r === C(e) )
+  }
+
+  test("π"){
+    val in = "π"
+    val p = new Parser
+    val r: Expression = p.parseAll(p.numb, in).get
+    assert( r === C(π) )
+  }
+
+  test("∞"){
+    val in = "∞"
+    val p = new Parser
+    val r: Expression = p.parseAll(p.numb, in).get
+    assert( r === C(∞) )
   }
 
 }

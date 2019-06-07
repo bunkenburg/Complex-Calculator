@@ -18,8 +18,8 @@
 package cat.inspiracio.parsing
 
 import cat.inspiracio.complex._
-import Syntax._
-import Token._
+import Expression._
+//import Token._
 import org.scalatest.FunSuite
 
 class SyntaxTest extends FunSuite {
@@ -55,66 +55,68 @@ class SyntaxTest extends FunSuite {
 
   test("-3"){
     val t = parse("-3")
-    assert( t === U(Minus, C(3)) )
+    assert( t === PreMinus(C(3)) )
   }
 
   test("+3"){
     val t = parse("+3")
-    assert( t === U(Plus, C(3)) )
+    assert( t === PrePlus(C(3)) )
   }
 
   test("3!"){
     val t = parse("3!")
-    assert( t === U(Fac, C(3) ))
+    assert( t === Fac( C(3) ))
   }
 
   test("ln(3)"){
     val t = parse("ln(3)")
-    assert( t === U(Ln, C(3) ) )
+    assert( t === Ln( C(3) ) )
   }
 
   test("sinz") {
     val t = parse("sinz ")
-    assert(t === U(Sin, V()))
+    assert(t === Sin( V()))
   }
 
   test("sinπ"){
     val t = parse("sinπ")
-    assert( t === U(Sin, C(π)) )
+    assert( t === Sin( C(π)) )
   }
 
   // -------------------------------------
 
   test("π + i "){
     val t = parse("π + i ")
-    assert( t === B( C(π), Plus, C(i) ) )
+    assert( t === Plus( C(π), C(i) ) )
   }
 
   test(" π - i "){
     val t = parse(" π - i ")
-    assert( t === B(C(π), Minus, C(i)) )
+    assert( t === Minus(C(π), C(i)) )
   }
 
   test("  π * i "){
     val t = parse("  π * i ")
-    assert( t === B(C(π), Mult, C(i) ) )
+    assert( t === Mult(C(π), C(i) ) )
   }
 
   test("π / i "){
     val t = parse("π / i ")
-    assert( t === B(C(π), Div, C(i)) )
+    assert( t === Div(C(π), C(i)) )
   }
 
   test(" π \\ i "){
     val t = parse("π \\ i ")
-    assert( t === B(C(π), Power, C(i) ) )
+    assert( t === Power(C(π), C(i) ) )
   }
 
   // ---------------------------------------
 
   test("3e\\πi"){
     val t = parse("3e\\πi")
-    assert( t === B(C(3), Mult, B(C(e), Power, B(C(Pi), Mult, C(i)))) )
+    assert( t === Mult(
+      C(3),
+      Power(C(e), Mult(C(Pi), C(i)))) )
   }
 
   // ----------------------------------------

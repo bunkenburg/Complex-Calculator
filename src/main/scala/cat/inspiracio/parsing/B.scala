@@ -18,27 +18,51 @@
 package cat.inspiracio.parsing
 
 import cat.inspiracio.complex._
-import cat.inspiracio.parsing.Token.Token
-import Token._
 
-/** Binary expression */
-case class B(left: Syntax, token: Token, right: Syntax) extends Syntax {
+/** Binary expressions */
 
-  override def toString: String = s"($left)$token($right)"
-
+case class Plus(left: Expression, right: Expression) extends Expression {
+  override def toString: String = s"($left) + ($right)"
   override def apply(z: Complex): Complex = {
-
     val a: Complex = left(z)
     val b: Complex = right(z)
-
-    token match {
-      case Plus => a + b
-      case Minus => a - b
-      case Mult => a * b
-      case Div => a / b
-      case Power => a \ b
-      case t => throw new RuntimeException(s"SyntaxTreeBinary.evaluate with token $t")
-    }
-
+    a + b
   }
 }
+
+case class Minus(left: Expression, right: Expression) extends Expression {
+  override def toString: String = s"($left) + ($right)"
+  override def apply(z: Complex): Complex = {
+    val a: Complex = left(z)
+    val b: Complex = right(z)
+    a + b
+  }
+}
+
+case class Mult(left: Expression, right: Expression) extends Expression {
+  override def toString: String = s"($left) * ($right)"
+  override def apply(z: Complex): Complex = {
+    val a: Complex = left(z)
+    val b: Complex = right(z)
+    a * b
+  }
+}
+
+case class Div(left: Expression, right: Expression) extends Expression {
+  override def toString: String = s"($left) / ($right)"
+  override def apply(z: Complex): Complex = {
+    val a: Complex = left(z)
+    val b: Complex = right(z)
+    a / b
+  }
+}
+
+case class Power(left: Expression, right: Expression) extends Expression {
+  override def toString: String = s"($left) \\ ($right)"
+  override def apply(z: Complex): Complex = {
+    val a: Complex = left(z)
+    val b: Complex = right(z)
+    a \ b
+  }
+}
+

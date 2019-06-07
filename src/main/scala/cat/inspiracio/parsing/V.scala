@@ -20,7 +20,7 @@ package cat.inspiracio.parsing
 import cat.inspiracio.complex._
 
 /** Variable */
-case class V() extends Syntax {
+case class V() extends Expression {
 
   override def toString: String = "z"
 

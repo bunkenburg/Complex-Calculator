@@ -24,7 +24,7 @@ import cat.inspiracio.calculator.Mode._
 import cat.inspiracio.complex._
 import cat.inspiracio.geometry.Point2
 import cat.inspiracio.geometry.Point2._
-import cat.inspiracio.parsing.Syntax.parse
+import cat.inspiracio.parsing.Expression.parse
 
 import scala.swing._
 import scala.swing.event.WindowClosing
@@ -61,7 +61,7 @@ final class Calculator() extends MainFrame {
   private[calculator] var modfzW: ThreeDWorld = null
   private var refxW: RefxWorld = null
 
-  private[calculator] var f: cat.inspiracio.parsing.Syntax = null
+  private[calculator] var f: cat.inspiracio.parsing.Expression = null
 
   init()
 
@@ -207,7 +207,7 @@ final class Calculator() extends MainFrame {
 
   /** Event listener: f(z)=... has changed. */
   private[calculator] def functionChanged() = try {
-    val text = cat.inspiracio.parsing.Syntax.stripBlanks(display.text)
+    val text = cat.inspiracio.parsing.Expression.stripBlanks(display.text)
     if (text.startsWith("f(" + variable + ")=")) {
       f = parse(text.substring(5))
       mode match {

@@ -20,6 +20,14 @@ precedence:
     + -
     (binds less)
     
+code:
+    
+    Expression ::= 
+          B(E, token, E)    //binary
+        | C(Complex)        //constant
+        | U(token, E)       //unary function
+        | V                 //variable
+    
 ## future
 
 Maybe this is faster: 

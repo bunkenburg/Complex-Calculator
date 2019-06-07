@@ -20,43 +20,43 @@ package cat.inspiracio.parsing
 import cat.inspiracio.complex._
 import java.text.ParseException
 import java.text.ParsePosition
-import Token._
 
-// Referenced classes of package bunkenba.parsing:
-//            SyntaxTreeBinary, SyntaxTreeConstant, SyntaxTreeUnary, SyntaxTreeVariable
-object Syntax {
+import Token._
+import cat.inspiracio.complex
+
+object Expression {
 
   /** The main client method: parses a tree from a String. */
   @throws[ParseException]
-  def parse(s: String): Syntax = {
+  def parse(s: String): Expression = {
     val s_ = stripBlanks(s)
     parse(s_, 0, s_.length)
   }
 
   @throws[ParseException]
-  private def parse(s: String, start: Int, end: Int): Syntax = {
+  private def parse(s: String, start: Int, end: Int): Expression = {
 
     if ( end <= start ) throw new ParseException("SyntaxTree.parse(empty)", start)
 
     val k = last('+', s, start, end)
     if ( k.isDefined )
-      plusMinus(s, start, k.get, end, Plus)
+      plusMinus(s, start, k.get, end, '+')
 
     else {
 
       val k = last('-', s, start, end)
       if ( k.isDefined )
-        plusMinus(s, start, k.get, end, Minus)
+        plusMinus(s, start, k.get, end, '-')
 
       else {
         val k = last('*', s, start, end)
         if ( k.isDefined )
-          binary(s, start, k.get, end, Mult)
+          mult(s, start, k.get, end)
 
         else {
           val k = last('/', s, start, end)
           if ( k.isDefined )
-            binary(s, start, k.get, end, Div)
+            div(s, start, k.get, end)
 
           else {
             val p0 = new ParsePosition(start)
@@ -64,7 +64,7 @@ object Syntax {
             var tree = parseFactor(s, p0, p1)
             while ( p0.getIndex != p1.getIndex ) {
               val factor = parseFactor(s, p0, p1)
-              tree = new B(tree, Mult, factor )
+              tree = Mult(tree, factor )
             }
             tree
           }
@@ -74,8 +74,8 @@ object Syntax {
   }
 
   @throws[ParseException]
-  private def parseFactor(s: String, start: ParsePosition, end: ParsePosition): Syntax = {
-    var tree: Syntax = null
+  private def parseFactor(s: String, start: ParsePosition, end: ParsePosition): Expression = {
+    var tree: Expression = null
 
     //parse (
     if (s.charAt(start.getIndex) == '(') {
@@ -90,7 +90,25 @@ object Syntax {
     else {
       val token = recogniseFunction(s, start, end)
       if (token.isDefined) {
-        tree = new U(token.get, parse(s, start.getIndex, end.getIndex))
+        import cat.inspiracio.parsing
+        val a = parse(s, start.getIndex, end.getIndex)
+        tree = token.get match {
+          case Token.Arg => parsing.Arg(a)
+          case Token.Conj => parsing.Conj(a)
+          case Token.Cos => parsing.Cos(a)
+          case Token.Exp => parsing.Exp(a)
+          case Token.Fac => parsing.Fac(a)
+          case Token.Im => parsing.Im(a)
+          case Token.Ln => parsing.Ln(a)
+          case Token.Mod => parsing.Mod(a)
+          case Token.Opp => parsing.Opp(a)
+          case Token.Re => parsing.Re(a)
+          case Token.Sin => parsing.Sin(a)
+          case Token.Sinh => parsing.Sinh(a)
+          case Token.Tan => parsing.Tan(a)
+          case Token.Tanh => parsing.Tanh(a)
+          case _ => throw new RuntimeException(token.get.toString)
+        }
         start.setIndex(end.getIndex)
       }
 
@@ -112,13 +130,14 @@ object Syntax {
 
     //parse trailing !
     while ( start.getIndex < end.getIndex && s.charAt(start.getIndex) == '!' ) {
-      tree = new U( Fac, tree )
+      tree = Fac(tree )
       start.setIndex(start.getIndex + 1)
     }
 
     //parse \
     if (start.getIndex < end.getIndex && s.charAt(start.getIndex) == '\\') {
-      tree = new B( tree, Power, parse(s, start.getIndex + 1, end.getIndex))
+      val a = parse(s, start.getIndex + 1, end.getIndex)
+      tree = Power( tree, a)
       start.setIndex(end.getIndex)
     }
 
@@ -174,7 +193,7 @@ object Syntax {
     }
     else if (s.startsWith("arg", i)) {
       p0.setIndex(i + 3)
-      Some(Arg)
+      Some(Token.Arg)
     }
     else if (s.startsWith("asin", i)) {
       p0.setIndex(i + 4)
@@ -186,55 +205,55 @@ object Syntax {
     }
     else if (s.startsWith("conj", i)) {
       p0.setIndex(i + 4)
-      Some(Conj)
+      Some(Token.Conj)
     }
     else if (s.startsWith("cosh", i)) {
       p0.setIndex(i + 4)
-      Some(Cosh)
+      Some(Token.Cosh)
     }
     else if (s.startsWith("cos", i)) {
       p0.setIndex(i + 3)
-      Some(Cos)
+      Some(Token.Cos)
     }
     else if (s.startsWith("exp", i)) {
       p0.setIndex(i + 3)
-      Some(Exp)
+      Some(Token.Exp)
     }
     else if (s.startsWith("Im", i)) {
       p0.setIndex(i + 2)
-      Some(ImToken)
+      Some(Token.Im)
     }
     else if (s.startsWith("ln", i)) {
       p0.setIndex(i + 2)
-      Some(Ln)
+      Some(Token.Ln)
     }
     else if (s.startsWith("mod", i)) {
       p0.setIndex(i + 3)
-      Some(Mod)
+      Some(Token.Mod)
     }
     else if (s.startsWith("opp", i)) {
       p0.setIndex(i + 3)
-      Some(Opp)
+      Some(Token.Opp)
     }
     else if (s.startsWith("Re", i )) {
       p0.setIndex(i + 2)
-      Some(ReToken)
+      Some(Token.Re)
     }
     else if (s.startsWith("sinh", i )) {
       p0.setIndex(i + 4)
-      Some(Sinh)
+      Some(Token.Sinh)
     }
     else if (s.startsWith("sin", i )) {
       p0.setIndex(i + 3)
-      Some(Sin)
+      Some(Token.Sin)
     }
     else if (s.startsWith("tanh", i )) {
       p0.setIndex(i + 4)
-      Some(Tanh)
+      Some(Token.Tanh)
     }
     else if (s.startsWith("tan", i )) {
       p0.setIndex(i + 3)
-      Some(Tan)
+      Some(Token.Tan)
     }
     else None
   }
@@ -258,19 +277,19 @@ object Syntax {
     val i = start.getIndex
     if (s.startsWith("i", i)) {
       start.setIndex(i+1)
-      new C( Cartesian(0, 1) )
+      C( complex.i )
     }
     else if (s.startsWith("e", i)) {
       start.setIndex(i+1)
-      new C( e )
+      C( e )
     }
     else if (s.startsWith("π", i)) {
       start.setIndex(i+1)
-      new C( π )
+      C( π )
     }
     else if (s.startsWith("∞", i)) {
       start.setIndex(i+1)
-      new C( ∞ )
+      C( ∞ )
     }
     else
       throw new ParseException("readConstant " + s, i)
@@ -285,7 +304,7 @@ object Syntax {
     if (end.getIndex == i){
       val c = ( s.substring(start.getIndex, i) ).toDouble
       start.setIndex(i)
-      new C(c)
+      C(c)
     }
 
     else if (s.charAt(i) == '.') {
@@ -297,7 +316,7 @@ object Syntax {
         i = j
         val c = (s.substring(start.getIndex, i)).toDouble
         start.setIndex(i)
-        new C(c)
+        C(c)
       }
       else
         throw new ParseException("readDigits: decimal point followed by non-digit", i)
@@ -306,27 +325,45 @@ object Syntax {
     else{
       val c = (s.substring(start.getIndex, i)).toDouble
       start.setIndex(i)
-      new C(c)
+      C(c)
     }
   }
 
   @throws[ParseException]
-  private def binary(s: String, i: Int, j: Int, k: Int, token: Token): B = {
+  private def mult(s: String, i: Int, j: Int, k: Int): Expression = {
     val a = parse(s, i, j)
     val b = parse(s, j + 1, k)
-    new B(a, token, b)
+    Mult(a, b)
   }
 
   @throws[ParseException]
-  private def plusMinus(s: String, i: Int, j: Int, k: Int, token: Token): Syntax =
-    if (j == i)
-      new U(token, parse(s, i + 1, k))
-    else
-      binary(s, i, j, k, token)
+  private def div(s: String, i: Int, j: Int, k: Int): Expression = {
+    val a = parse(s, i, j)
+    val b = parse(s, j + 1, k)
+    Div(a, b)
+  }
+
+  @throws[ParseException]
+  private def plusMinus(s: String, i: Int, j: Int, k: Int, token: Char): Expression =
+    if (j == i) {
+      val a = parse(s, i + 1, k)
+      if(token=='+')
+        PrePlus(a)
+      else
+        PreMinus(a)
+    }
+    else{
+      val a = parse(s, i, j)
+      val b = parse(s, j + 1, k)
+      if(token=='+')
+        Plus(a, b)
+      else
+        Minus(a, b)
+    }
 
 }
 
-abstract class Syntax() {
+abstract class Expression() {
 
   override def toString: String
 

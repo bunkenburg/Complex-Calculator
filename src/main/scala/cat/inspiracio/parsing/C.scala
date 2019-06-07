@@ -20,7 +20,7 @@ package cat.inspiracio.parsing
 import cat.inspiracio.complex._
 
 /** An expression that is a Complex number */
-case class C(constant: Complex) extends Syntax {
+case class C(constant: Complex) extends Expression {
 
   override def toString: String = constant.toString
 

@@ -370,6 +370,6 @@ class ComplexFormat extends NumberFormat {
     * @param position unused */
   override def parse(s: String, position: ParsePosition): Complex = parse(s)
 
-  import cat.inspiracio.parsing.Syntax
-  override def parse(s: String): Complex = Syntax.parse(s).apply(null)
+  import cat.inspiracio.parsing.Expression
+  override def parse(s: String): Complex = Expression.parse(s).apply(null)
 }

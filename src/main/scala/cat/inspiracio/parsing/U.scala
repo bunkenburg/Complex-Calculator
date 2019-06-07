@@ -18,41 +18,91 @@
 package cat.inspiracio.parsing
 
 import cat.inspiracio.complex._
-import cat.inspiracio.parsing.Token.Token
-import Token._
+import cat.inspiracio.complex
 
 /** An expression that is a unary function application */
-case class U(token: Token, argument: Syntax) extends Syntax {
 
-  override def toString: String =
-    if (token == Fac) s"($argument)!"
-    else s"$token($argument)"
+case class Arg(a: Expression) extends Expression {
+  override def toString: String = s"arg($a)"
+  override def apply(z: Complex): Complex = { val Polar(_, angle) = a(z); angle }
+}
 
-  override def apply(z: Complex): Complex = {
-    val a: Complex = argument(z)
+case class Conj(a: Expression) extends Expression {
+  override def toString: String = s"conj($a)"
+  override def apply(z: Complex): Complex = conj(a(z))
+}
 
-    token match {
+case class Cos(a: Expression) extends Expression {
+  override def toString: String = s"cos($a)"
+  override def apply(z: Complex): Complex = cos(a(z))
+}
 
-      case Fac => fac(a)
-      case Plus => a
-      case Minus => -a
-      case Conj => conj(a)
-      case Sinh => sinh(a)
-      case Cosh => cosh(a)
-      case Tanh => tanh(a)
-      case Arg => { val Polar(_, angle) = a; angle }
-      case Cos => cos(a)
-      case Exp => exp(a)
-      case Mod => abs(a)
-      case Opp => opp(a)
-      case Sin => sin(a)
-      case Tan => tan(a)
-      case Im => Im(a)
-      case Ln => ln(a)
-      case ReToken => Re(a)
+case class Cosh(a: Expression) extends Expression {
+  override def toString: String = s"cosh($a)"
+  override def apply(z: Complex): Complex = cosh(a(z))
+}
 
-      case t => throw new RuntimeException(s"SyntaxTreeUnary.evaluate with unexpected token $t")
-    }
-  }
+case class Exp(a: Expression) extends Expression {
+  override def toString: String = s"exp($a)"
+  override def apply(z: Complex): Complex = exp(a(z))
+}
 
+case class Fac(a: Expression) extends Expression {
+  override def toString: String = s"($a)!"
+  override def apply(z: Complex): Complex = fac(a(z))
+}
+
+case class Im(a: Expression) extends Expression {
+  override def toString: String = s"Im($a)"
+  override def apply(z: Complex): Complex = complex.Im(a(z))
+}
+
+case class Ln(a: Expression) extends Expression {
+  override def toString: String = s"ln($a)"
+  override def apply(z: Complex): Complex = ln(a(z))
+}
+
+case class Mod(a: Expression) extends Expression {
+  override def toString: String = s"|$a|"
+  override def apply(z: Complex): Complex = abs(a(z))
+}
+
+case class Opp(a: Expression) extends Expression {
+  override def toString: String = s"opp($a)"
+  override def apply(z: Complex): Complex = opp(a(z))
+}
+
+case class PreMinus(a: Expression) extends Expression {
+  override def toString: String = s"-($a)"
+  override def apply(z: Complex): Complex = -a(z)
+}
+
+case class PrePlus(a: Expression) extends Expression {
+  override def toString: String = s"+($a)"
+  override def apply(z: Complex): Complex = a(z)
+}
+
+case class Re(a: Expression) extends Expression {
+  override def toString: String = s"Re($a)"
+  override def apply(z: Complex): Complex = complex.Re(a(z))
+}
+
+case class Sin(a: Expression) extends Expression {
+  override def toString: String = s"sin($a)"
+  override def apply(z: Complex): Complex = sin(a(z))
+}
+
+case class Sinh(a: Expression) extends Expression {
+  override def toString: String = s"sinh($a)"
+  override def apply(z: Complex): Complex = sinh(a(z))
+}
+
+case class Tan(a: Expression) extends Expression {
+  override def toString: String = s"tan($a)"
+  override def apply(z: Complex): Complex = tan(a(z))
+}
+
+case class Tanh(a: Expression) extends Expression {
+  override def toString: String = s"tanh($a)"
+  override def apply(z: Complex): Complex = tanh(a(z))
 }
