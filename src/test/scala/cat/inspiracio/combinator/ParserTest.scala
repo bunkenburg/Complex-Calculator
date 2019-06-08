@@ -342,7 +342,7 @@ class ParserTest extends FunSuite {
 
   test("2πi(e+1)"){
     val r = parse("2πi(e+1)")
-    assert( r === Mult(Mult(Mult(Two,Pi),I),Plus(E,I)) )
+    assert( r === Mult(Mult(Mult(Two,Pi),I), Plus(E,One)) )
   }
 
   // from my big table -------------------------
