@@ -429,7 +429,7 @@ class ParserTest extends FunSuite {
 
   test("-1-2"){
     val r = parse("-1-2")
-    assert( r === Plus(PrePlus(One),Two) )
+    assert( r === Minus(PreMinus(One),Two) )
   }
 
   test("-1*2"){
