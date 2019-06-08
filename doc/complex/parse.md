@@ -2,7 +2,8 @@
 
 grammar without precedence:
 
-    S ::= i | e | π | ∞ | decimalNumber      // constants
+    S ::= (S)                                // parentheses
+        | i | e | π | ∞ | decimalNumber      // constants
         | z | x                              // variable
         | S!                                 //factorial
         | +S | -S
@@ -25,13 +26,15 @@ grammar without precedence:
         | S - S     
         | S * S     
         | S / S     
-        | S \ S     
+        | S \ S
+        | SS                                 // invisible multiplication
         
 precedence table:
 
     (binds more)
+    E!
     AB          //invisible multiplication
-    A! sin(A)
+    sin A
     A\B
     A*B A/B     //factor
     -A +A       //prefix
@@ -40,6 +43,7 @@ precedence table:
 
 
 grammar with precedence:
+(first weak binding, then strong)
 
     E ::= E0
     E0 ::= E1 ~ rep( "+"~E1 | "-"~E1 )      // summands
@@ -50,6 +54,8 @@ grammar with precedence:
     E5 ::= rep( "arg" | "conj" | ...)~E6    // functions
     E6 ::= E7 ~ rep( E7 )                   // invisible multiplication
     E7 ::= "z" | "x" | "i" | "e" | "π" | "∞" | decimalNumber | "("~E0~")"| "|"~E0~"|"
+    
+This grammar does not produce 3 sin 0 = 3 * sin(0)!
         
 ## future
 
