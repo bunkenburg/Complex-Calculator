@@ -101,6 +101,7 @@ class Parser extends JavaTokenParsers {
       "π" ^^ (_ => C(π)) |
       "∞" ^^ (_ => C(∞)) |
       decimalNumber ^^ (d => C(d.toDouble)) |
-    "(" ~> e0 <~ ")"
+      "(" ~> e0 <~ ")" |
+      "|" ~> e0 <~ "|" ^^ (z => Mod(z))
 
 }

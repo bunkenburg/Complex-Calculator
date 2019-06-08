@@ -14,6 +14,7 @@ grammar without precedence:
         | Im S
         | ln S
         | mod S
+        | |S|
         | opp S
         | Re S
         | sin S
@@ -48,7 +49,7 @@ grammar with precedence:
     E4 ::= E5 ~ rep( "!" )                  // factorial
     E5 ::= rep( "arg" | "conj" | ...)~E6    // functions
     E6 ::= E7 ~ rep( E7 )                   // invisible multiplication
-    E7 ::= "z" | "x" | "i" | "e" | "π" | "∞" | decimalNumber | "("~E0~")"
+    E7 ::= "z" | "x" | "i" | "e" | "π" | "∞" | decimalNumber | "("~E0~")"| "|"~E0~"|"
         
 ## future
 
