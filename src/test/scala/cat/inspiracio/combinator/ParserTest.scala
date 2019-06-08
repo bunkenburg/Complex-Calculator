@@ -29,6 +29,8 @@ class ParserTest extends FunSuite {
     p.parseAll(p.expr, s).get
   }
 
+  // simple things --------------------------
+
   test("i"){
     val r = parse("i")
     assert( r === C(i) )
@@ -52,6 +54,11 @@ class ParserTest extends FunSuite {
   test("3.16"){
     val r = parse("3.16")
     assert( r === C(3.16) )
+  }
+
+  test("316"){
+    val r = parse("316")
+    assert( r === C(316) )
   }
 
   test("z"){
@@ -180,5 +187,42 @@ class ParserTest extends FunSuite {
   }
 
   // combinations
+
+  test("  π with white space"){
+    val r = parse("  π  ")
+    assert( r === C(π) )
+  }
+
+  test("  3π  "){
+    val r = parse("  3π  ")
+    assert( r === Mult(C(3), C(π)) )
+  }
+
+  test("  ( π)  "){
+    val r = parse("  ( π)  ")
+    assert( r === C(π) )
+  }
+
+  test("i3!"){
+    val r = parse("i3!")
+    assert( r === Fac(Mult(C(i), C(3))) )
+  }
+
+  test("3!i"){
+    val r = parse("3!i")
+    assert( r === Mult(Fac(C(3)), C(i)) )
+  }
+
+  test("3sin 0"){
+    val r = parse("3sin 0")
+    assert( r === Mult(C(3), Sin(C(0))) )
+  }
+
+  test("sin ei"){
+    val r = parse("sin ei")
+    assert( r === Sin(Mult(C(e), C(i))) )
+  }
+
+  // \
 
 }

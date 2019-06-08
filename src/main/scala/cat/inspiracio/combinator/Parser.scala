@@ -18,33 +18,12 @@
 package cat.inspiracio.combinator
 
 import cat.inspiracio.complex._
+import cat.inspiracio.parsing
 import cat.inspiracio.parsing.{Arg, C, Conj, Cos, Cosh, Div, Exp, Expression, Fac, Ln, Minus, Mod, Mult, Opp, Plus, Power, PreMinus, PrePlus, Sin, Sinh, Tan, Tanh, V}
 
 import scala.util.parsing.combinator.JavaTokenParsers
 
 /** An alternative parser, built using Scala's combinator parsing.
-  *
-  * context-free grammar:
-  *
-  * E ::= T {"+" T | "-" T}     // expression (additive)
-  * T ::= F {"*" F | "/" F}     // term (multiplicative)
-  * F ::= N | "(" E ")"         // F (parentheses)
-  * N ::= "i" | "e" | "π" | "∞" | ...   // numbers
-  *
-  * Missing:
-  * factorial
-  * prefix +
-  * prefix -
-  * functions
-  * invisible multiplication
-  *
-  * p ~ p    = sequence
-  * p | p    = alternation
-  * p.?      = optional
-  * p.*      = repetition
-  * rep      = repetition -- not p.* ?
-  * "bla"    = parser for a literal string
-  *
   * */
 class Parser extends JavaTokenParsers {
 
@@ -58,7 +37,7 @@ class Parser extends JavaTokenParsers {
   }
 
   /** prefix + - */
-  def e1 = rep( "+" | "-" ) ~ e2 ^^ {
+  def e1 = rep( "-" | "+" ) ~ e2 ^^ {
     case rs~r =>
       (r /: rs) { (a,c) => if(c=="+") PrePlus(a) else PreMinus(a) }
   }
@@ -66,18 +45,18 @@ class Parser extends JavaTokenParsers {
   /** factors */
   def e2 = e3 ~ rep( "*"~e3 | "/"~e3 ) ^^ {
     case r ~ rs => {
-      (r /: rs) { case (a, c ~ b) => if (c == "*") Mult(a, b) else Div(a, b) }
+      (r /: rs) { case (a, c~b) => if (c=="*") Mult(a,b) else Div(a,b) }
     }
   }
 
   /** power */
   def e3 = e4 ~ rep( "\\"~>e4 ) ^^ {
     case r~rs =>
-      (r /: rs) { case (a, b) => Power(a, b) }
+      (r /: rs) { (a,b) => Power(a,b) }
   }
 
   /** factorial */
-  def e4 = e5 ~ rep( "!") ^^ {
+  def e4 = e5 ~ rep("!") ^^ {
     case r~rs =>
       (r /: rs) { (a,_) => Fac(a) }
   }
@@ -96,11 +75,11 @@ class Parser extends JavaTokenParsers {
         case "cos" => Cos(a)
         case "cosh" => Cosh(a)
         case "exp" => Exp(a)
-        case "Im" => cat.inspiracio.parsing.Im(a)
+        case "Im" => parsing.Im(a)
         case "ln" => Ln(a)
         case "mod" => Mod(a)
         case "opp" => Opp(a)
-        case "Re" => cat.inspiracio.parsing.Re(a)
+        case "Re" => parsing.Re(a)
         case "sin" => Sin(a)
         case "sinh" => Sinh(a)
         case "tan" => Tan(a)
@@ -112,7 +91,7 @@ class Parser extends JavaTokenParsers {
   /** invisible multiplication */
   def e6 = e7 ~ rep(e7) ^^ {
     case r~rs =>
-      (r /: rs) { case (a, b) => Mult(a, b) }
+      (r /: rs) { (a,b) => Mult(a,b) }
   }
 
   def e7: Parser[Expression] =

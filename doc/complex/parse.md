@@ -30,7 +30,7 @@ precedence table:
 
     (binds more)
     AB          //invisible multiplication
-    A! sin A
+    A! sin(A)
     A\B
     A*B A/B     //factor
     -A +A       //prefix
