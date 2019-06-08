@@ -50,13 +50,16 @@ grammar with precedence:
     E1 ::= rep( "-" | "+" ) ~ E2            // prefix
     E2 ::= E3 ~ rep( "*"~E3 | "/"~E3 )      // factors
     E3 ::= E4 ~ rep( "\"~E4 )               // power
-    E4 ::= E5 ~ rep( "!" )                  // factorial
-    E5 ::= rep( "arg" | "conj" | ...)~E6    // functions
-    E6 ::= E7 ~ rep( E7 )                   // invisible multiplication
-    E7 ::= "z" | "x" | "i" | "e" | "π" | "∞" | decimalNumber | "("~E0~")"| "|"~E0~"|"
+    E4 ::= rep( "arg" | "conj" | ...)~E5    // functions
+    E5 ::= E6 ~ rep( E6 )                   // invisible multiplication
+    E6 ::= E7 ~ rep( "!" )                  // factorial
+    E7 ::= "z" | "x" | "i" | "e" | "π" | "∞" 
+       | decimalNumber 
+       | "("~E0~")" 
+       | "|"~E0~"|"
     
-This grammar does not produce 3 sin 0 = 3 * sin(0)!
-        
+This grammar does not produce 3 sin 0 = 3 * sin(0).
+
 ## future
 
 Maybe this is faster: 

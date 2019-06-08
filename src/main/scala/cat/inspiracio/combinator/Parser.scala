@@ -55,19 +55,13 @@ class Parser extends JavaTokenParsers {
       (r /: rs) { (a,b) => Power(a,b) }
   }
 
-  /** factorial */
-  def e4 = e5 ~ rep("!") ^^ {
-    case r~rs =>
-      (r /: rs) { (a,_) => Fac(a) }
-  }
-
   /** functions */
-  def e5 = rep(
+  def e4 = rep(
     // Mustn't have prefixes before longer strings.
     "arg" | "conj" | "cosh" | "cos" |
       "exp" | "Im" | "ln" | "mod" |
       "opp" | "Re" | "sinh" | "sin" |
-      "tanh" | "tan" ) ~ e6 ^^ {
+      "tanh" | "tan" ) ~ e5 ^^ {
     case rs~r =>
       (r /: rs) { (a,f) => f match {
         case "arg" => Arg(a)
@@ -89,9 +83,15 @@ class Parser extends JavaTokenParsers {
   }
 
   /** invisible multiplication */
-  def e6 = e7 ~ rep(e7) ^^ {
+  def e5 = e6 ~ rep(e6) ^^ {
     case r~rs =>
       (r /: rs) { (a,b) => Mult(a,b) }
+  }
+
+  /** factorial */
+  def e6 = e7 ~ rep("!") ^^ {
+    case r~rs =>
+      (r /: rs) { (a,_) => Fac(a) }
   }
 
   def e7: Parser[Expression] =
