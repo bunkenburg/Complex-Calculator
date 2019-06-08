@@ -388,7 +388,7 @@ class ParserTest extends FunSuite {
   }
 
   test("+1/2"){
-    val r = parse("+1*2")
+    val r = parse("+1/2")
     assert( r === PrePlus(Div(One,Two)) )
   }
 
