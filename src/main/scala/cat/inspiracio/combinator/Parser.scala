@@ -39,7 +39,8 @@ class Parser extends JavaTokenParsers {
   /** prefix + - */
   def e1 = rep( "-" | "+" ) ~ e2 ^^ {
     case rs~r =>
-      (r /: rs) { (a,c) => if(c=="+") PrePlus(a) else PreMinus(a) }
+      //(r /: rs) { (a,c) => if(c=="+") PrePlus(a) else PreMinus(a) }
+      (rs :\ r) { (c,a) => if(c=="+") PrePlus(a) else PreMinus(a) }
   }
 
   /** factors */
