@@ -40,7 +40,7 @@ class Parser extends JavaTokenParsers {
 
   /** Binary + and - binds least of all. */
   private def summands = {
-    val next = factors //prefix
+    val next = factors
     next ~ rep( "+"~next | "-"~next ) ^^ {
       case r~rs => (r /: rs) { case (a,c~b) => if(c=="+") Plus(a,b) else Minus(a,b) }
     }
@@ -48,7 +48,7 @@ class Parser extends JavaTokenParsers {
 
   /** Binary * and / for multiplication and division. */
   private def factors = {
-    val next = prefix //powers
+    val next = powers //prefix
     next ~ rep( "*"~next | "/"~next ) ^^ {
       case r~rs => (r /: rs) { case (a, c~b) => if(c=="*") Mult(a,b) else Div(a,b) }
     }
@@ -57,7 +57,7 @@ class Parser extends JavaTokenParsers {
   /** Unary prefix + and -. Binds quite strongly.
     * Parsing swallows prefix +. */
   private def prefix = {
-    val next = powers //factor
+    val next = functions //powers
     rep( "-" | "+" ) ~ next ^^ {
       case rs~r => (rs :\ r) { (c,a) => if(c=="+") a else Neg(a) }
     }
@@ -65,7 +65,7 @@ class Parser extends JavaTokenParsers {
 
   /** Binary exponentiation. */
   private def powers = {
-    val next = functions
+    val next = prefix //functions
     next ~ rep( "\\"~>next ) ^^ {
       case r~rs => (r /: rs) { (a,b) => Power(a,b) }
     }

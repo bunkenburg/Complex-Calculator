@@ -490,12 +490,8 @@ class ParserTest extends FunSuite {
   }
 
   test("-1*2"){ assert( p("-1*2") === Mult(Neg(One),Two) )}
-  test("-1/2"){assert( p("-1/2") === Div(Neg(One),Two) )}
-
-  test("-1\\2"){
-    val r = p("-1\\2")
-    assert( r === Neg(Power(One,Two)) )
-  }
+  test("-1/2"){ assert( p("-1/2") === Div(Neg(One),Two) ) }
+  test("-1\\2"){ assert( p("-1\\2") === Power(Neg(One),Two) )}
 
   test("-2i"){
     val r = p("-2i")
