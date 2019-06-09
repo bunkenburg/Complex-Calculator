@@ -121,4 +121,32 @@ class ParserSystematicTest extends FunSuite {
   test("|ee|"){ assert( p("|ee|") === Mod(Mult(E,E)) ) }
   test("|2i|"){ assert( p("|2i|") === Mod(Mult(Two,I)) ) }
 
+  // +E
+  test("+(e)"){ assert( p("+(e)") === PrePlus(E) ) }
+  test("+|e|"){ assert( p("+|e|") === PrePlus(Mod(E)) ) }
+  test("++e"){ assert( p("++e") === PrePlus(PrePlus(E)) ) }
+  test("+-e"){ assert( p("+-e") === PrePlus(PreMinus(E)) ) }
+  test("+sin e"){ assert( p("+sin e") === PrePlus(Sin(E)) ) }
+  test("+e+e"){ assert( p("+e+e") === Plus(PrePlus(E),E) ) }
+  test("+e-e"){ assert( p("+e-e") === Minus(PrePlus(E),E) ) }
+  test("+e*e"){ assert( p("+e*e") === PrePlus(Mult(E,E)) ) }
+  test("+e/e"){ assert( p("+e/e") === PrePlus(Div(E,E)) ) }
+  test("+e\\e"){ assert( p("+e\\e") === PrePlus(Power(E,E)) ) }
+  test("+ee"){ assert( p("+ee") === PrePlus(Mult(E,E)) ) }
+  test("+2i"){ assert( p("+2i") === PrePlus(Mult(Two,I)) ) }
+
+  // -E
+  test("-(e)"){ assert( p("-(e)") === PreMinus(E) ) }
+  test("-|e|"){ assert( p("-|e|") === PreMinus(Mod(E)) ) }
+  test("-+e"){ assert( p("-+e") === PreMinus(PrePlus(E)) ) }
+  test("--e"){ assert( p("--e") === PreMinus(PreMinus(E)) ) }
+  test("-sin e"){ assert( p("-sin e") === PreMinus(Sin(E)) ) }
+  test("-e+e"){ assert( p("-e+e") === Plus(PreMinus(E),E) ) }
+  test("-e-e"){ assert( p("-e-e") === Minus(PreMinus(E),E) ) }
+  test("-e*e"){ assert( p("-e*e") === PreMinus(Mult(E,E)) ) }
+  test("-e/e"){ assert( p("-e/e") === PreMinus(Div(E,E)) ) }
+  test("-e\\e"){ assert( p("-e\\e") === PreMinus(Power(E,E)) ) }
+  test("-ee"){ assert( p("-ee") === PreMinus(Mult(E,E)) ) }
+  test("-2i"){ assert( p("-2i") === PreMinus(Mult(Two,I)) ) }
+
 }
