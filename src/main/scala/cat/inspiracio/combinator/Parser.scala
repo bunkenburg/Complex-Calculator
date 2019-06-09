@@ -24,85 +24,88 @@ import cat.inspiracio.parsing.{Arg, C, Conj, Cos, Cosh, Div, Exp, Expression, Fa
 import scala.util.parsing.combinator.JavaTokenParsers
 
 /** An alternative parser, built using Scala's combinator parsing.
+  *
+  * XXX Not ready yet. Does not accept many expressions that
+  * occur in maths books. See ParserTest.
+  * Most important: better-prefix e\\-πi That must work as expected.
   * */
 class Parser extends JavaTokenParsers {
 
-  def expr: Parser[Expression] = e0
-
-  /** summands */
-  def e0 = e1 ~ rep( "+"~e1 | "-"~e1 ) ^^ {
-    case r~rs => {
-      (r /: rs) { case (a, c~b ) => if(c=="+") Plus(a,b) else Minus(a,b) }
-    }
+  def apply(input: String): Expression = parseAll(expr, input) match {
+    case Success(result, _) => result
+    case failure : NoSuccess => scala.sys.error(failure.msg)
   }
 
-  /** prefix + - */
-  def e1 = rep( "-" | "+" ) ~ e2 ^^ {
-    case rs~r =>
-      //(r /: rs) { (a,c) => if(c=="+") PrePlus(a) else PreMinus(a) }
-      (rs :\ r) { (c,a) => if(c=="+") PrePlus(a) else PreMinus(a) }
+  private def expr: Parser[Expression] = summands
+
+  private def summands = prefix ~ rep( "+"~prefix | "-"~prefix ) ^^ {
+    case r~rs => (r /: rs) { case (a, c~b ) => if(c=="+") Plus(a,b) else Minus(a,b) }
   }
 
-  /** factors */
-  def e2 = e3 ~ rep( "*"~e3 | "/"~e3 ) ^^ {
-    case r ~ rs => {
-      (r /: rs) { case (a, c~b) => if (c=="*") Mult(a,b) else Div(a,b) }
-    }
+  private def prefix = rep( "-" | "+" ) ~ factor ^^ {
+    case rs~r => (rs :\ r) { (c,a) => if(c=="+") PrePlus(a) else PreMinus(a) }
   }
 
-  /** power */
-  def e3 = e4 ~ rep( "\\"~>e4 ) ^^ {
-    case r~rs =>
-      (r /: rs) { (a,b) => Power(a,b) }
+  private def factor = powers ~ rep( "*"~powers | "/"~powers ) ^^ {
+    case r~rs => (r /: rs) { case (a, c~b) => if (c=="*") Mult(a,b) else Div(a,b) }
   }
 
-  /** functions */
-  def e4 = rep(
-    // Mustn't have prefixes before longer strings.
-    "arg" | "conj" | "cosh" | "cos" |
-      "exp" | "Im" | "ln" | "mod" |
-      "opp" | "Re" | "sinh" | "sin" |
-      "tanh" | "tan" ) ~ e5 ^^ {
-    case rs~r =>
-      (r /: rs) { (a,f) => f match {
-        case "arg" => Arg(a)
-        case "conj" => Conj(a)
-        case "cos" => Cos(a)
-        case "cosh" => Cosh(a)
-        case "exp" => Exp(a)
-        case "Im" => parsing.Im(a)
-        case "ln" => Ln(a)
-        case "mod" => Mod(a)
-        case "opp" => Opp(a)
-        case "Re" => parsing.Re(a)
-        case "sin" => Sin(a)
-        case "sinh" => Sinh(a)
-        case "tan" => Tan(a)
-        case "tanh" => Tanh(a)
-        case _ => throw new RuntimeException(f)
-      }}
+  private def powers = functions ~ rep( "\\"~>functions ) ^^ {
+    case r~rs => (r /: rs) { (a,b) => Power(a,b) }
   }
 
-  /** invisible multiplication */
-  def e5 = e6 ~ rep(e6) ^^ {
-    case r~rs =>
-      (r /: rs) { (a,b) => Mult(a,b) }
+
+  private def functions =
+    "arg"~>im ^^ (Arg(_)) |
+      "conj"~>im ^^ (Conj(_)) |
+      "cosh"~>im ^^ (Cosh(_)) |
+      "cos"~>im ^^ (Cos(_)) |
+      "exp"~>im ^^ (Exp(_)) |
+      "Im"~>im ^^ (parsing.Im(_)) |
+      "ln"~>im ^^ (Ln(_)) |
+      "mod"~>im ^^ (Mod(_)) |
+      "opp"~>im ^^ (Opp(_)) |
+      "Re"~>im ^^ (parsing.Re(_)) |
+      "sinh"~>im ^^ (Sinh(_)) |
+      "sin"~>im ^^ (Sin(_)) |
+      "tanh"~>im ^^ (Tanh(_)) |
+      "tan"~>im ^^ (Tan(_)) |
+    im
+
+  /** im = invisible multiplication
+    *
+    * XXX Sharpen this.
+    *
+    * 1. forbid whitespace between factors
+    * 2. decimal number can only be first factor
+    * 3. other factors can only be single-char or (E)
+    *
+    * */
+  private def im = factorial ~ rep(factorial) ^^ {
+    case r~rs => (r /: rs) { (a,b) => Mult(a,b) }
   }
 
-  /** factorial */
-  def e6 = e7 ~ rep("!") ^^ {
-    case r~rs =>
-      (r /: rs) { (a,_) => Fac(a) }
+  private def factorial = e7 ~ rep("!") ^^ {
+    case r~rs => (r /: rs) { (a,_) => Fac(a) }
   }
 
-  def e7: Parser[Expression] =
-    ("z" | "x") ^^ (_ => V()) |
+  private def e7: Parser[Expression] =
+    variable | constant | decimal |
+      parens |
+      abs
+
+  private def variable: Parser[Expression] = ("z" | "x") ^^ (_ => V())
+
+  private def constant: Parser[Expression] =
       "i" ^^ (_ => C(i)) |
       "e" ^^ (_ => C(e)) |
       "π" ^^ (_ => C(π)) |
-      "∞" ^^ (_ => C(∞)) |
-      decimalNumber ^^ (d => C(d.toDouble)) |
-      "(" ~> e0 <~ ")" |
-      "|" ~> e0 <~ "|" ^^ (z => Mod(z))
+      "∞" ^^ (_ => C(∞))
+
+  private def decimal: Parser[Expression] = decimalNumber ^^ (s => C(s.toDouble))
+
+  private def parens: Parser[Expression] = "("~>summands<~")"
+
+  private def abs: Parser[Expression] = "|"~>summands<~"|" ^^ (Mod(_))
 
 }

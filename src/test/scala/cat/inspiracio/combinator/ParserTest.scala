@@ -21,14 +21,10 @@ import cat.inspiracio.complex._
 import cat.inspiracio.parsing
 import cat.inspiracio.parsing._
 import org.scalatest.FunSuite
-import sun.nio.cs.ext.MacUkraine
 
 class ParserTest extends FunSuite {
 
-  def parse(s: String): Expression = {
-    val p = new Parser
-    p.parseAll(p.expr, s).get
-  }
+  val parse = new Parser
 
   val X = V()
   val Z = V()
@@ -231,8 +227,15 @@ class ParserTest extends FunSuite {
     assert( r === Fac(Plus(Mult(Two, X), One)) )
   }
 
+  /* needs functions without () and space-multiplication
   test("3 sin 0"){
     val r = parse("3 sin 0")
+    assert( r === Mult(Three, Sin(Zero)) )
+  }
+   */
+
+  test("3 * sin 0"){
+    val r = parse("3 * sin 0")
     assert( r === Mult(Three, Sin(Zero)) )
   }
 
@@ -240,8 +243,6 @@ class ParserTest extends FunSuite {
     val r = parse("sin ei")
     assert( r === Sin(Mult(E, I)) )
   }
-
-  // \
 
   // various expressions from Maths books -----
 
@@ -265,18 +266,39 @@ class ParserTest extends FunSuite {
     assert( r === Power(E, Mult(I,Z)) )
   }
 
+  /* needs better-prefix
   test("e\\-iz"){
     val r = parse("e\\-iz")
     assert( r === Power(E, PreMinus(Mult(I,Z))) )
   }
+   */
 
+  test("e\\(-iz)"){
+    val r = parse("e\\(-iz)")
+    assert( r === Power(E, PreMinus(Mult(I,Z))) )
+  }
+
+  /* Needs functions without parentheses and space-multiplication
   test("sin xz sin zx"){
     val r = parse("sin xz sin zx")
     assert( r === Mult(Sin(Mult(X,Z)), Sin(Mult(Z,X))) )
   }
+   */
 
+  test("sin(xz)*sin(zx)"){
+    val r = parse("sin(xz)*sin(zx)")
+    assert( r === Mult(Sin(Mult(X,Z)), Sin(Mult(Z,X))) )
+  }
+
+  /* needs functions without parentheses
   test("cos z + i sin z"){
     val r = parse("cos z + i sin z")
+    assert( r === Plus(Cos(Z), Mult(I, Sin(Z))) )
+  }
+   */
+
+  test("cos z + i*sin z"){
+    val r = parse("cos z + i*sin z")
     assert( r === Plus(Cos(Z), Mult(I, Sin(Z))) )
   }
 
@@ -285,8 +307,15 @@ class ParserTest extends FunSuite {
     assert( r === Cos(Mult(Two,Z)) )
   }
 
+  /* needs space-multiplication and functions without parentheses
   test("2 cos z sin z"){
     val r = parse("2 cos z sin z")
+    assert( r === Mult(Mult(Two, Cos(Z)), Sin(Z)) )
+  }
+   */
+
+  test("2 * cos z * sin z"){
+    val r = parse("2 * cos z * sin z")
     assert( r === Mult(Mult(Two, Cos(Z)), Sin(Z)) )
   }
 
@@ -300,23 +329,51 @@ class ParserTest extends FunSuite {
     assert( r === Plus(Ln(Z), Mult(Mult(Plus(Mult(Two,Z), One), Pi), I)) )
   }
 
+  /* needs space-multiplication
   test("(cos z + i sin z)\\x"){
     val r = parse("(cos z + i sin z)\\x")
     assert( r === Power(Plus(Cos(Z), Mult(I, Sin(Z))), X) )
   }
+   */
 
+  test("(cos z + i * sin z)\\x"){
+    val r = parse("(cos z + i * sin z)\\x")
+    assert( r === Power(Plus(Cos(Z), Mult(I, Sin(Z))), X) )
+  }
+
+  /* needs space-multiplication
   test("cos zx +  i sin zx"){
     val r = parse("cos zx +  i sin zx")
     assert( r === Plus(Cos(Mult(X,Z)), Mult(I,Sin(Mult(Z,X)))) )
   }
+   */
 
+  test("cos zx + i * sin zx"){
+    val r = parse("cos zx + i * sin zx")
+    assert( r === Plus(Cos(Mult(X,Z)), Mult(I,Sin(Mult(Z,X)))) )
+  }
+
+  /* needs invisible-multiplication
   test("exp(x)exp(z)"){
     val r = parse("exp(x)exp(z)")
     assert( r === Mult(Exp(X), Exp(Z)) )
   }
+   */
 
+  test("exp(x)*exp(z)"){
+    val r = parse("exp(x)*exp(z)")
+    assert( r === Mult(Exp(X), Exp(Z)) )
+  }
+
+  /* needs space-multiplication
   test("sin x cos z + cos x sin z"){
     val r = parse("sin x cos z + cos x sin z")
+    assert( r === Plus(Mult(Sin(X),Cos(Z)),Mult(Cos(X),Sin(Z))) )
+  }
+   */
+
+  test("sin x * cos z + cos x * sin z"){
+    val r = parse("sin x * cos z + cos x * sin z")
     assert( r === Plus(Mult(Sin(X),Cos(Z)),Mult(Cos(X),Sin(Z))) )
   }
 
@@ -457,18 +514,39 @@ class ParserTest extends FunSuite {
     assert( r === Sin(Fac(E)) )
   }
 
+  /* needs better-prefix
   test("sin +e"){
     val r = parse("sin +e")
     assert( r === Sin(PrePlus(E)) )
   }
+   */
 
+  test("sin(+e)"){
+    val r = parse("sin(+e)")
+    assert( r === Sin(PrePlus(E)) )
+  }
+
+  /* needs better-prefix
   test("sin -e"){
     val r = parse("sin -e")
     assert( r === Sin(PreMinus(E)) )
   }
+   */
 
+  test("sin(-e)"){
+    val r = parse("sin(-e)")
+    assert( r === Sin(PreMinus(E)) )
+  }
+
+  /* needs functions without parentheses
   test("sin sin e"){
     val r = parse("sin sin e")
+    assert( r === Sin(Sin(E)) )
+  }
+   */
+
+  test("sin(sin e)"){
+    val r = parse("sin(sin e)")
     assert( r === Sin(Sin(E)) )
   }
 
@@ -602,13 +680,27 @@ class ParserTest extends FunSuite {
     assert( r === Mult(One,Fac(Two)) )
   }
 
+  /* needs better-prefix
   test("1*+2"){
     val r = parse("1*+2")
     assert( r === Mult(One,PrePlus(Two)) )
   }
+   */
 
+  test("1*(+2)"){
+    val r = parse("1*(+2)")
+    assert( r === Mult(One,PrePlus(Two)) )
+  }
+
+  /* needs better-prefix
   test("1*-2"){
     val r = parse("1*-2")
+    assert( r === Mult(One,PreMinus(Two)) )
+  }
+   */
+
+  test("1*(-2)"){
+    val r = parse("1*(-2)")
     assert( r === Mult(One,PreMinus(Two)) )
   }
 
@@ -647,13 +739,27 @@ class ParserTest extends FunSuite {
     assert( r === Div(One,Fac(Two)) )
   }
 
+  /* needs better-prefix
   test("1/+2"){
     val r = parse("1/+2")
     assert( r === Div(One,PrePlus(Two)) )
   }
+   */
 
+  test("1/(+2)"){
+    val r = parse("1/(+2)")
+    assert( r === Div(One,PrePlus(Two)) )
+  }
+
+  /* needs better-prefix
   test("1/-2"){
     val r = parse("1/-2")
+    assert( r === Div(One,PreMinus(Two)) )
+  }
+   */
+
+  test("1/(-2)"){
+    val r = parse("1/(-2)")
     assert( r === Div(One,PreMinus(Two)) )
   }
 
@@ -697,13 +803,27 @@ class ParserTest extends FunSuite {
     assert( r === Power(One,Fac(Two)) )
   }
 
+  /* needs better-prefix
   test("1\\+2"){
     val r = parse("1\\+2")
     assert( r === Power(One,PrePlus(Two)) )
   }
+   */
 
+  test("1\\(+2)"){
+    val r = parse("1\\(+2)")
+    assert( r === Power(One,PrePlus(Two)) )
+  }
+
+  /* needs better-prefix
   test("1\\-2"){
     val r = parse("1\\-2")
+    assert( r === Power(One,PreMinus(Two)) )
+  }
+   */
+
+  test("1\\(-2)"){
+    val r = parse("1\\(-2)")
     assert( r === Power(One,PreMinus(Two)) )
   }
 
@@ -747,8 +867,15 @@ class ParserTest extends FunSuite {
     assert( r === Mult(I, Fac(Z)) )
   }
 
+  /* needs space-multiplication
   test("i sin π"){
     val r = parse("i sin π")
+    assert( r === Mult(I, Sin(Pi)) )
+  }
+   */
+
+  test("i * sin π"){
+    val r = parse("i * sin π")
     assert( r === Mult(I, Sin(Pi)) )
   }
 

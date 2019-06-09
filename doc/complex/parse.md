@@ -60,6 +60,23 @@ grammar with precedence:
     
 This grammar does not produce 3 sin 0 = 3 * sin(0).
 
+## possible simplications
+
+1. invisible-multiplication restricted
+    - decimal only as first factor
+    - other factors must be single-character: xzieπ∞
+    - all other multiplications must be visible
+    - 1+2i
+    - πi
+2. functions must have parentheses
+    - sin(π)
+
+## todo
+
+* better-prefix, most important: e\\-πi
+* functions without parentheses
+* space-multiplication
+
 ## future
 
 Maybe this is faster: 
