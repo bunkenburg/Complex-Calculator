@@ -295,6 +295,18 @@ class ParserSystematicTest extends FunSuite {
   test("2ize"){ assert( p("2ize") === Mult(Mult(Mult(Two,I),Z),E) ) }
 
   // E E     interesting
+  test("(e) (e)"){ assert( p("(e) (e)") === Mult(E,E) ) }
+  test("|e| |e|"){ assert( p("|e| |e|") === Mult(Mod(E),Mod(E)) ) }
+  test("+e e"){ assert( p("+e e") === Mult(E,E) ) }
+  //No. test("-e e"){ assert( p("-e e") === Mult(Neg(E),E) ) }
+  //XXX Yes. test("sin(e) sin(e)"){ assert( p("sin(e) sin(e)") === Mult(Sin(E), Sin(E)) ) }
+  test("3! 2!"){ assert( p("3! 2!") ===Mult(Fac(Three),Fac(Two)) ) }
+  test("2 i + 3 i"){ assert( p("2 i + 3 i") === Plus(Mult(Two,I),Mult(Three,I)) ) }
+  test("2 i - 3 i"){ assert( p("2 i - 3 i") === Minus(Mult(Two,I),Mult(Three,I)) ) }
+  //Not necessary. test("2 i * 3 i"){ assert( p("2 i * 3 i") === Mult(Mult(Mult(Two,I),Three),I)  ) }
+  //No. test("2 i / 3 i"){ assert( p(" 2 i / 3 i") === Mult(Div(Mult(Two,I),Three),I) ) }
+  //XXX test("2 i \\ 3 i"){ assert( p("2 i \\ 3 i") === Mult(Mult(Two,Power(I,Three)),I) ) }
+  //No. test("2i ze"){ assert( p("2ize") === Mult(Mult(Two,I),Mult(Z,E)) ) }
 
 
 }
