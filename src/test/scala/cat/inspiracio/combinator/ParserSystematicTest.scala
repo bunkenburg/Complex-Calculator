@@ -235,4 +235,28 @@ class ParserSystematicTest extends FunSuite {
   test("0-e\\e-3"){ assert( p("0-e\\e-3") === Minus(Minus(Zero,Power(E,E)),Three) ) }
   test("2i-3e"){ assert( p("2i-3e") === Minus(Mult(Two,I),Mult(Three,E)) ) }
 
+  // E * E
+  test("(e)*(e)"){ assert( p("(e)*(e)") === Mult(E,E) ) }
+  test("|e|*|e|"){ assert( p("|e|*|e|") === Mult(Mod(E),Mod(E)) ) }
+  //XXX test("+e*+e"){ assert( p("+e*+e") === Mult(E,E) ) }
+  //XXX test("-e*-e"){ assert( p("-e*-e") === Mult(Neg(E),Neg(E)) ) }
+  test("sin e * sin e"){ assert( p("sin e * sin e") === Mult(Sin(E),Sin(E)) ) }
+  test("sin(e) * sin(e)"){ assert( p("sin(e) * sin(e)") === Mult(Sin(E), Sin(E)) ) }
+  test("3!*2!"){ assert( p("3!*2!") === Mult(Fac(Three),Fac(Two)) ) }
+  test("1*2+3*4"){ assert( p("1*2+3*4") === Plus(Mult(One,Two),Mult(Three,Four)) ) }
+  test("0*1-2*3"){ assert( p("0*1-2*3") === Minus(Mult(Zero,One),Mult(Two,Three)) ) }
+  test("0*1*2*3"){ assert( p("0*1*2*3") === Mult(Mult(Mult(Zero,One),Two),Three)  ) }
+  test("0*1/2*3"){ assert( p("0*1/2*3") === Mult(Div(Mult(Zero,One),Two),Three) ) }
+  test("0*1\\2*3"){ assert( p("0*1\\2*3") === Mult(Mult(Zero,Power(One,Two)),Three) ) }
+  test("2i*3e"){ assert( p("2i*3e") === Mult(Mult(Two,I),Mult(Three,E)) ) }
+
+  // E / E
+
+  // E \ E
+
+  // EE      interesting
+
+  // E E     interesting
+
+  
 }
