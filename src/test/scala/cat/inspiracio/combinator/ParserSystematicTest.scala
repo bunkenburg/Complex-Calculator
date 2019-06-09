@@ -148,4 +148,17 @@ class ParserSystematicTest extends FunSuite {
   test("-ee"){ assert( p("-ee") === Neg(Mult(E,E)) ) }
   test("-2i"){ assert( p("-2i") === Neg(Mult(Two,I)) ) }
 
+  // sin(E)
+  test("sin((e))"){ assert( p("sin((e))") === Sin(E) ) }
+  test("sin(|e|)"){ assert( p("sin(|e|)") === Sin(Mod(E)) ) }
+  test("sin(+e)"){ assert( p("sin(+e)") === Sin(E) ) }
+  test("sin(-e)"){ assert( p("sin(-e)") === Sin(Neg(E)) ) }
+  test("sin(sin e)"){ assert( p("sin(sin e)") === Sin(Sin(E)) ) }
+  test("sin(e+e)"){ assert( p("sin(e+e)") === Sin(Plus(E,E)) ) }
+  test("sin(e-e)"){ assert( p("sin(e-e)") === Sin(Minus(E,E)) ) }
+  test("sin(e*e)"){ assert( p("sin(e*e)") === Sin(Mult(E,E)) ) }
+  test("sin(e/e)"){ assert( p("sin(e/e)") === Sin(Div(E,E)) ) }
+  test("sin(e\\e)"){ assert( p("sin(e\\e)") === Sin(Power(E,E)) ) }
+  test("sin(2i)"){ assert( p("sin(2i)") === Sin(Mult(Two,I)) ) }
+
 }
