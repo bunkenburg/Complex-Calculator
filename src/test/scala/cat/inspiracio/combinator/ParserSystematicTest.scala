@@ -47,8 +47,8 @@ import org.scalatest.FunSuite
   *   * /
   *   \
   *   +E -E sin E       pre-unary
+  *   EE                strongest of almost all
   *   E!
-  *   EE                strongest of all
   *
   * */
 class ParserSystematicTest extends FunSuite {
@@ -189,5 +189,19 @@ class ParserSystematicTest extends FunSuite {
   test("sin e/e"){ assert( p("sin e/e") === Div(Sin(E),E) ) }
   test("sin e\\e"){ assert( p("sin e\\e") === Power(Sin(E),E) ) }
   test("sin 2i"){ assert( p("sin 2i") === Sin(Mult(Two,I)) ) }
+
+  // E!    interesting
+  test("(e)!"){ assert( p("(e)!") === Fac(E) ) }
+  test("|e|!"){ assert( p("|e|!") === Fac(Mod(E)) ) }
+  test("+e!"){ assert( p("+e!") === Fac(E) ) }
+  test("-e!"){ assert( p("-e!") === Neg(Fac(E)) ) }
+  test("sin e!"){ assert( p("sin e!") === Sin(Fac(E)) ) }
+  test("3!!"){ assert( p("3!!") === Fac(Fac(Three)) ) }
+  test("e!+e!"){ assert( p("e!+e!") === Plus(Fac(E),Fac(E)) ) }
+  test("e!-e!"){ assert( p("e!-e!") === Minus(Fac(E),Fac(E)) ) }
+  test("e!*e!"){ assert( p("e!*e!") === Mult(Fac(E),Fac(E)) ) }
+  test("e!/e!"){ assert( p("e!/e!") === Div(Fac(E),Fac(E)) ) }
+  test("e!\\e!"){ assert( p("e!\\e!") === Power(Fac(E),Fac(E)) ) }
+  test("2i!"){ assert( p("2i!") === Mult(Two,Fac(I)) ) }
 
 }
