@@ -204,4 +204,19 @@ class ParserSystematicTest extends FunSuite {
   test("e!\\e!"){ assert( p("e!\\e!") === Power(Fac(E),Fac(E)) ) }
   test("2i!"){ assert( p("2i!") === Mult(Two,Fac(I)) ) }
 
+  // E + E
+  test("(e)+(e)"){ assert( p("(e)+(e)") === Plus(E,E) ) }
+  test("|e|+|e|"){ assert( p("|e|+|e|") === Plus(Mod(E),Mod(E)) ) }
+  test("+e++e"){ assert( p("+e++e") === Plus(E,E) ) }
+  test("-e+-e"){ assert( p("-e+-e") === Plus(Neg(E),Neg(E)) ) }
+  test("sin e + sin e"){ assert( p("sin e + sin e") === Plus(Sin(E),Sin(E)) ) }
+  test("sin(e) + sin(e)"){ assert( p("sin(e) + sin(e)") === Plus(Sin(E), Sin(E)) ) }
+  test("3!+2!"){ assert( p("3!+2!") === Plus(Fac(Three),Fac(Two)) ) }
+  test("1+2+3"){ assert( p("1+2+3") === Plus(Plus(One,Two),Three) ) }
+  test("0+1-2+3"){ assert( p("0+1-2+3") === Plus(Minus(Plus(Zero,One),Two),Three) ) }
+  test("0+e*e+3"){ assert( p("0+e*e+3") === Plus(Plus(Zero,Mult(E,E)),Three) ) }
+  test("0+1/2+3"){ assert( p("0+1/2+3") === Plus(Plus(Zero,Div(One,Two)),Three) ) }
+  test("0+e\\e+3"){ assert( p("0+e\\e+3") === Plus(Plus(Zero,Power(E,E)),Three) ) }
+  test("2i+3e"){ assert( p("2i+3e") === Plus(Mult(Two,I),Mult(Three,E)) ) }
+
 }

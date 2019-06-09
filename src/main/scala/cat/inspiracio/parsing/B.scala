@@ -22,7 +22,7 @@ import cat.inspiracio.complex._
 /** Binary expressions */
 
 case class Plus(left: Expression, right: Expression) extends Expression {
-  override def toString: String = s"($left) + ($right)"
+  //override def toString: String = s"($left) + ($right)"
   override def apply(z: Complex): Complex = {
     val a: Complex = left(z)
     val b: Complex = right(z)
@@ -31,7 +31,7 @@ case class Plus(left: Expression, right: Expression) extends Expression {
 }
 
 case class Minus(left: Expression, right: Expression) extends Expression {
-  override def toString: String = s"($left) + ($right)"
+  //override def toString: String = s"($left) + ($right)"
   override def apply(z: Complex): Complex = {
     val a: Complex = left(z)
     val b: Complex = right(z)
@@ -40,7 +40,7 @@ case class Minus(left: Expression, right: Expression) extends Expression {
 }
 
 case class Mult(left: Expression, right: Expression) extends Expression {
-  override def toString: String = s"($left) * ($right)"
+  //override def toString: String = s"($left) * ($right)"
   override def apply(z: Complex): Complex = {
     val a: Complex = left(z)
     val b: Complex = right(z)
@@ -49,7 +49,7 @@ case class Mult(left: Expression, right: Expression) extends Expression {
 }
 
 case class Div(left: Expression, right: Expression) extends Expression {
-  override def toString: String = s"($left) / ($right)"
+  //override def toString: String = s"($left) / ($right)"
   override def apply(z: Complex): Complex = {
     val a: Complex = left(z)
     val b: Complex = right(z)
@@ -58,7 +58,7 @@ case class Div(left: Expression, right: Expression) extends Expression {
 }
 
 case class Power(left: Expression, right: Expression) extends Expression {
-  override def toString: String = s"($left) \\ ($right)"
+  //override def toString: String = s"($left) \\ ($right)"
   override def apply(z: Complex): Complex = {
     val a: Complex = left(z)
     val b: Complex = right(z)
