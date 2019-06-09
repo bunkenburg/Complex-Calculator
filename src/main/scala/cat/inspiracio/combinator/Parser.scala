@@ -48,26 +48,26 @@ class Parser extends JavaTokenParsers {
 
   /** Binary * and / for multiplication and division. */
   private def factors = {
-    val next = powers //prefix
+    val next = powers
     next ~ rep( "*"~next | "/"~next ) ^^ {
       case r~rs => (r /: rs) { case (a, c~b) => if(c=="*") Mult(a,b) else Div(a,b) }
+    }
+  }
+
+  /** Binary exponentiation. */
+  private def powers = {
+    val next = functions
+    next ~ rep( "\\"~>next ) ^^ {
+      case r~rs => (r /: rs) { (a,b) => Power(a,b) }
     }
   }
 
   /** Unary prefix + and -. Binds quite strongly.
     * Parsing swallows prefix +. */
   private def prefix = {
-    val next = functions //powers
+    val next = functions
     rep( "-" | "+" ) ~ next ^^ {
       case rs~r => (rs :\ r) { (c,a) => if(c=="+") a else Neg(a) }
-    }
-  }
-
-  /** Binary exponentiation. */
-  private def powers = {
-    val next = prefix //functions
-    next ~ rep( "\\"~>next ) ^^ {
-      case r~rs => (r /: rs) { (a,b) => Power(a,b) }
     }
   }
 
@@ -75,24 +75,26 @@ class Parser extends JavaTokenParsers {
     * Can be used with parentheses: sin(z)
     * or without: sin z.
     * Not desired without space: sinz.
-    * Binds quite stronly. */
-  private def functions = {
+    * Binds quite strongly. */
+  private def functions: Parser[Expression] = {
     val next = im
-    "arg" ~> next ^^ (Arg(_)) |
-      "conj" ~> next ^^ (Conj(_)) |
-      "cosh" ~> next ^^ (Cosh(_)) |
-      "cos" ~> next ^^ (Cos(_)) |
-      "exp" ~> next ^^ (Exp(_)) |
-      "Im" ~> next ^^ (parsing.Im(_)) |
-      "ln" ~> next ^^ (Ln(_)) |
-      "mod" ~> next ^^ (Mod(_)) |
-      "opp" ~> next ^^ (Opp(_)) |
-      "Re" ~> next ^^ (parsing.Re(_)) |
-      "sinh" ~> next ^^ (Sinh(_)) |
-      "sin" ~> next ^^ (Sin(_)) |
-      "tanh" ~> next ^^ (Tanh(_)) |
-      "tan" ~> next ^^ (Tan(_)) |
-      next
+    "+" ~> functions ^^ (a => a) |
+    "-" ~> functions ^^ (Neg(_)) |
+    "arg" ~> functions ^^ (Arg(_)) |
+    "conj" ~> functions ^^ (Conj(_)) |
+    "cosh" ~> functions ^^ (Cosh(_)) |
+    "cos" ~> functions ^^ (Cos(_)) |
+    "exp" ~> functions ^^ (Exp(_)) |
+    "Im" ~> functions ^^ (parsing.Im(_)) |
+    "ln" ~> functions ^^ (Ln(_)) |
+    "mod" ~> functions ^^ (Mod(_)) |
+    "opp" ~> functions ^^ (Opp(_)) |
+    "Re" ~> functions ^^ (parsing.Re(_)) |
+    "sinh" ~> functions ^^ (Sinh(_)) |
+    "sin" ~> functions ^^ (Sin(_)) |
+    "tanh" ~> functions ^^ (Tanh(_)) |
+    "tan" ~> functions ^^ (Tan(_)) |
+    next
   }
 
   /** im = invisible multiplication

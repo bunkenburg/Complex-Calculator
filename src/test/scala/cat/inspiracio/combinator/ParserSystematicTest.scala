@@ -180,9 +180,9 @@ class ParserSystematicTest extends FunSuite {
   // sin E    interesting
   test("sin (e)"){ assert( p("sin (e)") === Sin(E) ) }
   test("sin |e|"){ assert( p("sin |e|") === Sin(Mod(E)) ) }
-  //XXX test("sin +e"){ assert( p("sin +e") === Sin(E) ) }
-  //XXX test("sin -e"){ assert( p("sin -e") === Sin(Neg(E)) ) }
-  //XXX test("sin sin e"){ assert( p("sin sin e") === Sin(Sin(E)) ) }
+  test("sin +e"){ assert( p("sin +e") === Sin(E) ) }
+  test("sin -e"){ assert( p("sin -e") === Sin(Neg(E)) ) }
+  test("sin sin e"){ assert( p("sin sin e") === Sin(Sin(E)) ) }
   test("sin 3!"){ assert( p("sin 3!") === Sin(Fac(Three)) ) }
   test("sin e+e"){ assert( p("sin e+e") === Plus(Sin(E),E) ) }
   test("sin e-e"){ assert( p("sin e-e") === Minus(Sin(E),E) ) }
@@ -298,7 +298,7 @@ class ParserSystematicTest extends FunSuite {
   test("(e) (e)"){ assert( p("(e) (e)") === Mult(E,E) ) }
   test("|e| |e|"){ assert( p("|e| |e|") === Mult(Mod(E),Mod(E)) ) }
   test("+e e"){ assert( p("+e e") === Mult(E,E) ) }
-  //No. test("-e e"){ assert( p("-e e") === Mult(Neg(E),E) ) }
+  //XXX Maybe. test("-e e"){ assert( p("-e e") === Mult(Neg(E),E) ) }
   //XXX Yes. test("sin(e) sin(e)"){ assert( p("sin(e) sin(e)") === Mult(Sin(E), Sin(E)) ) }
   test("3! 2!"){ assert( p("3! 2!") ===Mult(Fac(Three),Fac(Two)) ) }
   test("2 i + 3 i"){ assert( p("2 i + 3 i") === Plus(Mult(Two,I),Mult(Three,I)) ) }
