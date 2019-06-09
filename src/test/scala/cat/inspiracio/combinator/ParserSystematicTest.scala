@@ -251,6 +251,19 @@ class ParserSystematicTest extends FunSuite {
   test("2i*3e"){ assert( p("2i*3e") === Mult(Mult(Two,I),Mult(Three,E)) ) }
 
   // E / E
+  test("(e)/(e)"){ assert( p("(e)/(e)") === Div(E,E) ) }
+  test("|e|/|e|"){ assert( p("|e|/|e|") === Div(Mod(E),Mod(E)) ) }
+  //XXX test("+e/+e"){ assert( p("+e/+e") === Div(E,E) ) }
+  //XXX test("-e/-e"){ assert( p("-e/-e") === Div(Neg(E),Neg(E)) ) }
+  test("sin e / sin e"){ assert( p("sin e / sin e") === Div(Sin(E),Sin(E)) ) }
+  test("sin(e) / sin(e)"){ assert( p("sin(e) / sin(e)") === Div(Sin(E), Sin(E)) ) }
+  test("3!/2!"){ assert( p("3!/2!") === Div(Fac(Three),Fac(Two)) ) }
+  test("1/2+3/4"){ assert( p("1/2+3/4") === Plus(Div(One,Two),Div(Three,Four)) ) }
+  test("0/1-2/3"){ assert( p("0/1-2/3") === Minus(Div(Zero,One),Div(Two,Three)) ) }
+  test("0/1*2/3"){ assert( p("0/1*2/3") === Div(Mult(Div(Zero,One),Two),Three)  ) }
+  test("0/1/2/3"){ assert( p("0/1/2/3") === Div(Div(Div(Zero,One),Two),Three) ) }
+  test("0/1\\2/3"){ assert( p("0/1\\2/3") === Div(Div(Zero,Power(One,Two)),Three) ) }
+  test("2i/3e"){ assert( p("2i/3e") === Div(Mult(Two,I),Mult(Three,E)) ) }
 
   // E \ E
 
@@ -258,5 +271,5 @@ class ParserSystematicTest extends FunSuite {
 
   // E E     interesting
 
-  
+
 }
