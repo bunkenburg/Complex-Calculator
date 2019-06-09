@@ -33,6 +33,7 @@ import org.scalatest.FunSuite
   *   | -E              prefix
   *   | sin(E)          function
   *   | sin E   <-- new naked-function
+  *   | E!
   *   | E + E           addition
   *   | E - E           subtraction
   *   | E * E           multiplication
@@ -40,6 +41,14 @@ import org.scalatest.FunSuite
   *   | E \ E           exponentiation
   *   | EE      <-- new invisible multiplication
   *   | E E     <-- new space-multiplication
+  *
+  * roughly, precedence:
+  *   + -
+  *   * /
+  *   \
+  *   +E -E sin E       pre-unary
+  *   E!
+  *   EE                strongest of all
   *
   * */
 class ParserSystematicTest extends FunSuite {
@@ -77,6 +86,7 @@ class ParserSystematicTest extends FunSuite {
   test("-∞"){ assert( p("-∞") === Neg(Inf) ) }
   test("sin(π)"){ assert( p("sin(π)") === Sin(Pi) ) }
   test("sin π"){ assert( p("sin π") === Sin(Pi) ) }
+  test("3!"){ assert( p("3!") === Fac(Three) ) }
 
   test("e+e"){ assert( p("e+e") === Plus(E,E) ) }
   test("e-e"){ assert( p("e-e") === Minus(E,E) ) }
@@ -98,6 +108,7 @@ class ParserSystematicTest extends FunSuite {
   test("(+e)"){ assert( p("(+e)") === E ) }
   test("(-e)"){ assert( p("(-e)") === Neg(E) ) }
   test("(sin e)"){ assert( p("(sin e)") === Sin(E) ) }
+  test("(3!)"){ assert( p("(3!)") === Fac(Three) ) }
   test("(e+e)"){ assert( p("(e+e)") === Plus(E,E) ) }
   test("(e-e)"){ assert( p("(e-e)") === Minus(E,E) ) }
   test("(e*e)"){ assert( p("(e*e)") === Mult(E,E) ) }
@@ -112,6 +123,7 @@ class ParserSystematicTest extends FunSuite {
   test("|+e|"){ assert( p("|+e|") === Mod(E) ) }
   test("|-e|"){ assert( p("|-e|") === Mod(Neg(E)) ) }
   test("|sin e|"){ assert( p("|sin e|") === Mod(Sin(E)) ) }
+  test("|3!|"){ assert( p("|3!|") === Mod(Fac(Three)) ) }
   test("|e+e|"){ assert( p("|e+e|") === Mod(Plus(E,E)) ) }
   test("|e-e|"){ assert( p("|e-e|") === Mod(Minus(E,E)) ) }
   test("|e*e|"){ assert( p("|e*e|") === Mod(Mult(E,E)) ) }
@@ -126,6 +138,7 @@ class ParserSystematicTest extends FunSuite {
   test("++e"){ assert( p("++e") === E ) }
   test("+-e"){ assert( p("+-e") === Neg(E) ) }
   test("+sin e"){ assert( p("+sin e") === Sin(E) ) }
+  test("+3!"){ assert( p("+3!") === Fac(Three) ) }
   test("+e+e"){ assert( p("+e+e") === Plus(E,E) ) }
   test("+e-e"){ assert( p("+e-e") === Minus(E,E) ) }
   test("+e*e"){ assert( p("+e*e") === Mult(E,E) ) }
@@ -140,6 +153,7 @@ class ParserSystematicTest extends FunSuite {
   test("-+e"){ assert( p("-+e") === Neg(E) ) }
   test("--e"){ assert( p("--e") === Neg(Neg(E)) ) }
   test("-sin e"){ assert( p("-sin e") === Neg(Sin(E)) ) }
+  test("-3!"){ assert( p("-3!") === Neg(Fac(Three)) ) }
   test("-e+e"){ assert( p("-e+e") === Plus(Neg(E),E) ) }
   test("-e-e"){ assert( p("-e-e") === Minus(Neg(E),E) ) }
   test("-e*e"){ assert( p("-e*e") === Neg(Mult(E,E)) ) }
@@ -154,11 +168,26 @@ class ParserSystematicTest extends FunSuite {
   test("sin(+e)"){ assert( p("sin(+e)") === Sin(E) ) }
   test("sin(-e)"){ assert( p("sin(-e)") === Sin(Neg(E)) ) }
   test("sin(sin e)"){ assert( p("sin(sin e)") === Sin(Sin(E)) ) }
+  test("sin(3!)"){ assert( p("sin(3!)") === Sin(Fac(Three)) ) }
   test("sin(e+e)"){ assert( p("sin(e+e)") === Sin(Plus(E,E)) ) }
   test("sin(e-e)"){ assert( p("sin(e-e)") === Sin(Minus(E,E)) ) }
   test("sin(e*e)"){ assert( p("sin(e*e)") === Sin(Mult(E,E)) ) }
   test("sin(e/e)"){ assert( p("sin(e/e)") === Sin(Div(E,E)) ) }
   test("sin(e\\e)"){ assert( p("sin(e\\e)") === Sin(Power(E,E)) ) }
   test("sin(2i)"){ assert( p("sin(2i)") === Sin(Mult(Two,I)) ) }
+
+  // sin E    interesting
+  test("sin (e)"){ assert( p("sin (e)") === Sin(E) ) }
+  test("sin |e|"){ assert( p("sin |e|") === Sin(Mod(E)) ) }
+  //XXX test("sin +e"){ assert( p("sin +e") === Sin(E) ) }
+  //XXX test("sin -e"){ assert( p("sin -e") === Sin(Neg(E)) ) }
+  //XXX test("sin sin e"){ assert( p("sin sin e") === Sin(Sin(E)) ) }
+  test("sin 3!"){ assert( p("sin 3!") === Sin(Fac(Three)) ) }
+  test("sin e+e"){ assert( p("sin e+e") === Plus(Sin(E),E) ) }
+  test("sin e-e"){ assert( p("sin e-e") === Minus(Sin(E),E) ) }
+  test("sin e*e"){ assert( p("sin e*e") === Mult(Sin(E),E) ) }
+  test("sin e/e"){ assert( p("sin e/e") === Div(Sin(E),E) ) }
+  test("sin e\\e"){ assert( p("sin e\\e") === Power(Sin(E),E) ) }
+  test("sin 2i"){ assert( p("sin 2i") === Sin(Mult(Two,I)) ) }
 
 }
