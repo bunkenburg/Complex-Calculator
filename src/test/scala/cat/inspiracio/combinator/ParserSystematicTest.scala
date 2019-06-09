@@ -266,6 +266,19 @@ class ParserSystematicTest extends FunSuite {
   test("2i/3e"){ assert( p("2i/3e") === Div(Mult(Two,I),Mult(Three,E)) ) }
 
   // E \ E
+  test("(e)\\(e)"){ assert( p("(e)\\(e)") === Power(E,E) ) }
+  test("|e|\\|e|"){ assert( p("|e|\\|e|") === Power(Mod(E),Mod(E)) ) }
+  //XXX test("+e\\+e"){ assert( p("+e\\+e") === Power(E,E) ) }
+  //XXX test("-e\\-e"){ assert( p("-e\\-e") === Power(Neg(E),Neg(E)) ) }
+  test("sin e \\ sin e"){ assert( p("sin e \\ sin e") === Power(Sin(E),Sin(E)) ) }
+  test("sin(e) \\ sin(e)"){ assert( p("sin(e) \\ sin(e)") === Power(Sin(E), Sin(E)) ) }
+  test("3!\\2!"){ assert( p("3!\\2!") === Power(Fac(Three),Fac(Two)) ) }
+  test("1\\2+3\\4"){ assert( p("1\\2+3\\4") === Plus(Power(One,Two),Power(Three,Four)) ) }
+  test("0\\1-2\\3"){ assert( p("0\\1-2\\3") === Minus(Power(Zero,One),Power(Two,Three)) ) }
+  test("0\\1*2\\3"){ assert( p("0\\1*2\\3") === Mult(Power(Zero,One),Power(Two,Three))  ) }
+  test("0\\1/2\\3"){ assert( p("0\\1/2\\3") === Div(Power(Zero,One),Power(Two,Three)) ) }
+  test("0\\1\\2\\3"){ assert( p("0\\1\\2\\3") === Power(Power(Power(Zero,One),Two),Three) ) }
+  test("2i\\3e"){ assert( p("2i\\3e") === Power(Mult(Two,I),Mult(Three,E)) ) }
 
   // EE      interesting
 
