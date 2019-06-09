@@ -66,6 +66,7 @@ class ParserSystematicTest extends FunSuite {
   val One = C(1)
   val Two = C(2)
   val Three = C(3)
+  val Four = C(4)
 
   // single feature -------------------------
 
@@ -218,5 +219,20 @@ class ParserSystematicTest extends FunSuite {
   test("0+1/2+3"){ assert( p("0+1/2+3") === Plus(Plus(Zero,Div(One,Two)),Three) ) }
   test("0+e\\e+3"){ assert( p("0+e\\e+3") === Plus(Plus(Zero,Power(E,E)),Three) ) }
   test("2i+3e"){ assert( p("2i+3e") === Plus(Mult(Two,I),Mult(Three,E)) ) }
+
+  // E - E
+  test("(e)-(e)"){ assert( p("(e)-(e)") === Minus(E,E) ) }
+  test("|e|-|e|"){ assert( p("|e|-|e|") === Minus(Mod(E),Mod(E)) ) }
+  test("+e-+e"){ assert( p("+e-+e") === Minus(E,E) ) }
+  test("-e--e"){ assert( p("-e--e") === Minus(Neg(E),Neg(E)) ) }
+  test("sin e - sin e"){ assert( p("sin e - sin e") === Minus(Sin(E),Sin(E)) ) }
+  test("sin(e) - sin(e)"){ assert( p("sin(e) - sin(e)") === Minus(Sin(E), Sin(E)) ) }
+  test("3!-2!"){ assert( p("3!-2!") === Minus(Fac(Three),Fac(Two)) ) }
+  test("1-2+3-4"){ assert( p("1-2+3-4") === Minus(Plus(Minus(One,Two),Three),Four) ) }
+  test("0-1-2-3"){ assert( p("0-1-2-3") === Minus(Minus(Minus(Zero,One),Two),Three) ) }
+  test("0-e*e-3"){ assert( p("0-e*e-3") === Minus(Minus(Zero,Mult(E,E)),Three) ) }
+  test("0-1/2-3"){ assert( p("0-1/2-3") === Minus(Minus(Zero,Div(One,Two)),Three) ) }
+  test("0-e\\e-3"){ assert( p("0-e\\e-3") === Minus(Minus(Zero,Power(E,E)),Three) ) }
+  test("2i-3e"){ assert( p("2i-3e") === Minus(Mult(Two,I),Mult(Three,E)) ) }
 
 }
