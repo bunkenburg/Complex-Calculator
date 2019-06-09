@@ -94,6 +94,8 @@ class Parser extends JavaTokenParsers {
       parens |
       abs
 
+  // terminal parsers (they don't delegate to other parsers) ---
+
   private def variable: Parser[Expression] = ("z" | "x") ^^ (_ => V())
 
   private def constant: Parser[Expression] =
@@ -102,10 +104,10 @@ class Parser extends JavaTokenParsers {
       "π" ^^ (_ => C(π)) |
       "∞" ^^ (_ => C(∞))
 
-  private def decimal: Parser[Expression] = decimalNumber ^^ (s => C(s.toDouble))
+  def decimal: Parser[Expression] = decimalNumber ^^ (s => C(s.toDouble))
 
-  private def parens: Parser[Expression] = "("~>summands<~")"
+  def parens: Parser[Expression] = "("~>summands<~")"
 
-  private def abs: Parser[Expression] = "|"~>summands<~"|" ^^ (Mod(_))
+  def abs: Parser[Expression] = "|"~>summands<~"|" ^^ (Mod(_))
 
 }
