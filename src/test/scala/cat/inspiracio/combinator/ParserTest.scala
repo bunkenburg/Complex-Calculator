@@ -87,12 +87,12 @@ class ParserTest extends FunSuite {
 
   test("+3"){
     val r = parse("+3")
-    assert( r === PrePlus(Three) )
+    assert( r === Three )
   }
 
   test("-3"){
     val r = parse("-3")
-    assert( r === PreMinus(Three) )
+    assert( r === Neg(Three) )
   }
 
   test("arg(i)"){
@@ -275,7 +275,7 @@ class ParserTest extends FunSuite {
 
   test("e\\(-iz)"){
     val r = parse("e\\(-iz)")
-    assert( r === Power(E, PreMinus(Mult(I,Z))) )
+    assert( r === Power(E, Neg(Mult(I,Z))) )
   }
 
   /* Needs functions without parentheses and space-multiplication
@@ -411,102 +411,102 @@ class ParserTest extends FunSuite {
 
   test("+3!"){
     val r = parse("+3!")
-    assert( r === PrePlus(Fac(Three)) )
+    assert( r === Fac(Three) )
   }
 
   test("++3"){
     val r = parse("++3")
-    assert( r === PrePlus(PrePlus(Three)) )
+    assert( r === Three )
   }
 
   test("+-3"){
     val r = parse("+-3")
-    assert( r === PrePlus(PreMinus(Three)) )
+    assert( r === Neg(Three) )
   }
 
   test("+sin 3"){
     val r = parse("+sin 3")
-    assert( r === PrePlus(Sin(Three)) )
+    assert( r === Sin(Three) )
   }
 
   test("+1+2"){
     val r = parse("+1+2")
-    assert( r === Plus(PrePlus(One),Two) )
+    assert( r === Plus(One,Two) )
   }
 
   test("+1-2"){
     val r = parse("+1-2")
-    assert( r === Minus(PrePlus(One),Two) )
+    assert( r === Minus(One,Two) )
   }
 
   test("+1*2"){
     val r = parse("+1*2")
-    assert( r === PrePlus(Mult(One,Two)) )
+    assert( r === Mult(One,Two) )
   }
 
   test("+1/2"){
     val r = parse("+1/2")
-    assert( r === PrePlus(Div(One,Two)) )
+    assert( r === Div(One,Two) )
   }
 
   test("+1\\2"){
     val r = parse("+1\\2")
-    assert( r === PrePlus(Power(One,Two)) )
+    assert( r === Power(One,Two) )
   }
 
   test("+2i"){
     val r = parse("+2i")
-    assert( r === PrePlus(Mult(Two,I)) )
+    assert( r === Mult(Two,I) )
   }
 
   test("-3!"){
     val r = parse("-3!")
-    assert( r === PreMinus(Fac(Three)) )
+    assert( r === Neg(Fac(Three)) )
   }
 
   test("-+3"){
     val r = parse("-+3")
-    assert( r === PreMinus(PrePlus(Three)) )
+    assert( r === Neg(Three) )
   }
 
   test("--3"){
     val r = parse("--3")
-    assert( r === PreMinus(PreMinus(Three)) )
+    assert( r === Neg(Neg(Three)) )
   }
 
   test("-sin 3"){
     val r = parse("-sin 3")
-    assert( r === PreMinus(Sin(Three)) )
+    assert( r === Neg(Sin(Three)) )
   }
 
   test("-1+2"){
     val r = parse("-1+2")
-    assert( r === Plus(PreMinus(One),Two) )
+    assert( r === Plus(Neg(One),Two) )
   }
 
   test("-1-2"){
     val r = parse("-1-2")
-    assert( r === Minus(PreMinus(One),Two) )
+    assert( r === Minus(Neg(One),Two) )
   }
 
   test("-1*2"){
     val r = parse("-1*2")
-    assert( r === PreMinus(Mult(One,Two)) )
+    assert( r === Neg(Mult(One,Two)) )
   }
 
   test("-1/2"){
     val r = parse("-1/2")
-    assert( r === PreMinus(Div(One,Two)) )
+    assert( r === Neg(Div(One,Two)) )
   }
 
   test("-1\\2"){
     val r = parse("-1\\2")
-    assert( r === PreMinus(Power(One,Two)) )
+    assert( r === Neg(Power(One,Two)) )
   }
 
   test("-2i"){
     val r = parse("-2i")
-    assert( r === PreMinus(Mult(Two,I)) )
+    assert( r === Neg(Mult(Two,I)) )
   }
 
   test("sin e!"){
@@ -523,7 +523,7 @@ class ParserTest extends FunSuite {
 
   test("sin(+e)"){
     val r = parse("sin(+e)")
-    assert( r === Sin(PrePlus(E)) )
+    assert( r === Sin(E) )
   }
 
   /* needs better-prefix
@@ -535,7 +535,7 @@ class ParserTest extends FunSuite {
 
   test("sin(-e)"){
     val r = parse("sin(-e)")
-    assert( r === Sin(PreMinus(E)) )
+    assert( r === Sin(Neg(E)) )
   }
 
   /* needs functions without parentheses
@@ -582,12 +582,12 @@ class ParserTest extends FunSuite {
 
   test("1++2"){
     val r = parse("1++2")
-    assert( r === Plus(One,PrePlus(Two)) )
+    assert( r === Plus(One,Two) )
   }
 
   test("1+-2"){
     val r = parse("1+-2")
-    assert( r === Plus(One,PreMinus(Two)) )
+    assert( r === Plus(One,Neg(Two)) )
   }
 
   test("1+sin 2"){
@@ -632,12 +632,12 @@ class ParserTest extends FunSuite {
 
   test("1-+2"){
     val r = parse("1-+2")
-    assert( r === Minus(One,PrePlus(Two)) )
+    assert( r === Minus(One,Two) )
   }
 
   test("1--2"){
     val r = parse("1--2")
-    assert( r === Minus(One,PreMinus(Two)) )
+    assert( r === Minus(One,Neg(Two)) )
   }
 
   test("1-sin 2"){
@@ -689,7 +689,7 @@ class ParserTest extends FunSuite {
 
   test("1*(+2)"){
     val r = parse("1*(+2)")
-    assert( r === Mult(One,PrePlus(Two)) )
+    assert( r === Mult(One,Two) )
   }
 
   /* needs better-prefix
@@ -701,7 +701,7 @@ class ParserTest extends FunSuite {
 
   test("1*(-2)"){
     val r = parse("1*(-2)")
-    assert( r === Mult(One,PreMinus(Two)) )
+    assert( r === Mult(One,Neg(Two)) )
   }
 
   test("1*sin 2"){
@@ -748,7 +748,7 @@ class ParserTest extends FunSuite {
 
   test("1/(+2)"){
     val r = parse("1/(+2)")
-    assert( r === Div(One,PrePlus(Two)) )
+    assert( r === Div(One,Two) )
   }
 
   /* needs better-prefix
@@ -760,7 +760,7 @@ class ParserTest extends FunSuite {
 
   test("1/(-2)"){
     val r = parse("1/(-2)")
-    assert( r === Div(One,PreMinus(Two)) )
+    assert( r === Div(One,Neg(Two)) )
   }
 
   test("1/sin 2"){
@@ -812,7 +812,7 @@ class ParserTest extends FunSuite {
 
   test("1\\(+2)"){
     val r = parse("1\\(+2)")
-    assert( r === Power(One,PrePlus(Two)) )
+    assert( r === Power(One,Two) )
   }
 
   /* needs better-prefix
@@ -824,7 +824,7 @@ class ParserTest extends FunSuite {
 
   test("1\\(-2)"){
     val r = parse("1\\(-2)")
-    assert( r === Power(One,PreMinus(Two)) )
+    assert( r === Power(One,Neg(Two)) )
   }
 
   test("1\\sin 2"){

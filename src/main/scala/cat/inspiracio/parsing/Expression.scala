@@ -348,9 +348,9 @@ object Expression {
     if (j == i) {
       val a = parse(s, i + 1, k)
       if(token=='+')
-        PrePlus(a)
+        a
       else
-        PreMinus(a)
+        Neg(a)
     }
     else{
       val a = parse(s, i, j)

@@ -18,7 +18,6 @@
 package cat.inspiracio.combinator
 
 import cat.inspiracio.complex._
-import cat.inspiracio.parsing
 import cat.inspiracio.parsing._
 import org.scalatest.FunSuite
 
@@ -74,8 +73,8 @@ class ParserSystematicTest extends FunSuite {
 
   test("(∞)"){ assert( p("(∞)") === Inf ) }
   test("|∞|"){ assert( p("|∞|") === Mod(Inf) ) }
-  test("+∞"){ assert( p("+∞") === PrePlus(Inf) ) }
-  test("-∞"){ assert( p("-∞") === PreMinus(Inf) ) }
+  test("+∞"){ assert( p("+∞") === Inf ) }
+  test("-∞"){ assert( p("-∞") === Neg(Inf) ) }
   test("sin(π)"){ assert( p("sin(π)") === Sin(Pi) ) }
   test("sin π"){ assert( p("sin π") === Sin(Pi) ) }
 
@@ -96,8 +95,8 @@ class ParserSystematicTest extends FunSuite {
   // (E)
   test("((e))"){ assert( p("((e))") === E ) }
   test("(|e|)"){ assert( p("(|e|)") === Mod(E) ) }
-  test("(+e)"){ assert( p("(+e)") === PrePlus(E) ) }
-  test("(-e)"){ assert( p("(-e)") === PreMinus(E) ) }
+  test("(+e)"){ assert( p("(+e)") === E ) }
+  test("(-e)"){ assert( p("(-e)") === Neg(E) ) }
   test("(sin e)"){ assert( p("(sin e)") === Sin(E) ) }
   test("(e+e)"){ assert( p("(e+e)") === Plus(E,E) ) }
   test("(e-e)"){ assert( p("(e-e)") === Minus(E,E) ) }
@@ -110,8 +109,8 @@ class ParserSystematicTest extends FunSuite {
   // |E|
   test("|(e)|"){ assert( p("|(e)|") === Mod(E) ) }
   test("||e||"){ assert( p("||e||") === Mod(Mod(E)) ) }
-  test("|+e|"){ assert( p("|+e|") === Mod(PrePlus(E)) ) }
-  test("|-e|"){ assert( p("|-e|") === Mod(PreMinus(E)) ) }
+  test("|+e|"){ assert( p("|+e|") === Mod(E) ) }
+  test("|-e|"){ assert( p("|-e|") === Mod(Neg(E)) ) }
   test("|sin e|"){ assert( p("|sin e|") === Mod(Sin(E)) ) }
   test("|e+e|"){ assert( p("|e+e|") === Mod(Plus(E,E)) ) }
   test("|e-e|"){ assert( p("|e-e|") === Mod(Minus(E,E)) ) }
@@ -122,31 +121,31 @@ class ParserSystematicTest extends FunSuite {
   test("|2i|"){ assert( p("|2i|") === Mod(Mult(Two,I)) ) }
 
   // +E
-  test("+(e)"){ assert( p("+(e)") === PrePlus(E) ) }
-  test("+|e|"){ assert( p("+|e|") === PrePlus(Mod(E)) ) }
-  test("++e"){ assert( p("++e") === PrePlus(PrePlus(E)) ) }
-  test("+-e"){ assert( p("+-e") === PrePlus(PreMinus(E)) ) }
-  test("+sin e"){ assert( p("+sin e") === PrePlus(Sin(E)) ) }
-  test("+e+e"){ assert( p("+e+e") === Plus(PrePlus(E),E) ) }
-  test("+e-e"){ assert( p("+e-e") === Minus(PrePlus(E),E) ) }
-  test("+e*e"){ assert( p("+e*e") === PrePlus(Mult(E,E)) ) }
-  test("+e/e"){ assert( p("+e/e") === PrePlus(Div(E,E)) ) }
-  test("+e\\e"){ assert( p("+e\\e") === PrePlus(Power(E,E)) ) }
-  test("+ee"){ assert( p("+ee") === PrePlus(Mult(E,E)) ) }
-  test("+2i"){ assert( p("+2i") === PrePlus(Mult(Two,I)) ) }
+  test("+(e)"){ assert( p("+(e)") === E ) }
+  test("+|e|"){ assert( p("+|e|") === Mod(E) ) }
+  test("++e"){ assert( p("++e") === E ) }
+  test("+-e"){ assert( p("+-e") === Neg(E) ) }
+  test("+sin e"){ assert( p("+sin e") === Sin(E) ) }
+  test("+e+e"){ assert( p("+e+e") === Plus(E,E) ) }
+  test("+e-e"){ assert( p("+e-e") === Minus(E,E) ) }
+  test("+e*e"){ assert( p("+e*e") === Mult(E,E) ) }
+  test("+e/e"){ assert( p("+e/e") === Div(E,E) ) }
+  test("+e\\e"){ assert( p("+e\\e") === Power(E,E) ) }
+  test("+ee"){ assert( p("+ee") === Mult(E,E) ) }
+  test("+2i"){ assert( p("+2i") === Mult(Two,I) ) }
 
   // -E
-  test("-(e)"){ assert( p("-(e)") === PreMinus(E) ) }
-  test("-|e|"){ assert( p("-|e|") === PreMinus(Mod(E)) ) }
-  test("-+e"){ assert( p("-+e") === PreMinus(PrePlus(E)) ) }
-  test("--e"){ assert( p("--e") === PreMinus(PreMinus(E)) ) }
-  test("-sin e"){ assert( p("-sin e") === PreMinus(Sin(E)) ) }
-  test("-e+e"){ assert( p("-e+e") === Plus(PreMinus(E),E) ) }
-  test("-e-e"){ assert( p("-e-e") === Minus(PreMinus(E),E) ) }
-  test("-e*e"){ assert( p("-e*e") === PreMinus(Mult(E,E)) ) }
-  test("-e/e"){ assert( p("-e/e") === PreMinus(Div(E,E)) ) }
-  test("-e\\e"){ assert( p("-e\\e") === PreMinus(Power(E,E)) ) }
-  test("-ee"){ assert( p("-ee") === PreMinus(Mult(E,E)) ) }
-  test("-2i"){ assert( p("-2i") === PreMinus(Mult(Two,I)) ) }
+  test("-(e)"){ assert( p("-(e)") === Neg(E) ) }
+  test("-|e|"){ assert( p("-|e|") === Neg(Mod(E)) ) }
+  test("-+e"){ assert( p("-+e") === Neg(E) ) }
+  test("--e"){ assert( p("--e") === Neg(Neg(E)) ) }
+  test("-sin e"){ assert( p("-sin e") === Neg(Sin(E)) ) }
+  test("-e+e"){ assert( p("-e+e") === Plus(Neg(E),E) ) }
+  test("-e-e"){ assert( p("-e-e") === Minus(Neg(E),E) ) }
+  test("-e*e"){ assert( p("-e*e") === Neg(Mult(E,E)) ) }
+  test("-e/e"){ assert( p("-e/e") === Neg(Div(E,E)) ) }
+  test("-e\\e"){ assert( p("-e\\e") === Neg(Power(E,E)) ) }
+  test("-ee"){ assert( p("-ee") === Neg(Mult(E,E)) ) }
+  test("-2i"){ assert( p("-2i") === Neg(Mult(Two,I)) ) }
 
 }

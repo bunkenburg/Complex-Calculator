@@ -72,14 +72,9 @@ case class Opp(a: Expression) extends Expression {
   override def apply(z: Complex): Complex = opp(a(z))
 }
 
-case class PreMinus(a: Expression) extends Expression {
+case class Neg(a: Expression) extends Expression {
   override def toString: String = s"-($a)"
   override def apply(z: Complex): Complex = -a(z)
-}
-
-case class PrePlus(a: Expression) extends Expression {
-  override def toString: String = s"+($a)"
-  override def apply(z: Complex): Complex = a(z)
 }
 
 case class Re(a: Expression) extends Expression {

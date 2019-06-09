@@ -19,7 +19,7 @@ package cat.inspiracio.combinator
 
 import cat.inspiracio.complex._
 import cat.inspiracio.parsing
-import cat.inspiracio.parsing.{Arg, C, Conj, Cos, Cosh, Div, Exp, Expression, Fac, Ln, Minus, Mod, Mult, Opp, Plus, Power, PreMinus, PrePlus, Sin, Sinh, Tan, Tanh, V}
+import cat.inspiracio.parsing.{Arg, C, Conj, Cos, Cosh, Div, Exp, Expression, Fac, Ln, Minus, Mod, Mult, Opp, Plus, Power, Neg, Sin, Sinh, Tan, Tanh, V}
 
 import scala.util.parsing.combinator.JavaTokenParsers
 
@@ -43,7 +43,7 @@ class Parser extends JavaTokenParsers {
   }
 
   private def prefix = rep( "-" | "+" ) ~ factor ^^ {
-    case rs~r => (rs :\ r) { (c,a) => if(c=="+") PrePlus(a) else PreMinus(a) }
+    case rs~r => (rs :\ r) { (c,a) => if(c=="+") a else Neg(a) }
   }
 
   private def factor = powers ~ rep( "*"~powers | "/"~powers ) ^^ {

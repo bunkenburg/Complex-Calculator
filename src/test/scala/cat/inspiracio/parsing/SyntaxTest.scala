@@ -55,12 +55,12 @@ class SyntaxTest extends FunSuite {
 
   test("-3"){
     val t = parse("-3")
-    assert( t === PreMinus(C(3)) )
+    assert( t === Neg(C(3)) )
   }
 
   test("+3"){
     val t = parse("+3")
-    assert( t === PrePlus(C(3)) )
+    assert( t === C(3) )
   }
 
   test("3!"){
