@@ -40,7 +40,6 @@ case class Minus(left: Expression, right: Expression) extends Expression {
 }
 
 case class Mult(left: Expression, right: Expression) extends Expression {
-  //override def toString: String = s"($left) * ($right)"
   override def apply(z: Complex): Complex = {
     val a: Complex = left(z)
     val b: Complex = right(z)

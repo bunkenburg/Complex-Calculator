@@ -157,8 +157,8 @@ class ParserSystematicTest extends FunSuite {
   test("-3!"){ assert( p("-3!") === Neg(Fac(Three)) ) }
   test("-e+e"){ assert( p("-e+e") === Plus(Neg(E),E) ) }
   test("-e-e"){ assert( p("-e-e") === Minus(Neg(E),E) ) }
-  test("-e*e"){ assert( p("-e*e") === Neg(Mult(E,E)) ) }
-  test("-e/e"){ assert( p("-e/e") === Neg(Div(E,E)) ) }
+  test("-e*e"){ assert( p("-e*e") === Mult(Neg(E),E) ) }
+  test("-e/e"){ assert( p("-e/e") === Div(Neg(E),E) ) }
   test("-e\\e"){ assert( p("-e\\e") === Neg(Power(E,E)) ) }
   test("-ee"){ assert( p("-ee") === Neg(Mult(E,E)) ) }
   test("-2i"){ assert( p("-2i") === Neg(Mult(Two,I)) ) }
@@ -238,8 +238,8 @@ class ParserSystematicTest extends FunSuite {
   // E * E
   test("(e)*(e)"){ assert( p("(e)*(e)") === Mult(E,E) ) }
   test("|e|*|e|"){ assert( p("|e|*|e|") === Mult(Mod(E),Mod(E)) ) }
-  //XXX test("+e*+e"){ assert( p("+e*+e") === Mult(E,E) ) }
-  //XXX test("-e*-e"){ assert( p("-e*-e") === Mult(Neg(E),Neg(E)) ) }
+  test("+e * +e"){assert( p("+e * +e") === Mult(E,E) ) }
+  test("-e * -e"){ assert( p("-e * -e") === Mult(Neg(E),Neg(E)) ) }
   test("sin e * sin e"){ assert( p("sin e * sin e") === Mult(Sin(E),Sin(E)) ) }
   test("sin(e) * sin(e)"){ assert( p("sin(e) * sin(e)") === Mult(Sin(E), Sin(E)) ) }
   test("3!*2!"){ assert( p("3!*2!") === Mult(Fac(Three),Fac(Two)) ) }

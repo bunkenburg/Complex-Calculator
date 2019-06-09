@@ -24,7 +24,7 @@ import org.scalatest.FunSuite
 
 class ParserTest extends FunSuite {
 
-  val parse = new Parser
+  val p = new Parser
 
   val X = V()
   val Z = V()
@@ -41,189 +41,189 @@ class ParserTest extends FunSuite {
   // simple things --------------------------
 
   test("i"){
-    val r = parse("i")
+    val r = p("i")
     assert( r === I )
   }
 
   test("e"){
-    val r = parse("e")
+    val r = p("e")
     assert( r === E )
   }
 
   test("π"){
-    val r = parse("π")
+    val r = p("π")
     assert( r === Pi )
   }
 
   test("∞"){
-    val r = parse("∞")
+    val r = p("∞")
     assert( r === Inf )
   }
 
   test("3.16"){
-    val r = parse("3.16")
+    val r = p("3.16")
     assert( r === C(3.16) )
   }
 
   test("316"){
-    val r = parse("316")
+    val r = p("316")
     assert( r === C(316) )
   }
 
   test("z"){
-    val r = parse("z")
+    val r = p("z")
     assert( r === Z )
   }
 
   test("x"){
-    val r = parse("x")
+    val r = p("x")
     assert( r === X )
   }
 
   test("3!"){
-    val r = parse("3!")
+    val r = p("3!")
     assert( r === Fac(Three) )
   }
 
   test("+3"){
-    val r = parse("+3")
+    val r = p("+3")
     assert( r === Three )
   }
 
   test("-3"){
-    val r = parse("-3")
+    val r = p("-3")
     assert( r === Neg(Three) )
   }
 
   test("arg(i)"){
-    val r = parse("arg(i)")
+    val r = p("arg(i)")
     assert( r === Arg(I) )
   }
 
   test("conj i"){
-    val r = parse("conj i")
+    val r = p("conj i")
     assert( r === Conj(I) )
   }
 
   test("cos 0.5"){
-    val r = parse("cos 0.5 ")
+    val r = p("cos 0.5 ")
     assert( r === Cos(Half) )
   }
 
   test("cosh π"){
-    val r = parse("cosh π")
+    val r = p("cosh π")
     assert( r === Cosh(Pi) )
   }
 
   test("exp 0"){
-    val r = parse("exp 0")
+    val r = p("exp 0")
     assert( r === Exp(Zero) )
   }
 
   test("Im(z)"){
-    val r = parse("Im(z)")
+    val r = p("Im(z)")
     assert( r === parsing.Im(Z) )
   }
 
   test("ln(z)"){
-    val r = parse("ln(z)")
+    val r = p("ln(z)")
     assert( r === Ln(Z) )
   }
 
   test("mod(z)"){
-    val r = parse("mod(z)")
+    val r = p("mod(z)")
     assert( r === Mod(Z) )
   }
 
   test("|z|"){
-    val r = parse("|z|")
+    val r = p("|z|")
     assert( r === Mod(Z) )
   }
 
   test("opp z"){
-    val r = parse("opp z")
+    val r = p("opp z")
     assert( r === Opp(Z) )
   }
 
   test("Re z"){
-    val r = parse("Re z")
+    val r = p("Re z")
     assert( r === parsing.Re(Z) )
   }
 
   test("sin π"){
-    val r = parse("sin π")
+    val r = p("sin π")
     assert( r === Sin(Pi) )
   }
 
   test("sinh π"){
-    val r = parse("sinh π")
+    val r = p("sinh π")
     assert( r === Sinh(Pi) )
   }
 
   test("tan π "){
-    val r = parse("tan π ")
+    val r = p("tan π ")
     assert( r === Tan(Pi) )
   }
 
   test("tanh π "){
-    val r = parse("tanh π ")
+    val r = p("tanh π ")
     assert( r === Tanh(Pi) )
   }
 
   test("3+i"){
-    val r = parse("3+i")
+    val r = p("3+i")
     assert( r === Plus(Three, I) )
   }
 
   test("3-i"){
-    val r = parse("3-i")
+    val r = p("3-i")
     assert( r === Minus(Three, I) )
   }
 
   test("3*i"){
-    val r = parse("3*i")
+    val r = p("3*i")
     assert( r === Mult(Three, I) )
   }
 
   test("3/i"){
-    val r = parse("3/i")
+    val r = p("3/i")
     assert( r === Div(Three, I) )
   }
 
   test("e\\i"){
-    val r = parse("e\\i")
+    val r = p("e\\i")
     assert( r === Power(E, I) )
   }
 
   test("πi"){
-    val r = parse("πi")
+    val r = p("πi")
     assert( r === Mult(Pi, I) )
   }
 
   // combinations
 
   test("  π with white space"){
-    val r = parse("  π  ")
+    val r = p("  π  ")
     assert( r === Pi )
   }
 
   test("  3π  "){
-    val r = parse("  3π  ")
+    val r = p("  3π  ")
     assert( r === Mult(Three, Pi) )
   }
 
   test("  ( π)  "){
-    val r = parse("  ( π)  ")
+    val r = p("  ( π)  ")
     assert( r === Pi )
   }
 
   test("(2z)!"){
-    val r = parse("(2z)!")
+    val r = p("(2z)!")
     assert( r === Fac(Mult(Two, Z)) )
   }
 
   test("(2x + 1)!"){
-    val r = parse("(2x + 1)!")
+    val r = p("(2x + 1)!")
     assert( r === Fac(Plus(Mult(Two, X), One)) )
   }
 
@@ -235,34 +235,34 @@ class ParserTest extends FunSuite {
    */
 
   test("3 * sin 0"){
-    val r = parse("3 * sin 0")
+    val r = p("3 * sin 0")
     assert( r === Mult(Three, Sin(Zero)) )
   }
 
   test("sin ei"){
-    val r = parse("sin ei")
+    val r = p("sin ei")
     assert( r === Sin(Mult(E, I)) )
   }
 
   // various expressions from Maths books -----
 
   test("e\\ix*z"){
-    val r = parse("e\\ix*z")
+    val r = p("e\\ix*z")
     assert( r === Mult(Power(E, Mult(I,X)), Z) )
   }
 
   test("2πi"){
-    val r = parse("2πi")
+    val r = p("2πi")
     assert( r === Mult(Mult(Two, Pi), I) )
   }
 
   test("sin z"){
-    val r = parse("sin z")
+    val r = p("sin z")
     assert( r === Sin(Z) )
   }
 
   test("e\\iz"){
-    val r = parse("e\\iz")
+    val r = p("e\\iz")
     assert( r === Power(E, Mult(I,Z)) )
   }
 
@@ -274,7 +274,7 @@ class ParserTest extends FunSuite {
    */
 
   test("e\\(-iz)"){
-    val r = parse("e\\(-iz)")
+    val r = p("e\\(-iz)")
     assert( r === Power(E, Neg(Mult(I,Z))) )
   }
 
@@ -286,7 +286,7 @@ class ParserTest extends FunSuite {
    */
 
   test("sin(xz)*sin(zx)"){
-    val r = parse("sin(xz)*sin(zx)")
+    val r = p("sin(xz)*sin(zx)")
     assert( r === Mult(Sin(Mult(X,Z)), Sin(Mult(Z,X))) )
   }
 
@@ -298,12 +298,12 @@ class ParserTest extends FunSuite {
    */
 
   test("cos z + i*sin z"){
-    val r = parse("cos z + i*sin z")
+    val r = p("cos z + i*sin z")
     assert( r === Plus(Cos(Z), Mult(I, Sin(Z))) )
   }
 
   test("cos 2z"){
-    val r = parse("cos 2z")
+    val r = p("cos 2z")
     assert( r === Cos(Mult(Two,Z)) )
   }
 
@@ -315,17 +315,17 @@ class ParserTest extends FunSuite {
    */
 
   test("2 * cos z * sin z"){
-    val r = parse("2 * cos z * sin z")
+    val r = p("2 * cos z * sin z")
     assert( r === Mult(Mult(Two, Cos(Z)), Sin(Z)) )
   }
 
   test("1*2*3"){
-    val r = parse("1*2*3")
+    val r = p("1*2*3")
     assert( r === Mult(Mult(One, Two), Three) )
   }
 
   test("ln z + (2z + 1)πi"){
-    val r = parse("ln z + (2z + 1)πi")
+    val r = p("ln z + (2z + 1)πi")
     assert( r === Plus(Ln(Z), Mult(Mult(Plus(Mult(Two,Z), One), Pi), I)) )
   }
 
@@ -337,7 +337,7 @@ class ParserTest extends FunSuite {
    */
 
   test("(cos z + i * sin z)\\x"){
-    val r = parse("(cos z + i * sin z)\\x")
+    val r = p("(cos z + i * sin z)\\x")
     assert( r === Power(Plus(Cos(Z), Mult(I, Sin(Z))), X) )
   }
 
@@ -349,7 +349,7 @@ class ParserTest extends FunSuite {
    */
 
   test("cos zx + i * sin zx"){
-    val r = parse("cos zx + i * sin zx")
+    val r = p("cos zx + i * sin zx")
     assert( r === Plus(Cos(Mult(X,Z)), Mult(I,Sin(Mult(Z,X)))) )
   }
 
@@ -361,7 +361,7 @@ class ParserTest extends FunSuite {
    */
 
   test("exp(x)*exp(z)"){
-    val r = parse("exp(x)*exp(z)")
+    val r = p("exp(x)*exp(z)")
     assert( r === Mult(Exp(X), Exp(Z)) )
   }
 
@@ -373,144 +373,137 @@ class ParserTest extends FunSuite {
    */
 
   test("sin x * cos z + cos x * sin z"){
-    val r = parse("sin x * cos z + cos x * sin z")
+    val r = p("sin x * cos z + cos x * sin z")
     assert( r === Plus(Mult(Sin(X),Cos(Z)),Mult(Cos(X),Sin(Z))) )
   }
 
   test("cos 2π"){
-    val r = parse("cos 2π")
+    val r = p("cos 2π")
     assert( r === Cos(Mult(Two,Pi)) )
   }
 
   test("cos ix"){
-    val r = parse("cos ix")
+    val r = p("cos ix")
     assert( r === Cos(Mult(I,X)) )
   }
 
   test("sin πz"){
-    val r = parse("sin πz")
+    val r = p("sin πz")
     assert( r === Sin(Mult(Pi,Z)) )
   }
 
   test("sinh|πz|"){
-    val r = parse("sinh|πz|")
+    val r = p("sinh|πz|")
     assert( r === Sinh(Mod(Mult(Pi,Z))) )
   }
 
   test("2πi(e+1)"){
-    val r = parse("2πi(e+1)")
+    val r = p("2πi(e+1)")
     assert( r === Mult(Mult(Mult(Two,Pi),I), Plus(E,One)) )
   }
 
   // from my big table -------------------------
 
   test("3!!"){
-    val r = parse("3!!")
+    val r = p("3!!")
     assert( r === Fac(Fac(Three)) )
   }
 
   test("+3!"){
-    val r = parse("+3!")
+    val r = p("+3!")
     assert( r === Fac(Three) )
   }
 
   test("++3"){
-    val r = parse("++3")
+    val r = p("++3")
     assert( r === Three )
   }
 
   test("+-3"){
-    val r = parse("+-3")
+    val r = p("+-3")
     assert( r === Neg(Three) )
   }
 
   test("+sin 3"){
-    val r = parse("+sin 3")
+    val r = p("+sin 3")
     assert( r === Sin(Three) )
   }
 
   test("+1+2"){
-    val r = parse("+1+2")
+    val r = p("+1+2")
     assert( r === Plus(One,Two) )
   }
 
   test("+1-2"){
-    val r = parse("+1-2")
+    val r = p("+1-2")
     assert( r === Minus(One,Two) )
   }
 
   test("+1*2"){
-    val r = parse("+1*2")
+    val r = p("+1*2")
     assert( r === Mult(One,Two) )
   }
 
   test("+1/2"){
-    val r = parse("+1/2")
+    val r = p("+1/2")
     assert( r === Div(One,Two) )
   }
 
   test("+1\\2"){
-    val r = parse("+1\\2")
+    val r = p("+1\\2")
     assert( r === Power(One,Two) )
   }
 
   test("+2i"){
-    val r = parse("+2i")
+    val r = p("+2i")
     assert( r === Mult(Two,I) )
   }
 
   test("-3!"){
-    val r = parse("-3!")
+    val r = p("-3!")
     assert( r === Neg(Fac(Three)) )
   }
 
   test("-+3"){
-    val r = parse("-+3")
+    val r = p("-+3")
     assert( r === Neg(Three) )
   }
 
   test("--3"){
-    val r = parse("--3")
+    val r = p("--3")
     assert( r === Neg(Neg(Three)) )
   }
 
   test("-sin 3"){
-    val r = parse("-sin 3")
+    val r = p("-sin 3")
     assert( r === Neg(Sin(Three)) )
   }
 
   test("-1+2"){
-    val r = parse("-1+2")
+    val r = p("-1+2")
     assert( r === Plus(Neg(One),Two) )
   }
 
   test("-1-2"){
-    val r = parse("-1-2")
+    val r = p("-1-2")
     assert( r === Minus(Neg(One),Two) )
   }
 
-  test("-1*2"){
-    val r = parse("-1*2")
-    assert( r === Neg(Mult(One,Two)) )
-  }
-
-  test("-1/2"){
-    val r = parse("-1/2")
-    assert( r === Neg(Div(One,Two)) )
-  }
+  test("-1*2"){ assert( p("-1*2") === Mult(Neg(One),Two) )}
+  test("-1/2"){assert( p("-1/2") === Div(Neg(One),Two) )}
 
   test("-1\\2"){
-    val r = parse("-1\\2")
+    val r = p("-1\\2")
     assert( r === Neg(Power(One,Two)) )
   }
 
   test("-2i"){
-    val r = parse("-2i")
+    val r = p("-2i")
     assert( r === Neg(Mult(Two,I)) )
   }
 
   test("sin e!"){
-    val r = parse("sin e!")
+    val r = p("sin e!")
     assert( r === Sin(Fac(E)) )
   }
 
@@ -522,7 +515,7 @@ class ParserTest extends FunSuite {
    */
 
   test("sin(+e)"){
-    val r = parse("sin(+e)")
+    val r = p("sin(+e)")
     assert( r === Sin(E) )
   }
 
@@ -534,7 +527,7 @@ class ParserTest extends FunSuite {
    */
 
   test("sin(-e)"){
-    val r = parse("sin(-e)")
+    val r = p("sin(-e)")
     assert( r === Sin(Neg(E)) )
   }
 
@@ -546,137 +539,137 @@ class ParserTest extends FunSuite {
    */
 
   test("sin(sin e)"){
-    val r = parse("sin(sin e)")
+    val r = p("sin(sin e)")
     assert( r === Sin(Sin(E)) )
   }
 
   test("sin e + e"){
-    val r = parse("sin e + e")
+    val r = p("sin e + e")
     assert( r === Plus(Sin(E), E) )
   }
 
   test("sin e - e"){
-    val r = parse("sin e - e")
+    val r = p("sin e - e")
     assert( r === Minus(Sin(E), E) )
   }
 
   test("sin e * e"){
-    val r = parse("sin e * e")
+    val r = p("sin e * e")
     assert( r === Mult(Sin(E), E) )
   }
 
   test("sin e / e"){
-    val r = parse("sin e / e")
+    val r = p("sin e / e")
     assert( r === Div(Sin(E), E) )
   }
 
   test("sin e \\ e"){
-    val r = parse("sin e \\ e")
+    val r = p("sin e \\ e")
     assert( r === Power(Sin(E), E) )
   }
 
   test("1+2!"){
-    val r = parse("1+2!")
+    val r = p("1+2!")
     assert( r === Plus(One,Fac(Two)) )
   }
 
   test("1++2"){
-    val r = parse("1++2")
+    val r = p("1++2")
     assert( r === Plus(One,Two) )
   }
 
   test("1+-2"){
-    val r = parse("1+-2")
+    val r = p("1+-2")
     assert( r === Plus(One,Neg(Two)) )
   }
 
   test("1+sin 2"){
-    val r = parse("1+sin 2")
+    val r = p("1+sin 2")
     assert( r === Plus(One,Sin(Two)) )
   }
 
   test("1+2+3"){
-    val r = parse("1+2+3")
+    val r = p("1+2+3")
     assert( r === Plus(Plus(One,Two),Three) )
   }
 
   test("1+2-3"){
-    val r = parse("1+2-3")
+    val r = p("1+2-3")
     assert( r === Minus(Plus(One,Two),Three) )
   }
 
   test("1+2*3"){
-    val r = parse("1+2*3")
+    val r = p("1+2*3")
     assert( r === Plus(One,Mult(Two,Three)) )
   }
 
   test("1+2/3"){
-    val r = parse("1+2/3")
+    val r = p("1+2/3")
     assert( r === Plus(One,Div(Two,Three)) )
   }
 
   test("1+2\\3"){
-    val r = parse("1+2\\3")
+    val r = p("1+2\\3")
     assert( r === Plus(One,Power(Two,Three)) )
   }
 
   test("1+2i"){
-    val r = parse("1+2i")
+    val r = p("1+2i")
     assert( r === Plus(One,Mult(Two,I)) )
   }
 
   test("1-2!"){
-    val r = parse("1-2!")
+    val r = p("1-2!")
     assert( r === Minus(One,Fac(Two)) )
   }
 
   test("1-+2"){
-    val r = parse("1-+2")
+    val r = p("1-+2")
     assert( r === Minus(One,Two) )
   }
 
   test("1--2"){
-    val r = parse("1--2")
+    val r = p("1--2")
     assert( r === Minus(One,Neg(Two)) )
   }
 
   test("1-sin 2"){
-    val r = parse("1-sin 2")
+    val r = p("1-sin 2")
     assert( r === Minus(One,Sin(Two)) )
   }
 
   test("1-2+3"){
-    val r = parse("1-2+3")
+    val r = p("1-2+3")
     assert( r === Plus(Minus(One,Two),Three) )
   }
 
   test("1-2-3"){
-    val r = parse("1-2-3")
+    val r = p("1-2-3")
     assert( r === Minus(Minus(One,Two),Three) )
   }
 
   test("1-2*3"){
-    val r = parse("1-2*3")
+    val r = p("1-2*3")
     assert( r === Minus(One,Mult(Two,Three)) )
   }
 
   test("1-2/3"){
-    val r = parse("1-2/3")
+    val r = p("1-2/3")
     assert( r === Minus(One,Div(Two,Three)) )
   }
 
   test("1-2\\3"){
-    val r = parse("1-2\\3")
+    val r = p("1-2\\3")
     assert( r === Minus(One,Power(Two,Three)) )
   }
 
   test("1-2i"){
-    val r = parse("1-2i")
+    val r = p("1-2i")
     assert( r === Minus(One,Mult(Two,I)) )
   }
 
   test("1*2!"){
-    val r = parse("1*2!")
+    val r = p("1*2!")
     assert( r === Mult(One,Fac(Two)) )
   }
 
@@ -688,7 +681,7 @@ class ParserTest extends FunSuite {
    */
 
   test("1*(+2)"){
-    val r = parse("1*(+2)")
+    val r = p("1*(+2)")
     assert( r === Mult(One,Two) )
   }
 
@@ -700,42 +693,42 @@ class ParserTest extends FunSuite {
    */
 
   test("1*(-2)"){
-    val r = parse("1*(-2)")
+    val r = p("1*(-2)")
     assert( r === Mult(One,Neg(Two)) )
   }
 
   test("1*sin 2"){
-    val r = parse("1*sin 2")
+    val r = p("1*sin 2")
     assert( r === Mult(One,Sin(Two)) )
   }
 
   test("1*2+3"){
-    val r = parse("1*2+3")
+    val r = p("1*2+3")
     assert( r === Plus(Mult(One,Two),Three) )
   }
 
   test("1*2-3"){
-    val r = parse("1*2-3")
+    val r = p("1*2-3")
     assert( r === Minus(Mult(One,Two),Three) )
   }
 
   test("1*2/3"){
-    val r = parse("1*2/3")
+    val r = p("1*2/3")
     assert( r === Div(Mult(One,Two),Three) )
   }
 
   test("1*2\\3"){
-    val r = parse("1*2\\3")
+    val r = p("1*2\\3")
     assert( r === Mult(One,Power(Two,Three)) )
   }
 
   test("1*2i"){
-    val r = parse("1*2i")
+    val r = p("1*2i")
     assert( r === Mult(One,Mult(Two,I)) )
   }
 
   test("1/2!"){
-    val r = parse("1/2!")
+    val r = p("1/2!")
     assert( r === Div(One,Fac(Two)) )
   }
 
@@ -747,7 +740,7 @@ class ParserTest extends FunSuite {
    */
 
   test("1/(+2)"){
-    val r = parse("1/(+2)")
+    val r = p("1/(+2)")
     assert( r === Div(One,Two) )
   }
 
@@ -759,47 +752,47 @@ class ParserTest extends FunSuite {
    */
 
   test("1/(-2)"){
-    val r = parse("1/(-2)")
+    val r = p("1/(-2)")
     assert( r === Div(One,Neg(Two)) )
   }
 
   test("1/sin 2"){
-    val r = parse("1/sin 2")
+    val r = p("1/sin 2")
     assert( r === Div(One,Sin(Two)) )
   }
 
   test("1/2+3"){
-    val r = parse("1/2+3")
+    val r = p("1/2+3")
     assert( r === Plus(Div(One,Two),Three) )
   }
 
   test("1/2-3"){
-    val r = parse("1/2-3")
+    val r = p("1/2-3")
     assert( r === Minus(Div(One,Two),Three) )
   }
 
   test("1/2*3"){
-    val r = parse("1/2*3")
+    val r = p("1/2*3")
     assert( r === Mult(Div(One,Two),Three) )
   }
 
   test("1/2/3"){
-    val r = parse("1/2/3")
+    val r = p("1/2/3")
     assert( r === Div(Div(One,Two),Three) )
   }
 
   test("1/2\\3"){
-    val r = parse("1/2\\3")
+    val r = p("1/2\\3")
     assert( r === Div(One,Power(Two,Three)) )
   }
 
   test("1/2i"){
-    val r = parse("1/2i")
+    val r = p("1/2i")
     assert( r === Div(One,Mult(Two,I)) )
   }
 
   test("1\\2!"){
-    val r = parse("1\\2!")
+    val r = p("1\\2!")
     assert( r === Power(One,Fac(Two)) )
   }
 
@@ -811,7 +804,7 @@ class ParserTest extends FunSuite {
    */
 
   test("1\\(+2)"){
-    val r = parse("1\\(+2)")
+    val r = p("1\\(+2)")
     assert( r === Power(One,Two) )
   }
 
@@ -823,47 +816,47 @@ class ParserTest extends FunSuite {
    */
 
   test("1\\(-2)"){
-    val r = parse("1\\(-2)")
+    val r = p("1\\(-2)")
     assert( r === Power(One,Neg(Two)) )
   }
 
   test("1\\sin 2"){
-    val r = parse("1\\sin 2")
+    val r = p("1\\sin 2")
     assert( r === Power(One,Sin(Two)) )
   }
 
   test("1\\2+3"){
-    val r = parse("1\\2+3")
+    val r = p("1\\2+3")
     assert( r === Plus(Power(One,Two),Three) )
   }
 
   test("1\\2-3"){
-    val r = parse("1\\2-3")
+    val r = p("1\\2-3")
     assert( r === Minus(Power(One,Two),Three) )
   }
 
   test("1\\2*3"){
-    val r = parse("1\\2*3")
+    val r = p("1\\2*3")
     assert( r === Mult(Power(One,Two),Three) )
   }
 
   test("1\\2/3"){
-    val r = parse("1\\2/3")
+    val r = p("1\\2/3")
     assert( r === Div(Power(One,Two),Three) )
   }
 
   test("1\\2\\3"){
-    val r = parse("1\\2\\3")
+    val r = p("1\\2\\3")
     assert( r === Power(Power(One,Two),Three) )
   }
 
   test("1\\2i"){
-    val r = parse("1\\2i")
+    val r = p("1\\2i")
     assert( r === Power(One,Mult(Two,I)) )
   }
 
   test("iz!"){
-    val r = parse("iz!")
+    val r = p("iz!")
     assert( r === Mult(I, Fac(Z)) )
   }
 
@@ -875,37 +868,37 @@ class ParserTest extends FunSuite {
    */
 
   test("i * sin π"){
-    val r = parse("i * sin π")
+    val r = p("i * sin π")
     assert( r === Mult(I, Sin(Pi)) )
   }
 
   test("iz + π"){
-    val r = parse("iz + π")
+    val r = p("iz + π")
     assert( r === Plus(Mult(I, Z), Pi) )
   }
 
   test("iz - π"){
-    val r = parse("iz - π")
+    val r = p("iz - π")
     assert( r === Minus(Mult(I, Z), Pi) )
   }
 
   test("iz * π"){
-    val r = parse("iz * π")
+    val r = p("iz * π")
     assert( r === Mult(Mult(I, Z), Pi) )
   }
 
   test("iz / π"){
-    val r = parse("iz / π")
+    val r = p("iz / π")
     assert( r === Div(Mult(I, Z), Pi) )
   }
 
   test("iz \\ π"){
-    val r = parse("iz \\ π")
+    val r = p("iz \\ π")
     assert( r === Power(Mult(I, Z), Pi) )
   }
 
   test("3iπ"){
-    val r = parse("3iπ")
+    val r = p("3iπ")
     assert( r === Mult(Mult(Three, I), Pi) )
   }
 

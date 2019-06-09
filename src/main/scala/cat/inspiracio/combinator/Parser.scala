@@ -38,55 +38,95 @@ class Parser extends JavaTokenParsers {
 
   private def expr: Parser[Expression] = summands
 
-  private def summands = prefix ~ rep( "+"~prefix | "-"~prefix ) ^^ {
-    case r~rs => (r /: rs) { case (a, c~b ) => if(c=="+") Plus(a,b) else Minus(a,b) }
+  /** Binary + and - binds least of all. */
+  private def summands = {
+    val next = factors //prefix
+    next ~ rep( "+"~next | "-"~next ) ^^ {
+      case r~rs => (r /: rs) { case (a,c~b) => if(c=="+") Plus(a,b) else Minus(a,b) }
+    }
   }
 
-  private def prefix = rep( "-" | "+" ) ~ factor ^^ {
-    case rs~r => (rs :\ r) { (c,a) => if(c=="+") a else Neg(a) }
+  /** Binary * and / for multiplication and division. */
+  private def factors = {
+    val next = prefix //powers
+    next ~ rep( "*"~next | "/"~next ) ^^ {
+      case r~rs => (r /: rs) { case (a, c~b) => if(c=="*") Mult(a,b) else Div(a,b) }
+    }
   }
 
-  private def factor = powers ~ rep( "*"~powers | "/"~powers ) ^^ {
-    case r~rs => (r /: rs) { case (a, c~b) => if (c=="*") Mult(a,b) else Div(a,b) }
+  /** Unary prefix + and -. Binds quite strongly.
+    * Parsing swallows prefix +. */
+  private def prefix = {
+    val next = powers //factor
+    rep( "-" | "+" ) ~ next ^^ {
+      case rs~r => (rs :\ r) { (c,a) => if(c=="+") a else Neg(a) }
+    }
   }
 
-  private def powers = functions ~ rep( "\\"~>functions ) ^^ {
-    case r~rs => (r /: rs) { (a,b) => Power(a,b) }
+  /** Binary exponentiation. */
+  private def powers = {
+    val next = functions
+    next ~ rep( "\\"~>next ) ^^ {
+      case r~rs => (r /: rs) { (a,b) => Power(a,b) }
+    }
   }
 
-
-  private def functions =
-    "arg"~>im ^^ (Arg(_)) |
-      "conj"~>im ^^ (Conj(_)) |
-      "cosh"~>im ^^ (Cosh(_)) |
-      "cos"~>im ^^ (Cos(_)) |
-      "exp"~>im ^^ (Exp(_)) |
-      "Im"~>im ^^ (parsing.Im(_)) |
-      "ln"~>im ^^ (Ln(_)) |
-      "mod"~>im ^^ (Mod(_)) |
-      "opp"~>im ^^ (Opp(_)) |
-      "Re"~>im ^^ (parsing.Re(_)) |
-      "sinh"~>im ^^ (Sinh(_)) |
-      "sin"~>im ^^ (Sin(_)) |
-      "tanh"~>im ^^ (Tanh(_)) |
-      "tan"~>im ^^ (Tan(_)) |
-    im
+  /** Functions like sin.
+    * Can be used with parentheses: sin(z)
+    * or without: sin z.
+    * Not desired without space: sinz.
+    * Binds quite stronly. */
+  private def functions = {
+    val next = im
+    "arg" ~> next ^^ (Arg(_)) |
+      "conj" ~> next ^^ (Conj(_)) |
+      "cosh" ~> next ^^ (Cosh(_)) |
+      "cos" ~> next ^^ (Cos(_)) |
+      "exp" ~> next ^^ (Exp(_)) |
+      "Im" ~> next ^^ (parsing.Im(_)) |
+      "ln" ~> next ^^ (Ln(_)) |
+      "mod" ~> next ^^ (Mod(_)) |
+      "opp" ~> next ^^ (Opp(_)) |
+      "Re" ~> next ^^ (parsing.Re(_)) |
+      "sinh" ~> next ^^ (Sinh(_)) |
+      "sin" ~> next ^^ (Sin(_)) |
+      "tanh" ~> next ^^ (Tanh(_)) |
+      "tan" ~> next ^^ (Tan(_)) |
+      next
+  }
 
   /** im = invisible multiplication
+    *
+    * Multiplication without space.
+    * Should bind very strongly.
+    * Motivated by expressions like
+    *
+    *   e\πi = e\(πi)
+    *   sin πi = sin(πi)
     *
     * XXX Sharpen this.
     *
     * 1. forbid whitespace between factors
     * 2. decimal number can only be first factor
-    * 3. other factors can only be single-char or (E)
+    * 3. other factors can only be single-char
+    * 4. ... or maybe also (E)
     *
     * */
-  private def im = factorial ~ rep(factorial) ^^ {
-    case r~rs => (r /: rs) { (a,b) => Mult(a,b) }
+  private def im = {
+    val next = factorial
+    next ~ rep(next) ^^ {
+      case r~rs => (r /: rs) { (a,b) => Mult(a,b) }
+    }
   }
 
-  private def factorial = e7 ~ rep("!") ^^ {
-    case r~rs => (r /: rs) { (a,_) => Fac(a) }
+  /** Postfix factorial function: 3!
+    * Binds very strongly.
+    * Not very important in complex analysis. */
+  private def factorial = {
+    val next = e7
+    next ~ rep("!") ^^ {
+      case r~rs => (r /: rs) { (a,_) => Fac(a) }
+    }
   }
 
   private def e7: Parser[Expression] =
