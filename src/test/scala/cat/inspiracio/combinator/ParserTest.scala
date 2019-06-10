@@ -295,7 +295,17 @@ class ParserTest extends FunSuite {
 
   test("ln z + (2z + 1)πi"){
     val r = p("ln z + (2z + 1)πi")
-    assert( r === Plus(Ln(Z), Mult(Mult(Plus(Mult(Two,Z), One), Pi), I)) )
+    assert( r === Plus(Ln(Z),Mult(Plus(Mult(Two,Z),One),Mult(Pi,I))) )
+  }
+
+  test("(2z + 1)πi"){
+    val r = p("(2z + 1)πi")
+    assert( r === Mult(Plus(Mult(Two,Z),One),Mult(Pi,I)) )
+  }
+
+  test("(2)πi"){
+    val r = p("(2)πi")
+    assert( r === Mult(Two,Mult(Pi,I)) )
   }
 
   /** needs space-multiplication */
@@ -771,10 +781,7 @@ class ParserTest extends FunSuite {
     assert( r === Power(One,Mult(Two,I)) )
   }
 
-  test("iz!"){
-    val r = p("iz!")
-    assert( r === Mult(I, Fac(Z)) )
-  }
+  //XXX test("iz!"){assert( p("iz!") === Mult(I, Fac(Z)) )}
 
   /** needs space-multiplication */
   //XXX test("i sin π"){assert( p("i sin π") === Mult(I, Sin(Pi)) )}
@@ -812,6 +819,10 @@ class ParserTest extends FunSuite {
   test("3iπ"){
     val r = p("3iπ")
     assert( r === Mult(Mult(Three, I), Pi) )
+  }
+
+  test("e\\-πi"){
+    assert( p("e\\-πi") === Power(E,Neg(Mult(Pi,I))) )
   }
 
 }

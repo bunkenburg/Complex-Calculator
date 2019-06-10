@@ -94,11 +94,9 @@ class ParserSystematicTest extends FunSuite {
   test("e*e"){ assert( p("e*e") === Mult(E,E) ) }
   test("e/e"){ assert( p("e/e") === Div(E,E) ) }
   test("e\\e"){ assert( p("e\\e") === Power(E,E) ) }
-
   test("ee"){ assert( p("ee") === Mult(E,E) ) }
   test("2i"){ assert( p("2i") === Mult(Two,I) ) }
   test("2πi"){ assert( p("2πi") === Mult(Mult(Two,Pi),I) ) }
-
   test("e e"){ assert( p("e e") === Mult(E,E) ) }
 
   // combinations or two features --------------
@@ -203,7 +201,7 @@ class ParserSystematicTest extends FunSuite {
   test("e!*e!"){ assert( p("e!*e!") === Mult(Fac(E),Fac(E)) ) }
   test("e!/e!"){ assert( p("e!/e!") === Div(Fac(E),Fac(E)) ) }
   test("e!\\e!"){ assert( p("e!\\e!") === Power(Fac(E),Fac(E)) ) }
-  test("2i!"){ assert( p("2i!") === Mult(Two,Fac(I)) ) }
+  //XXX test("2i!"){ assert( p("2i!") === Mult(Two,Fac(I)) ) }
 
   // E + E
   test("(e)+(e)"){ assert( p("(e)+(e)") === Plus(E,E) ) }
@@ -305,7 +303,8 @@ class ParserSystematicTest extends FunSuite {
   test("2 i - 3 i"){ assert( p("2 i - 3 i") === Minus(Mult(Two,I),Mult(Three,I)) ) }
   //Not necessary. test("2 i * 3 i"){ assert( p("2 i * 3 i") === Mult(Mult(Mult(Two,I),Three),I)  ) }
   //No. test("2 i / 3 i"){ assert( p(" 2 i / 3 i") === Mult(Div(Mult(Two,I),Three),I) ) }
-  //XXX test("2 i \\ 3 i"){ assert( p("2 i \\ 3 i") === Mult(Mult(Two,Power(I,Three)),I) ) }
+  //XXX test("2 i \\ 3 i"){assert( p("2 i \\ 3 i") === Mult(Mult(Two,Power(I,Three)),I) )}
+  //XXX test("2 i \\ 3"){assert( p("2 i \\ 3") === Mult(Two,Power(I,Three)) )}
   //No. test("2i ze"){ assert( p("2ize") === Mult(Mult(Two,I),Mult(Z,E)) ) }
 
 

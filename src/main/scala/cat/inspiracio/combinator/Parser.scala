@@ -19,15 +19,15 @@ package cat.inspiracio.combinator
 
 import cat.inspiracio.complex._
 import cat.inspiracio.parsing
-import cat.inspiracio.parsing.{Arg, C, Conj, Cos, Cosh, Div, Exp, Expression, Fac, Ln, Minus, Mod, Mult, Opp, Plus, Power, Neg, Sin, Sinh, Tan, Tanh, V}
+import cat.inspiracio.parsing.{Arg, C, Conj, Cos, Cosh, Div, Exp, Expression, Fac, Ln, Minus, Mod, Mult, Neg, Opp, Plus, Power, Sin, Sinh, Tan, Tanh, V}
 
+import scala.util.matching.Regex
 import scala.util.parsing.combinator.JavaTokenParsers
 
 /** An alternative parser, built using Scala's combinator parsing.
   *
   * XXX Not ready yet. Does not accept many expressions that
   * occur in maths books. See ParserTest.
-  * Most important: better-prefix e\\-πi That must work as expected.
   * */
 class Parser extends JavaTokenParsers {
 
@@ -62,15 +62,6 @@ class Parser extends JavaTokenParsers {
     }
   }
 
-  /** Unary prefix + and -. Binds quite strongly.
-    * Parsing swallows prefix +. */
-  private def prefix = {
-    val next = functions
-    rep( "-" | "+" ) ~ next ^^ {
-      case rs~r => (rs :\ r) { (c,a) => if(c=="+") a else Neg(a) }
-    }
-  }
-
   /** Functions like sin.
     * Can be used with parentheses: sin(z)
     * or without: sin z.
@@ -97,21 +88,18 @@ class Parser extends JavaTokenParsers {
     next
   }
 
-  /** im = invisible multiplication
+  /** im = implicit multiplication
     *
-    * Multiplication without space.
-    * Should bind very strongly.
+    * Multiplication with space.
+    * Equivalent to *, also in precedence.
     * Motivated by expressions like
     *
-    *   e\πi = e\(πi)
-    *   sin πi = sin(πi)
+    *   i sin z = i * sin(z)
+    *   sin(z) cos(z) = sin(z) * cos(z)
     *
     * XXX Sharpen this.
-    *
-    * 1. forbid whitespace between factors
-    * 2. decimal number can only be first factor
-    * 3. other factors can only be single-char
-    * 4. ... or maybe also (E)
+    *   Ask for space explicitly.
+    *   Put it in the right precedence.
     *
     * */
   private def im = {
@@ -125,31 +113,77 @@ class Parser extends JavaTokenParsers {
     * Binds very strongly.
     * Not very important in complex analysis. */
   private def factorial = {
-    val next = e7
+    val next = atoms
     next ~ rep("!") ^^ {
       case r~rs => (r /: rs) { (a,_) => Fac(a) }
     }
   }
 
-  private def e7: Parser[Expression] =
-    variable | constant | decimal |
+  private def atoms: Parser[Expression] =
+      constants |
+      decimal |
       parens |
       abs
 
   // terminal parsers (they don't delegate to other parsers) ---
 
-  private def variable: Parser[Expression] = ("z" | "x") ^^ (_ => V())
+  /** Maybe a decimal number followed by one or more constants,
+    * all without space. Examples.
+    *
+    *   i
+    *   2.5i
+    *   2zi
+    *   zi
+    *   πi
+    *   ∞
+    *
+    * https://stackoverflow.com/questions/1815716/accessing-scala-parser-regular-expression-match-data
+    * */
+  private def constants: Parser[Expression] = {
 
-  private def constant: Parser[Expression] =
-      "i" ^^ (_ => C(i)) |
-      "e" ^^ (_ => C(e)) |
-      "π" ^^ (_ => C(π)) |
-      "∞" ^^ (_ => C(∞))
+    val cn = (c: Char) => c match {
+      case 'i' => C(i)
+      case 'e' => C(e)
+      case 'π' => C(π)
+      case '∞' => C(∞)
+      case 'x' => V()
+      case 'z' => V()
+    }
 
-  def decimal: Parser[Expression] = decimalNumber ^^ (s => C(s.toDouble))
+    regexMatch("""(\d+(\.\d*)?)?([xzieπ∞]+)""".r) ^^
+      ((m: Regex.Match) => {
+        val decimal = m.group(1)  // 2.5 or null
+        val symbols: String = m.group(3)  // πi or ""
+        val constants: Seq[Expression] = symbols.toSeq.map(cn)
+        val cs = if (decimal==null) constants else C(decimal.toDouble) +: constants
+        cs.reduce( Mult(_,_) )
+      })
+  }
 
-  def parens: Parser[Expression] = "("~>summands<~")"
+  private def decimal: Parser[Expression] = decimalNumber ^^ (s => C(s.toDouble))
 
-  def abs: Parser[Expression] = "|"~>summands<~"|" ^^ (Mod(_))
+  private def parens: Parser[Expression] = "("~>summands<~")"
+
+  private def abs: Parser[Expression] = "|"~>summands<~"|" ^^ (Mod(_))
+
+  // helpers --------------------------------------------------------
+
+  /** A parser that matches a regex string and returns the Match.
+    * https://stackoverflow.com/questions/1815716/accessing-scala-parser-regular-expression-match-data
+    * */
+  private def regexMatch(r: Regex): Parser[Regex.Match] = new Parser[Regex.Match] {
+    def apply(in: Input) = {
+      val source = in.source
+      val offset = in.offset
+      val start = handleWhiteSpace(source, offset)
+      (r findPrefixMatchOf (source.subSequence(start, source.length))) match {
+        case Some(matched) =>
+          Success(matched,
+            in.drop(start + matched.end - offset))
+        case None =>
+          Failure("string matching regex `"+r+"' expected but `"+in.first+"' found", in.drop(start - offset))
+      }
+    }
+  }
 
 }
