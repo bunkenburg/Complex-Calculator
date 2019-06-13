@@ -1,10 +1,8 @@
 # TODO
 
+* 3e\πi = (3e)\(πi). Maybe better 3 * e\(πi)
 * in extreme zooms of plane, factor out a scaling factor like 10\-5 and write it apart
 * configurable precision
-* These symbols can be used for multiplication without '*': eπi∞
-* rewrite parsing using Scala combinator parsing
-* symbols for modulus: |z|
 * |f(z)| mode, z word: remove unused disabled icons
 * put into About: date, mvn version, git revision
 * World: save movement in preferences
@@ -25,6 +23,9 @@
 
 # DONE
 
+* symbols for modulus: |z|
+* rewrite parsing using Scala combinator parsing
+* These symbols can be used for multiplication without '*': eπi∞
 * exponentiation symbol: \ not ^
 * Complex.toString and ComplexFormat with reasonable precision to get short numbers
 * Complex.toString or format with precision

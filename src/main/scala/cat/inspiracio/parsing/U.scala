@@ -63,7 +63,6 @@ case class Ln(a: Expression) extends Expression {
 }
 
 case class Mod(a: Expression) extends Expression {
-  //override def toString: String = s"|$a|"
   override def apply(z: Complex): Complex = abs(a(z))
 }
 
@@ -73,7 +72,6 @@ case class Opp(a: Expression) extends Expression {
 }
 
 case class Neg(a: Expression) extends Expression {
-  //override def toString: String = s"-($a)"
   override def apply(z: Complex): Complex = -a(z)
 }
 

@@ -46,11 +46,23 @@ class Parser extends JavaTokenParsers {
     }
   }
 
-  /** Binary * and / for multiplication and division. */
+  /** Binary * and / for multiplication and division.
+    *
+    * It would be cool to add " " (space) as an alternative
+    * multiplication operator, but Scala's combinator parsing
+    * library either ignores all white space or never ignores it.
+    * It can see no easy way of parsing one space just here.
+    * */
   private def factors = {
     val next = powers
+
     next ~ rep( "*"~next | "/"~next ) ^^ {
-      case r~rs => (r /: rs) { case (a, c~b) => if(c=="*") Mult(a,b) else Div(a,b) }
+      case r~rs => (r /: rs) {
+        case (a, c~b) => c match {
+          case "*" => Mult(a,b)
+          case "/" => Div(a,b)
+        }
+      }
     }
   }
 
@@ -62,13 +74,18 @@ class Parser extends JavaTokenParsers {
     }
   }
 
-  /** Functions like sin.
+  /** Functions like -E and sin(E).
     * Can be used with parentheses: sin(z)
     * or without: sin z.
     * Not desired without space: sinz.
-    * Binds quite strongly. */
+    * Binds quite strongly.
+    *
+    * +E and sin(E) are different.
+    * sin(E) sin(E) = (sin(E))\2
+    * -E -E != (-E)\2
+    * */
   private def functions: Parser[Expression] = {
-    val next = im
+    val next = factorial //im
     "+" ~> functions ^^ (a => a) |
     "-" ~> functions ^^ (Neg(_)) |
     "arg" ~> functions ^^ (Arg(_)) |
@@ -97,8 +114,8 @@ class Parser extends JavaTokenParsers {
     *   i sin z = i * sin(z)
     *   sin(z) cos(z) = sin(z) * cos(z)
     *
-    * XXX Sharpen this.
-    *   Ask for space explicitly.
+    * XXX
+    *   Ask for space explicitly. <- I don't know how.
     *   Put it in the right precedence.
     *
     * */
@@ -113,13 +130,13 @@ class Parser extends JavaTokenParsers {
     * Binds very strongly.
     * Not very important in complex analysis. */
   private def factorial = {
-    val next = atoms
+    val next = atom
     next ~ rep("!") ^^ {
       case r~rs => (r /: rs) { (a,_) => Fac(a) }
     }
   }
 
-  private def atoms: Parser[Expression] =
+  private def atom: Parser[Expression] =
       constants |
       decimal |
       parens |

@@ -119,7 +119,7 @@ final class Calculator() extends MainFrame {
       layout(button("ln", "natural logarithm"){ paste("ln") }) = constraints(0, 7)
       layout(button("exp", "e raised by"){ paste("exp") }) = constraints(1, 7)
       layout(button("\\", "exponentiation"){ paste("\\") }) = constraints(2, 7)
-      layout(button("mod", "modulus"){ paste("mod") }) = constraints(3, 7)
+      layout(button("|", "modulus"){ paste("|") }) = constraints(3, 7)
       layout(button("arg", "argument or angle"){ paste("arg") }) = constraints(4, 7)
       layout(button("i"){ paste("i") }) = constraints(0, 8)
       layout(button("e"){ paste("e") }) = constraints(1, 8)
@@ -147,6 +147,7 @@ final class Calculator() extends MainFrame {
       layout(button("0"){ paste("0") }) = constraints(0, 12)
       layout(button(".", "decimal point"){ paste(".") }) = constraints(1, 12)
       layout(button("∞", "infinity"){ paste("∞") }) = constraints(2, 12)
+      layout(button(" ", "space"){ paste(" ") }) = constraints(3, 12)
     }
   }
 

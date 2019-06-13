@@ -31,32 +31,33 @@ grammar without precedence:
         
 precedence table:
 
-    (binds more)
-    E!
-    AB          //invisible multiplication
-    sin A
-    A\B
-    A*B A/B     //factor
-    -A +A       //prefix
-    A+B A-B     //summand
     (binds less)
+    E+E E-E     //summand
+    E*E E/E     //factor
+    E\E
+    sin E | +E | -E
+    E!
+    EE          //invisible multiplication
+    (binds more)
 
 
 grammar with precedence:
 (first weak binding, then strong)
+"E" means the next lower parser.
 
-    E ::= E0
-    E0 ::= E1 ~ rep( "+"~E1 | "-"~E1 )      // summands
-    E1 ::= rep( "-" | "+" ) ~ E2            // prefix
-    E2 ::= E3 ~ rep( "*"~E3 | "/"~E3 )      // factors
-    E3 ::= E4 ~ rep( "\"~E4 )               // power
-    E4 ::= rep( "arg" | "conj" | ...)~E5    // functions
-    E5 ::= E6 ~ rep( E6 )                   // invisible multiplication
-    E6 ::= E7 ~ rep( "!" )                  // factorial
-    E7 ::= "z" | "x" | "i" | "e" | "π" | "∞" 
-       | decimalNumber 
-       | "("~E0~")" 
-       | "|"~E0~"|"
+    expr        ::= E
+    summands    ::= E ~ rep( "+"~E | "-"~E )
+    factors     ::= E ~ rep( "*"~E | "/"~E )
+    powers      ::= E ~ rep( "\"~E )
+    functions   ::= rep( "-" | "+" | "arg" | "conj" | ...)~E
+    factorial   ::= E ~ rep( "!" )
+    
+    atom        ::= constants | decimal | parens | abs
+    
+    constants   ::= """(\d+(\.\d*)?)?([xzieπ∞]+)"""                 // like 2.5πi no spaces
+    decimal     ::= decimalNumber
+    parens      ::= "(" ~> expr <~ ")" 
+    abs         ::= "|" ~ expr ~ "|"
     
 This grammar does not produce 3 sin 0 = 3 * sin(0).
 

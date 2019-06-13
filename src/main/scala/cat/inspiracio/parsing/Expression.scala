@@ -22,6 +22,7 @@ import java.text.ParseException
 import java.text.ParsePosition
 
 import Token._
+import cat.inspiracio.combinator.Parser
 import cat.inspiracio.complex
 
 object Expression {
@@ -29,8 +30,13 @@ object Expression {
   /** The main client method: parses a tree from a String. */
   @throws[ParseException]
   def parse(s: String): Expression = {
-    val s_ = stripBlanks(s)
-    parse(s_, 0, s_.length)
+
+    //uses my hand-made parser from 1992
+    //val s_ = stripBlanks(s)
+    //parse(s_, 0, s_.length)
+
+    val p = new Parser
+    p(s)
   }
 
   @throws[ParseException]

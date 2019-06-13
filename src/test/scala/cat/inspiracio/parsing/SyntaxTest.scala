@@ -112,12 +112,8 @@ class SyntaxTest extends FunSuite {
 
   // ---------------------------------------
 
-  test("3e\\πi"){
-    val t = parse("3e\\πi")
-    assert( t === Mult(
-      C(3),
-      Power(C(e), Mult(C(Pi), C(i)))) )
-  }
+  /**may surprise: maybe better invisible multiplication */
+  //XXX test("3e\\πi"){assert( parse("3e\\πi") === Mult(C(3), Power(C(e), Mult(C(Pi), C(i)))) )}
 
   // ----------------------------------------
 
@@ -133,11 +129,10 @@ class SyntaxTest extends FunSuite {
     assert( fz === 0 )
   }
 
-  /** Parsed as -(1 \ 0.5). */
   test("-1 \\ 0.5"){
     val f = parse("-1 \\ 0.5")
     val fz = f(7863)
-    assert( fz === -1 )
+    assert( fz === i )
   }
 
   /** This is where it all started. */
