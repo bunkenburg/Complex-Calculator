@@ -24,11 +24,7 @@ import cat.inspiracio.parsing.{Arg, C, Conj, Cos, Cosh, Div, Exp, Expression, Fa
 import scala.util.matching.Regex
 import scala.util.parsing.combinator.JavaTokenParsers
 
-/** An alternative parser, built using Scala's combinator parsing.
-  *
-  * XXX Not ready yet. Does not accept many expressions that
-  * occur in maths books. See ParserTest.
-  * */
+/** An alternative parser, built using Scala's combinator parsing. */
 class Parser extends JavaTokenParsers {
 
   def apply(input: String): Expression = parseAll(expr, input) match {
@@ -55,7 +51,6 @@ class Parser extends JavaTokenParsers {
     * */
   private def factors = {
     val next = powers
-
     next ~ rep( "*"~next | "/"~next ) ^^ {
       case r~rs => (r /: rs) {
         case (a, c~b) => c match {
@@ -142,7 +137,7 @@ class Parser extends JavaTokenParsers {
       parens |
       abs
 
-  // terminal parsers (they don't delegate to other parsers) ---
+  // terminal parsers (they don't delegate to other parsers) ----------------------------
 
   /** Maybe a decimal number followed by one or more constants,
     * all without space. Examples.

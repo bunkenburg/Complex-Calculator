@@ -354,6 +354,27 @@ class ParserTest extends FunSuite {
     assert( r === Sinh(Mod(Mult(Pi,Z))) )
   }
 
+  test("3\\(2)"){
+    val r = p("3\\(2)")
+    assert( r === Power(Three,Two) )
+  }
+
+  test("3\\(2+i)"){
+    val r = p("3\\(2+i)")
+    assert( r === Power(Three,Plus(Two,I)) )
+  }
+
+  test("3\\(2+i-i)"){
+    val r = p("3\\(2+i-i)")
+    assert( r === Power(Three,Minus(Plus(Two,I),I)) )
+  }
+
+  test("3\\(2+i-i).apply(_)"){
+    val r = p("3\\(2+i-i)")
+    val z: Complex = r(9)
+    assert( z === 9 )
+  }
+
   /** needs more implicit multiplication */
   //XXX test("2πi(e+1)"){assert( p("2πi(e+1)") === Mult(Mult(Mult(Two,Pi),I), Plus(E,One)) )}
 

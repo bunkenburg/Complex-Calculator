@@ -100,12 +100,11 @@ abstract class Complex extends Number with Formattable {
       else ∞
   }
 
-  /** 3\2 = 9.000000000000002 */
   def \ (c: Double): Complex = this match {
     case Real(0) => if(c == 0) throw new ArithmeticException("0\\0") else 0
     //case Real(r) => Math.pow(r, c)  //No. -1 \ 0.5 == i
 
-      // just for more precision
+    // just for more precision, otherwise 3\2 = 9.000000000000002
     case Real(r) if c.isWhole() =>
       Math.pow(r, c)
 
@@ -114,6 +113,7 @@ abstract class Complex extends Number with Formattable {
       else if(!c.isInfinite)
         Polar(exp(log(mx) * c), c * ax)
       else ∞
+
     case ∞ =>
       if(c == 0) throw new ArithmeticException("∞\\0")
       else ∞
@@ -122,7 +122,7 @@ abstract class Complex extends Number with Formattable {
   def \ (c: Complex): Complex = this match {
     case Real(0) => if(c === 0) throw new ArithmeticException("0\\0") else 0
 
-    // just for more precision
+    // just for more precision, otherwise 3\2 = 9.000000000000002
     case Real(are) if c.isInteger =>
       Math.pow(are, c.longValue())
 
@@ -152,7 +152,10 @@ abstract class Complex extends Number with Formattable {
     * This is a bit hacky.
     * But otherwise would have to write 10\(-7) whereas -10\7 = (-10)\7.
     * With these definitions, prefix - binds more than \, on both sides. */
+  def \- (c: Byte): Complex = this \ -c
   def \- (c: Int): Complex = this \ -c
+  def \- (c: Long): Complex = this \ -c
+  def \- (c: Float): Complex = this \ -c
   def \- (c: Double): Complex = this \ -c
   def \- (c: Complex): Complex = this \ -c
 

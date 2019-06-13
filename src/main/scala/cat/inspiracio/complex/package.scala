@@ -51,12 +51,12 @@ package object complex {
 
   val Re: Complex => Double = {
     case Cartesian(re, _) => re
-    case ∞ => throw new ArithmeticException("Re(∞)")
+    case ∞ => throw new ArithmeticException("Re ∞")
   }
 
   val Im: Complex => Double = {
     case Cartesian(_, im) => im
-    case ∞ => throw new ArithmeticException("Im(∞)")
+    case ∞ => throw new ArithmeticException("Im ∞")
   }
 
   def sqrt(d: Double): Double = math.sqrt(d)
@@ -145,8 +145,16 @@ package object complex {
     case z => sinh(z) / cosh(z)
   }
 
+  /** As method, because for methods can be overloaded.
+    *   def exp(d: Double): Complex
+    *   def exp(c: Complex): Complex
+    * whereas we can only have one
+    *   val exp
+    * whatever its type is.
+    * */
   def exp(d: Double): Double = math.exp(d)
 
+  /** Here as val but could also be a method. */
   val exp: Complex => Complex = {
     case ∞ => ∞
     case Real(r) => exp(r)

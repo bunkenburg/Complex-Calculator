@@ -35,6 +35,7 @@ object Expression {
     //val s_ = stripBlanks(s)
     //parse(s_, 0, s_.length)
 
+    // uses a Scala-style combinator parser
     val p = new Parser
     p(s)
   }
