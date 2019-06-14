@@ -14,7 +14,6 @@ grammar without precedence:
         | exp S
         | Im S
         | ln S
-        | mod S
         | |S|
         | opp S
         | Re S
@@ -61,16 +60,36 @@ grammar with precedence:
     
 This grammar does not produce 3 sin 0 = 3 * sin(0).
 
-## possible simplications
+## invisible multiplication
 
-1. invisible-multiplication restricted
+The grammar must distinguish between first factor and the others:
+the first factor can be decimal, but the others cannot be decimal. 
+
+invisible-multiplication restricted
+
     - decimal only as first factor
     - other factors must be single-character: xzieπ∞
     - all other multiplications must be visible
     - 1+2i
     - πi
-2. functions must have parentheses
-    - sin(π)
+
+## space multiplication
+
+The grammar must distinguish between first factor and the others:
+the first factor can be decimal, but the others cannot be decimal. 
+
+first factor:
+- decimal
+- like second factor
+
+second factor:
+- xzeiπ∞
+- sin E
+- (E)
+
+Maybe I won't bother with space-multiplication for now.
+It really complicates parsing a lot.
+
 
 ## todo
 

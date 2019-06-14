@@ -71,29 +71,42 @@ class ParserSystematicTest extends FunSuite {
   // single feature -------------------------
 
   test("x"){ assert( p("x") === X ) }
+  test("_x"){ assert( p(" x") === X ) }
   test("z"){ assert( p("z") === Z ) }
 
   test("0"){ assert( p("0") === Zero ) }
+  test("_0"){ assert( p(" 0") === Zero ) }
   test("15"){ assert( p("15") === C(15) ) }
   test("0.15"){ assert( p("0.15") === C(0.15) ) }
+  test("_0.15"){ assert( p(" 0.15") === C(0.15) ) }
   test("i"){ assert( p("i") === I ) }
+  test("_i"){ assert( p(" i") === I ) }
   test("e"){ assert( p("e") === E ) }
   test("π"){ assert( p("π") === Pi ) }
   test("∞"){ assert( p("∞") === Inf ) }
+  test("_∞"){ assert( p(" ∞") === Inf ) }
 
   test("(∞)"){ assert( p("(∞)") === Inf ) }
+  test(" ( ∞ ) "){ assert( p("(∞)") === Inf ) }
   test("|∞|"){ assert( p("|∞|") === Mod(Inf) ) }
+  test(" | ∞ | "){ assert( p("|∞|") === Mod(Inf) ) }
   test("+∞"){ assert( p("+∞") === Inf ) }
   test("-∞"){ assert( p("-∞") === Neg(Inf) ) }
   test("sin(π)"){ assert( p("sin(π)") === Sin(Pi) ) }
+  test(" sin( π )"){ assert( p("sin(π)") === Sin(Pi) ) }
   test("sin π"){ assert( p("sin π") === Sin(Pi) ) }
   test("3!"){ assert( p("3!") === Fac(Three) ) }
 
   test("e+e"){ assert( p("e+e") === Plus(E,E) ) }
+  test(" e + e "){ assert( p("e+e") === Plus(E,E) ) }
   test("e-e"){ assert( p("e-e") === Minus(E,E) ) }
+  test(" e - e "){ assert( p("e-e") === Minus(E,E) ) }
   test("e*e"){ assert( p("e*e") === Mult(E,E) ) }
+  test(" e * e "){ assert( p("e*e") === Mult(E,E) ) }
   test("e/e"){ assert( p("e/e") === Div(E,E) ) }
+  test(" e / e "){ assert( p("e/e") === Div(E,E) ) }
   test("e\\e"){ assert( p("e\\e") === Power(E,E) ) }
+  test(" e \\ e "){ assert( p("e\\e") === Power(E,E) ) }
   test("ee"){ assert( p("ee") === Mult(E,E) ) }
   test("2i"){ assert( p("2i") === Mult(Two,I) ) }
   test("2πi"){ assert( p("2πi") === Mult(Mult(Two,Pi),I) ) }

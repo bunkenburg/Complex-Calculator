@@ -19,101 +19,49 @@ package cat.inspiracio.parsing
 
 import cat.inspiracio.complex._
 import Expression._
-//import Token._
 import org.scalatest.FunSuite
 
 class SyntaxTest extends FunSuite {
 
-  test("3"){
-    val t = parse("3")
-    assert( t === C(3) )
-  }
+  val I = C(i)
+  val E = C(e)
+  val Three = C(3)
+  val Pi = C(π)
 
-  test("i"){
-    val t = parse("i")
-    assert( t === C(i) )
-  }
+  // -------------------------------------------------
 
-  test("∞"){
-    val t = parse("∞")
-    assert( t === C(∞) )
-  }
-
-  test("π"){
-    val t = parse("π")
-    assert( t === C(π) )
-  }
+  test("3_"){assert( parse("3 ") === C(3) )}
+  test("i"){assert( parse("i") === C(i) )}
+  test("∞"){assert( parse("∞") === C(∞) )}
+  test("π"){assert( parse("π") === C(π) )}
+  test("z"){ assert( parse("z") === V() )}
 
   // --------------------------------
 
-  test("z"){
-    val t = parse("z")
-    assert( t === V() )
-  }
-
-  // --------------------------------
-
-  test("-3"){
-    val t = parse("-3")
-    assert( t === Neg(C(3)) )
-  }
-
-  test("+3"){
-    val t = parse("+3")
-    assert( t === C(3) )
-  }
-
-  test("3!"){
-    val t = parse("3!")
-    assert( t === Fac( C(3) ))
-  }
-
-  test("ln(3)"){
-    val t = parse("ln(3)")
-    assert( t === Ln( C(3) ) )
-  }
-
-  test("sinz") {
-    val t = parse("sinz ")
-    assert(t === Sin( V()))
-  }
-
-  test("sinπ"){
-    val t = parse("sinπ")
-    assert( t === Sin( C(π)) )
-  }
+  test("-3"){assert( parse("-3") === Neg(C(3)) )}
+  test("- 3"){assert( parse("-3") === Neg(C(3)) )}
+  test("+3"){assert( parse("+3") === C(3) )}
+  test("3!"){assert( parse("3!") === Fac( C(3) ))}
+  test("ln(3)"){ assert( parse("ln(3)") === Ln( C(3) ) ) }
+  test("sin z") {assert(parse("sin z ") === Sin( V()))}
+  test("sin π"){assert( parse("sin π") === Sin( C(π)) )}
 
   // -------------------------------------
 
-  test("π + i "){
-    val t = parse("π + i ")
-    assert( t === Plus( C(π), C(i) ) )
-  }
-
-  test(" π - i "){
-    val t = parse(" π - i ")
-    assert( t === Minus(C(π), C(i)) )
-  }
-
-  test("  π * i "){
-    val t = parse("  π * i ")
-    assert( t === Mult(C(π), C(i) ) )
-  }
-
-  test("π / i "){
-    val t = parse("π / i ")
-    assert( t === Div(C(π), C(i)) )
-  }
-
-  test(" π \\ i "){
-    val t = parse("π \\ i ")
-    assert( t === Power(C(π), C(i) ) )
-  }
+  test("π + i "){ assert( parse("π + i ") === Plus( C(π), C(i) ) )}
+  test(" π - i "){ assert( parse(" π - i ") === Minus(C(π), C(i)) )}
+  test("  π * i "){ assert( parse("  π * i ") === Mult(C(π), C(i) ) )}
+  test("π / i "){ assert( parse("π / i ") === Div(C(π), C(i)) )}
+  test(" π \\ i "){ assert( parse("π \\ i ") === Power(C(π), C(i) ) )}
 
   // ---------------------------------------
 
-  /**may surprise: maybe better invisible multiplication */
-  //XXX test("3e\\πi"){assert( parse("3e\\πi") === Mult(C(3), Power(C(e), Mult(C(Pi), C(i)))) )}
+  /** may surprise: maybe better invisible multiplication */
+  test("3e\\πi"){
+    val expected = Mult(C(3), Power(C(e), Mult(Pi, C(i))))
+    val real = Power(Mult(Three,E), Mult(Pi,I))
+    assert( parse("3e\\πi") === real )
+  }
 
   // ----------------------------------------
 
@@ -151,7 +99,7 @@ class SyntaxTest extends FunSuite {
     val t: Complex = Cartesian(-1.0, -0.0)   //im=-0
     val Polar(mx,ax) = t
     assert( mx === 1 )
-    assert( ax === Pi )
+    assert( ax === π )
   }
 
 }

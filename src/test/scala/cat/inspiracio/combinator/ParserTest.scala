@@ -44,11 +44,7 @@ class ParserTest extends FunSuite {
   test("e"){assert( p("e") === E )}
   test("π"){assert( p("π") === Pi )}
   test("∞"){ assert( p("∞") === Inf )}
-
-  test("3.16"){
-    val r = p("3.16")
-    assert( r === C(3.16) )
-  }
+  test("3.16"){ assert( p("3.16") === C(3.16) )}
 
   test("316"){
     val r = p("316")
@@ -115,11 +111,6 @@ class ParserTest extends FunSuite {
     assert( r === Ln(Z) )
   }
 
-  test("mod(z)"){
-    val r = p("mod(z)")
-    assert( r === Mod(Z) )
-  }
-
   test("|z|"){
     val r = p("|z|")
     assert( r === Mod(Z) )
@@ -180,10 +171,7 @@ class ParserTest extends FunSuite {
     assert( r === Power(E, I) )
   }
 
-  test("πi"){
-    val r = p("πi")
-    assert( r === Mult(Pi, I) )
-  }
+  test("πi "){ assert( p("πi ") === Mult(Pi, I) ) }
 
   // combinations
 
@@ -215,10 +203,7 @@ class ParserTest extends FunSuite {
   /** needs space-multiplication */
   //XXX test("3 sin 0"){ assert( p("3 sin 0") === Mult(Three, Sin(Zero)) )}
 
-  test("3 * sin 0"){
-    val r = p("3 * sin 0")
-    assert( r === Mult(Three, Sin(Zero)) )
-  }
+  test("3 * sin 0"){ assert( p("3 * sin 0") === Mult(Three, Sin(Zero)) )}
 
   test("sin ei"){
     val r = p("sin ei")
@@ -349,10 +334,8 @@ class ParserTest extends FunSuite {
     assert( r === Sin(Mult(Pi,Z)) )
   }
 
-  test("sinh|πz|"){
-    val r = p("sinh|πz|")
-    assert( r === Sinh(Mod(Mult(Pi,Z))) )
-  }
+  /** very strange */
+  test("sinh |πz|"){assert( p("sinh |πz|") === Sinh(Mod(Mult(Pi,Z))) )}
 
   test("3\\(2)"){
     val r = p("3\\(2)")

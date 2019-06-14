@@ -26,18 +26,46 @@ import scala.util.parsing.combinator.JavaTokenParsers
 
 /** An alternative parser, built using Scala's combinator parsing. */
 class Parser extends JavaTokenParsers {
+  override def skipWhitespace: Boolean = false
 
-  def apply(input: String): Expression = parseAll(expr, input) match {
+  private def eat: Parser[String] = "\\s*".r
+  private def space: Parser[String] = "\\s+".r
+
+  /** Adds some methods */
+  implicit class AlexParser[T](p: Parser[T]) extends Parser[T]{
+    def apply(in: Input): ParseResult[T] = p(in)
+
+    /** p ~* q = p followed by 0-* space followed by q, returning results of p and q */
+    def ~* [U](q: Parser[U]): Parser[T~U] = (this <~ eat) ~ q
+
+    /** p ~*> q = p followed by 0-* space followed by q, returning result of q */
+    def ~*> [U](q: Parser[U]): Parser[U] = this ~> eat ~> q
+
+    /** p <~* q = p followed by 0-* space followed by q, returning result of p */
+    def <~* [U](q: Parser[U]): Parser[T] = this <~ eat <~ q
+
+    /** p ~+ q = p followed by at least one space followed by q, returning both results */
+    def ~+ [U](q: Parser[U]): Parser[T~U] = (this <~ space) ~ q
+
+    /** p ~+> q = p followed by at least one space followed by q, returning result of p */
+    def ~+> [U](p: Parser[U]): Parser[U] = this ~> space ~> p
+
+    /** p <~+ q = p followed by at least one space followed by q, returning result of p */
+    def <~+ [U](p: Parser[U]): Parser[T] = this <~ space ~ p
+  }
+  implicit def string2AlexParser(s: String): AlexParser[String] = AlexParser(literal(s))
+
+  def apply(input: String): Expression = parseAll(expression, input) match {
     case Success(result, _) => result
     case failure : NoSuccess => scala.sys.error(failure.msg)
   }
 
-  private def expr: Parser[Expression] = summands
+  private def expression: Parser[Expression] = eat ~*> summands
 
   /** Binary + and - binds least of all. */
   private def summands = {
     val next = factors
-    next ~ rep( "+"~next | "-"~next ) ^^ {
+    next ~* rep( "+" ~* next | "-" ~* next ) ^^ {
       case r~rs => (r /: rs) { case (a,c~b) => if(c=="+") Plus(a,b) else Minus(a,b) }
     }
   }
@@ -49,11 +77,16 @@ class Parser extends JavaTokenParsers {
     * library either ignores all white space or never ignores it.
     * It can see no easy way of parsing one space just here.
     * */
-  private def factors = {
+  private def factors: Parser[Expression] = {
     val next = powers
-    next ~ rep( "*"~next | "/"~next ) ^^ {
+    next ~ rep(
+      " " ~* next |
+        "" ~*> "*" ~* next |
+        "" ~*> "/" ~* next
+    ) ^^ {
       case r~rs => (r /: rs) {
         case (a, c~b) => c match {
+          case " " => Plus(a,b)
           case "*" => Mult(a,b)
           case "/" => Div(a,b)
         }
@@ -64,7 +97,7 @@ class Parser extends JavaTokenParsers {
   /** Binary exponentiation. */
   private def powers = {
     val next = functions
-    next ~ rep( "\\"~>next ) ^^ {
+    next ~* rep( "\\" ~*> next ) ^^ {
       case r~rs => (r /: rs) { (a,b) => Power(a,b) }
     }
   }
@@ -78,47 +111,40 @@ class Parser extends JavaTokenParsers {
     * +E and sin(E) are different.
     * sin(E) sin(E) = (sin(E))\2
     * -E -E != (-E)\2
+    *
+    * XXX incorporate: after "sin" either " " or "("
     * */
   private def functions: Parser[Expression] = {
-    val next = factorial //im
-    "+" ~> functions ^^ (a => a) |
-    "-" ~> functions ^^ (Neg(_)) |
-    "arg" ~> functions ^^ (Arg(_)) |
-    "conj" ~> functions ^^ (Conj(_)) |
-    "cosh" ~> functions ^^ (Cosh(_)) |
-    "cos" ~> functions ^^ (Cos(_)) |
-    "exp" ~> functions ^^ (Exp(_)) |
-    "Im" ~> functions ^^ (parsing.Im(_)) |
-    "ln" ~> functions ^^ (Ln(_)) |
-    "mod" ~> functions ^^ (Mod(_)) |
-    "opp" ~> functions ^^ (Opp(_)) |
-    "Re" ~> functions ^^ (parsing.Re(_)) |
-    "sinh" ~> functions ^^ (Sinh(_)) |
-    "sin" ~> functions ^^ (Sin(_)) |
-    "tanh" ~> functions ^^ (Tanh(_)) |
-    "tan" ~> functions ^^ (Tan(_)) |
-    next
-  }
-
-  /** im = implicit multiplication
-    *
-    * Multiplication with space.
-    * Equivalent to *, also in precedence.
-    * Motivated by expressions like
-    *
-    *   i sin z = i * sin(z)
-    *   sin(z) cos(z) = sin(z) * cos(z)
-    *
-    * XXX
-    *   Ask for space explicitly. <- I don't know how.
-    *   Put it in the right precedence.
-    *
-    * */
-  private def im = {
     val next = factorial
-    next ~ rep(next) ^^ {
-      case r~rs => (r /: rs) { (a,b) => Mult(a,b) }
-    }
+    "+" ~> functions ^^ (a => a) |        //no space
+    "-" ~> functions ^^ (Neg(_)) |        //no space
+      "arg("  ~*> expression <~* ")" ^^ (Arg(_)) |
+      "arg"   ~+> functions  ^^ (Arg(_)) |
+      "conj(" ~*> expression <~* ")" ^^ (Conj(_)) |
+      "conj"  ~+> functions  ^^ (Conj(_)) |
+      "cosh(" ~*> expression <~* ")" ^^ (Cosh(_)) |
+      "cosh"  ~+> functions  ^^ (Cosh(_)) |
+      "cos("  ~*> expression <~* ")" ^^ (Cos(_)) |
+      "cos"   ~+> functions  ^^ (Cos(_)) |
+      "exp("  ~*> expression <~* ")" ^^ (Exp(_)) |
+      "exp"   ~+> functions  ^^ (Exp(_)) |
+      "Im("   ~*> expression <~* ")" ^^ (parsing.Im(_)) |
+      "Im"    ~+> functions  ^^ (parsing.Im(_)) |
+      "ln("   ~*> expression <~* ")" ^^ (Ln(_)) |
+      "ln"    ~+> functions  ^^ (Ln(_)) |
+      "opp("  ~*> expression <~* ")" ^^ (Opp(_)) |
+      "opp"   ~+> functions  ^^ (Opp(_)) |
+      "Re("   ~*> expression <~* ")" ^^ (parsing.Re(_)) |
+      "Re"    ~+> functions  ^^ (parsing.Re(_)) |
+      "sinh(" ~*> expression <~* ")" ^^ (Sinh(_)) |
+      "sinh"  ~+> functions  ^^ (Sinh(_)) |
+      "sin("  ~*> expression <~ ")" ^^ (Sin(_)) |
+      "sin"   ~+> functions  ^^ (Sin(_)) |
+      "tanh(" ~*> expression <~* ")" ^^ (Tanh(_)) |
+      "tanh"  ~+> functions  ^^ (Tanh(_)) |
+      "tan("  ~*> expression <~* ")" ^^ (Tan(_)) |
+      "tan"   ~+> functions  ^^ (Tan(_)) |
+    next
   }
 
   /** Postfix factorial function: 3!
@@ -126,7 +152,7 @@ class Parser extends JavaTokenParsers {
     * Not very important in complex analysis. */
   private def factorial = {
     val next = atom
-    next ~ rep("!") ^^ {
+    next ~ rep("!") ^^ {      //no space
       case r~rs => (r /: rs) { (a,_) => Fac(a) }
     }
   }
@@ -174,9 +200,9 @@ class Parser extends JavaTokenParsers {
 
   private def decimal: Parser[Expression] = decimalNumber ^^ (s => C(s.toDouble))
 
-  private def parens: Parser[Expression] = "("~>summands<~")"
+  private def parens: Parser[Expression] = "(" ~*> expression <~* ")"
 
-  private def abs: Parser[Expression] = "|"~>summands<~"|" ^^ (Mod(_))
+  private def abs: Parser[Expression] = "|" ~> expression <~ "|" ^^ (Mod(_))  //no space
 
   // helpers --------------------------------------------------------
 
