@@ -70,13 +70,7 @@ class Parser extends JavaTokenParsers {
     }
   }
 
-  /** Binary * and / for multiplication and division.
-    *
-    * It would be cool to add " " (space) as an alternative
-    * multiplication operator, but Scala's combinator parsing
-    * library either ignores all white space or never ignores it.
-    * It can see no easy way of parsing one space just here.
-    * */
+  /** Binary * and / for multiplication and division. */
   private def factors: Parser[Expression] = {
     val next = powers
     next ~ rep(
@@ -111,8 +105,6 @@ class Parser extends JavaTokenParsers {
     * +E and sin(E) are different.
     * sin(E) sin(E) = (sin(E))\2
     * -E -E != (-E)\2
-    *
-    * XXX incorporate: after "sin" either " " or "("
     * */
   private def functions: Parser[Expression] = {
     val next = factorial

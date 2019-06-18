@@ -39,7 +39,6 @@ precedence table:
     EE          //invisible multiplication
     (binds more)
 
-
 grammar with precedence:
 (first weak binding, then strong)
 "E" means the next lower parser.
@@ -60,35 +59,57 @@ grammar with precedence:
     
 This grammar does not produce 3 sin 0 = 3 * sin(0).
 
-## invisible multiplication
+## numbers
 
-The grammar must distinguish between first factor and the others:
-the first factor can be decimal, but the others cannot be decimal. 
+    i | e | π | ∞ | decimalNumber | x | z
+    
+## prefix and postfix
 
-invisible-multiplication restricted
+    +E | -E | E!
+    
+## functions
 
-    - decimal only as first factor
-    - other factors must be single-character: xzieπ∞
-    - all other multiplications must be visible
-    - 1+2i
-    - πi
+    sin E
+    sin(E)
+    
+There mustn't be another alphabetic character directly before or after "sin".
 
+## brackets
+
+    (E)
+    |E|
+    
+## binary operators
+
+    E+E | E-E
+    E*E | E/E
+    E\E
+    
 ## space multiplication
 
-The grammar must distinguish between first factor and the others:
-the first factor can be decimal, but the others cannot be decimal. 
+Space is multiplication, and has the same precedence as multiplication.
 
-first factor:
-- decimal
-- like second factor
+next = powers
 
-second factor:
-- xzeiπ∞
-- sin E
-- (E)
+    E1 ~ rep( " " ~ E2)
+    
+    E1 ::= {decimal}[ieπ∞xz]*
+       | E2
+       
+    E2 ::= [xzeiπ∞]+
+       | sin juxtaposition
+       | sin(E)
+       | (E) 
+       | |E|
+       
+That looks good so far, but how combine this with * and / ?
 
-Maybe I won't bother with space-multiplication for now.
-It really complicates parsing a lot.
+## juxtaposition = invisible multiplication = constants
+
+Juxtaposition is multiplication,
+but it binds stronger than anything else.
+
+    {decimal}[ieπ∞xz]*
 
 
 ## todo
