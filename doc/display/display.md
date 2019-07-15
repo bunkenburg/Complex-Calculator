@@ -94,3 +94,14 @@ mouse:
 
 * click
 * drag
+
+## what is the best way to procede?
+
+* Make an object-model of the displayed editor for the expression
+
+or
+
+* show instances on existing class Expression
+* lay them out weel, in 2d
+* add focus traversal
+* add editing a part
