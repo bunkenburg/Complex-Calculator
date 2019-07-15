@@ -192,7 +192,7 @@ final class Calculator() extends MainFrame {
 
   /** Gets the expression from the display, parses it, evaluates it,
     * and appends the result to the display. */
-  private[calculator] def doEquals() = {
+  private[calculator] def doEquals() = ??? /*{
     val text = display.text
     display.append(" = ")
     try {
@@ -204,10 +204,10 @@ final class Calculator() extends MainFrame {
     } catch {
       case e: Exception => e.printStackTrace()
     }
-  }
+  }*/
 
   /** Event listener: f(z)=... has changed. */
-  private[calculator] def functionChanged() = try {
+  private[calculator] def functionChanged() = {} /*try {
     val text = cat.inspiracio.parsing.Expression.stripBlanks(display.text)
     if (text.startsWith("f(" + variable + ")=")) {
       f = parse(text.substring(5))
@@ -220,7 +220,7 @@ final class Calculator() extends MainFrame {
     }
   } catch {
     case _ex: ParseException =>
-  }
+  }*/
 
   private[calculator] def quit(): Unit = {
     if(visible){
@@ -229,7 +229,7 @@ final class Calculator() extends MainFrame {
       p.putInt("x", x)
       p.putInt("y", y)
 
-      p.put("text", display.text)
+      //p.put("text", display.text)
       p.put("mode", mode.toString)
     }
     dispose()
