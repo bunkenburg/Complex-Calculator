@@ -19,6 +19,8 @@ package cat.inspiracio.calculator
 
 import java.lang.Math.min
 
+import cat.inspiracio.combinator.Parser
+
 import scala.swing._
 import scala.swing.event.{KeyPressed, KeyTyped}
 
@@ -35,7 +37,10 @@ class Display private[calculator](calculator: Calculator, fontSize: Int) extends
   listenTo(keys)
   reactions += new MyKeyListener(calculator)
 
-  private[calculator] def clear() = text = ""
+  private[calculator] def clear() = {
+    text = ""
+    calculator.editor.show(null)
+  }
 
   private[calculator] def eraseOldResult() = {
     val equals = text.lastIndexOf('=')
@@ -43,6 +48,8 @@ class Display private[calculator](calculator: Calculator, fontSize: Int) extends
       text = text.substring(0, equals)
       caret.position = min(caret.position, text.length)
     }
+
+    tellEditor
   }
 
   /** deletes selected text or backspaces */
@@ -60,6 +67,8 @@ class Display private[calculator](calculator: Calculator, fontSize: Int) extends
       selectionEnd = start
       caret.position = start
     }
+
+    tellEditor
   }
 
   private[calculator] def paste(c: Char): Unit = paste(String.valueOf(c) )
@@ -73,7 +82,18 @@ class Display private[calculator](calculator: Calculator, fontSize: Int) extends
       replaceRange(s, start, end)
     caret.position = start + s.length
     select(start + s.length, start + s.length)
+
+    tellEditor
   }
+
+  private def tellEditor =
+    try {
+      val p = new Parser
+      val e = p(text)
+      calculator.editor.show(e)
+    }catch{
+      case ex => println(ex)
+    }
 
   /** Put s in from of displayed string */
   private[calculator] def prepend(s: String) = {
@@ -84,6 +104,8 @@ class Display private[calculator](calculator: Calculator, fontSize: Int) extends
     selectionStart = start + s.length
     selectionEnd = end + s.length
     caret.position = cp + s.length
+
+    tellEditor
   }
 
   /** Replace one char by another. */
@@ -94,6 +116,8 @@ class Display private[calculator](calculator: Calculator, fontSize: Int) extends
     text = text.replace(z, x)
     select(start, end)
     caret.position = cp
+
+    tellEditor
   }
 
   //Exposes a couple more methods of JTextArea
@@ -104,5 +128,15 @@ class Display private[calculator](calculator: Calculator, fontSize: Int) extends
   private def insert(str: String, pos: Int) = peer.insert(str, pos)
   private def select(selectionStart: Int, selectionEnd: Int) = peer.select(selectionStart, selectionEnd)
   private def replaceRange(str: String, start: Int, end: Int) = peer.replaceRange(str, start, end)
+
+  override def cut(): Unit = {
+    super.cut()
+    tellEditor
+  }
+
+  override def paste(): Unit = {
+    super.paste()
+    tellEditor
+  }
 
 }

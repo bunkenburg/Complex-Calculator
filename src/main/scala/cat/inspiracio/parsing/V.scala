@@ -17,7 +17,11 @@
  * */
 package cat.inspiracio.parsing
 
+import java.awt.Dimension
+
 import cat.inspiracio.complex._
+
+import scala.swing.Graphics2D
 
 /** Variable */
 case class V() extends Expression {
@@ -25,5 +29,17 @@ case class V() extends Expression {
   override def toString: String = "z"
 
   override def apply(z: Complex): Complex = z
+
+  /** Paints the expression in this rectangle, which is of preferred size for the expression. */
+  override def paint(g: Graphics2D, rect: swing.Rectangle) = {
+    val s = toString
+    draw(g, rect.x, rect.y, s)
+  }
+
+  /** Returns dimension for a good rendering of this expression */
+  override def preferredSize(g: Graphics2D): Dimension = {
+    val s = toString
+    preferredSize(g, s)
+  }
 
 }

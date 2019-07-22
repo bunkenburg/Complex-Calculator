@@ -102,6 +102,13 @@ mouse:
 or
 
 * show instances on existing class Expression
-* lay them out weel, in 2d
+* lay them out well, in 2d
 * add focus traversal
 * add editing a part
+
+Expressions
+
+* Constants
+* Variable
+* Unary
+* Binary

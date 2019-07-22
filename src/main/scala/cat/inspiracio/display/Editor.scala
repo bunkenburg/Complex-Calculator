@@ -28,6 +28,7 @@ import scala.swing._
 class Editor (calculator: Calculator) extends Component {
 
   background = Color.LIGHT_GRAY
+
   // Any size is good. This matches size of previously used TextArea.
   val width = 336
   val height = 46
@@ -59,15 +60,50 @@ class Editor (calculator: Calculator) extends Component {
   def selectAll() = ???
   def paste() = ???
 
-  private var string = ""
+  private var e: Expression = null
 
-  def show(e: Expression) = {
-    string = e.toString
+  def show(ex: Expression) = {
+    e = ex
     repaint()
   }
 
   override def paintComponent(g: Graphics2D) = {
     super.paintComponent(g)
-    g.drawString(string, 10, size.height-10)
+
+    if(e!=null){
+      //val b = this.bounds //java.awt.Rectangle[x=0,y=0,width=356,height=46]
+      //val s = this.size //java.awt.Dimension[width=356,height=46]
+      paint(g, e, bounds)
+    }
   }
+
+  /** Paints expression e in rectangle bounds.
+    *
+    * A rectangle has upper-left (x,y) and a width and height.
+    * */
+  private def paint(g: Graphics2D, e: Expression, bounds: Rectangle) = {
+
+    ///val string = if(e==null) "" else e.toString
+    //g.drawString(string, 10, size.height-10)
+
+    if(e!=null) {
+
+      val preferredSize: Dimension = e.preferredSize(g)
+
+      if (
+        preferredSize.width <= bounds.width &&
+        preferredSize.height <= bounds.height
+      ) {
+        val x = bounds.x + (bounds.width - preferredSize.width)/2
+        val y = bounds.y + (bounds.height - preferredSize.height)/2
+        val rect = new Rectangle(x, y, preferredSize.width, preferredSize.height)
+        e.paint(g, rect)
+      } else {
+        println(s"expression $e is too big for $bounds")
+      }
+
+    }
+
+  }
+
 }

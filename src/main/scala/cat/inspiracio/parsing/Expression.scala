@@ -17,6 +17,10 @@
  * */
 package cat.inspiracio.parsing
 
+import java.awt.{Color, Dimension, Point}
+import java.awt.font.TextLayout
+import java.awt.geom.Point2D
+
 import cat.inspiracio.complex._
 import java.text.ParseException
 import java.text.ParsePosition
@@ -24,6 +28,9 @@ import java.text.ParsePosition
 import Token._
 import cat.inspiracio.combinator.Parser
 import cat.inspiracio.complex
+import cat.inspiracio.geometry.Rectangle
+
+import scala.swing.Graphics2D
 
 object Expression {
 
@@ -377,4 +384,51 @@ abstract class Expression() {
   def apply(z: Complex): Complex
 
   //def apply(p: Pictlet) : Pictlet
+
+  /** Paints expression in rect, which is preferred size for the expression. */
+  def paint(g: Graphics2D, rect: swing.Rectangle)
+
+  /** Constructing and drawing a TextLayout and its bounding rectangle.
+    * @param x
+    * @param y (x,y) is topleft of where it should go */
+  protected def draw(g: Graphics2D, x: Int, y: Int, s: String) = {
+    cross(g, x, y)
+
+    val font = g.getFont
+    val frc = g.getFontRenderContext
+    val layout = new TextLayout(s, font, frc)
+    val ascent = layout.getAscent
+    layout.draw(g, x, y + ascent )  // (x,y) here is origin of text layout, on baseline
+
+    val bounds = layout.getBounds()  // java.awt.geom.Rectangle2D$Float[x=0.8125,y=-8.90625,w=6.0,h=9.078125]
+    bounds.setRect(
+      bounds.getX() + x,
+      bounds.getY() + y + ascent,
+      bounds.getWidth(),
+      bounds.getHeight())
+    g.draw(bounds);
+  }
+
+  private def cross(g: Graphics2D, x: Int, y: Int) = {
+    g.setColor(Color.red)
+    val c = 2
+    g.drawLine(x-c, y-c, x+c, y+c)
+    g.drawLine(x-c, y+c, x+c, y-c)
+    g.setColor(Color.black)
+  }
+
+  /** Gives a box for a string. */
+  protected def preferredSize(g: Graphics2D, s: String): Dimension = {
+    val font = g.getFont
+    val frc = g.getFontRenderContext
+    val layout = new TextLayout(s, font, frc)
+    val bounds = layout.getBounds() // java.awt.geom.Rectangle2D$Float[x=0.8125,y=-8.90625,w=6.0,h=9.078125]
+    val width: Int = bounds.getWidth.ceil.toInt
+    val height: Int = bounds.getHeight.ceil.toInt
+    new Dimension(width, height)
+  }
+
+  /** Returns dimension for a good rendering of this expression */
+  def preferredSize(g: Graphics2D): Dimension
+
 }

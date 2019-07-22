@@ -17,10 +17,29 @@
  * */
 package cat.inspiracio.parsing
 
+import java.awt.Dimension
+import java.awt.font.TextLayout
+
 import cat.inspiracio.complex._
+
+import scala.swing.Graphics2D
 
 /** An expression that is a Complex number */
 case class C(constant: Complex) extends Expression {
+
   override def toString: String = constant.toString
   override def apply(z: Complex): Complex = constant
+
+  /** Paints the expression in this rectangle, which is of preferred size for the expression. */
+  override def paint(g: Graphics2D, rect: swing.Rectangle) = {
+    val s = constant.toString
+    draw(g, rect.x, rect.y, s)
+  }
+
+  /** Returns dimension for a good rendering of this expression */
+  override def preferredSize(g: Graphics2D): Dimension = {
+    val s = constant.toString
+    preferredSize(g, s)
+  }
+
 }

@@ -17,71 +17,91 @@
  * */
 package cat.inspiracio.parsing
 
+import java.awt.Dimension
+
 import cat.inspiracio.complex._
 import cat.inspiracio.complex
 
+import scala.swing.Graphics2D
+
 /** An expression that is a unary function application */
 
-case class Arg(a: Expression) extends Expression {
+abstract class Unary extends Expression {
+
+  /** Paints the expression in this rectangle, which is of preferred size for the expression. */
+  override def paint(g: Graphics2D, rect: swing.Rectangle) = {
+    val s = toString
+    draw(g, rect.x, rect.y, s)
+  }
+
+  /** Returns dimension for a good rendering of this expression */
+  override def preferredSize(g: Graphics2D): Dimension = {
+    val s = toString
+    preferredSize(g, s)
+  }
+
+}
+
+case class Arg(a: Expression) extends Unary {
   override def apply(z: Complex): Complex = { val Polar(_, angle) = a(z); angle }
 }
 
-case class Conj(a: Expression) extends Expression {
+case class Conj(a: Expression) extends Unary {
   override def apply(z: Complex): Complex = conj(a(z))
 }
 
-case class Cos(a: Expression) extends Expression {
+case class Cos(a: Expression) extends Unary {
   override def apply(z: Complex): Complex = cos(a(z))
 }
 
-case class Cosh(a: Expression) extends Expression {
+case class Cosh(a: Expression) extends Unary {
   override def apply(z: Complex): Complex = cosh(a(z))
 }
 
-case class Exp(a: Expression) extends Expression {
+case class Exp(a: Expression) extends Unary {
   override def apply(z: Complex): Complex = exp(a(z))
 }
 
-case class Fac(a: Expression) extends Expression {
+case class Fac(a: Expression) extends Unary {
   override def apply(z: Complex): Complex = fac(a(z))
 }
 
-case class Im(a: Expression) extends Expression {
+case class Im(a: Expression) extends Unary {
   override def apply(z: Complex): Complex = complex.Im(a(z))
 }
 
-case class Ln(a: Expression) extends Expression {
+case class Ln(a: Expression) extends Unary {
   override def apply(z: Complex): Complex = ln(a(z))
 }
 
-case class Mod(a: Expression) extends Expression {
+case class Mod(a: Expression) extends Unary {
   override def apply(z: Complex): Complex = abs(a(z))
 }
 
-case class Opp(a: Expression) extends Expression {
+case class Opp(a: Expression) extends Unary {
   override def apply(z: Complex): Complex = opp(a(z))
 }
 
-case class Neg(a: Expression) extends Expression {
+case class Neg(a: Expression) extends Unary {
   override def apply(z: Complex): Complex = -a(z)
 }
 
-case class Re(a: Expression) extends Expression {
+case class Re(a: Expression) extends Unary {
   override def apply(z: Complex): Complex = complex.Re(a(z))
 }
 
-case class Sin(a: Expression) extends Expression {
+case class Sin(a: Expression) extends Unary {
   override def apply(z: Complex): Complex = sin(a(z))
 }
 
-case class Sinh(a: Expression) extends Expression {
+case class Sinh(a: Expression) extends Unary {
   override def apply(z: Complex): Complex = sinh(a(z))
 }
 
-case class Tan(a: Expression) extends Expression {
+case class Tan(a: Expression) extends Unary {
   override def apply(z: Complex): Complex = tan(a(z))
 }
 
-case class Tanh(a: Expression) extends Expression {
+case class Tanh(a: Expression) extends Unary {
   override def apply(z: Complex): Complex = tanh(a(z))
 }

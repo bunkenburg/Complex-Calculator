@@ -53,7 +53,17 @@ class MyKeyListener (calculator: Calculator) extends PartialFunction[Event, Unit
   /** Ignores forbidden characters,
     * erases old result,
     * inserts character, treating '=' special,
-    * tells calculator of function change. */
+    * tells calculator of function change.
+    *
+    * If you want to catch Ctrl-Z:
+    * modifiers = 128,
+    * c paste = 22 Synchronous idle,
+    * c cut = 24 Cancel,
+    * c undo = 26 substitute,
+    * c copy = 3 end-of-text
+    * But called here before the actual action,
+    * so the text I see here is still old.
+    * */
   private def keyTyped(e: KeyTyped): Unit = {
     val KeyTyped(source, c, modifiers, location) = e
     if ( !forbidden(c) )

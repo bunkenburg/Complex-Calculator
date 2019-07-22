@@ -17,11 +17,30 @@
  * */
 package cat.inspiracio.parsing
 
+import java.awt.Dimension
+
 import cat.inspiracio.complex._
 
-/** Binary expressions */
+import scala.swing.{Graphics2D, Rectangle}
 
-case class Plus(left: Expression, right: Expression) extends Expression {
+/** Binary expressions */
+abstract class Binary extends Expression {
+
+  /** Paints the expression in this rectangle, which is of preferred size for the expression. */
+  override def paint(g: Graphics2D, rect: swing.Rectangle) = {
+    val s = toString
+    draw(g, rect.x, rect.y, s)
+  }
+
+  /** Returns dimension for a good rendering of this expression */
+  override def preferredSize(g: Graphics2D): Dimension = {
+    val s = toString
+    preferredSize(g, s)
+  }
+
+}
+
+case class Plus(left: Expression, right: Expression) extends Binary {
   override def apply(z: Complex): Complex = {
     val a: Complex = left(z)
     val b: Complex = right(z)
@@ -29,7 +48,7 @@ case class Plus(left: Expression, right: Expression) extends Expression {
   }
 }
 
-case class Minus(left: Expression, right: Expression) extends Expression {
+case class Minus(left: Expression, right: Expression) extends Binary {
   override def apply(z: Complex): Complex = {
     val a: Complex = left(z)
     val b: Complex = right(z)
@@ -37,7 +56,7 @@ case class Minus(left: Expression, right: Expression) extends Expression {
   }
 }
 
-case class Mult(left: Expression, right: Expression) extends Expression {
+case class Mult(left: Expression, right: Expression) extends Binary {
   override def apply(z: Complex): Complex = {
     val a: Complex = left(z)
     val b: Complex = right(z)
@@ -45,7 +64,7 @@ case class Mult(left: Expression, right: Expression) extends Expression {
   }
 }
 
-case class Div(left: Expression, right: Expression) extends Expression {
+case class Div(left: Expression, right: Expression) extends Binary {
   override def apply(z: Complex): Complex = {
     val a: Complex = left(z)
     val b: Complex = right(z)
@@ -53,7 +72,7 @@ case class Div(left: Expression, right: Expression) extends Expression {
   }
 }
 
-case class Power(left: Expression, right: Expression) extends Expression {
+case class Power(left: Expression, right: Expression) extends Binary {
   override def apply(z: Complex): Complex = {
     val a: Complex = left(z)
     val b: Complex = right(z)
