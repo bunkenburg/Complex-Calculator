@@ -42,66 +42,72 @@ abstract class Unary extends Expression {
 
 }
 
-case class Arg(a: Expression) extends Unary {
+abstract class Prefix(pre: String) extends Unary
+
+case class Arg(a: Expression) extends Prefix("arg") {
   override def apply(z: Complex): Complex = { val Polar(_, angle) = a(z); angle }
 }
 
-case class Conj(a: Expression) extends Unary {
+case class Conj(a: Expression) extends Prefix("conj") {
   override def apply(z: Complex): Complex = conj(a(z))
 }
 
-case class Cos(a: Expression) extends Unary {
+case class Cos(a: Expression) extends Prefix("cos") {
   override def apply(z: Complex): Complex = cos(a(z))
 }
 
-case class Cosh(a: Expression) extends Unary {
+case class Cosh(a: Expression) extends Prefix("cosh") {
   override def apply(z: Complex): Complex = cosh(a(z))
 }
 
-case class Exp(a: Expression) extends Unary {
+case class Exp(a: Expression) extends Prefix("exp") {
   override def apply(z: Complex): Complex = exp(a(z))
 }
+
+case class Im(a: Expression) extends Prefix("Im") {
+  override def apply(z: Complex): Complex = complex.Im(a(z))
+}
+
+case class Ln(a: Expression) extends Prefix("ln") {
+  override def apply(z: Complex): Complex = ln(a(z))
+}
+
+case class Opp(a: Expression) extends Prefix("opp") {
+  override def apply(z: Complex): Complex = opp(a(z))
+}
+
+case class Neg(a: Expression) extends Prefix("-") {
+  override def apply(z: Complex): Complex = -a(z)
+}
+
+case class Re(a: Expression) extends Prefix("Re") {
+  override def apply(z: Complex): Complex = complex.Re(a(z))
+}
+
+case class Sin(a: Expression) extends Prefix("sin") {
+  override def apply(z: Complex): Complex = sin(a(z))
+}
+
+case class Sinh(a: Expression) extends Prefix("sinh") {
+  override def apply(z: Complex): Complex = sinh(a(z))
+}
+
+case class Tan(a: Expression) extends Prefix("tan") {
+  override def apply(z: Complex): Complex = tan(a(z))
+}
+
+case class Tanh(a: Expression) extends Prefix("tanh") {
+  override def apply(z: Complex): Complex = tanh(a(z))
+}
+
+//-------------------------------------------------
 
 case class Fac(a: Expression) extends Unary {
   override def apply(z: Complex): Complex = fac(a(z))
 }
 
-case class Im(a: Expression) extends Unary {
-  override def apply(z: Complex): Complex = complex.Im(a(z))
-}
-
-case class Ln(a: Expression) extends Unary {
-  override def apply(z: Complex): Complex = ln(a(z))
-}
+//-------------------------------------------------
 
 case class Mod(a: Expression) extends Unary {
   override def apply(z: Complex): Complex = abs(a(z))
-}
-
-case class Opp(a: Expression) extends Unary {
-  override def apply(z: Complex): Complex = opp(a(z))
-}
-
-case class Neg(a: Expression) extends Unary {
-  override def apply(z: Complex): Complex = -a(z)
-}
-
-case class Re(a: Expression) extends Unary {
-  override def apply(z: Complex): Complex = complex.Re(a(z))
-}
-
-case class Sin(a: Expression) extends Unary {
-  override def apply(z: Complex): Complex = sin(a(z))
-}
-
-case class Sinh(a: Expression) extends Unary {
-  override def apply(z: Complex): Complex = sinh(a(z))
-}
-
-case class Tan(a: Expression) extends Unary {
-  override def apply(z: Complex): Complex = tan(a(z))
-}
-
-case class Tanh(a: Expression) extends Unary {
-  override def apply(z: Complex): Complex = tanh(a(z))
 }

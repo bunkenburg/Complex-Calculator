@@ -40,7 +40,9 @@ abstract class Binary extends Expression {
 
 }
 
-case class Plus(left: Expression, right: Expression) extends Binary {
+abstract class LinearBinary(op: String) extends Binary
+
+case class Plus(left: Expression, right: Expression) extends LinearBinary("+") {
   override def apply(z: Complex): Complex = {
     val a: Complex = left(z)
     val b: Complex = right(z)
@@ -48,7 +50,7 @@ case class Plus(left: Expression, right: Expression) extends Binary {
   }
 }
 
-case class Minus(left: Expression, right: Expression) extends Binary {
+case class Minus(left: Expression, right: Expression) extends LinearBinary("-") {
   override def apply(z: Complex): Complex = {
     val a: Complex = left(z)
     val b: Complex = right(z)
@@ -56,13 +58,15 @@ case class Minus(left: Expression, right: Expression) extends Binary {
   }
 }
 
-case class Mult(left: Expression, right: Expression) extends Binary {
+case class Mult(left: Expression, right: Expression) extends LinearBinary("*") {
   override def apply(z: Complex): Complex = {
     val a: Complex = left(z)
     val b: Complex = right(z)
     a * b
   }
 }
+
+//------------------------------------------------------------------
 
 case class Div(left: Expression, right: Expression) extends Binary {
   override def apply(z: Complex): Complex = {
@@ -71,6 +75,8 @@ case class Div(left: Expression, right: Expression) extends Binary {
     a / b
   }
 }
+
+//------------------------------------------------------------------
 
 case class Power(left: Expression, right: Expression) extends Binary {
   override def apply(z: Complex): Complex = {

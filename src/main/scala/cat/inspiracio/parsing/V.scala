@@ -18,6 +18,7 @@
 package cat.inspiracio.parsing
 
 import java.awt.Dimension
+import java.awt.font.TextLayout
 
 import cat.inspiracio.complex._
 
@@ -26,8 +27,12 @@ import scala.swing.Graphics2D
 /** Variable */
 case class V() extends Expression {
 
-  override def toString: String = "z"
+  lazy val layout: TextLayout = {
+    ???
+    new TextLayout()
+  }
 
+  override def toString: String = "z"
   override def apply(z: Complex): Complex = z
 
   /** Paints the expression in this rectangle, which is of preferred size for the expression. */

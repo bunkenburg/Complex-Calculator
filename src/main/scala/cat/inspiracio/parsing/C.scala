@@ -27,6 +27,11 @@ import scala.swing.Graphics2D
 /** An expression that is a Complex number */
 case class C(constant: Complex) extends Expression {
 
+  lazy val layout: TextLayout = {
+    ???
+    new TextLayout()
+  }
+
   override def toString: String = constant.toString
   override def apply(z: Complex): Complex = constant
 

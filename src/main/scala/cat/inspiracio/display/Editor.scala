@@ -62,11 +62,19 @@ class Editor (calculator: Calculator) extends Component {
 
   private var e: Expression = null
 
+  /** Creates all the TextLayouts for this expression,
+    * containing the right String,
+    * sized right,
+    * and positioned right.
+    * Size adapted to available space in Editor.
+    * Positioned in the middle of the Editor. */
   def show(ex: Expression) = {
     e = ex
     repaint()
   }
 
+  /** Paints the Expression e which has already been decorated with
+    * TextLayouts that are sized and positioned. */
   override def paintComponent(g: Graphics2D) = {
     super.paintComponent(g)
 
