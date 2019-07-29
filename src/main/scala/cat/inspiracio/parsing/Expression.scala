@@ -423,12 +423,21 @@ abstract class Expression() {
     val frc = g.getFontRenderContext
     val layout = new TextLayout(s, font, frc)
     val bounds = layout.getBounds() // java.awt.geom.Rectangle2D$Float[x=0.8125,y=-8.90625,w=6.0,h=9.078125]
-    val width: Int = bounds.getWidth.ceil.toInt
-    val height: Int = bounds.getHeight.ceil.toInt
+    val width: Int = bounds.getWidth.ceil.toInt   // XXX don't round
+    val height: Int = bounds.getHeight.ceil.toInt // XXX don't round
     new Dimension(width, height)
   }
 
   /** Returns dimension for a good rendering of this expression */
   def preferredSize(g: Graphics2D): Dimension
+
+  /** Lay out the expression in this rectangle,
+    * which usually will be the preferred size of the expression,
+    * unless the expression is too big for the Editor.
+    *
+    * This methods sizes and positions all the TextLayout objects
+    * in the expression. After that, the expression is ready for painting-
+    * */
+  def layout(g: Graphics2D, bounds: swing.Rectangle) = {}
 
 }

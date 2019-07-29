@@ -29,7 +29,6 @@ case class V() extends Expression {
 
   lazy val layout: TextLayout = {
     ???
-    new TextLayout()
   }
 
   override def toString: String = "z"

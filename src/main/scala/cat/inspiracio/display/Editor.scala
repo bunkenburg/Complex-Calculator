@@ -18,6 +18,7 @@
 package cat.inspiracio.display
 
 import java.awt.Color
+import java.awt.font.FontRenderContext
 
 import cat.inspiracio.calculator.{Calculator, MyKeyListener}
 import cat.inspiracio.parsing.Expression
@@ -26,8 +27,9 @@ import scala.swing._
 
 /** The text area of the complex calculator. */
 class Editor (calculator: Calculator) extends Component {
+  import Color._
 
-  background = Color.LIGHT_GRAY
+  background = LIGHT_GRAY
 
   // Any size is good. This matches size of previously used TextArea.
   val width = 336
@@ -38,14 +40,12 @@ class Editor (calculator: Calculator) extends Component {
   reactions += new MyKeyListener(calculator)
 
   def clear() = {} //text = ""
-
   def eraseOldResult() = {}
 
   /** deletes selected text or backspaces */
   def delete() = {}
 
   def paste(c: Char): Unit = paste(String.valueOf(c) )
-
   def paste(s: String): Unit = {}
 
   /** Put s in from of displayed string */
@@ -61,6 +61,7 @@ class Editor (calculator: Calculator) extends Component {
   def paste() = ???
 
   private var e: Expression = null
+  private var elayout: Expression = null
 
   /** Creates all the TextLayouts for this expression,
     * containing the right String,
@@ -70,6 +71,7 @@ class Editor (calculator: Calculator) extends Component {
     * Positioned in the middle of the Editor. */
   def show(ex: Expression) = {
     e = ex
+    elayout = null
     repaint()
   }
 
@@ -79,39 +81,28 @@ class Editor (calculator: Calculator) extends Component {
     super.paintComponent(g)
 
     if(e!=null){
-      //val b = this.bounds //java.awt.Rectangle[x=0,y=0,width=356,height=46]
-      //val s = this.size //java.awt.Dimension[width=356,height=46]
-      paint(g, e, bounds)
+      if(elayout==null)
+        elayout = layout(g, e)
+      elayout.paint(g, bounds)
     }
   }
 
-  /** Paints expression e in rectangle bounds.
-    *
-    * A rectangle has upper-left (x,y) and a width and height.
-    * */
-  private def paint(g: Graphics2D, e: Expression, bounds: Rectangle) = {
+  private def layout(g: Graphics2D, e: Expression) = if(e==null) null else {
+    val preferredSize: Dimension = e.preferredSize(g)
 
-    ///val string = if(e==null) "" else e.toString
-    //g.drawString(string, 10, size.height-10)
-
-    if(e!=null) {
-
-      val preferredSize: Dimension = e.preferredSize(g)
-
-      if (
-        preferredSize.width <= bounds.width &&
+    if (
+      preferredSize.width <= bounds.width &&
         preferredSize.height <= bounds.height
-      ) {
-        val x = bounds.x + (bounds.width - preferredSize.width)/2
-        val y = bounds.y + (bounds.height - preferredSize.height)/2
-        val rect = new Rectangle(x, y, preferredSize.width, preferredSize.height)
-        e.paint(g, rect)
-      } else {
-        println(s"expression $e is too big for $bounds")
-      }
-
+    ) {
+      val x = bounds.x + (bounds.width - preferredSize.width)/2
+      val y = bounds.y + (bounds.height - preferredSize.height)/2
+      val rect = new Rectangle(x, y, preferredSize.width, preferredSize.height)
+      e.layout(g, rect)
+    } else {
+      println(s"expression $e is too big for $bounds")
     }
 
+    e
   }
 
 }
