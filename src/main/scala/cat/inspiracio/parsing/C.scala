@@ -17,8 +17,8 @@
  * */
 package cat.inspiracio.parsing
 
-import java.awt.Dimension
 import java.awt.font.TextLayout
+import java.awt.geom.{Dimension2D, Point2D, Rectangle2D}
 
 import cat.inspiracio.complex._
 
@@ -28,26 +28,19 @@ import scala.swing.Graphics2D
 case class C(constant: Complex) extends Expression {
 
   private var tl: TextLayout = null
+  private var top: Double = 0
+  private var left: Double = 0
 
   override def toString: String = constant.toString
   override def apply(z: Complex): Complex = constant
 
-  /** Paints the expression in this rectangle, which is of preferred size for the expression. */
-  override def paint(g: Graphics2D, rect: swing.Rectangle) = {
-    //val s = constant.toString
-    //draw(g, rect.x, rect.y, s)
-
-    // draw tl
-    val ascent = tl.getAscent
-    val x = rect.x
-    val y = rect.y
-    tl.draw(g, x, y + ascent )  // (x,y) here is origin of text layout, on baseline
-  }
-
   /** Returns dimension for a good rendering of this expression */
-  override def preferredSize(g: Graphics2D): Dimension = {
+  override def preferredSize(g: Graphics2D): Dimension2D = {
     val s = constant.toString
-    preferredSize(g, s)
+    val font = g.getFont
+    val frc = g.getFontRenderContext
+    tl = new TextLayout(s, font, frc)
+    tl.getBounds()
   }
 
   /** Lay out the expression in this rectangle,
@@ -57,12 +50,25 @@ case class C(constant: Complex) extends Expression {
     * This methods sizes and positions all the TextLayout objects
     * in the expression. After that, the expression is ready for painting-
     * */
-  override def layout(g: Graphics2D, bounds: swing.Rectangle) = {
-    val s = constant.toString
-    val font = g.getFont
-    val frc = g.getFontRenderContext
-    tl = new TextLayout(s, font, frc)
-    // XXX size and position tl correctly
+  override def layout(g: Graphics2D, bounds: Rectangle2D) = {
+    // size tl correctly
+    val tlb = tl.getBounds
+    if(tlb.getWidth <= bounds.getWidth && tlb.getHeight <= bounds.getHeight){
+      //do nothing
+    }
+    else{
+      // resize tl
+      println("C.layout must resize tl")
+    }
+
+    // position tl correctly
+    top = bounds.getY
+    left = bounds.getX
+  }
+
+  override def paint(g: Graphics2D) = {
+    val ascent = tl.getAscent
+    tl.draw(g, left.toFloat, top.toFloat + ascent )  // (x,y) here is origin of text layout, on baseline
   }
 
 }

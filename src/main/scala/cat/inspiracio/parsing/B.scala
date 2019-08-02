@@ -18,6 +18,7 @@
 package cat.inspiracio.parsing
 
 import java.awt.Dimension
+import java.awt.geom.{Dimension2D, Rectangle2D}
 
 import cat.inspiracio.complex._
 
@@ -26,14 +27,11 @@ import scala.swing.{Graphics2D, Rectangle}
 /** Binary expressions */
 abstract class Binary extends Expression {
 
-  /** Paints the expression in this rectangle, which is of preferred size for the expression. */
-  override def paint(g: Graphics2D, rect: swing.Rectangle) = {
-    val s = toString
-    draw(g, rect.x, rect.y, s)
+  override def paint(g: Graphics2D) = {
   }
 
   /** Returns dimension for a good rendering of this expression */
-  override def preferredSize(g: Graphics2D): Dimension = {
+  override def preferredSize(g: Graphics2D): Dimension2D = {
     val s = toString
     preferredSize(g, s)
   }

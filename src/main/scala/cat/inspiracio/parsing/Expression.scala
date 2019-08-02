@@ -19,7 +19,7 @@ package cat.inspiracio.parsing
 
 import java.awt.{Color, Dimension, Point}
 import java.awt.font.TextLayout
-import java.awt.geom.Point2D
+import java.awt.geom.{Dimension2D, Point2D, Rectangle2D}
 
 import cat.inspiracio.complex._
 import java.text.ParseException
@@ -385,8 +385,7 @@ abstract class Expression() {
 
   //def apply(p: Pictlet) : Pictlet
 
-  /** Paints expression in rect, which is preferred size for the expression. */
-  def paint(g: Graphics2D, rect: swing.Rectangle)
+  def paint(g: Graphics2D)
 
   /** Constructing and drawing a TextLayout and its bounding rectangle.
     * @param x
@@ -418,18 +417,22 @@ abstract class Expression() {
   }
 
   /** Gives a box for a string. */
-  protected def preferredSize(g: Graphics2D, s: String): Dimension = {
+  protected def preferredSize(g: Graphics2D, s: String): Dimension2D = {
     val font = g.getFont
     val frc = g.getFontRenderContext
     val layout = new TextLayout(s, font, frc)
-    val bounds = layout.getBounds() // java.awt.geom.Rectangle2D$Float[x=0.8125,y=-8.90625,w=6.0,h=9.078125]
-    val width: Int = bounds.getWidth.ceil.toInt   // XXX don't round
-    val height: Int = bounds.getHeight.ceil.toInt // XXX don't round
-    new Dimension(width, height)
+    layout.getBounds() // java.awt.geom.Rectangle2D$Float[x=0.8125,y=-8.90625,w=6.0,h=9.078125]
+  }
+
+  /** Makes a Rectangle2D (with position) appear as a Dimension2D (without position). */
+  implicit class Rectangle2DDimension2D(r: Rectangle2D) extends Dimension2D{
+    override def getWidth: Double = r.getWidth
+    override def getHeight: Double = r.getHeight
+    override def setSize(v: Double, v1: Double): Unit = ???
   }
 
   /** Returns dimension for a good rendering of this expression */
-  def preferredSize(g: Graphics2D): Dimension
+  def preferredSize(g: Graphics2D): Dimension2D
 
   /** Lay out the expression in this rectangle,
     * which usually will be the preferred size of the expression,
@@ -438,6 +441,6 @@ abstract class Expression() {
     * This methods sizes and positions all the TextLayout objects
     * in the expression. After that, the expression is ready for painting-
     * */
-  def layout(g: Graphics2D, bounds: swing.Rectangle) = {}
+  def layout(g: Graphics2D, bounds: Rectangle2D) = {}
 
 }

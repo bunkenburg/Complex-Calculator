@@ -19,6 +19,7 @@ package cat.inspiracio.parsing
 
 import java.awt.Dimension
 import java.awt.font.TextLayout
+import java.awt.geom.{Dimension2D, Rectangle2D}
 
 import cat.inspiracio.complex._
 
@@ -27,23 +28,48 @@ import scala.swing.Graphics2D
 /** Variable */
 case class V() extends Expression {
 
-  lazy val layout: TextLayout = {
-    ???
-  }
+  private var tl: TextLayout = null
+  private var top: Double = 0
+  private var left: Double = 0
 
   override def toString: String = "z"
   override def apply(z: Complex): Complex = z
 
-  /** Paints the expression in this rectangle, which is of preferred size for the expression. */
-  override def paint(g: Graphics2D, rect: swing.Rectangle) = {
+  /** Returns dimension for a good rendering of this expression */
+  override def preferredSize(g: Graphics2D): Dimension2D = {
     val s = toString
-    draw(g, rect.x, rect.y, s)
+    val font = g.getFont
+    val frc = g.getFontRenderContext
+    tl = new TextLayout(s, font, frc)
+    tl.getBounds()
   }
 
-  /** Returns dimension for a good rendering of this expression */
-  override def preferredSize(g: Graphics2D): Dimension = {
-    val s = toString
-    preferredSize(g, s)
+  /** Lay out the expression in this rectangle,
+   * which usually will be the preferred size of the expression,
+   * unless the expression is too big for the Editor.
+   *
+   * This methods sizes and positions all the TextLayout objects
+   * in the expression. After that, the expression is ready for painting-
+   * */
+  override def layout(g: Graphics2D, bounds: Rectangle2D) = {
+    // size tl correctly
+    val tlb = tl.getBounds
+    if(tlb.getWidth <= bounds.getWidth && tlb.getHeight <= bounds.getHeight){
+      //do nothing
+    }
+    else{
+      // resize tl
+      println("V.layout must resize tl")
+    }
+
+    // position tl correctly
+    top = bounds.getY
+    left = bounds.getX
+  }
+
+  override def paint(g: Graphics2D) = {
+    val ascent = tl.getAscent
+    tl.draw(g, left.toFloat, top.toFloat + ascent )  // (x,y) here is origin of text layout, on baseline
   }
 
 }

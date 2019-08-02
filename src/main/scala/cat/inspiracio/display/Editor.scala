@@ -19,6 +19,7 @@ package cat.inspiracio.display
 
 import java.awt.Color
 import java.awt.font.FontRenderContext
+import java.awt.geom.{Dimension2D, Rectangle2D}
 
 import cat.inspiracio.calculator.{Calculator, MyKeyListener}
 import cat.inspiracio.parsing.Expression
@@ -81,22 +82,24 @@ class Editor (calculator: Calculator) extends Component {
     super.paintComponent(g)
 
     if(e!=null){
+
       if(elayout==null)
         elayout = layout(g, e)
-      elayout.paint(g, bounds)
+
+      elayout.paint(g)
     }
   }
 
   private def layout(g: Graphics2D, e: Expression) = if(e==null) null else {
-    val preferredSize: Dimension = e.preferredSize(g)
+    val preferredSize: Dimension2D = e.preferredSize(g)
 
     if (
-      preferredSize.width <= bounds.width &&
-        preferredSize.height <= bounds.height
+      preferredSize.getWidth <= bounds.width &&
+      preferredSize.getHeight <= bounds.height
     ) {
-      val x = bounds.x + (bounds.width - preferredSize.width)/2
-      val y = bounds.y + (bounds.height - preferredSize.height)/2
-      val rect = new Rectangle(x, y, preferredSize.width, preferredSize.height)
+      val x = bounds.x + (bounds.width - preferredSize.getWidth)/2
+      val y = bounds.y + (bounds.height - preferredSize.getHeight)/2
+      val rect = new Rectangle2D.Double(x, y, preferredSize.getWidth, preferredSize.getHeight)
       e.layout(g, rect)
     } else {
       println(s"expression $e is too big for $bounds")
