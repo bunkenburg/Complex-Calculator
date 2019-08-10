@@ -92,7 +92,7 @@ class Display private[calculator](calculator: Calculator, fontSize: Int) extends
       val e = p(text)
       calculator.editor.show(e)
     }catch{
-      case ex => println(ex)
+      case ex: Exception => println(ex)
     }
 
   /** Put s in from of displayed string */

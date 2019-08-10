@@ -230,7 +230,7 @@ final class Calculator() extends MainFrame {
 
   /** Event listener: f(z)=... has changed. */
   private[calculator] def functionChanged() = try {
-    val text = cat.inspiracio.parsing.Expression.stripBlanks(display.text)
+    val text = stripBlanks(display.text)
     if (text.startsWith("f(" + variable + ")=")) {
       f = parse(text.substring(5))
       mode match {
@@ -242,6 +242,15 @@ final class Calculator() extends MainFrame {
     }
   } catch {
     case _ex: ParseException =>
+  }
+
+  /** removes all white space from the string */
+  private def stripBlanks(s: String): String = {
+    val builder = new StringBuilder(s.length)
+    for (c <- s)
+      if (!Character.isWhitespace(c))
+        builder.append(c)
+    builder.toString
   }
 
   private[calculator] def quit(): Unit = {

@@ -72,7 +72,7 @@ class Editor (calculator: Calculator) extends Component {
     * Positioned in the middle of the Editor. */
   def show(ex: Expression) = {
     e = ex
-    elayout = null
+    elayout = null  //Can't lay out yet, because I need Graphics2D for that.
     repaint()
   }
 
@@ -94,9 +94,11 @@ class Editor (calculator: Calculator) extends Component {
     val preferredSize: Dimension2D = e.preferredSize(g)
 
     if (
+      //put this somewhere
       preferredSize.getWidth <= bounds.width &&
       preferredSize.getHeight <= bounds.height
     ) {
+      //put this somewhere
       val x = bounds.x + (bounds.width - preferredSize.getWidth)/2
       val y = bounds.y + (bounds.height - preferredSize.getHeight)/2
       val rect = new Rectangle2D.Double(x, y, preferredSize.getWidth, preferredSize.getHeight)
