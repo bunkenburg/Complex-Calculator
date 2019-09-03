@@ -17,9 +17,9 @@
  * */
 package cat.inspiracio.parsing
 
-import java.awt.{Color, Dimension, Point}
+import java.awt.Color
 import java.awt.font.TextLayout
-import java.awt.geom.{Dimension2D, Point2D, Rectangle2D}
+import java.awt.geom.{Dimension2D, Rectangle2D}
 
 import cat.inspiracio.complex._
 import java.text.ParseException
@@ -37,16 +37,14 @@ object Expression {
     p(s)
   }
 
-  private final val constants = "iepπ∞"
-  private final val variables = "zx"
-  private final val digits = "0123456789"
-  private final val functionInitials = "acDeIlmoRst"
 }
 
 abstract class Expression() {
 
-  override def toString: String
+  //override def toString: String
 
+  /** Evaluate the expression to a complex number,
+   * substituting the given number for variable z. */
   def apply(z: Complex): Complex
 
   //def apply(p: Pictlet) : Pictlet
@@ -90,13 +88,6 @@ abstract class Expression() {
     layout.getBounds() // java.awt.geom.Rectangle2D$Float[x=0.8125,y=-8.90625,w=6.0,h=9.078125]
   }
 
-  /** Makes a Rectangle2D (with position) appear as a Dimension2D (without position). */
-  implicit class Rectangle2DDimension2D(r: Rectangle2D) extends Dimension2D{
-    override def getWidth: Double = r.getWidth
-    override def getHeight: Double = r.getHeight
-    override def setSize(v: Double, v1: Double): Unit = ???
-  }
-
   /** Returns dimension for a good rendering of this expression */
   def preferredSize(g: Graphics2D): Dimension2D
 
@@ -107,6 +98,41 @@ abstract class Expression() {
     * This methods sizes and positions all the TextLayout objects
     * in the expression. After that, the expression is ready for painting-
     * */
-  def layout(g: Graphics2D, bounds: Rectangle2D) = {}
+  def layout(g: Graphics2D, bounds: Rectangle2D): Unit = {}
+
+  /** Makes a TextLayout for a String.
+   * It will still have to be positioned at the right place,
+   * and maybe scaled. */
+  protected def textlayout(g: Graphics2D, s: String) = new TextLayout(s, g.getFont, g.getFontRenderContext)
+
+  // classes =========================================================================================
+
+  // java.awt.Rectangle extends Rectangle2D(public x, y, width,height : int)
+  // java.awt.geom.Rectangle2D .Float .Double
+  // java.awt.geom.RectangularShape
+  // java.awt.Dimension extends Dimension2D(public width height : int)
+  // java.awt.geom.Dimension2D abstract double
+
+  // Dimension2D is the one I want.
+
+  /** Makes a Rectangle2D (with position) appear as a Dimension2D (without position). */
+  implicit class Rectangle2DDimension2D(r: Rectangle2D) extends Dimension2D{
+    override def getWidth: Double = r.getWidth
+    override def getHeight: Double = r.getHeight
+    override def setSize(v: Double, v1: Double): Unit = ???
+  }
+
+  protected class Rectangle extends Dimension2D {
+    // implicit constructor from Rectangle2D
+    // implicit constructor from Dimension2D
+
+    // extends Dimension2D
+    override def getWidth: Double = ???
+    override def getHeight: Double = ???
+    override def setSize(v: Double, v1: Double): Unit = ???
+
+    def | (b: Rectangle): Rectangle = ???
+    def / (b: Rectangle): Rectangle = ???
+  }
 
 }

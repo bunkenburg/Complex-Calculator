@@ -36,10 +36,7 @@ case class C(constant: Complex) extends Expression {
 
   /** Returns dimension for a good rendering of this expression */
   override def preferredSize(g: Graphics2D): Dimension2D = {
-    val s = constant.toString
-    val font = g.getFont
-    val frc = g.getFontRenderContext
-    tl = new TextLayout(s, font, frc)
+    tl = textlayout(g, constant.toString)
     tl.getBounds()
   }
 
@@ -48,7 +45,7 @@ case class C(constant: Complex) extends Expression {
     * unless the expression is too big for the Editor.
     *
     * This methods sizes and positions all the TextLayout objects
-    * in the expression. After that, the expression is ready for painting-
+    * in the expression. After that, the expression is ready for painting.
     * */
   override def layout(g: Graphics2D, bounds: Rectangle2D) = {
     // size tl correctly
@@ -66,6 +63,8 @@ case class C(constant: Complex) extends Expression {
     left = bounds.getX
   }
 
+  /** Paints this expression.
+   * Its text layouts have already been created, scaled, and positioned. */
   override def paint(g: Graphics2D) = {
     val ascent = tl.getAscent
     tl.draw(g, left.toFloat, top.toFloat + ascent )  // (x,y) here is origin of text layout, on baseline
